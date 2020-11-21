@@ -16,6 +16,9 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.util.compat.JreCompat;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +32,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.util.compat.JreCompat;
 
 /**
  * Implementation of {@link Jar} that is optimised for file based JAR URLs that

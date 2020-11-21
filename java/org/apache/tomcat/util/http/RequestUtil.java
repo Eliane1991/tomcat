@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.util.http;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class RequestUtil {
 

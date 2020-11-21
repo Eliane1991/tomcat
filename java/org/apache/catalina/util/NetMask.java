@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.util;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * A class representing a CIDR netmask.

@@ -16,6 +16,15 @@
  */
 package org.apache.catalina.valves;
 
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.util.ServerInfo;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -23,22 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
-import org.apache.catalina.util.ServerInfo;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.ExceptionUtils;
+import java.util.*;
 
 /**
  * An implementation of the W3c Extended Log File Format. See

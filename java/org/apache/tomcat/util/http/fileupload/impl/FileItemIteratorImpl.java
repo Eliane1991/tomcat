@@ -16,26 +16,12 @@
  */
 package org.apache.tomcat.util.http.fileupload.impl;
 
+import org.apache.tomcat.util.http.fileupload.*;
+import org.apache.tomcat.util.http.fileupload.util.LimitedInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.FileItemHeaders;
-import org.apache.tomcat.util.http.fileupload.FileItemIterator;
-import org.apache.tomcat.util.http.fileupload.FileItemStream;
-import org.apache.tomcat.util.http.fileupload.FileUploadBase;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.apache.tomcat.util.http.fileupload.MultipartStream;
-import org.apache.tomcat.util.http.fileupload.ProgressListener;
-import org.apache.tomcat.util.http.fileupload.RequestContext;
-import org.apache.tomcat.util.http.fileupload.UploadContext;
-import org.apache.tomcat.util.http.fileupload.util.LimitedInputStream;
+import java.util.*;
 
 /**
  * The iterator, which is returned by

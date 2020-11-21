@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.startup;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.catalina.Host;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -30,11 +30,6 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
-
-import org.apache.catalina.Host;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Expand out a WAR in a Host's appBase.

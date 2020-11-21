@@ -17,13 +17,6 @@
 
 package org.apache.catalina.session;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Manager;
@@ -31,6 +24,13 @@ import org.apache.catalina.Store;
 import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 
 /**
  * Abstract implementation of the {@link Store} interface to

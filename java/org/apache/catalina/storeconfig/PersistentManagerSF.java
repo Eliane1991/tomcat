@@ -17,11 +17,11 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.SessionIdGenerator;
 import org.apache.catalina.Store;
 import org.apache.catalina.session.PersistentManager;
+
+import java.io.PrintWriter;
 
 /**
  * store server.xml PersistentManager element with nested "Store"

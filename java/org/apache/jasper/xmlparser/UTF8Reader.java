@@ -17,14 +17,14 @@
 
 package org.apache.jasper.xmlparser;
 
+import org.apache.jasper.compiler.Localizer;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.UTFDataFormatException;
-
-import org.apache.jasper.compiler.Localizer;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * @author Andy Clark, IBM

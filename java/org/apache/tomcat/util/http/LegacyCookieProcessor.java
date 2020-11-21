@@ -16,21 +16,20 @@
  */
 package org.apache.tomcat.util.http;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.text.FieldPosition;
-import java.util.BitSet;
-import java.util.Date;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.log.UserDataHelper;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.text.FieldPosition;
+import java.util.BitSet;
+import java.util.Date;
 
 /**
  * The legacy (up to early Tomcat 8 releases) cookie parser based on RFC6265,

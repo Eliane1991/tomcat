@@ -16,9 +16,7 @@
  */
 package org.apache.jasper.runtime;
 
-import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import org.apache.jasper.Constants;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -28,8 +26,9 @@ import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
-
-import org.apache.jasper.Constants;
+import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * Implementation of JspFactory.

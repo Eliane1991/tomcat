@@ -16,10 +16,9 @@
  */
 package javax.servlet.http;
 
-import java.io.IOException;
-
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
+import java.io.IOException;
 
 /**
  * The interface used by an {@link HttpUpgradeHandler} to interact with an upgraded

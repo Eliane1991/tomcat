@@ -17,21 +17,20 @@
 
 package org.apache.tomcat.util.net.jsse;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.SSLSession;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.net.SSLSessionManager;
 import org.apache.tomcat.util.net.SSLSupport;
 import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLSession;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /** JSSESupport
 

@@ -16,11 +16,11 @@
  */
 package org.apache.catalina.tribes.util;
 
-import java.security.SecureRandom;
-import java.util.Random;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * simple generation of a UUID

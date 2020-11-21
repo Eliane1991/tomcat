@@ -17,10 +17,10 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.tomcat.util.net.openssl.OpenSSLConf;
 import org.apache.tomcat.util.net.openssl.OpenSSLConfCmd;
+
+import java.io.PrintWriter;
 
 /**
  * Store OpenSSLConf

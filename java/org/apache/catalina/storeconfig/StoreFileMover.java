@@ -16,14 +16,10 @@
  */
 package org.apache.catalina.storeconfig;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.*;
+import java.sql.Timestamp;
 
 /**
  * Move server.xml or context.xml as backup

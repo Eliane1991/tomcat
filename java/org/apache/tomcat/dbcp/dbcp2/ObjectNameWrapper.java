@@ -17,15 +17,14 @@
 
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.lang.management.ManagementFactory;
-import java.util.Objects;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
+import java.lang.management.ManagementFactory;
+import java.util.Objects;
 
 /**
  * Internal wrapper class that allows JMX to be a noop if absent or disabled.

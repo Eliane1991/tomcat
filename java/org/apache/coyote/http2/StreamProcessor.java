@@ -16,18 +16,7 @@
  */
 package org.apache.coyote.http2;
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import org.apache.coyote.AbstractProcessor;
-import org.apache.coyote.ActionCode;
-import org.apache.coyote.Adapter;
-import org.apache.coyote.ContainerThreadMarker;
-import org.apache.coyote.ContinueResponseTiming;
-import org.apache.coyote.ErrorState;
-import org.apache.coyote.Request;
-import org.apache.coyote.RequestGroupInfo;
-import org.apache.coyote.Response;
+import org.apache.coyote.*;
 import org.apache.coyote.http11.filters.GzipOutputFilter;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -39,6 +28,9 @@ import org.apache.tomcat.util.net.DispatchType;
 import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.util.Iterator;
 
 class StreamProcessor extends AbstractProcessor {
 

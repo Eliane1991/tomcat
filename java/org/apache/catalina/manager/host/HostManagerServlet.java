@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.manager.host;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.StringTokenizer;
+import org.apache.catalina.*;
+import org.apache.catalina.core.ContainerBase;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.startup.HostConfig;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.buf.StringUtils;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
@@ -33,19 +32,14 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.ContainerServlet;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.core.ContainerBase;
-import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.startup.HostConfig;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.buf.StringUtils;
-import org.apache.tomcat.util.res.StringManager;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.StringTokenizer;
 
 /**
  * Servlet that enables remote management of the virtual hosts installed

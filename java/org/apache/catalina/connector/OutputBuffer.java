@@ -16,6 +16,16 @@
  */
 package org.apache.catalina.connector;
 
+import org.apache.catalina.Globals;
+import org.apache.coyote.ActionCode;
+import org.apache.coyote.CloseNowException;
+import org.apache.coyote.Response;
+import org.apache.tomcat.util.buf.B2CConverter;
+import org.apache.tomcat.util.buf.C2BConverter;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.WriteListener;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.Buffer;
@@ -27,17 +37,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Globals;
-import org.apache.coyote.ActionCode;
-import org.apache.coyote.CloseNowException;
-import org.apache.coyote.Response;
-import org.apache.tomcat.util.buf.B2CConverter;
-import org.apache.tomcat.util.buf.C2BConverter;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * The buffer used by Tomcat response. This is a derivative of the Tomcat 3.3

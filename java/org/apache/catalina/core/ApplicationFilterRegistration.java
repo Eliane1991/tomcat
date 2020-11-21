@@ -17,21 +17,15 @@
 
 package org.apache.catalina.core;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.util.ParameterMap;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import java.util.*;
 
 public class ApplicationFilterRegistration
         implements FilterRegistration.Dynamic {

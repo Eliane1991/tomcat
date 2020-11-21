@@ -17,13 +17,6 @@
 
 package org.apache.catalina.tribes.transport.bio;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.Arrays;
-
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.transport.AbstractSender;
@@ -32,6 +25,13 @@ import org.apache.catalina.tribes.transport.SenderState;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is

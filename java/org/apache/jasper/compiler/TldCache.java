@@ -16,15 +16,6 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.ServletContext;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.tomcat.Jar;
@@ -32,6 +23,14 @@ import org.apache.tomcat.util.descriptor.tld.TaglibXml;
 import org.apache.tomcat.util.descriptor.tld.TldParser;
 import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class caches parsed instances of TLD files to remove the need for the

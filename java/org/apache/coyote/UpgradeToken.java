@@ -17,10 +17,10 @@
 
 package org.apache.coyote;
 
-import javax.servlet.http.HttpUpgradeHandler;
-
 import org.apache.tomcat.ContextBind;
 import org.apache.tomcat.InstanceManager;
+
+import javax.servlet.http.HttpUpgradeHandler;
 
 /**
  * Token used during the upgrade process.

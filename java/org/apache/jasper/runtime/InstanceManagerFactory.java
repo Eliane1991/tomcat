@@ -16,9 +16,9 @@
  */
 package org.apache.jasper.runtime;
 
-import javax.servlet.ServletConfig;
-
 import org.apache.tomcat.InstanceManager;
+
+import javax.servlet.ServletConfig;
 
 public class InstanceManagerFactory {
 

@@ -16,16 +16,16 @@
  */
 package org.apache.catalina.tribes.util;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.UniqueId;
 import org.apache.catalina.tribes.group.AbsoluteOrder;
 import org.apache.catalina.tribes.membership.Membership;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * @version 1.0

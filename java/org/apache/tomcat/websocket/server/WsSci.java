@@ -16,9 +16,7 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.tomcat.util.compat.JreCompat;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
@@ -30,8 +28,9 @@ import javax.websocket.Endpoint;
 import javax.websocket.server.ServerApplicationConfig;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;
-
-import org.apache.tomcat.util.compat.JreCompat;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Registers an interest in any class that is annotated with

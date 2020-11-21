@@ -16,25 +16,17 @@
  */
 package org.apache.catalina.session;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Session;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Concrete implementation of the <b>Store</b> interface that utilizes

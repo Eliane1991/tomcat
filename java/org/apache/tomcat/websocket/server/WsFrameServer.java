@@ -16,10 +16,6 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.coyote.http11.upgrade.UpgradeInfo;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -31,6 +27,10 @@ import org.apache.tomcat.websocket.Transformation;
 import org.apache.tomcat.websocket.WsFrameBase;
 import org.apache.tomcat.websocket.WsIOException;
 import org.apache.tomcat.websocket.WsSession;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class WsFrameServer extends WsFrameBase {
 

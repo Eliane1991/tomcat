@@ -17,18 +17,6 @@
 
 package org.apache.jasper.compiler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
@@ -37,6 +25,13 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.Jar;
 import org.apache.tomcat.util.scan.JarFactory;
+
+import java.io.*;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Main JSP compiler class. This class uses Ant for compiling.

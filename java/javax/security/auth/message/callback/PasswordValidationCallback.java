@@ -16,10 +16,9 @@
  */
 package javax.security.auth.message.callback;
 
-import java.util.Arrays;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
+import java.util.Arrays;
 
 /**
  * Callback that enables an authentication module to supply a user name and

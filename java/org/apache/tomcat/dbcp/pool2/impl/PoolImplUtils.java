@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
+import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-
-import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
 
 /**
  * Implementation specific utilities.

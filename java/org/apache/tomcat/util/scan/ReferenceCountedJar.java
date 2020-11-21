@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.tomcat.Jar;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.jar.Manifest;
-
-import org.apache.tomcat.Jar;
 
 /**
  * This class provides a wrapper around {@link Jar} that uses reference counting

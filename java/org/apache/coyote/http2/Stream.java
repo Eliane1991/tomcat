@@ -16,19 +16,7 @@
  */
 package org.apache.coyote.http2;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Locale;
-
-import org.apache.coyote.ActionCode;
-import org.apache.coyote.CloseNowException;
-import org.apache.coyote.InputBuffer;
-import org.apache.coyote.Request;
-import org.apache.coyote.Response;
+import org.apache.coyote.*;
 import org.apache.coyote.http11.HttpOutputBuffer;
 import org.apache.coyote.http11.OutputFilter;
 import org.apache.coyote.http2.HpackDecoder.HeaderEmitter;
@@ -41,6 +29,14 @@ import org.apache.tomcat.util.http.parser.Host;
 import org.apache.tomcat.util.net.ApplicationBufferHandler;
 import org.apache.tomcat.util.net.WriteBuffer;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Locale;
 
 public class Stream extends AbstractNonZeroStream implements HeaderEmitter {
 

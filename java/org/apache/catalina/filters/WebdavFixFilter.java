@@ -16,18 +16,12 @@
  */
 package org.apache.catalina.filters;
 
-import java.io.IOException;
+import org.apache.tomcat.util.res.StringManager;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.io.IOException;
 
 /**
  * Filter that attempts to force MS WebDAV clients connecting on port 80 to use

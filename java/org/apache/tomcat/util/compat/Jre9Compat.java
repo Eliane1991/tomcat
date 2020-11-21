@@ -16,6 +16,10 @@
  */
 package org.apache.tomcat.util.compat;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
@@ -30,10 +34,6 @@ import java.util.Deque;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 class Jre9Compat extends Jre8Compat {
 

@@ -16,20 +16,6 @@
  */
 package org.apache.catalina.valves.rewrite;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Request;
@@ -39,6 +25,14 @@ import org.apache.tomcat.util.net.jsse.PEMFile;
 import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
 import org.apache.tomcat.util.net.openssl.ciphers.EncryptionLevel;
 import org.apache.tomcat.util.net.openssl.ciphers.OpenSSLCipherConfigurationParser;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ResolverImpl extends Resolver {
 

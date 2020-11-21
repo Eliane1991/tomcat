@@ -16,14 +16,6 @@
  */
 package org.apache.tomcat.util.net.openssl;
 
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.util.List;
-import java.util.Set;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.X509KeyManager;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.net.SSLContext;
@@ -31,6 +23,13 @@ import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.apache.tomcat.util.net.SSLUtilBase;
 import org.apache.tomcat.util.net.jsse.JSSEKeyManager;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.X509KeyManager;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.util.List;
+import java.util.Set;
 
 public class OpenSSLUtil extends SSLUtilBase {
 

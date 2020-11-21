@@ -16,10 +16,10 @@
  */
 package org.apache.jasper.compiler;
 
+import org.apache.jasper.JspCompilationContext;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.jasper.JspCompilationContext;
 
 /**
  * Mark represents a point in the JSP input.

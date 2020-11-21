@@ -16,20 +16,7 @@
  */
 package org.apache.catalina.mbeans;
 
-import java.io.File;
-import java.net.InetAddress;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.JmxEnabled;
-import org.apache.catalina.Server;
-import org.apache.catalina.Service;
-import org.apache.catalina.Valve;
+import org.apache.catalina.*;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
@@ -46,6 +33,11 @@ import org.apache.catalina.startup.HostConfig;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.File;
+import java.net.InetAddress;
 
 
 /**

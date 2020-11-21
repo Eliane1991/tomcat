@@ -17,26 +17,6 @@
 
 package org.apache.tomcat.dbcp.dbcp2.cpdsadapter;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.RefAddr;
-import javax.naming.Reference;
-import javax.naming.Referenceable;
-import javax.naming.StringRefAddr;
-import javax.naming.spi.ObjectFactory;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.PooledConnection;
-
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.apache.tomcat.dbcp.dbcp2.DelegatingPreparedStatement;
 import org.apache.tomcat.dbcp.dbcp2.PStmtKey;
@@ -45,6 +25,19 @@ import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
 import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
 import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPool;
 import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
+
+import javax.naming.*;
+import javax.naming.spi.ObjectFactory;
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.PooledConnection;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * <p>

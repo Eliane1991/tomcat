@@ -16,28 +16,6 @@
  */
 package org.apache.tomcat.util.net.openssl;
 
-import java.nio.ByteBuffer;
-import java.nio.ReadOnlyBufferException;
-import java.security.Principal;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLEngineResult;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSessionBindingEvent;
-import javax.net.ssl.SSLSessionBindingListener;
-import javax.net.ssl.SSLSessionContext;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.jni.Buffer;
@@ -49,6 +27,13 @@ import org.apache.tomcat.util.net.Constants;
 import org.apache.tomcat.util.net.SSLUtil;
 import org.apache.tomcat.util.net.openssl.ciphers.OpenSSLCipherConfigurationParser;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.*;
+import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
+import java.security.Principal;
+import java.security.cert.Certificate;
+import java.util.*;
 
 /**
  * Implements a {@link SSLEngine} using

@@ -16,20 +16,16 @@
  */
 package org.apache.catalina.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
+import org.apache.juli.logging.Log;
+import org.apache.tomcat.util.res.StringManager;
+
+import java.io.*;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
-
-import org.apache.juli.logging.Log;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Custom subclass of <code>ObjectInputStream</code> that loads from the

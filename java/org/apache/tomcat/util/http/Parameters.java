@@ -16,25 +16,17 @@
  */
 package org.apache.tomcat.util.http;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.buf.*;
+import org.apache.tomcat.util.log.UserDataHelper;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.buf.B2CConverter;
-import org.apache.tomcat.util.buf.ByteChunk;
-import org.apache.tomcat.util.buf.MessageBytes;
-import org.apache.tomcat.util.buf.StringUtils;
-import org.apache.tomcat.util.buf.UDecoder;
-import org.apache.tomcat.util.log.UserDataHelper;
-import org.apache.tomcat.util.res.StringManager;
+import java.util.*;
 
 /**
  *

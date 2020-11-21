@@ -16,9 +16,9 @@
  */
 package org.apache.coyote.http2;
 
-import java.nio.ByteBuffer;
-
 import org.apache.tomcat.util.res.StringManager;
+
+import java.nio.ByteBuffer;
 
 /**
  * A decoder for HPACK.

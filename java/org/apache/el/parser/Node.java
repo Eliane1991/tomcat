@@ -19,11 +19,11 @@
 
 package org.apache.el.parser;
 
+import org.apache.el.lang.EvaluationContext;
+
 import javax.el.ELException;
 import javax.el.MethodInfo;
 import javax.el.ValueReference;
-
-import org.apache.el.lang.EvaluationContext;
 
 
 /* All AST nodes must implement this interface.  It provides basic

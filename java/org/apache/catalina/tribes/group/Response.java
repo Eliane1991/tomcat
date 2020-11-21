@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.tribes.group;
 
-import java.io.Serializable;
-
 import org.apache.catalina.tribes.Member;
+
+import java.io.Serializable;
 
 /**
  * A response object holds a message from a responding partner.

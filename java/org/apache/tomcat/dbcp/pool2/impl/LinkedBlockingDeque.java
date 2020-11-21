@@ -17,12 +17,7 @@
 package org.apache.tomcat.dbcp.pool2.impl;
 
 import java.io.Serializable;
-import java.util.AbstractQueue;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 

@@ -16,17 +16,17 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.WebResource;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.catalina.WebResource;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 public class Cache {
 

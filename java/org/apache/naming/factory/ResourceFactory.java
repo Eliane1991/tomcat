@@ -16,12 +16,12 @@
  */
 package org.apache.naming.factory;
 
+import org.apache.naming.ResourceRef;
+import org.apache.naming.StringManager;
+
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.naming.ResourceRef;
-import org.apache.naming.StringManager;
 
 /**
  * Object factory for Resources.

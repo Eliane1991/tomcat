@@ -16,6 +16,9 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.util.compat.JreCompat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,9 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.Manifest;
-
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.util.compat.JreCompat;
 
 /**
  * Base implementation of Jar for implementations that use a JarInputStream to

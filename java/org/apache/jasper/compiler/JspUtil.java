@@ -16,13 +16,6 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Vector;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
@@ -30,6 +23,9 @@ import org.apache.tomcat.Jar;
 import org.apache.tomcat.util.security.Escape;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+
+import java.io.*;
+import java.util.Vector;
 
 /**
  * This class has all the utility method(s). Ideally should move all the bean

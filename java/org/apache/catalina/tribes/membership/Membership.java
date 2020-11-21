@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.tribes.membership;
 
+import org.apache.catalina.tribes.Member;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import org.apache.catalina.tribes.Member;
 
 /**
  * A <b>membership</b> implementation using simple multicast.

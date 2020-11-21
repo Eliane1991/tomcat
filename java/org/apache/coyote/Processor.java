@@ -16,13 +16,13 @@
  */
 package org.apache.coyote;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
 import org.apache.tomcat.util.net.SSLSupport;
 import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Common interface for processors of all protocols.

@@ -16,13 +16,16 @@
  */
 package org.apache.catalina.users;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import org.apache.catalina.*;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.digester.AbstractObjectCreationFactory;
+import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.file.ConfigFileLoader;
+import org.apache.tomcat.util.res.StringManager;
+import org.xml.sax.Attributes;
+
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -33,19 +36,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.catalina.Globals;
-import org.apache.catalina.Group;
-import org.apache.catalina.Role;
-import org.apache.catalina.User;
-import org.apache.catalina.UserDatabase;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.digester.AbstractObjectCreationFactory;
-import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.file.ConfigFileLoader;
-import org.apache.tomcat.util.res.StringManager;
-import org.xml.sax.Attributes;
 
 /**
  * Concrete implementation of {@link UserDatabase} that loads all defined users,

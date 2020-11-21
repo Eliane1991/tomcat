@@ -16,18 +16,17 @@
  */
 package org.apache.catalina.filters;
 
-import java.io.IOException;
+import org.apache.catalina.Globals;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.http.Parameters.FailReason;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Globals;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.http.Parameters.FailReason;
+import java.io.IOException;
 
 /**
  * Filter that will reject requests if there was a failure during parameter

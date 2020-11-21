@@ -16,37 +16,7 @@
  */
 package org.apache.catalina.startup;
 
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.net.URL;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletSecurityElement;
-import javax.servlet.descriptor.JspConfigDescriptor;
-
-import org.apache.catalina.AccessLog;
-import org.apache.catalina.Authenticator;
-import org.apache.catalina.Cluster;
-import org.apache.catalina.Container;
-import org.apache.catalina.ContainerListener;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Loader;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Pipeline;
-import org.apache.catalina.Realm;
-import org.apache.catalina.ThreadBindingListener;
-import org.apache.catalina.Valve;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.Wrapper;
+import org.apache.catalina.*;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.NamingResourcesImpl;
@@ -55,14 +25,18 @@ import org.apache.catalina.util.LifecycleMBeanBase;
 import org.apache.juli.logging.Log;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.JarScanner;
-import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
-import org.apache.tomcat.util.descriptor.web.ErrorPage;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.apache.tomcat.util.descriptor.web.LoginConfig;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.apache.tomcat.util.descriptor.web.*;
 import org.apache.tomcat.util.http.CookieProcessor;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.net.URL;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An implementation of {@link Context} that is used as a place-holder for

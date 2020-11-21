@@ -17,16 +17,12 @@
 
 package org.apache.jasper.compiler;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.jasper.JspCompilationContext;
 import org.apache.tomcat.Jar;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class providing details about a javac compilation error.

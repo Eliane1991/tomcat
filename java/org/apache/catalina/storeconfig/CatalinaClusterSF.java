@@ -17,10 +17,6 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ha.CatalinaCluster;
@@ -29,6 +25,10 @@ import org.apache.catalina.ha.ClusterListener;
 import org.apache.catalina.ha.ClusterManager;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.Channel;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generate Cluster Element with Membership,Sender,Receiver,Deployer and

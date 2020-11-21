@@ -16,29 +16,19 @@
  */
 package org.apache.catalina;
 
-import java.net.URL;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletSecurityElement;
-import javax.servlet.descriptor.JspConfigDescriptor;
-
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.tomcat.ContextBind;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.JarScanner;
-import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
-import org.apache.tomcat.util.descriptor.web.ErrorPage;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.apache.tomcat.util.descriptor.web.LoginConfig;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.apache.tomcat.util.descriptor.web.*;
 import org.apache.tomcat.util.http.CookieProcessor;
+
+import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
+import java.net.URL;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A <b>Context</b> is a Container that represents a servlet context, and

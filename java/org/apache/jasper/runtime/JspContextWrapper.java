@@ -16,44 +16,21 @@
  */
 package org.apache.jasper.runtime;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import org.apache.jasper.compiler.Localizer;
 
-import javax.el.ELContext;
-import javax.el.ELResolver;
-import javax.el.EvaluationListener;
-import javax.el.FunctionMapper;
-import javax.el.ImportHandler;
-import javax.el.VariableMapper;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.el.*;
+import javax.servlet.*;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspContext;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.*;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.VariableInfo;
-
-import org.apache.jasper.compiler.Localizer;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * Implementation of a JSP Context Wrapper.

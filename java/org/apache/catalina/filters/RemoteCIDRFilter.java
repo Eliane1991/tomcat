@@ -16,6 +16,15 @@
  */
 package org.apache.catalina.filters;
 
+import org.apache.catalina.util.NetMask;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -24,16 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.util.NetMask;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 public final class RemoteCIDRFilter extends FilterBase {
 

@@ -16,11 +16,11 @@
  */
 package org.apache.catalina.mbeans;
 
-import javax.management.MBeanException;
-
 import org.apache.catalina.Executor;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
+
+import javax.management.MBeanException;
 
 public class ServiceMBean extends BaseCatalinaMBean<Service> {
 

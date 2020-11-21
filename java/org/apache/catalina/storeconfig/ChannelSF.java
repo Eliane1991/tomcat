@@ -17,15 +17,10 @@
 
 package org.apache.catalina.storeconfig;
 
+import org.apache.catalina.tribes.*;
+
 import java.io.PrintWriter;
 import java.util.Iterator;
-
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelInterceptor;
-import org.apache.catalina.tribes.ChannelReceiver;
-import org.apache.catalina.tribes.ChannelSender;
-import org.apache.catalina.tribes.ManagedChannel;
-import org.apache.catalina.tribes.MembershipService;
 
 /**
  * Generate Channel Element

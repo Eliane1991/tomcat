@@ -16,6 +16,10 @@
  */
 package org.apache.tomcat.util.compat;
 
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
@@ -25,11 +29,6 @@ import java.net.URLConnection;
 import java.security.KeyStore.LoadStoreParameter;
 import java.util.Deque;
 import java.util.jar.JarFile;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * This is the base implementation class for JRE compatibility and provides an

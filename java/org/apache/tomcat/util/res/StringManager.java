@@ -17,13 +17,7 @@
 package org.apache.tomcat.util.res;
 
 import java.text.MessageFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * An internationalization / localization helper class which reduces

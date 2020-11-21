@@ -16,14 +16,14 @@
  */
 package org.apache.tomcat.util.buf;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * This class implements a String cache for ByteChunk and CharChunk.

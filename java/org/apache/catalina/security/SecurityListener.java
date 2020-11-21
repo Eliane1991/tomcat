@@ -16,10 +16,6 @@
  */
 package org.apache.catalina.security;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -27,6 +23,10 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 public class SecurityListener implements LifecycleListener {
 

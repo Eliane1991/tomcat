@@ -16,14 +16,10 @@
  */
 package org.apache.catalina.mbeans;
 
-import javax.management.MBeanException;
-
 import org.apache.catalina.Context;
-import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
-import org.apache.tomcat.util.descriptor.web.ErrorPage;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.apache.tomcat.util.descriptor.web.*;
+
+import javax.management.MBeanException;
 
 public class ContextMBean extends BaseCatalinaMBean<Context> {
 

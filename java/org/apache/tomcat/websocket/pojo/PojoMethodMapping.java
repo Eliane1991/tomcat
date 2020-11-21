@@ -16,38 +16,20 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.websocket.DecoderEntry;
+import org.apache.tomcat.websocket.Util;
+import org.apache.tomcat.websocket.Util.DecoderMatch;
+
+import javax.websocket.*;
+import javax.websocket.server.PathParam;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.websocket.CloseReason;
-import javax.websocket.DecodeException;
-import javax.websocket.Decoder;
-import javax.websocket.DeploymentException;
-import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.PongMessage;
-import javax.websocket.Session;
-import javax.websocket.server.PathParam;
-
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.websocket.DecoderEntry;
-import org.apache.tomcat.websocket.Util;
-import org.apache.tomcat.websocket.Util.DecoderMatch;
+import java.util.*;
 
 /**
  * For a POJO class annotated with

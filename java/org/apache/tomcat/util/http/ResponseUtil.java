@@ -16,18 +16,12 @@
  */
 package org.apache.tomcat.util.http;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.apache.tomcat.util.http.parser.TokenList;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.http.parser.TokenList;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 
 public class ResponseUtil {
 

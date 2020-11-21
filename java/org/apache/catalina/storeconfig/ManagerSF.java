@@ -17,13 +17,13 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.Manager;
 import org.apache.catalina.SessionIdGenerator;
 import org.apache.catalina.session.StandardManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.PrintWriter;
 
 /**
  * Store server.xml Manager element

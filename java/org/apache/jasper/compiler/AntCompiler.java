@@ -16,13 +16,6 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.StringTokenizer;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.juli.logging.Log;
@@ -33,6 +26,9 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
+
+import java.io.*;
+import java.util.StringTokenizer;
 
 /**
  * Main JSP compiler class. This class uses Ant for compiling.

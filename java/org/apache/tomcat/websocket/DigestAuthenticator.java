@@ -16,13 +16,13 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.tomcat.util.security.MD5Encoder;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
-
-import org.apache.tomcat.util.security.MD5Encoder;
 
 /**
  * Authenticator supporting the DIGEST auth method.

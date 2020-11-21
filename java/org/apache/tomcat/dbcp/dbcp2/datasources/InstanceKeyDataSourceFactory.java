@@ -16,24 +16,19 @@
  */
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.tomcat.dbcp.dbcp2.ListException;
 
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.tomcat.dbcp.dbcp2.ListException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A JNDI ObjectFactory which creates <code>SharedPoolDataSource</code>s or <code>PerUserPoolDataSource</code>s

@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.ha.session;
 
-import java.io.Serializable;
-
 import org.apache.catalina.SessionListener;
+
+import java.io.Serializable;
 
 /**
  * This is a marker interface used to indicate an implementation of

@@ -16,6 +16,7 @@
  */
 package javax.servlet.http;
 
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -25,13 +26,6 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.GenericServlet;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 
 /**

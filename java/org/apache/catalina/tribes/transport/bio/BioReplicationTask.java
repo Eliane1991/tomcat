@@ -17,10 +17,6 @@
 
 package org.apache.catalina.tribes.transport.bio;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.io.BufferPool;
 import org.apache.catalina.tribes.io.ChannelData;
@@ -31,6 +27,10 @@ import org.apache.catalina.tribes.transport.Constants;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each

@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.UpgradeProtocol;
 import org.apache.tomcat.util.net.SSLHostConfig;
+
+import java.io.PrintWriter;
 
 /**
  * Store Connector and Listeners

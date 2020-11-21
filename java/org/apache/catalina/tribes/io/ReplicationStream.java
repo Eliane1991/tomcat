@@ -18,14 +18,14 @@
 
 package org.apache.catalina.tribes.io;
 
+import org.apache.catalina.tribes.util.StringManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-
-import org.apache.catalina.tribes.util.StringManager;
 
 /**
  * Custom subclass of <code>ObjectInputStream</code> that loads from the

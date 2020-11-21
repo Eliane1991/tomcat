@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.util.compat;
 
-import java.security.NoSuchAlgorithmException;
+import org.apache.tomcat.util.net.Constants;
 
 import javax.net.ssl.SSLContext;
-
-import org.apache.tomcat.util.net.Constants;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * This class checks for the availability of TLS features.

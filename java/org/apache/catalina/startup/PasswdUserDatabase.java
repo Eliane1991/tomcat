@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.startup;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.naming.StringManager;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.naming.StringManager;
 
 /**
  * Concrete implementation of the <code>UserDatabase</code> interface

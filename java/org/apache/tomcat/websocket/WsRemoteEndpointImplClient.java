@@ -16,14 +16,13 @@
  */
 package org.apache.tomcat.websocket;
 
+import javax.websocket.SendHandler;
+import javax.websocket.SendResult;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.websocket.SendHandler;
-import javax.websocket.SendResult;
 
 public class WsRemoteEndpointImplClient extends WsRemoteEndpointImplBase {
 

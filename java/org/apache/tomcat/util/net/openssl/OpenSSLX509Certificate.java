@@ -18,17 +18,8 @@ package org.apache.tomcat.util.net.openssl;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Principal;
-import java.security.PublicKey;
-import java.security.SignatureException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.X509Certificate;
+import java.security.*;
+import java.security.cert.*;
 import java.util.Date;
 import java.util.Set;
 

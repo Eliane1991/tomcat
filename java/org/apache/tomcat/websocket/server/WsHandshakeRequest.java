@@ -16,22 +16,16 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.HandshakeRequest;
-
-import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
-import org.apache.tomcat.util.res.StringManager;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Represents the request that this session was opened under.

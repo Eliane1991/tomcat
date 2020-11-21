@@ -16,13 +16,13 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.util.buf.UriUtil;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
-
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.util.buf.UriUtil;
 
 /**
  * Provide a mechanism to obtain objects that implement {@link Jar}.

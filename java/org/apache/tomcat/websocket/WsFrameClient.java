@@ -16,17 +16,16 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.websocket.CloseReason;
+import javax.websocket.CloseReason.CloseCodes;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
-
-import javax.websocket.CloseReason;
-import javax.websocket.CloseReason.CloseCodes;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 public class WsFrameClient extends WsFrameBase {
 

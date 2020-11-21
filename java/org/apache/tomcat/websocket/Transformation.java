@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.websocket;
 
+import javax.websocket.Extension;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
-
-import javax.websocket.Extension;
 
 /**
  * The internal representation of the transformation that a WebSocket extension

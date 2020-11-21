@@ -16,11 +16,11 @@
  */
 package org.apache.catalina.tribes.transport;
 
+import org.apache.catalina.tribes.Member;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import org.apache.catalina.tribes.Member;
 
 public abstract class AbstractSender implements DataSender {
 

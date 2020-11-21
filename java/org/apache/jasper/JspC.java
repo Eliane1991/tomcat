@@ -16,44 +16,8 @@
  */
 package org.apache.jasper;
 
-import java.io.BufferedReader;
-import java.io.CharArrayWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-
 import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.JspConfig;
-import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.compiler.TagPluginManager;
-import org.apache.jasper.compiler.TldCache;
+import org.apache.jasper.compiler.*;
 import org.apache.jasper.runtime.JspFactoryImpl;
 import org.apache.jasper.servlet.JspCServletContext;
 import org.apache.jasper.servlet.TldScanner;
@@ -64,6 +28,14 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.util.FileUtils;
 import org.xml.sax.SAXException;
+
+import javax.servlet.jsp.JspFactory;
+import javax.servlet.jsp.tagext.TagLibraryInfo;
+import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the

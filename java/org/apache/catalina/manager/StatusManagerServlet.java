@@ -19,6 +19,15 @@
 package org.apache.catalina.manager;
 
 
+import org.apache.catalina.util.ServerInfo;
+import org.apache.tomcat.util.modeler.Registry;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -27,21 +36,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerNotification;
-import javax.management.Notification;
-import javax.management.NotificationListener;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.util.ServerInfo;
-import org.apache.tomcat.util.modeler.Registry;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * This servlet will display a complete status of the HTTP/1.1 connector.

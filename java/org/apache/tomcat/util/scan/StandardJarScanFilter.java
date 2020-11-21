@@ -16,16 +16,16 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.tomcat.JarScanFilter;
+import org.apache.tomcat.JarScanType;
+import org.apache.tomcat.util.file.Matcher;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.tomcat.JarScanFilter;
-import org.apache.tomcat.JarScanType;
-import org.apache.tomcat.util.file.Matcher;
 
 public class StandardJarScanFilter implements JarScanFilter {
 

@@ -19,15 +19,15 @@
 package org.apache.catalina.users;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.apache.tomcat.util.buf.StringUtils.Function;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

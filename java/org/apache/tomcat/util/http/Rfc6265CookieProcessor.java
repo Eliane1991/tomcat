@@ -16,20 +16,19 @@
  */
 package org.apache.tomcat.util.http;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.text.FieldPosition;
-import java.util.BitSet;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.parser.Cookie;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.text.FieldPosition;
+import java.util.BitSet;
+import java.util.Date;
 
 public class Rfc6265CookieProcessor extends CookieProcessorBase {
 

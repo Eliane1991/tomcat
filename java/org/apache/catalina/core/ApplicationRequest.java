@@ -19,13 +19,12 @@
 package org.apache.catalina.core;
 
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestWrapper;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 
 /**

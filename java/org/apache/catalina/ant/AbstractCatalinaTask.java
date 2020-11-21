@@ -16,19 +16,15 @@
  */
 package org.apache.catalina.ant;
 
+import org.apache.catalina.util.IOTools;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.net.URLConnection;
-
-import org.apache.catalina.util.IOTools;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
+import java.net.*;
 
 /**
  * Abstract base class for Ant tasks that interact with the <em>Manager</em> web

@@ -16,10 +16,10 @@
  */
 package org.apache.el.stream;
 
+import org.apache.el.util.MessageFactory;
+
 import javax.el.ELException;
 import javax.el.LambdaExpression;
-
-import org.apache.el.util.MessageFactory;
 
 public class Optional {
 

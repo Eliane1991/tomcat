@@ -16,11 +16,10 @@
  */
 package org.apache.naming;
 
-import java.util.Enumeration;
-
 import javax.naming.Context;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
+import java.util.Enumeration;
 
 public abstract class AbstractRef extends Reference {
 

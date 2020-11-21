@@ -16,10 +16,6 @@
  */
 package org.apache.catalina.tribes.group.interceptors;
 
-import java.text.DecimalFormat;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
@@ -30,6 +26,10 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ThroughputInterceptor extends ChannelInterceptorBase
         implements ThroughputInterceptorMBean {

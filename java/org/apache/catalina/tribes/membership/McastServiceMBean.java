@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.tribes.membership;
 
-import java.util.Properties;
-
 import org.apache.catalina.tribes.Member;
+
+import java.util.Properties;
 
 public interface McastServiceMBean {
 

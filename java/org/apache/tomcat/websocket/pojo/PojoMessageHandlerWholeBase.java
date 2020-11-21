@@ -16,14 +16,13 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.apache.tomcat.websocket.WsSession;
 
 import javax.websocket.DecodeException;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-
-import org.apache.tomcat.websocket.WsSession;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Common implementation code for the POJO whole message handlers. All the real

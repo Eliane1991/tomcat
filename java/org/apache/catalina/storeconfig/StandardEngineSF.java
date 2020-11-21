@@ -17,18 +17,13 @@
 
 package org.apache.catalina.storeconfig;
 
+import org.apache.catalina.*;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.ha.ClusterValve;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.catalina.Cluster;
-import org.apache.catalina.Container;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Valve;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.ha.ClusterValve;
 
 /**
  * Store server.xml Element Engine

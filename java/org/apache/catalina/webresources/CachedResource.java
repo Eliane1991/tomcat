@@ -16,14 +16,16 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.security.Permission;
 import java.security.cert.Certificate;
@@ -33,12 +35,6 @@ import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * This class is designed to wrap a 'raw' WebResource and providing caching for

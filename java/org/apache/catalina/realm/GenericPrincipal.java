@@ -16,15 +16,14 @@
  */
 package org.apache.catalina.realm;
 
+import org.apache.catalina.TomcatPrincipal;
+import org.ietf.jgss.GSSCredential;
+
+import javax.security.auth.login.LoginContext;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.security.auth.login.LoginContext;
-
-import org.apache.catalina.TomcatPrincipal;
-import org.ietf.jgss.GSSCredential;
 
 /**
  * Generic implementation of <strong>java.security.Principal</strong> that

@@ -16,14 +16,6 @@
  */
 package org.apache.tomcat.util.descriptor.tagplugin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.descriptor.DigesterFactory;
@@ -32,6 +24,13 @@ import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.digester.RuleSetBase;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parser for Tag Plugin descriptors.

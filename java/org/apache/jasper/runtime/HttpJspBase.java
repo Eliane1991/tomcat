@@ -17,7 +17,8 @@
 
 package org.apache.jasper.runtime;
 
-import java.io.IOException;
+import org.apache.jasper.Constants;
+import org.apache.jasper.compiler.Localizer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,9 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.HttpJspPage;
-
-import org.apache.jasper.Constants;
-import org.apache.jasper.compiler.Localizer;
+import java.io.IOException;
 
 /**
  * This is the super class of all JSP-generated servlets.

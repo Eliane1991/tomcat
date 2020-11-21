@@ -16,13 +16,7 @@
  */
 package org.apache.catalina.ha.authenticator;
 
-import java.security.Principal;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Session;
-import org.apache.catalina.SessionListener;
+import org.apache.catalina.*;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.authenticator.SingleSignOnEntry;
 import org.apache.catalina.ha.CatalinaCluster;
@@ -32,6 +26,8 @@ import org.apache.catalina.tribes.tipis.AbstractReplicatedMap.MapOwner;
 import org.apache.catalina.tribes.tipis.ReplicatedMap;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.security.Principal;
 
 /**
  * A <strong>Valve</strong> that supports a "single sign on" user experience on

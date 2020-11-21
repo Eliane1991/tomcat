@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.webresources;
 
-import java.util.jar.Manifest;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
 import org.apache.catalina.util.LifecycleBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.jar.Manifest;
 
 public abstract class AbstractResourceSet extends LifecycleBase
         implements WebResourceSet {

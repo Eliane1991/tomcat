@@ -16,9 +16,9 @@
  */
 package org.apache.tomcat.util.net;
 
-import java.nio.ByteBuffer;
-
 import org.apache.tomcat.util.buf.ByteBufferUtils;
+
+import java.nio.ByteBuffer;
 
 public class SocketBufferHandler {
 

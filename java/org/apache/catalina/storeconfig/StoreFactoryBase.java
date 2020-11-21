@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * StoreFactory saves special elements.

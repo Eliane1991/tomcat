@@ -16,11 +16,6 @@
  */
 package org.apache.coyote.http11.upgrade;
 
-import java.io.IOException;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-
 import org.apache.coyote.ContainerThreadMarker;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -28,6 +23,10 @@ import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.net.DispatchType;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import java.io.IOException;
 
 public class UpgradeServletInputStream extends ServletInputStream {
 

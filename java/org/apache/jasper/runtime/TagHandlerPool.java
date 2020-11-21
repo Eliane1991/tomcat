@@ -17,12 +17,12 @@
 
 package org.apache.jasper.runtime;
 
+import org.apache.jasper.Constants;
+import org.apache.tomcat.InstanceManager;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
-
-import org.apache.jasper.Constants;
-import org.apache.tomcat.InstanceManager;
 
 /**
  * Pool of tag handlers that can be reused.

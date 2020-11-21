@@ -17,18 +17,17 @@
 
 package org.apache.catalina.manager.util;
 
+import org.apache.catalina.Session;
+import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.security.auth.Subject;
+import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-
-import javax.security.auth.Subject;
-import javax.servlet.http.HttpSession;
-
-import org.apache.catalina.Session;
-import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * Utility methods on HttpSessions...

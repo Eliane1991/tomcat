@@ -16,11 +16,10 @@
  */
 package javax.servlet.jsp.tagext;
 
+import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-
-import javax.servlet.jsp.JspWriter;
 
 /**
  * An encapsulation of the evaluation of the body of an action so it is

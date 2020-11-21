@@ -16,9 +16,6 @@
  */
 package org.apache.coyote.http11;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.coyote.ActionCode;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.ByteChunk;
@@ -26,6 +23,9 @@ import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.HttpMessages;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Provides buffering for the HTTP headers (allowing responses to be reset

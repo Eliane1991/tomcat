@@ -16,13 +16,13 @@
  */
 package org.apache.naming.factory;
 
+import org.apache.naming.EjbRef;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.naming.EjbRef;
 
 /**
  * Object factory for EJBs.

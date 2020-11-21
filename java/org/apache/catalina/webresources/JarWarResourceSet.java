@@ -16,6 +16,12 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.tomcat.util.buf.UriUtil;
+import org.apache.tomcat.util.compat.JreCompat;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +34,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.tomcat.util.buf.UriUtil;
-import org.apache.tomcat.util.compat.JreCompat;
 
 /**
  * Represents a {@link org.apache.catalina.WebResourceSet} based on a JAR file

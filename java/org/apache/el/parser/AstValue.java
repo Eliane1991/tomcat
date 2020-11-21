@@ -18,22 +18,16 @@
 
 package org.apache.el.parser;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import javax.el.ELException;
-import javax.el.ELResolver;
-import javax.el.LambdaExpression;
-import javax.el.MethodInfo;
-import javax.el.PropertyNotFoundException;
-import javax.el.ValueReference;
-
 import org.apache.el.lang.ELSupport;
 import org.apache.el.lang.EvaluationContext;
 import org.apache.el.stream.Optional;
 import org.apache.el.util.MessageFactory;
 import org.apache.el.util.ReflectionUtil;
+
+import javax.el.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /**

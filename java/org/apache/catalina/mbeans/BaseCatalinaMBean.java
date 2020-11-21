@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.mbeans;
 
+import org.apache.tomcat.util.modeler.BaseModelMBean;
+
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
-
-import org.apache.tomcat.util.modeler.BaseModelMBean;
 
 public abstract class BaseCatalinaMBean<T> extends BaseModelMBean {
 

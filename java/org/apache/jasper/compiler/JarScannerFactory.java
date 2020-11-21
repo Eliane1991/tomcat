@@ -16,10 +16,10 @@
  */
 package org.apache.jasper.compiler;
 
-import javax.servlet.ServletContext;
-
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
+
+import javax.servlet.ServletContext;
 
 /**
  * Provide a mechanism for Jasper to obtain a reference to the JarScanner

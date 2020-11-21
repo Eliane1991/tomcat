@@ -16,18 +16,6 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Locale;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
@@ -41,6 +29,17 @@ import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.http.MimeHeaders;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Principal;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * An <b>Authenticator</b> and <b>Valve</b> implementation of FORM BASED

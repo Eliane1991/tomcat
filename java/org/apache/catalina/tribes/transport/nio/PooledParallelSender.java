@@ -16,8 +16,6 @@
  */
 package org.apache.catalina.tribes.transport.nio;
 
-import java.io.IOException;
-
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
@@ -25,6 +23,8 @@ import org.apache.catalina.tribes.transport.AbstractSender;
 import org.apache.catalina.tribes.transport.DataSender;
 import org.apache.catalina.tribes.transport.PooledSender;
 import org.apache.catalina.tribes.util.StringManager;
+
+import java.io.IOException;
 
 public class PooledParallelSender extends PooledSender implements PooledParallelSenderMBean {
     protected static final StringManager sm = StringManager.getManager(PooledParallelSender.class);

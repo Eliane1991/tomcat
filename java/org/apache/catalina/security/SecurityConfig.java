@@ -16,11 +16,11 @@
  */
 package org.apache.catalina.security;
 
-import java.security.Security;
-
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.security.Security;
 
 /**
  * Util class to protect Catalina against package access and insertion.

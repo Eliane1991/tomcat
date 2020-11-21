@@ -16,43 +16,6 @@
  */
 package org.apache.tomcat.util.net;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.cert.CRL;
-import java.security.cert.CRLException;
-import java.security.cert.CertPathParameters;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreParameters;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXBuilderParameters;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.net.ssl.CertPathTrustManagerParameters;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.ManagerFactoryParameters;
-import javax.net.ssl.SSLSessionContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509KeyManager;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.compat.JreCompat;
@@ -62,6 +25,16 @@ import org.apache.tomcat.util.net.jsse.JSSEKeyManager;
 import org.apache.tomcat.util.net.jsse.PEMFile;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.security.KeyStoreUtil;
+
+import javax.net.ssl.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.cert.*;
+import java.util.*;
 
 /**
  * Common base class for {@link SSLUtil} implementations.

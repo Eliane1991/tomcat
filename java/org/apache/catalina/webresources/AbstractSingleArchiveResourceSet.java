@@ -16,6 +16,11 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.tomcat.util.buf.UriUtil;
+import org.apache.tomcat.util.compat.JreCompat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,11 +28,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.tomcat.util.buf.UriUtil;
-import org.apache.tomcat.util.compat.JreCompat;
 
 /**
  * Base class for a {@link org.apache.catalina.WebResourceSet} based on a

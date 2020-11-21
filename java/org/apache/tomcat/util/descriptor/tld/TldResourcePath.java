@@ -16,14 +16,14 @@
  */
 package org.apache.tomcat.util.descriptor.tld;
 
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.util.scan.JarFactory;
+import org.apache.tomcat.util.scan.ReferenceCountedJar;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
-
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.util.scan.JarFactory;
-import org.apache.tomcat.util.scan.ReferenceCountedJar;
 
 /**
  * A TLD Resource Path as defined in JSP 7.3.2.

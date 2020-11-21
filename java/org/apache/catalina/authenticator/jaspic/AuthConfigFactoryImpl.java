@@ -16,27 +16,22 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.security.auth.message.config.AuthConfigFactory;
-import javax.security.auth.message.config.AuthConfigProvider;
-import javax.security.auth.message.config.RegistrationListener;
-
 import org.apache.catalina.Globals;
 import org.apache.catalina.authenticator.jaspic.PersistentProviderRegistrations.Provider;
 import org.apache.catalina.authenticator.jaspic.PersistentProviderRegistrations.Providers;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.security.auth.message.config.AuthConfigFactory;
+import javax.security.auth.message.config.AuthConfigProvider;
+import javax.security.auth.message.config.RegistrationListener;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuthConfigFactoryImpl extends AuthConfigFactory {
 

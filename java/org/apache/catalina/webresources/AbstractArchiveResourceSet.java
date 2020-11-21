@@ -16,6 +16,11 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.util.ResourceSet;
+import org.apache.tomcat.util.compat.JreCompat;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,11 +32,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.util.ResourceSet;
-import org.apache.tomcat.util.compat.JreCompat;
 
 public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
 

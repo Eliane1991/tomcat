@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.realm;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Random;
-
 import org.apache.catalina.CredentialHandler;
 import org.apache.juli.logging.Log;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * Base implementation for the Tomcat provided {@link CredentialHandler}s.

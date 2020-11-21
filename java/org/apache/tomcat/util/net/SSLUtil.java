@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.util.net;
 
-import java.util.List;
-
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.TrustManager;
+import java.util.List;
 
 /**
  * Provides a common interface for {@link SSLImplementation}s to create the

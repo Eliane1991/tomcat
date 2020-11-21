@@ -16,12 +16,11 @@
  */
 package org.apache.catalina;
 
-import java.io.IOException;
+import org.apache.catalina.connector.Request;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.connector.Request;
+import java.io.IOException;
 
 
 /**

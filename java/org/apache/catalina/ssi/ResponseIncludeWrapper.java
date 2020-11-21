@@ -17,6 +17,11 @@
 
 package org.apache.catalina.ssi;
 
+import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -24,12 +29,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * An HttpServletResponseWrapper, used from

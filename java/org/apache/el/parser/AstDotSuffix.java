@@ -18,11 +18,11 @@
 
 package org.apache.el.parser;
 
-import javax.el.ELException;
-
 import org.apache.el.lang.EvaluationContext;
 import org.apache.el.util.MessageFactory;
 import org.apache.el.util.Validation;
+
+import javax.el.ELException;
 
 
 /**

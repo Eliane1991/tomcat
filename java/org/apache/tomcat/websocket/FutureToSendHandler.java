@@ -16,17 +16,12 @@
  */
 package org.apache.tomcat.websocket;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.websocket.SendHandler;
 import javax.websocket.SendResult;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**

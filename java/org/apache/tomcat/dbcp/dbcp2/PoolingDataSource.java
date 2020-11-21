@@ -16,6 +16,12 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.dbcp.pool2.ObjectPool;
+import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
+
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,13 +29,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.logging.Logger;
-
-import javax.sql.DataSource;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.dbcp.pool2.ObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
 
 /**
  * A simple {@link DataSource} implementation that obtains {@link Connection}s from the specified {@link ObjectPool}.

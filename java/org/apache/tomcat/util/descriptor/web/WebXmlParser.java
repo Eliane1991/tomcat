@@ -16,9 +16,6 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.descriptor.DigesterFactory;
@@ -28,6 +25,9 @@ import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.res.StringManager;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class WebXmlParser {
 

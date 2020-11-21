@@ -17,9 +17,9 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
-import java.io.Serializable;
-
 import org.apache.tomcat.dbcp.dbcp2.Utils;
+
+import java.io.Serializable;
 
 /**
  * <p>

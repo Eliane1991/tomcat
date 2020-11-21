@@ -16,10 +16,9 @@
  */
 package org.apache.catalina.core;
 
-import java.util.Locale;
-
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
+import java.util.Locale;
 
 
 /**

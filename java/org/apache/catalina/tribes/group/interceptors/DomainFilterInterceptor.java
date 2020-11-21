@@ -16,9 +16,6 @@
  */
 package org.apache.catalina.tribes.group.interceptors;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
@@ -26,6 +23,9 @@ import org.apache.catalina.tribes.membership.Membership;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>Title: Member domain filter interceptor </p>

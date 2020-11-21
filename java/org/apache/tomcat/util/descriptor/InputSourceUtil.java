@@ -16,10 +16,10 @@
  */
 package org.apache.tomcat.util.descriptor;
 
-import java.io.InputStream;
-
 import org.apache.tomcat.util.ExceptionUtils;
 import org.xml.sax.InputSource;
+
+import java.io.InputStream;
 
 public final class InputSourceUtil {
 

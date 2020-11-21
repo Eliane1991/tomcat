@@ -16,21 +16,13 @@
  */
 package org.apache.el.stream;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.el.ELException;
-import javax.el.LambdaExpression;
-
 import org.apache.el.lang.ELArithmetic;
 import org.apache.el.lang.ELSupport;
 import org.apache.el.util.MessageFactory;
+
+import javax.el.ELException;
+import javax.el.LambdaExpression;
+import java.util.*;
 
 public class Stream {
 

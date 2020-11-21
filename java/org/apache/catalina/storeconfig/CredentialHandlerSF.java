@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.CredentialHandler;
 import org.apache.catalina.realm.NestedCredentialHandler;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.PrintWriter;
 
 /**
  * Store server.xml Element CredentialHandler

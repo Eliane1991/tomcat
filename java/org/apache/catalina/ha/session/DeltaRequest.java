@@ -24,18 +24,18 @@ package org.apache.catalina.ha.session;
  * @version 1.0
  */
 
+import org.apache.catalina.SessionListener;
+import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.security.Principal;
 import java.util.LinkedList;
-
-import org.apache.catalina.SessionListener;
-import org.apache.catalina.realm.GenericPrincipal;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 
 public class DeltaRequest implements Externalizable {

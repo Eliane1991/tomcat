@@ -16,10 +16,9 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
 
 /**
  * A {@link DataSource}-based implementation of {@link ConnectionFactory}.

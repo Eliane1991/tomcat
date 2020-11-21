@@ -19,12 +19,12 @@
 package org.apache.catalina.users;
 
 
-import java.util.Iterator;
-
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
+
+import java.util.Iterator;
 
 
 /**

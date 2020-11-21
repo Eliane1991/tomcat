@@ -17,12 +17,12 @@
 
 package org.apache.jasper.xmlparser;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * Reader for UCS-2 and UCS-4 encodings.

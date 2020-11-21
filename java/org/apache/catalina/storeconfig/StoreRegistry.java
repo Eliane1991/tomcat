@@ -17,33 +17,20 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.naming.directory.DirContext;
-
-import org.apache.catalina.CredentialHandler;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Valve;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.WebResourceSet;
+import org.apache.catalina.*;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.ClusterDeployer;
 import org.apache.catalina.ha.ClusterListener;
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelInterceptor;
-import org.apache.catalina.tribes.ChannelReceiver;
-import org.apache.catalina.tribes.ChannelSender;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.MembershipService;
-import org.apache.catalina.tribes.MessageListener;
+import org.apache.catalina.tribes.*;
 import org.apache.catalina.tribes.transport.DataSender;
 import org.apache.coyote.UpgradeProtocol;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.http.CookieProcessor;
+
+import javax.naming.directory.DirContext;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Central StoreRegistry for all server.xml elements

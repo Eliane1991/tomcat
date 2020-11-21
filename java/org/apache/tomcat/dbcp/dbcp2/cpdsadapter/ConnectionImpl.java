@@ -17,14 +17,14 @@
 
 package org.apache.tomcat.dbcp.dbcp2.cpdsadapter;
 
+import org.apache.tomcat.dbcp.dbcp2.DelegatingCallableStatement;
+import org.apache.tomcat.dbcp.dbcp2.DelegatingConnection;
+import org.apache.tomcat.dbcp.dbcp2.DelegatingPreparedStatement;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import org.apache.tomcat.dbcp.dbcp2.DelegatingCallableStatement;
-import org.apache.tomcat.dbcp.dbcp2.DelegatingConnection;
-import org.apache.tomcat.dbcp.dbcp2.DelegatingPreparedStatement;
 
 /**
  * This class is the <code>Connection</code> that will be returned from

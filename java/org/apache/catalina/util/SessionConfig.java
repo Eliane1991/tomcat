@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.util;
 
-import javax.servlet.SessionCookieConfig;
-
 import org.apache.catalina.Context;
+
+import javax.servlet.SessionCookieConfig;
 
 public class SessionConfig {
 

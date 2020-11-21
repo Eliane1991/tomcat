@@ -17,28 +17,22 @@
 
 package org.apache.tomcat.dbcp.dbcp2.cpdsadapter;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.sql.ConnectionEvent;
-import javax.sql.ConnectionEventListener;
-import javax.sql.PooledConnection;
-import javax.sql.StatementEventListener;
-
-import org.apache.tomcat.dbcp.dbcp2.DelegatingConnection;
-import org.apache.tomcat.dbcp.dbcp2.DelegatingPreparedStatement;
-import org.apache.tomcat.dbcp.dbcp2.Jdbc41Bridge;
-import org.apache.tomcat.dbcp.dbcp2.PStmtKey;
-import org.apache.tomcat.dbcp.dbcp2.PoolableCallableStatement;
-import org.apache.tomcat.dbcp.dbcp2.PoolablePreparedStatement;
+import org.apache.tomcat.dbcp.dbcp2.*;
 import org.apache.tomcat.dbcp.dbcp2.PoolingConnection.StatementType;
 import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
 import org.apache.tomcat.dbcp.pool2.KeyedPooledObjectFactory;
 import org.apache.tomcat.dbcp.pool2.PooledObject;
 import org.apache.tomcat.dbcp.pool2.impl.DefaultPooledObject;
+
+import javax.sql.ConnectionEvent;
+import javax.sql.ConnectionEventListener;
+import javax.sql.PooledConnection;
+import javax.sql.StatementEventListener;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Vector;
 
 /**
  * Implementation of PooledConnection that is returned by PooledConnectionDataSource.

@@ -16,11 +16,7 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * <p>

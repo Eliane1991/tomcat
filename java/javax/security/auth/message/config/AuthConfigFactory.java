@@ -16,13 +16,7 @@
  */
 package javax.security.auth.message.config;
 
-import java.security.AccessController;
-import java.security.Permission;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.security.Security;
-import java.security.SecurityPermission;
+import java.security.*;
 import java.util.Map;
 
 public abstract class AuthConfigFactory {

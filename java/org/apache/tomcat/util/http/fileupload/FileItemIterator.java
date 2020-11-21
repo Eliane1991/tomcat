@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.util.http.fileupload;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * An iterator, as returned by

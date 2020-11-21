@@ -16,17 +16,16 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.websocket.WrappedMessageHandler;
 
 import javax.websocket.EncodeException;
 import javax.websocket.MessageHandler;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
-
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.websocket.WrappedMessageHandler;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 
 /**
  * Common implementation code for the POJO message handlers.

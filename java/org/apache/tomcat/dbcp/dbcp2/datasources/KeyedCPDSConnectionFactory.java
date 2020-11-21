@@ -17,6 +17,16 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
+import org.apache.tomcat.dbcp.dbcp2.Utils;
+import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
+import org.apache.tomcat.dbcp.pool2.KeyedPooledObjectFactory;
+import org.apache.tomcat.dbcp.pool2.PooledObject;
+import org.apache.tomcat.dbcp.pool2.impl.DefaultPooledObject;
+
+import javax.sql.ConnectionEvent;
+import javax.sql.ConnectionEventListener;
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.PooledConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,17 +35,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.sql.ConnectionEvent;
-import javax.sql.ConnectionEventListener;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.PooledConnection;
-
-import org.apache.tomcat.dbcp.dbcp2.Utils;
-import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
-import org.apache.tomcat.dbcp.pool2.KeyedPooledObjectFactory;
-import org.apache.tomcat.dbcp.pool2.PooledObject;
-import org.apache.tomcat.dbcp.pool2.impl.DefaultPooledObject;
 
 /**
  * A {@link KeyedPooledObjectFactory} that creates {@link org.apache.tomcat.dbcp.dbcp2.PoolableConnection

@@ -16,13 +16,8 @@
  */
 package javax.servlet.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import javax.servlet.DispatcherType;
+import java.lang.annotation.*;
 
 /**
  * The annotation used to declare a Servlet {@link javax.servlet.Filter}. <br>

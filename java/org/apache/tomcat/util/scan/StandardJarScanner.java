@@ -16,34 +16,24 @@
  */
 package org.apache.tomcat.util.scan;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.*;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.buf.UriUtil;
+import org.apache.tomcat.util.compat.JreCompat;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-
-import javax.servlet.ServletContext;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.JarScanFilter;
-import org.apache.tomcat.JarScanType;
-import org.apache.tomcat.JarScanner;
-import org.apache.tomcat.JarScannerCallback;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.buf.UriUtil;
-import org.apache.tomcat.util.compat.JreCompat;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * The default {@link JarScanner} implementation scans the WEB-INF/lib directory

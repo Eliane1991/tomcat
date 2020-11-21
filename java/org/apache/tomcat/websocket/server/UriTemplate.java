@@ -16,17 +16,10 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.websocket.DeploymentException;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.*;
 
 /**
  * Extracts path parameters from URIs used to create web socket connections

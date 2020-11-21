@@ -16,20 +16,19 @@
  */
 package org.apache.tomcat.util.net;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.ObjectName;
+import javax.net.ssl.X509KeyManager;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.management.ObjectName;
-import javax.net.ssl.X509KeyManager;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.apache.tomcat.util.res.StringManager;
 
 public class SSLHostConfigCertificate implements Serializable {
 

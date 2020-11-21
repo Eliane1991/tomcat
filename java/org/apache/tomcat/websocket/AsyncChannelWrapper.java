@@ -16,14 +16,13 @@
  */
 package org.apache.tomcat.websocket;
 
+import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLException;
 
 /**
  * This is a wrapper for a {@link java.nio.channels.AsynchronousSocketChannel}

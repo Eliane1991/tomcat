@@ -16,12 +16,11 @@
 */
 package org.apache.catalina.core;
 
-import java.io.IOException;
-
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 public class AsyncListenerWrapper {
 

@@ -16,18 +16,18 @@
  */
 package org.apache.catalina.realm;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.file.ConfigFileLoader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.file.ConfigFileLoader;
 
 
 /**

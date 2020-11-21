@@ -16,13 +16,13 @@
  */
 package org.apache.tomcat.websocket.server;
 
+import org.apache.tomcat.websocket.BackgroundProcess;
+import org.apache.tomcat.websocket.BackgroundProcessManager;
+
 import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.tomcat.websocket.BackgroundProcess;
-import org.apache.tomcat.websocket.BackgroundProcessManager;
 
 /**
  * Provides timeouts for asynchronous web socket writes. On the server side we

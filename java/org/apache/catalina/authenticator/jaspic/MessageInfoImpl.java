@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.security.auth.message.MessageInfo;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageInfoImpl implements MessageInfo {
     protected static final StringManager sm = StringManager.getManager(MessageInfoImpl.class);

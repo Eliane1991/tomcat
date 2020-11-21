@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.PrintWriter;
 
 /**
  * Generate Interceptor Element

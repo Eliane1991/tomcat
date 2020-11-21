@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import org.apache.tomcat.util.codec.binary.Base64;
 
 /**
  * Authenticator supporting the BASIC auth method.

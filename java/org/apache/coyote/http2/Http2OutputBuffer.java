@@ -16,14 +16,14 @@
  */
 package org.apache.coyote.http2;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.coyote.Response;
 import org.apache.coyote.http11.HttpOutputBuffer;
 import org.apache.coyote.http11.OutputFilter;
 import org.apache.coyote.http2.Stream.StreamOutputBuffer;
 import org.apache.tomcat.util.buf.ByteChunk;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class Http2OutputBuffer implements HttpOutputBuffer {
 

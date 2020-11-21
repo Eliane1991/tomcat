@@ -16,43 +16,13 @@
  */
 package org.apache.catalina.realm;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import org.apache.catalina.LifecycleException;
+import org.apache.tomcat.util.collections.SynchronizedStack;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSName;
 
-import javax.naming.AuthenticationException;
-import javax.naming.CommunicationException;
-import javax.naming.CompositeName;
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.PartialResultException;
-import javax.naming.ServiceUnavailableException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
+import javax.naming.*;
+import javax.naming.directory.*;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
@@ -61,11 +31,17 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.tomcat.util.collections.SynchronizedStack;
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSName;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>Implementation of <strong>Realm</strong> that works with a directory

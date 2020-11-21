@@ -17,10 +17,10 @@
  */
 package org.apache.tomcat.util.bcel.classfile;
 
+import org.apache.tomcat.util.bcel.Const;
+
 import java.io.DataInput;
 import java.io.IOException;
-
-import org.apache.tomcat.util.bcel.Const;
 
 /**
  * Abstract superclass for classes to represent the different constant types

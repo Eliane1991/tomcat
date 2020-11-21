@@ -16,10 +16,9 @@
  */
 package javax.servlet.http;
 
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-
-import javax.servlet.ServletResponse;
 
 /**
  * Extends the {@link ServletResponse} interface to provide HTTP-specific

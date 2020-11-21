@@ -16,14 +16,14 @@
  */
 package org.apache.coyote;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.security.PrivilegedGetTccl;
 import org.apache.tomcat.util.security.PrivilegedSetTccl;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Manages the state transitions for async requests.

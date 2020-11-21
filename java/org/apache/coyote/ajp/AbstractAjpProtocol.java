@@ -16,9 +16,6 @@
  */
 package org.apache.coyote.ajp;
 
-import java.net.InetAddress;
-import java.util.regex.Pattern;
-
 import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.Processor;
 import org.apache.coyote.UpgradeProtocol;
@@ -27,6 +24,9 @@ import org.apache.tomcat.util.net.AbstractEndpoint;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.net.InetAddress;
+import java.util.regex.Pattern;
 
 /**
  * The is the base implementation for the AJP protocol handlers. Implementations

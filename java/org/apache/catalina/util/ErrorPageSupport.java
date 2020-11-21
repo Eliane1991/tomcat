@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.util;
 
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.apache.tomcat.util.descriptor.web.ErrorPage;
 
 /**
  * Provides support for tracking per exception type and per HTTP status code

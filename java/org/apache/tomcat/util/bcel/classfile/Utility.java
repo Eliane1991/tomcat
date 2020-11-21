@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.util.bcel.classfile;
 
+import org.apache.tomcat.util.bcel.Const;
+
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
-
-import org.apache.tomcat.util.bcel.Const;
 
 /**
  * Utility functions that do not really belong to any class in particular.

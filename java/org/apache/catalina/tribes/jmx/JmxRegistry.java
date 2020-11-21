@@ -16,21 +16,16 @@
  */
 package org.apache.catalina.tribes.jmx;
 
-import java.lang.management.ManagementFactory;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.JmxChannel;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JmxRegistry {
 

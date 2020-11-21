@@ -16,15 +16,6 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.IOException;
-import java.net.URL;
-import java.security.AccessController;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.tagplugin.TagPlugin;
@@ -33,6 +24,14 @@ import org.apache.tomcat.util.descriptor.tagplugin.TagPluginParser;
 import org.apache.tomcat.util.security.PrivilegedGetTccl;
 import org.apache.tomcat.util.security.PrivilegedSetTccl;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.net.URL;
+import java.security.AccessController;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manages tag plugin optimizations.

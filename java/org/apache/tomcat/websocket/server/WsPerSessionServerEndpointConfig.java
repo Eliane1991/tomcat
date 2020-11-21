@@ -16,14 +16,13 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import javax.websocket.Decoder;
 import javax.websocket.Encoder;
 import javax.websocket.Extension;
 import javax.websocket.server.ServerEndpointConfig;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Wraps the provided {@link ServerEndpointConfig} and provides a per session

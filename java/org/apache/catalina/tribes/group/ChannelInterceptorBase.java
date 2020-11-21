@@ -16,14 +16,10 @@
  */
 package org.apache.catalina.tribes.group;
 
-import javax.management.ObjectName;
-
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelInterceptor;
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.*;
 import org.apache.catalina.tribes.jmx.JmxRegistry;
+
+import javax.management.ObjectName;
 
 /**
  * Abstract class for the interceptor base class.

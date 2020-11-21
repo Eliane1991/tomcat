@@ -16,8 +16,6 @@
  */
 package org.apache.catalina.tribes.tipis;
 
-import java.io.Serializable;
-
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
@@ -25,6 +23,8 @@ import org.apache.catalina.tribes.UniqueId;
 import org.apache.catalina.tribes.util.Arrays;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.Serializable;
 
 /**
  * A smart implementation of a stateful replicated map. uses primary/secondary backup strategy.

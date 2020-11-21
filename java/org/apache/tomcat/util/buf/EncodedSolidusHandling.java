@@ -16,9 +16,9 @@
  */
 package org.apache.tomcat.util.buf;
 
-import java.util.Locale;
-
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.Locale;
 
 public enum EncodedSolidusHandling {
     DECODE("decode"),

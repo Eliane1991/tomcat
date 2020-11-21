@@ -16,30 +16,18 @@
  */
 package org.apache.jasper.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.el.ELContext;
-import javax.el.ELException;
-import javax.el.ExpressionFactory;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.DynamicAttributes;
-import javax.servlet.jsp.tagext.IterationTag;
-import javax.servlet.jsp.tagext.JspIdConsumer;
-import javax.servlet.jsp.tagext.SimpleTag;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagData;
-import javax.servlet.jsp.tagext.TagFileInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
-import javax.servlet.jsp.tagext.TryCatchFinally;
-import javax.servlet.jsp.tagext.VariableInfo;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.tagplugin.TagPluginContext;
 import org.xml.sax.Attributes;
+
+import javax.el.ELContext;
+import javax.el.ELException;
+import javax.el.ExpressionFactory;
+import javax.servlet.jsp.tagext.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * An internal data representation of a JSP page or a JSP document (XML). Also

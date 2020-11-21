@@ -16,15 +16,11 @@
  */
 package org.apache.tomcat.util.threads;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import org.apache.tomcat.util.res.StringManager;
+
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Same as a java.util.concurrent.ThreadPoolExecutor but implements a much more efficient

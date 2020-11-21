@@ -16,6 +16,19 @@
  */
 package org.apache.tomcat.util.net;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.buf.ByteBufferUtils;
+import org.apache.tomcat.util.compat.JreCompat;
+import org.apache.tomcat.util.net.TLSClientHelloExtractor.ExtractorResult;
+import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLEngineResult;
+import javax.net.ssl.SSLEngineResult.HandshakeStatus;
+import javax.net.ssl.SSLEngineResult.Status;
+import javax.net.ssl.SSLException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -28,20 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLEngineResult;
-import javax.net.ssl.SSLEngineResult.HandshakeStatus;
-import javax.net.ssl.SSLEngineResult.Status;
-import javax.net.ssl.SSLException;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.buf.ByteBufferUtils;
-import org.apache.tomcat.util.compat.JreCompat;
-import org.apache.tomcat.util.net.TLSClientHelloExtractor.ExtractorResult;
-import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Implementation of a secure socket channel for NIO2.

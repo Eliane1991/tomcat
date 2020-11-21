@@ -16,6 +16,19 @@
  */
 package org.apache.catalina.connector;
 
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.coyote.ActionCode;
+import org.apache.coyote.ContainerThreadMarker;
+import org.apache.coyote.Request;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.buf.B2CConverter;
+import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.tomcat.util.collections.SynchronizedStack;
+import org.apache.tomcat.util.net.ApplicationBufferHandler;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ReadListener;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.Buffer;
@@ -28,20 +41,6 @@ import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.servlet.ReadListener;
-
-import org.apache.catalina.security.SecurityUtil;
-import org.apache.coyote.ActionCode;
-import org.apache.coyote.ContainerThreadMarker;
-import org.apache.coyote.Request;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.buf.B2CConverter;
-import org.apache.tomcat.util.buf.ByteChunk;
-import org.apache.tomcat.util.collections.SynchronizedStack;
-import org.apache.tomcat.util.net.ApplicationBufferHandler;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * The buffer used by Tomcat request. This is a derivative of the Tomcat 3.3

@@ -16,16 +16,16 @@
  */
 package org.apache.coyote.http2;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.coyote.ProtocolException;
 import org.apache.coyote.http2.HpackDecoder.HeaderEmitter;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.ByteBufferUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 class Http2Parser {
 

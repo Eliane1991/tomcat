@@ -16,9 +16,9 @@
  */
 package org.apache.tomcat.util.http.fileupload.impl;
 
-import java.io.IOException;
-
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+
+import java.io.IOException;
 
 /**
  * This exception is thrown for hiding an inner

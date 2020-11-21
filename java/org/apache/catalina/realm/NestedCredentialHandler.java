@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.realm;
 
+import org.apache.catalina.CredentialHandler;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.catalina.CredentialHandler;
 
 public class NestedCredentialHandler implements CredentialHandler {
 

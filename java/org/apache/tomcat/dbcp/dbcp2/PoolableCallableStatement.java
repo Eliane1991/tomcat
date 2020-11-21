@@ -17,14 +17,14 @@
 
 package org.apache.tomcat.dbcp.dbcp2;
 
+import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
 
 /**
  * A {@link DelegatingCallableStatement} that cooperates with {@link PoolingConnection} to implement a pool of

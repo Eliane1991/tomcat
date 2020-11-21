@@ -17,11 +17,7 @@
 
 package org.apache.jasper.compiler;
 
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.*;
 
 /**
  * TagInfo extension used by tag handlers that are implemented via tag files.

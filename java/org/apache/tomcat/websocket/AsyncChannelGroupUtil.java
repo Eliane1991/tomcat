@@ -16,6 +16,9 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+
 import java.io.IOException;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.security.AccessController;
@@ -25,9 +28,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 
 /**
  * This is a utility class that enables multiple {@link WsWebSocketContainer}

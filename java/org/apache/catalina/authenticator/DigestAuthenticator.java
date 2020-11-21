@@ -16,16 +16,6 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Request;
@@ -34,6 +24,15 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.apache.tomcat.util.security.ConcurrentMessageDigest;
 import org.apache.tomcat.util.security.MD5Encoder;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**

@@ -17,29 +17,21 @@
 
 package org.apache.catalina.session;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import org.apache.catalina.Globals;
+import org.apache.catalina.Session;
+import org.apache.juli.logging.Log;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
-import org.apache.catalina.Globals;
-import org.apache.catalina.Session;
-import org.apache.juli.logging.Log;
 
 /**
  * Implementation of the {@link org.apache.catalina.Store Store}

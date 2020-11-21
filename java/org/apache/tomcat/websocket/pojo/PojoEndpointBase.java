@@ -16,21 +16,16 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.Set;
-
-import javax.websocket.CloseReason;
-import javax.websocket.Endpoint;
-import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base implementation (client and server have different concrete

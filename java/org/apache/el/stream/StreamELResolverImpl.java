@@ -16,14 +16,13 @@
  */
 package org.apache.el.stream;
 
+import javax.el.ELContext;
+import javax.el.ELResolver;
 import java.beans.FeatureDescriptor;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import javax.el.ELContext;
-import javax.el.ELResolver;
 
 public class StreamELResolverImpl extends ELResolver {
 

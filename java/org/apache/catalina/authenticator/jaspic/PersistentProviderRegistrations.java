@@ -16,26 +16,19 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.res.StringManager;
+import org.xml.sax.SAXException;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.res.StringManager;
-import org.xml.sax.SAXException;
 
 /**
  * Utility class for the loading and saving of JASPIC persistent provider

@@ -16,20 +16,15 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
+import org.apache.tomcat.dbcp.pool2.ObjectPool;
+
+import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
-import org.apache.tomcat.dbcp.pool2.ObjectPool;
 
 /**
  * A delegating connection that, rather than closing the underlying connection, returns itself to an {@link ObjectPool}

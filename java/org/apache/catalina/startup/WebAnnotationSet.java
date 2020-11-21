@@ -16,8 +16,13 @@
  */
 package org.apache.catalina.startup;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.ApplicationServletRegistration;
+import org.apache.catalina.util.Introspection;
+import org.apache.tomcat.util.descriptor.web.*;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.annotation.Resource;
 import javax.annotation.Resources;
@@ -25,19 +30,8 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RunAs;
 import javax.servlet.ServletSecurityElement;
 import javax.servlet.annotation.ServletSecurity;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.core.ApplicationServletRegistration;
-import org.apache.catalina.util.Introspection;
-import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
-import org.apache.tomcat.util.descriptor.web.ContextResource;
-import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
-import org.apache.tomcat.util.descriptor.web.ContextService;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.MessageDestinationRef;
-import org.apache.tomcat.util.res.StringManager;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * <strong>AnnotationSet</strong> for processing the annotations of the web

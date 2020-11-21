@@ -17,6 +17,9 @@
 
 package org.apache.tomcat.util.net.jsse;
 
+import org.apache.tomcat.util.net.SSLContext;
+
+import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -24,17 +27,6 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSessionContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509KeyManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.tomcat.util.net.SSLContext;
 
 class JSSESSLContext implements SSLContext {
 

@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import org.apache.tomcat.util.buf.UDecoder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.apache.tomcat.util.buf.UDecoder;
 
 /**
  * Representation of a jsp-property-group element in web.xml.

@@ -17,13 +17,13 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate.Type;
 import org.apache.tomcat.util.net.openssl.OpenSSLConf;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * Store SSLHostConfig

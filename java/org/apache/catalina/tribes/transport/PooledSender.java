@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.tribes.transport;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 public abstract class PooledSender extends AbstractSender implements MultiPointSender {
 

@@ -16,16 +16,16 @@
  */
 package org.apache.jasper.compiler;
 
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.tomcat.Jar;
+import org.xml.sax.Attributes;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
-
-import org.apache.jasper.JasperException;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.tomcat.Jar;
-import org.xml.sax.Attributes;
 
 /**
  * Controller for the parsing of a JSP page.

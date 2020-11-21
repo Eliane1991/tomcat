@@ -16,21 +16,16 @@
  */
 package org.apache.tomcat.util.http.fileupload;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.tomcat.util.http.fileupload.impl.FileItemIteratorImpl;
 import org.apache.tomcat.util.http.fileupload.impl.FileItemStreamImpl;
 import org.apache.tomcat.util.http.fileupload.impl.FileUploadIOException;
 import org.apache.tomcat.util.http.fileupload.impl.IOFileUploadException;
 import org.apache.tomcat.util.http.fileupload.util.FileItemHeadersImpl;
 import org.apache.tomcat.util.http.fileupload.util.Streams;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 
 /**

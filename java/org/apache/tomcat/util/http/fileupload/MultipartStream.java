@@ -16,15 +16,12 @@
  */
 package org.apache.tomcat.util.http.fileupload;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
 import org.apache.tomcat.util.http.fileupload.impl.FileUploadIOException;
 import org.apache.tomcat.util.http.fileupload.util.Closeable;
 import org.apache.tomcat.util.http.fileupload.util.Streams;
+
+import java.io.ByteArrayOutputStream;
+import java.io.*;
 
 
 /**

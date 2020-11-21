@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.tribes.group;
 
+import org.apache.catalina.tribes.Member;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.catalina.tribes.Member;
 
 /**
  * <p>Title: Membership - Absolute Order</p>

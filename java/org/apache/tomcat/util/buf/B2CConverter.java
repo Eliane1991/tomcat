@@ -16,18 +16,14 @@
  */
 package org.apache.tomcat.util.buf;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.*;
 import java.util.Locale;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * NIO based character decoder.

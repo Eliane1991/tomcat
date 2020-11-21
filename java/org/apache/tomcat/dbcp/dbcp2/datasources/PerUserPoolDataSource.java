@@ -16,6 +16,16 @@
  */
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.dbcp.dbcp2.SwallowedExceptionLogger;
+import org.apache.tomcat.dbcp.pool2.ObjectPool;
+import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
+
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import javax.sql.ConnectionPoolDataSource;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
@@ -23,17 +33,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.sql.ConnectionPoolDataSource;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.dbcp.dbcp2.SwallowedExceptionLogger;
-import org.apache.tomcat.dbcp.pool2.ObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
 
 /**
  * <p>

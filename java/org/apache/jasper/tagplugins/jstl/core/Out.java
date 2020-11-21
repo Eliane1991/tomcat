@@ -18,14 +18,13 @@
 
 package org.apache.jasper.tagplugins.jstl.core;
 
-import java.io.IOException;
-import java.io.Reader;
-
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.jasper.compiler.tagplugin.TagPlugin;
 import org.apache.jasper.compiler.tagplugin.TagPluginContext;
 import org.apache.jasper.tagplugins.jstl.Util;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.io.Reader;
 
 
 public final class Out implements TagPlugin {

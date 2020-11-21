@@ -19,13 +19,9 @@
 package org.apache.catalina.ant.jmx;
 
 
-import javax.management.Attribute;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-
 import org.apache.tools.ant.BuildException;
+
+import javax.management.*;
 
 
 /**

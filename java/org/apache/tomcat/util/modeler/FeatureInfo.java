@@ -19,9 +19,8 @@
 package org.apache.tomcat.util.modeler;
 
 
-import java.io.Serializable;
-
 import javax.management.MBeanFeatureInfo;
+import java.io.Serializable;
 
 
 /**

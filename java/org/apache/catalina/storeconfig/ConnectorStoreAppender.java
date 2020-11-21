@@ -16,6 +16,11 @@
  */
 package org.apache.catalina.storeconfig;
 
+import org.apache.catalina.connector.Connector;
+import org.apache.coyote.ProtocolHandler;
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.net.SocketProperties;
+
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -26,11 +31,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.catalina.connector.Connector;
-import org.apache.coyote.ProtocolHandler;
-import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.net.SocketProperties;
 
 /**
  * Store the Connector attributes. Connector has really special design. A

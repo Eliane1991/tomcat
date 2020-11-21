@@ -16,9 +16,9 @@
  */
 package org.apache.coyote;
 
-import java.util.concurrent.Executor;
-
 import org.apache.tomcat.util.net.SSLHostConfig;
+
+import java.util.concurrent.Executor;
 
 /**
  * Abstract the protocol implementation, including threading, etc.

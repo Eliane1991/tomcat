@@ -16,13 +16,13 @@
  */
 package org.apache.coyote.http2;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * See <a href="https://tools.ietf.org/html/rfc7540#section-5.1">state

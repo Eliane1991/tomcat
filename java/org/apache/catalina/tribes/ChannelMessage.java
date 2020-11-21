@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.tribes;
 
-import java.io.Serializable;
-
 import org.apache.catalina.tribes.io.XByteBuffer;
+
+import java.io.Serializable;
 
 /**
  * Message that is passed through the interceptor stack after the

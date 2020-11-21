@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.mbeans;
 
+import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
+import org.apache.tomcat.util.descriptor.web.NamingResources;
+
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
-
-import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
-import org.apache.tomcat.util.descriptor.web.NamingResources;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the

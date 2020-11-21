@@ -16,10 +16,10 @@
  */
 package org.apache.catalina;
 
-import java.security.Principal;
-
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSName;
+
+import java.security.Principal;
 
 /**
  * A <b>GSSRealm</b> is a specialized realm for GSS-based principals.

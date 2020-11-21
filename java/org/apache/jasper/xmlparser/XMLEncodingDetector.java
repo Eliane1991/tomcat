@@ -24,19 +24,15 @@
  */
 package org.apache.jasper.xmlparser;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Locale;
-
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.ErrorDispatcher;
 import org.apache.jasper.compiler.JspUtil;
 import org.apache.jasper.compiler.Localizer;
 import org.apache.tomcat.Jar;
+
+import java.io.*;
+import java.util.Locale;
 
 /**
  * @deprecated Will be removed in Tomcat 9.0.x onwards

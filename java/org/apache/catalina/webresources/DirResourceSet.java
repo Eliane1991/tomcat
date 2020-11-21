@@ -16,6 +16,14 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.WebResourceRoot.ResourceSetType;
+import org.apache.catalina.util.ResourceSet;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,14 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.WebResourceRoot.ResourceSetType;
-import org.apache.catalina.util.ResourceSet;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.catalina.WebResourceSet} based on a directory.

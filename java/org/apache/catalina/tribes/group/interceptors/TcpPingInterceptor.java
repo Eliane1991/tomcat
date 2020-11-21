@@ -17,10 +17,6 @@
 
 package org.apache.catalina.tribes.group.interceptors;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.ChannelMessage;
@@ -31,6 +27,10 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.util.StringManager;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *

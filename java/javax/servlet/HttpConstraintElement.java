@@ -16,10 +16,9 @@
 */
 package javax.servlet;
 
-import java.util.ResourceBundle;
-
 import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
 import javax.servlet.annotation.ServletSecurity.TransportGuarantee;
+import java.util.ResourceBundle;
 
 /**
  * Equivalent of {@link javax.servlet.annotation.HttpConstraint} for

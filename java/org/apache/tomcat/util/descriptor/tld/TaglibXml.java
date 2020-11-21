@@ -16,10 +16,9 @@
  */
 package org.apache.tomcat.util.descriptor.tld;
 
+import javax.servlet.jsp.tagext.FunctionInfo;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.jsp.tagext.FunctionInfo;
 
 /**
  * Common representation of a Tag Library Descriptor (TLD) XML file.

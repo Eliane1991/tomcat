@@ -17,9 +17,9 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
-import javax.sql.PooledConnection;
-
 import org.apache.tomcat.dbcp.dbcp2.Utils;
+
+import javax.sql.PooledConnection;
 
 /**
  * Immutable poolable object holding a PooledConnection along with the user name and password used to create the

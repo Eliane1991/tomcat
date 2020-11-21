@@ -16,11 +16,18 @@
  */
 package org.apache.tomcat.util.net.jsse;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.apache.tomcat.util.buf.Asn1Parser;
+import org.apache.tomcat.util.buf.Asn1Writer;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.file.ConfigFileLoader;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.crypto.Cipher;
+import javax.crypto.EncryptedPrivateKeyInfo;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -37,18 +44,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-import org.apache.tomcat.util.buf.Asn1Parser;
-import org.apache.tomcat.util.buf.Asn1Writer;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.file.ConfigFileLoader;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * RFC 1421 PEM file containing X509 certificates or private keys.

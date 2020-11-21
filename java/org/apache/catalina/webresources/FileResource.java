@@ -16,12 +16,11 @@
  */
 package org.apache.catalina.webresources;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -29,10 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.cert.Certificate;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.WebResourceRoot;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * Represents a single resource (file or directory) that is located on a file

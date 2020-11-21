@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.websocket;
 
-import java.util.List;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.websocket.Extension;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.List;
 
 public class TransformationFactory {
 

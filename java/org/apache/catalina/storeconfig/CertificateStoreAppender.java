@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.storeconfig;
 
-import java.beans.PropertyDescriptor;
-
 import org.apache.tomcat.util.IntrospectionUtils;
+
+import java.beans.PropertyDescriptor;
 
 /**
  * Store the Certificate attributes.

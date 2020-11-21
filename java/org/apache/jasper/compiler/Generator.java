@@ -17,6 +17,20 @@
 
 package org.apache.jasper.compiler;
 
+import org.apache.el.util.JreCompat;
+import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.compiler.Node.NamedAttribute;
+import org.apache.jasper.runtime.JspRuntimeLibrary;
+import org.xml.sax.Attributes;
+
+import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.VariableInfo;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -26,35 +40,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.Vector;
-
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
-import javax.servlet.jsp.tagext.VariableInfo;
-
-import org.apache.el.util.JreCompat;
-import org.apache.jasper.Constants;
-import org.apache.jasper.JasperException;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.compiler.Node.NamedAttribute;
-import org.apache.jasper.runtime.JspRuntimeLibrary;
-import org.xml.sax.Attributes;
 
 /**
  * Generate Java source from Nodes

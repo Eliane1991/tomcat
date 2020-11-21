@@ -16,6 +16,17 @@
  */
 package org.apache.tomcat.util.net;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.compat.JreCompat;
+import org.apache.tomcat.util.net.openssl.OpenSSLConf;
+import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
+import org.apache.tomcat.util.net.openssl.ciphers.OpenSSLCipherConfigurationParser;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.ObjectName;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,18 +37,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.management.ObjectName;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.compat.JreCompat;
-import org.apache.tomcat.util.net.openssl.OpenSSLConf;
-import org.apache.tomcat.util.net.openssl.ciphers.Cipher;
-import org.apache.tomcat.util.net.openssl.ciphers.OpenSSLCipherConfigurationParser;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Represents the TLS configuration for a virtual host.

@@ -16,9 +16,6 @@
  */
 package org.apache.tomcat.util.http.fileupload.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.tomcat.util.http.fileupload.FileItemHeaders;
 import org.apache.tomcat.util.http.fileupload.FileItemStream;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -27,6 +24,9 @@ import org.apache.tomcat.util.http.fileupload.MultipartStream.ItemInputStream;
 import org.apache.tomcat.util.http.fileupload.util.Closeable;
 import org.apache.tomcat.util.http.fileupload.util.LimitedInputStream;
 import org.apache.tomcat.util.http.fileupload.util.Streams;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**

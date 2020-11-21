@@ -17,13 +17,12 @@
 
 package org.apache.jasper.compiler;
 
+import org.apache.jasper.JasperException;
+
+import javax.servlet.jsp.tagext.FunctionInfo;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.jsp.tagext.FunctionInfo;
-
-import org.apache.jasper.JasperException;
 
 /**
  * This class defines internal representation for an EL Expression

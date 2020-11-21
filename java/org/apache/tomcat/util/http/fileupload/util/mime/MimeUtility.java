@@ -16,14 +16,14 @@
  */
 package org.apache.tomcat.util.http.fileupload.util.mime;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.tomcat.util.codec.binary.Base64;
 
 /**
  * Utility class to decode MIME texts.

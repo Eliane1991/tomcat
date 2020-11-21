@@ -16,14 +16,14 @@
  */
 package org.apache.coyote.http11.filters;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.coyote.Response;
 import org.apache.coyote.http11.HttpOutputBuffer;
 import org.apache.coyote.http11.OutputFilter;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.HexUtils;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Chunked output filter.

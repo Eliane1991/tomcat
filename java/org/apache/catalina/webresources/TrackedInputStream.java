@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.TrackedWebResource;
+import org.apache.catalina.WebResourceRoot;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import org.apache.catalina.TrackedWebResource;
-import org.apache.catalina.WebResourceRoot;
 
 class TrackedInputStream extends InputStream implements TrackedWebResource {
 

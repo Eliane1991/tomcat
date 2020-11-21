@@ -16,16 +16,16 @@
  */
 package org.apache.catalina.webresources;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.compat.JrePlatform;
 import org.apache.tomcat.util.http.RequestUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public abstract class AbstractFileResourceSet extends AbstractResourceSet {
 

@@ -17,34 +17,25 @@
 
 package org.apache.catalina.ha.tcp;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.servlet.ServletException;
-
-import org.apache.catalina.Cluster;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Session;
+import org.apache.catalina.*;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.ha.CatalinaCluster;
-import org.apache.catalina.ha.ClusterManager;
-import org.apache.catalina.ha.ClusterMessage;
-import org.apache.catalina.ha.ClusterSession;
-import org.apache.catalina.ha.ClusterValve;
+import org.apache.catalina.ha.*;
 import org.apache.catalina.ha.session.DeltaManager;
 import org.apache.catalina.ha.session.DeltaSession;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * <p>Implementation of a Valve that logs interesting contents from the

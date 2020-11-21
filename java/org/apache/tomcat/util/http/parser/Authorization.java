@@ -16,13 +16,13 @@
  */
 package org.apache.tomcat.util.http.parser;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Parser for an "Authorization" header.

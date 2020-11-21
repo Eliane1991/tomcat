@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.ant.jmx;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import org.apache.tools.ant.ProjectComponent;
+import org.apache.tools.ant.taskdefs.condition.Condition;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-
-import org.apache.tools.ant.ProjectComponent;
-import org.apache.tools.ant.taskdefs.condition.Condition;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 public abstract class JMXAccessorConditionBase extends ProjectComponent implements Condition {
 

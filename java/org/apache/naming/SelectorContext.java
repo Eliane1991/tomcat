@@ -18,18 +18,11 @@
 
 package org.apache.naming;
 
-import java.util.Hashtable;
-
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import javax.naming.*;
+import java.util.Hashtable;
 
 /**
  * Catalina JNDI Context implementation.

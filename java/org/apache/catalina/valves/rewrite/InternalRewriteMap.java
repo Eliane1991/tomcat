@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.valves.rewrite;
 
+import org.apache.catalina.util.URLEncoder;
+import org.apache.tomcat.util.buf.UDecoder;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-
-import org.apache.catalina.util.URLEncoder;
-import org.apache.tomcat.util.buf.UDecoder;
 
 public class InternalRewriteMap {
 

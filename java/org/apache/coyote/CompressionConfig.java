@@ -16,16 +16,6 @@
  */
 package org.apache.coyote;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.MessageBytes;
@@ -34,6 +24,11 @@ import org.apache.tomcat.util.http.ResponseUtil;
 import org.apache.tomcat.util.http.parser.AcceptEncoding;
 import org.apache.tomcat.util.http.parser.TokenList;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class CompressionConfig {
 

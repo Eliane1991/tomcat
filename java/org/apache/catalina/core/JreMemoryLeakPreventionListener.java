@@ -17,19 +17,6 @@
 
 package org.apache.catalina.core;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URLConnection;
-import java.sql.DriverManager;
-import java.util.StringTokenizer;
-import java.util.concurrent.ForkJoinPool;
-
-import javax.imageio.ImageIO;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -42,6 +29,18 @@ import org.apache.tomcat.util.compat.JreVendor;
 import org.apache.tomcat.util.res.StringManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
+
+import javax.imageio.ImageIO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLConnection;
+import java.sql.DriverManager;
+import java.util.StringTokenizer;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Provide a workaround for known places where the Java Runtime environment can

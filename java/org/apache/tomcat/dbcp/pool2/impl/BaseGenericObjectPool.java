@@ -16,6 +16,12 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
+import org.apache.tomcat.dbcp.pool2.BaseObject;
+import org.apache.tomcat.dbcp.pool2.PooledObject;
+import org.apache.tomcat.dbcp.pool2.PooledObjectState;
+import org.apache.tomcat.dbcp.pool2.SwallowedExceptionListener;
+
+import javax.management.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -29,19 +35,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
-import org.apache.tomcat.dbcp.pool2.BaseObject;
-import org.apache.tomcat.dbcp.pool2.PooledObject;
-import org.apache.tomcat.dbcp.pool2.PooledObjectState;
-import org.apache.tomcat.dbcp.pool2.SwallowedExceptionListener;
 
 /**
  * Base class that provides common functionality for {@link GenericObjectPool}

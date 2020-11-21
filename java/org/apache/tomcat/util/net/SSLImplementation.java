@@ -17,12 +17,12 @@
 
 package org.apache.tomcat.util.net;
 
-import javax.net.ssl.SSLSession;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.net.jsse.JSSEImplementation;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLSession;
 
 /**
  * Provides a factory and base implementation for the Tomcat specific mechanism

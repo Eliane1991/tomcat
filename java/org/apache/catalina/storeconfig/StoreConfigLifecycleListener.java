@@ -16,9 +16,6 @@
  */
 package org.apache.catalina.storeconfig;
 
-import javax.management.DynamicMBean;
-import javax.management.ObjectName;
-
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -29,6 +26,9 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.modeler.ManagedBean;
 import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.DynamicMBean;
+import javax.management.ObjectName;
 
 /**
  * Loads and registers a StoreConfig MBean with the name

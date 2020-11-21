@@ -16,12 +16,12 @@
  */
 package org.apache.jasper.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.jasper.compiler.Localizer;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Wraps the default attributes implementation and ensures that each attribute

@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.tribes.transport;
 
+import org.apache.catalina.tribes.Member;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.apache.catalina.tribes.Member;
 
 public class SenderState {
 

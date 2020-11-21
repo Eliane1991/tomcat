@@ -16,11 +16,11 @@
  */
 package org.apache.coyote.http2;
 
-import java.util.Iterator;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.Iterator;
 
 /**
  * Base class for all streams other than stream 0, the connection. Primarily

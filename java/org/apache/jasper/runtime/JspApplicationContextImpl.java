@@ -16,24 +16,18 @@
  */
 package org.apache.jasper.runtime;
 
+import org.apache.jasper.Constants;
+import org.apache.jasper.el.ELContextImpl;
+import org.apache.jasper.el.JasperELResolver;
+
+import javax.el.*;
+import javax.servlet.ServletContext;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.el.CompositeELResolver;
-import javax.el.ELContext;
-import javax.el.ELContextEvent;
-import javax.el.ELContextListener;
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
-import javax.servlet.ServletContext;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspContext;
-
-import org.apache.jasper.Constants;
-import org.apache.jasper.el.ELContextImpl;
-import org.apache.jasper.el.JasperELResolver;
 
 /**
  * Implementation of JspApplicationContext

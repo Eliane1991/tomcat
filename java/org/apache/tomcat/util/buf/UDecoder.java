@@ -16,17 +16,13 @@
  */
 package org.apache.tomcat.util.buf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.CharConversionException;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  *  All URL decoding happens here. This way we can reuse, review, optimize

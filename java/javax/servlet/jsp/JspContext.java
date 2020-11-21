@@ -16,9 +16,8 @@
 */
 package javax.servlet.jsp;
 
-import java.util.Enumeration;
-
 import javax.el.ELContext;
+import java.util.Enumeration;
 
 /**
  * <p>

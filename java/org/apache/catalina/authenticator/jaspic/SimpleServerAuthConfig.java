@@ -16,10 +16,7 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -28,8 +25,10 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Basic implementation primarily intended for use when using third-party

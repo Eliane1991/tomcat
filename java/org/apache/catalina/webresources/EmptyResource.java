@@ -16,15 +16,15 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
 
 public class EmptyResource implements WebResource {
 

@@ -16,9 +16,6 @@
  */
 package org.apache.catalina.tribes.group.interceptors;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
@@ -30,6 +27,9 @@ import org.apache.catalina.tribes.util.StringManager;
 import org.apache.catalina.tribes.util.UUIDGenerator;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TwoPhaseCommitInterceptor extends ChannelInterceptorBase {
 

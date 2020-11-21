@@ -16,19 +16,14 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import org.apache.tomcat.dbcp.pool2.ObjectPool;
+
+import java.sql.*;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import org.apache.tomcat.dbcp.pool2.ObjectPool;
 
 /**
  * A {@link Driver} implementation that obtains {@link Connection}s from a registered {@link ObjectPool}.

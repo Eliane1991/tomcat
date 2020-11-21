@@ -17,9 +17,6 @@
 
 package org.apache.catalina.core;
 
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.catalina.Executor;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
@@ -28,6 +25,9 @@ import org.apache.tomcat.util.threads.ResizableExecutor;
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.TaskThreadFactory;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class StandardThreadExecutor extends LifecycleMBeanBase
         implements Executor, ResizableExecutor {

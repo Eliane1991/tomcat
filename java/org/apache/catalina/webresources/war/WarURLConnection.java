@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.webresources.war;
 
+import org.apache.tomcat.util.buf.UriUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Permission;
-
-import org.apache.tomcat.util.buf.UriUtil;
 
 
 public class WarURLConnection extends URLConnection {

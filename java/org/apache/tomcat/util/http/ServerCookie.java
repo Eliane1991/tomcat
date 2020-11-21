@@ -16,9 +16,9 @@
  */
 package org.apache.tomcat.util.http;
 
-import java.io.Serializable;
-
 import org.apache.tomcat.util.buf.MessageBytes;
+
+import java.io.Serializable;
 
 
 /**

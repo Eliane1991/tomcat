@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.Loader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+
+import java.io.PrintWriter;
 
 /**
  * Store Loader Element.

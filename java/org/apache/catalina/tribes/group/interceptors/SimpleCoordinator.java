@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.tribes.group.interceptors;
 
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.AbsoluteOrder;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A dinky coordinator, just uses a sorted version of the member array.

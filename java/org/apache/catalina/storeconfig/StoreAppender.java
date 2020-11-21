@@ -17,16 +17,16 @@
 
 package org.apache.catalina.storeconfig;
 
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.descriptor.web.ResourceBase;
+import org.apache.tomcat.util.security.Escape;
+
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.util.Iterator;
-
-import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.descriptor.web.ResourceBase;
-import org.apache.tomcat.util.security.Escape;
 
 /**
  * StoreAppends generate really the xml tag elements

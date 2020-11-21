@@ -16,6 +16,16 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.juli.logging.Log;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.buf.Utf8Decoder;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.websocket.CloseReason;
+import javax.websocket.CloseReason.CloseCodes;
+import javax.websocket.Extension;
+import javax.websocket.MessageHandler;
+import javax.websocket.PongMessage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -24,17 +34,6 @@ import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-
-import javax.websocket.CloseReason;
-import javax.websocket.CloseReason.CloseCodes;
-import javax.websocket.Extension;
-import javax.websocket.MessageHandler;
-import javax.websocket.PongMessage;
-
-import org.apache.juli.logging.Log;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.buf.Utf8Decoder;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Takes the ServletInputStream, processes the WebSocket frames it contains and

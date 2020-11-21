@@ -16,41 +16,25 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.dbcp.pool2.PooledObject;
+import org.apache.tomcat.dbcp.pool2.impl.*;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.dbcp.pool2.PooledObject;
-import org.apache.tomcat.dbcp.pool2.impl.AbandonedConfig;
-import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
-import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.sql.*;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * <p>

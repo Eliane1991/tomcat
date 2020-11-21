@@ -16,11 +16,7 @@
  */
 package org.apache.tomcat.dbcp.pool2;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 

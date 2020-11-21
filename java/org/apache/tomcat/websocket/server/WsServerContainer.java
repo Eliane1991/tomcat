@@ -16,15 +16,11 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.websocket.WsSession;
+import org.apache.tomcat.websocket.WsWebSocketContainer;
+import org.apache.tomcat.websocket.pojo.PojoMethodMapping;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -40,12 +36,11 @@ import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;
 import javax.websocket.server.ServerEndpointConfig.Configurator;
-
-import org.apache.tomcat.InstanceManager;
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.websocket.WsSession;
-import org.apache.tomcat.websocket.WsWebSocketContainer;
-import org.apache.tomcat.websocket.pojo.PojoMethodMapping;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Provides a per class loader (i.e. per web application) instance of a

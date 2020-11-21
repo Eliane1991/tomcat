@@ -16,6 +16,13 @@
  */
 package org.apache.catalina.util;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.WebResource;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,13 +32,6 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-
-import org.apache.catalina.Context;
-import org.apache.catalina.WebResource;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 
 /**

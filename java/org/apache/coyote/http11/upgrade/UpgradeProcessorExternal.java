@@ -16,11 +16,6 @@
  */
 package org.apache.coyote.http11.upgrade;
 
-import java.io.IOException;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
-
 import org.apache.coyote.UpgradeToken;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -29,6 +24,10 @@ import org.apache.tomcat.util.net.SSLSupport;
 import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
+import java.io.IOException;
 
 public class UpgradeProcessorExternal extends UpgradeProcessorBase {
 

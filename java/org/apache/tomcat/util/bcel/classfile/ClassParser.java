@@ -17,13 +17,9 @@
  */
 package org.apache.tomcat.util.bcel.classfile;
 
-import java.io.BufferedInputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.tomcat.util.bcel.Const;
+
+import java.io.*;
 
 /**
  * Wrapper class that parses a given Java .class file. The method <A

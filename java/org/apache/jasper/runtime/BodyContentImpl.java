@@ -17,17 +17,16 @@
 
 package org.apache.jasper.runtime;
 
+import org.apache.jasper.Constants;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
-
-import org.apache.jasper.Constants;
 
 /**
  * Write text to a character-output stream, buffering characters so as

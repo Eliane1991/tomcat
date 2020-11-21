@@ -17,6 +17,15 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
+import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
+import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.Referenceable;
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
+import javax.sql.PooledConnection;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -27,16 +36,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.Referenceable;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.DataSource;
-import javax.sql.PooledConnection;
-
-import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
-import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
 
 /**
  * <p>

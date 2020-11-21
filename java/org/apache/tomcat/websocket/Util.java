@@ -16,42 +16,26 @@
  */
 package org.apache.tomcat.websocket;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import javax.websocket.CloseReason.CloseCode;
-import javax.websocket.CloseReason.CloseCodes;
-import javax.websocket.Decoder;
-import javax.websocket.Decoder.Binary;
-import javax.websocket.Decoder.BinaryStream;
-import javax.websocket.Decoder.Text;
-import javax.websocket.Decoder.TextStream;
-import javax.websocket.DeploymentException;
-import javax.websocket.Encoder;
-import javax.websocket.EndpointConfig;
-import javax.websocket.Extension;
-import javax.websocket.MessageHandler;
-import javax.websocket.PongMessage;
-import javax.websocket.Session;
-
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.websocket.pojo.PojoMessageHandlerPartialBinary;
 import org.apache.tomcat.websocket.pojo.PojoMessageHandlerWholeBinary;
 import org.apache.tomcat.websocket.pojo.PojoMessageHandlerWholeText;
+
+import javax.websocket.CloseReason.CloseCode;
+import javax.websocket.CloseReason.CloseCodes;
+import javax.websocket.*;
+import javax.websocket.Decoder.Binary;
+import javax.websocket.Decoder.BinaryStream;
+import javax.websocket.Decoder.Text;
+import javax.websocket.Decoder.TextStream;
+import java.io.InputStream;
+import java.io.Reader;
+import java.lang.reflect.*;
+import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Utility class for internal use only within the

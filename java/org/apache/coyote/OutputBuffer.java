@@ -16,10 +16,10 @@
  */
 package org.apache.coyote;
 
+import org.apache.tomcat.util.buf.ByteChunk;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import org.apache.tomcat.util.buf.ByteChunk;
 
 /**
  * Output buffer.

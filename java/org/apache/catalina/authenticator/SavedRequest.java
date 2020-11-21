@@ -19,17 +19,10 @@
 package org.apache.catalina.authenticator;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.apache.tomcat.util.buf.ByteChunk;
 
 import javax.servlet.http.Cookie;
-
-import org.apache.tomcat.util.buf.ByteChunk;
+import java.util.*;
 
 
 /**

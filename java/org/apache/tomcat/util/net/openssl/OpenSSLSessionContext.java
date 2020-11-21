@@ -16,15 +16,14 @@
  */
 package org.apache.tomcat.util.net.openssl;
 
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
-
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSessionContext;
-
 import org.apache.tomcat.jni.SSL;
 import org.apache.tomcat.jni.SSLContext;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSessionContext;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 /**
  * OpenSSL specific {@link SSLSessionContext} implementation.

@@ -16,14 +16,6 @@
  */
 package org.apache.jasper.servlet;
 
-import java.io.IOException;
-import java.util.Set;
-
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspFactory;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.compiler.TldCache;
@@ -34,6 +26,13 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletContainerInitializer;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspFactory;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Initializer for the Jasper JSP Engine.

@@ -16,9 +16,8 @@
  */
 package org.apache.naming;
 
-import java.util.Vector;
-
 import javax.naming.StringRefAddr;
+import java.util.Vector;
 
 /**
  * Represents a reference web service.

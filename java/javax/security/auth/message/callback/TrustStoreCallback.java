@@ -16,9 +16,8 @@
  */
 package javax.security.auth.message.callback;
 
-import java.security.KeyStore;
-
 import javax.security.auth.callback.Callback;
+import java.security.KeyStore;
 
 /**
  * A Callback enabling an authentication module to request a truststore from the

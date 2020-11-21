@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.threads;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * As task queue specifically designed to run with a thread pool executor. The

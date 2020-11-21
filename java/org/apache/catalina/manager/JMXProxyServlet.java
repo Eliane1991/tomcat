@@ -16,29 +16,19 @@
  */
 package org.apache.catalina.manager;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Set;
+import org.apache.catalina.mbeans.MBeanDumper;
+import org.apache.tomcat.util.modeler.Registry;
+import org.apache.tomcat.util.res.StringManager;
 
-import javax.management.Attribute;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.OperationsException;
-import javax.management.ReflectionException;
+import javax.management.*;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.mbeans.MBeanDumper;
-import org.apache.tomcat.util.modeler.Registry;
-import org.apache.tomcat.util.res.StringManager;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Set;
 
 /**
  * This servlet will dump JMX attributes in a simple format and implement proxy

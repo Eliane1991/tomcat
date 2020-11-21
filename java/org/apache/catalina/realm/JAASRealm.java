@@ -16,6 +16,16 @@
  */
 package org.apache.catalina.realm;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.LifecycleException;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.*;
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -24,22 +34,6 @@ import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.LifecycleException;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * <p>Implementation of <b>Realm</b> that authenticates users via the <em>Java

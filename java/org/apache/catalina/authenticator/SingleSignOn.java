@@ -16,27 +16,19 @@
  */
 package org.apache.catalina.authenticator;
 
+import org.apache.catalina.*;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.valves.ValveBase;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
-import org.apache.catalina.SessionListener;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
-import org.apache.catalina.valves.ValveBase;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * A <strong>Valve</strong> that supports a "single sign on" user experience,

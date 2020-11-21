@@ -16,25 +16,16 @@
  */
 package org.apache.catalina.session;
 
+import org.apache.catalina.*;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleState;
-import org.apache.catalina.Session;
-import org.apache.catalina.Store;
-import org.apache.catalina.StoreManager;
-import org.apache.catalina.security.SecurityUtil;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
+import java.util.*;
 /**
  * Extends the {@link ManagerBase} class to implement most of the
  * functionality required by a Manager which supports any kind of

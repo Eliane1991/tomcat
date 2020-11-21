@@ -16,11 +16,11 @@
  */
 package org.apache.catalina.webresources;
 
-import java.util.jar.JarEntry;
-import java.util.jar.Manifest;
-
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
+
+import java.util.jar.JarEntry;
+import java.util.jar.Manifest;
 
 /**
  * Represents a {@link org.apache.catalina.WebResourceSet} based on a JAR file.

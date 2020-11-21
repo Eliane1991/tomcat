@@ -16,29 +16,23 @@
  */
 package org.apache.catalina.realm;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.TextInputCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.catalina.CredentialHandler;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.digester.Digester;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.*;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * <p>Implementation of the JAAS <strong>LoginModule</strong> interface,

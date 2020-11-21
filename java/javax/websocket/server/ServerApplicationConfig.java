@@ -16,9 +16,8 @@
  */
 package javax.websocket.server;
 
-import java.util.Set;
-
 import javax.websocket.Endpoint;
+import java.util.Set;
 
 /**
  * Applications may provide an implementation of this interface to filter the

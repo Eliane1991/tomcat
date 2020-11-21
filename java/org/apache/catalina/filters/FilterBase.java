@@ -16,15 +16,14 @@
  */
 package org.apache.catalina.filters;
 
-import java.util.Enumeration;
+import org.apache.juli.logging.Log;
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-
-import org.apache.juli.logging.Log;
-import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.res.StringManager;
+import java.util.Enumeration;
 
 /**
  * Base class for filters that provides generic initialisation and a simple

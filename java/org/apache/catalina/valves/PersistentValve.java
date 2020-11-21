@@ -16,24 +16,15 @@
  */
 package org.apache.catalina.valves;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import org.apache.catalina.*;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
-import org.apache.catalina.Host;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Session;
-import org.apache.catalina.Store;
-import org.apache.catalina.StoreManager;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
+import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Valve that implements per-request session persistence. It is intended to be

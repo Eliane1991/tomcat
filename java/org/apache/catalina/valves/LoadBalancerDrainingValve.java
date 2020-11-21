@@ -16,15 +16,14 @@
  */
 package org.apache.catalina.valves;
 
-import java.io.IOException;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.util.SessionConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
-import org.apache.catalina.util.SessionConfig;
+import java.io.IOException;
 
 /**
  * <p>A Valve to detect situations where a load-balanced node receiving a

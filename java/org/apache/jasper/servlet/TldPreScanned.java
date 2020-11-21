@@ -16,12 +16,11 @@
  */
 package org.apache.jasper.servlet;
 
-import java.net.URL;
-import java.util.Collection;
+import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 
 import javax.servlet.ServletContext;
-
-import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
+import java.net.URL;
+import java.util.Collection;
 
 public class TldPreScanned extends TldScanner {
 

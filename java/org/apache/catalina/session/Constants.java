@@ -16,12 +16,12 @@
  */
 package org.apache.catalina.session;
 
+import org.apache.catalina.Globals;
+import org.apache.catalina.valves.CrawlerSessionManagerValve;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.catalina.Globals;
-import org.apache.catalina.valves.CrawlerSessionManagerValve;
 
 /**
  * Manifest constants for the <code>org.apache.catalina.session</code>

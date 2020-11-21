@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
+import org.apache.tomcat.dbcp.dbcp2.PoolingConnection.StatementType;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-
-import org.apache.tomcat.dbcp.dbcp2.PoolingConnection.StatementType;
 
 /**
  * A key uniquely identifying {@link java.sql.PreparedStatement PreparedStatement}s.

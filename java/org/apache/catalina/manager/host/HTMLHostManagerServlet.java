@@ -18,6 +18,15 @@
 
 package org.apache.catalina.manager.host;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.Host;
+import org.apache.catalina.util.ServerInfo;
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.util.security.Escape;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,16 +35,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Host;
-import org.apache.catalina.util.ServerInfo;
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.util.security.Escape;
 
 /**
 * Servlet that enables remote management of the virtual hosts deployed

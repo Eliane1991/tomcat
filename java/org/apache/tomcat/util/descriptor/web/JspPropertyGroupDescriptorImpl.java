@@ -16,10 +16,9 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 
 
 

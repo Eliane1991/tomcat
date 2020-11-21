@@ -16,27 +16,13 @@
  */
 package org.apache.tomcat.util.http.fileupload.disk;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import org.apache.tomcat.util.http.fileupload.*;
+import org.apache.tomcat.util.http.fileupload.util.Streams;
+
+import java.io.*;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.tomcat.util.http.fileupload.DeferredFileOutputStream;
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.FileItemHeaders;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.apache.tomcat.util.http.fileupload.ParameterParser;
-import org.apache.tomcat.util.http.fileupload.util.Streams;
 
 /**
  * <p> The default implementation of the

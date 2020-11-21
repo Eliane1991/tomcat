@@ -17,14 +17,14 @@
 
 package org.apache.coyote.ajp;
 
-import java.nio.ByteBuffer;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.nio.ByteBuffer;
 
 /**
  * A single packet for communication between the web server and the

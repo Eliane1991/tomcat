@@ -16,22 +16,17 @@
  */
 package org.apache.catalina.tribes.group;
 
+import org.apache.catalina.tribes.*;
+import org.apache.catalina.tribes.util.StringManager;
+import org.apache.catalina.tribes.util.UUIDGenerator;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelListener;
-import org.apache.catalina.tribes.ErrorHandler;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.UniqueId;
-import org.apache.catalina.tribes.util.StringManager;
-import org.apache.catalina.tribes.util.UUIDGenerator;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * A channel to handle RPC messaging

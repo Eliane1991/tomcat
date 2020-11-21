@@ -16,18 +16,18 @@
  */
 package org.apache.catalina.util;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
+import org.apache.juli.logging.Log;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.res.StringManager;
+
 import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
-import org.apache.juli.logging.Log;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Provides introspection utilities that either require knowledge of Tomcat

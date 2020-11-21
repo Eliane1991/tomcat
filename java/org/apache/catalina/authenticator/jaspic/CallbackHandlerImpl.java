@@ -16,11 +16,12 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.apache.catalina.Contained;
+import org.apache.catalina.Container;
+import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -29,13 +30,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.security.auth.message.callback.PasswordValidationCallback;
-
-import org.apache.catalina.Contained;
-import org.apache.catalina.Container;
-import org.apache.catalina.realm.GenericPrincipal;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Default implementation of a JASPIC CallbackHandler.

@@ -16,10 +16,10 @@
  */
 package org.apache.naming.factory;
 
+import org.apache.naming.ResourceEnvRef;
+
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.naming.ResourceEnvRef;
 
 /**
  * Object factory for Resources env.

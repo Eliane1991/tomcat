@@ -17,13 +17,13 @@
 
 package org.apache.catalina.ha;
 
-import java.util.Map;
-
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
+
+import java.util.Map;
 
 
 /**

@@ -16,6 +16,12 @@
  */
 package org.apache.tomcat.util.compat;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,13 +29,6 @@ import java.net.URI;
 import java.security.KeyStore.LoadStoreParameter;
 import java.util.Collections;
 import java.util.Map;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.res.StringManager;
 
 class Jre8Compat extends JreCompat {
 

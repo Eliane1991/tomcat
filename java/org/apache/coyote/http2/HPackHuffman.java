@@ -16,12 +16,12 @@
  */
 package org.apache.coyote.http2;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.tomcat.util.res.StringManager;
 
 public class HPackHuffman {
 

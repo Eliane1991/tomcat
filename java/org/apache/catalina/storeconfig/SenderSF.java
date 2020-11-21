@@ -17,10 +17,10 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
+
+import java.io.PrintWriter;
 
 /**
  * Generate Sender Element

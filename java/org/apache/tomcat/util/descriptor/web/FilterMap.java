@@ -16,13 +16,12 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import org.apache.tomcat.util.buf.UDecoder;
+
+import javax.servlet.DispatcherType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import javax.servlet.DispatcherType;
-
-import org.apache.tomcat.util.buf.UDecoder;
 
 /**
  * Representation of a filter mapping for a web application, as represented

@@ -16,14 +16,10 @@
  */
 package org.apache.catalina.mbeans;
 
-import javax.management.Attribute;
-import javax.management.AttributeNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
-import javax.management.RuntimeOperationsException;
-
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.IntrospectionUtils;
+
+import javax.management.*;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the

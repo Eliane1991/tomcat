@@ -17,9 +17,8 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
-import java.sql.SQLException;
-
 import javax.sql.PooledConnection;
+import java.sql.SQLException;
 
 /**
  * Methods to manage PoolableConnections and the connection pools that source them.

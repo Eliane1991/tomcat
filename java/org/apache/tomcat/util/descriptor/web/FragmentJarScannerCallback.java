@@ -16,6 +16,10 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.JarScannerCallback;
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,10 +27,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.JarScannerCallback;
-import org.xml.sax.InputSource;
 
 /**
 * Callback handling a web-fragment.xml descriptor.

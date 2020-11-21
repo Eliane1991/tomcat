@@ -17,22 +17,15 @@
 
 package org.apache.tomcat.buildutil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Ant task to convert a given set of files from Text to HTML.

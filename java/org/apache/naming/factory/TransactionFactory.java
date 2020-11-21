@@ -16,10 +16,10 @@
  */
 package org.apache.naming.factory;
 
+import org.apache.naming.TransactionRef;
+
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.naming.TransactionRef;
 
 /**
  * Object factory for User transactions.

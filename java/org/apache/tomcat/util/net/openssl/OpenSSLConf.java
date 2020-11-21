@@ -16,14 +16,14 @@
  */
 package org.apache.tomcat.util.net.openssl;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.jni.SSLConf;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpenSSLConf implements Serializable {
 

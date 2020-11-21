@@ -17,12 +17,12 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+
+import java.io.PrintWriter;
 
 public interface IStoreConfig {
 

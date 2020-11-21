@@ -16,10 +16,6 @@
  */
 package org.apache.catalina.ha.session;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.apache.catalina.Cluster;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
@@ -35,6 +31,9 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * Valve to handle Tomcat jvmRoute takeover using mod_jk module after node

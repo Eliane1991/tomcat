@@ -16,12 +16,11 @@
  */
 package org.apache.tomcat.util.modeler.modules;
 
-import java.util.List;
-
-import javax.management.ObjectName;
-
 import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.ObjectName;
+import java.util.List;
 
 /**
  * Source for descriptor data. More sources can be added.

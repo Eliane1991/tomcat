@@ -16,10 +16,10 @@
  */
 package org.apache.coyote;
 
-import java.io.IOException;
-
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.net.ApplicationBufferHandler;
+
+import java.io.IOException;
 
 /**
  * This class is only for internal use in the protocol implementation. All

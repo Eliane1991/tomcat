@@ -18,25 +18,14 @@
 package org.apache.catalina.mbeans;
 
 
-import java.util.Iterator;
-
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-
-import org.apache.catalina.Group;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Role;
-import org.apache.catalina.User;
-import org.apache.catalina.UserDatabase;
+import org.apache.catalina.*;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.modeler.Registry;
+
+import javax.naming.Context;
+import javax.naming.*;
+import java.util.Iterator;
 
 
 /**

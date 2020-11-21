@@ -16,12 +16,11 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import javax.servlet.descriptor.TaglibDescriptor;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class JspConfigDescriptorImpl implements JspConfigDescriptor {
 

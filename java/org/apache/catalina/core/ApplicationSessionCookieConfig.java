@@ -17,13 +17,13 @@
 
 package org.apache.catalina.core;
 
-import javax.servlet.SessionCookieConfig;
-import javax.servlet.http.Cookie;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.util.SessionConfig;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.http.Cookie;
 
 public class ApplicationSessionCookieConfig implements SessionCookieConfig {
 

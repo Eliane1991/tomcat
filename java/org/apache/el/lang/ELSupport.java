@@ -16,6 +16,10 @@
  */
 package org.apache.el.lang;
 
+import org.apache.el.util.MessageFactory;
+
+import javax.el.ELContext;
+import javax.el.ELException;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
@@ -26,11 +30,6 @@ import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import javax.el.ELContext;
-import javax.el.ELException;
-
-import org.apache.el.util.MessageFactory;
 
 
 /**

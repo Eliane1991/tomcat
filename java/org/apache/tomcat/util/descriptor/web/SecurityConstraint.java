@@ -16,25 +16,17 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.juli.logging.Log;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.servlet.HttpConstraintElement;
 import javax.servlet.HttpMethodConstraintElement;
 import javax.servlet.ServletSecurityElement;
 import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
-
-import org.apache.juli.logging.Log;
-import org.apache.tomcat.util.res.StringManager;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.*;
 
 
 /**

@@ -16,6 +16,12 @@
  */
 package org.apache.tomcat.util.modeler;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.modeler.modules.ModelerSource;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,22 +30,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-
-import javax.management.DynamicMBean;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanRegistration;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.modeler.modules.ModelerSource;
-import org.apache.tomcat.util.res.StringManager;
 
 /*
    Issues:

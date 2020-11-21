@@ -16,28 +16,16 @@
  */
 package org.apache.catalina.mbeans;
 
-import java.util.Set;
-
-import javax.management.DynamicMBean;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Group;
-import org.apache.catalina.Loader;
-import org.apache.catalina.Role;
-import org.apache.catalina.Server;
-import org.apache.catalina.User;
-import org.apache.catalina.UserDatabase;
+import org.apache.catalina.*;
 import org.apache.catalina.util.ContextName;
 import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
 import org.apache.tomcat.util.modeler.ManagedBean;
 import org.apache.tomcat.util.modeler.Registry;
+
+import javax.management.*;
+import java.util.Set;
 
 
 /**

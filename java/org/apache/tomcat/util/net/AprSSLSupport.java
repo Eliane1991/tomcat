@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.net;
 
+import org.apache.tomcat.jni.SSL;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
-import org.apache.tomcat.jni.SSL;
 
 /**
  * Implementation of SSLSupport for APR.

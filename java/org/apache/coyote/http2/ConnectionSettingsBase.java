@@ -16,12 +16,12 @@
  */
 package org.apache.coyote.http2;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ConnectionSettingsBase<T extends Throwable> {
 

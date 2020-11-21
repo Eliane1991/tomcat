@@ -16,15 +16,14 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
+import org.apache.tomcat.websocket.WsSession;
 
 import javax.websocket.DecodeException;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-
-import org.apache.tomcat.websocket.WsSession;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 
 /**
  * Common implementation code for the POJO partial message handlers. All

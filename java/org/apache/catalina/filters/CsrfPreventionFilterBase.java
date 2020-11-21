@@ -16,16 +16,15 @@
  */
 package org.apache.catalina.filters;
 
-import java.security.SecureRandom;
-import java.util.Random;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
+import java.security.SecureRandom;
+import java.util.Random;
 
 public abstract class CsrfPreventionFilterBase extends FilterBase {
 

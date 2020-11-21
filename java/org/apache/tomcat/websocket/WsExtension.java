@@ -16,10 +16,9 @@
  */
 package org.apache.tomcat.websocket;
 
+import javax.websocket.Extension;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.websocket.Extension;
 
 public class WsExtension implements Extension {
 

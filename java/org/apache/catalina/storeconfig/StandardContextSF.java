@@ -17,25 +17,7 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Loader;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Valve;
-import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.*;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.ThreadLocalLeakPreventionListener;
 import org.apache.catalina.deploy.NamingResourcesImpl;
@@ -45,6 +27,11 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
 import org.apache.tomcat.util.http.CookieProcessor;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Store server.xml Context element with all children

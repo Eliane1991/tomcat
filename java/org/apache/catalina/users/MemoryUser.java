@@ -19,15 +19,15 @@
 package org.apache.catalina.users;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.UserDatabase;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.apache.tomcat.util.buf.StringUtils.Function;
 import org.apache.tomcat.util.security.Escape;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <p>Concrete implementation of {@link org.apache.catalina.User} for the

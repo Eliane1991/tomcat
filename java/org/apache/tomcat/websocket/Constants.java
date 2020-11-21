@@ -16,11 +16,10 @@
  */
 package org.apache.tomcat.websocket;
 
+import javax.websocket.Extension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.websocket.Extension;
 
 /**
  * Internal implementation constants.

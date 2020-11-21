@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import org.apache.tomcat.util.buf.UDecoder;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import org.apache.tomcat.util.buf.UDecoder;
 
 
 /**

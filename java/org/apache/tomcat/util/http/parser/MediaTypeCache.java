@@ -16,10 +16,10 @@
  */
 package org.apache.tomcat.util.http.parser;
 
+import org.apache.tomcat.util.collections.ConcurrentCache;
+
 import java.io.IOException;
 import java.io.StringReader;
-
-import org.apache.tomcat.util.collections.ConcurrentCache;
 
 /**
  * Caches the results of parsing content-type headers.

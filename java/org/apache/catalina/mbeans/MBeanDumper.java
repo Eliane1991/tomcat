@@ -16,18 +16,13 @@
  */
 package org.apache.catalina.mbeans;
 
-import java.lang.reflect.Array;
-import java.util.Set;
-
-import javax.management.JMRuntimeException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.management.*;
+import java.lang.reflect.Array;
+import java.util.Set;
 
 /**
  * General helper to dump MBean contents to the log.

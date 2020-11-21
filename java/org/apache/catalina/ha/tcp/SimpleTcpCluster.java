@@ -17,32 +17,8 @@
 
 package org.apache.catalina.ha.tcp;
 
-import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.management.ObjectName;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleState;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Valve;
-import org.apache.catalina.ha.CatalinaCluster;
-import org.apache.catalina.ha.ClusterDeployer;
-import org.apache.catalina.ha.ClusterListener;
-import org.apache.catalina.ha.ClusterManager;
-import org.apache.catalina.ha.ClusterMessage;
-import org.apache.catalina.ha.ClusterValve;
+import org.apache.catalina.*;
+import org.apache.catalina.ha.*;
 import org.apache.catalina.ha.session.ClusterSessionListener;
 import org.apache.catalina.ha.session.DeltaManager;
 import org.apache.catalina.ha.session.JvmRouteBinderValve;
@@ -58,6 +34,12 @@ import org.apache.catalina.util.LifecycleMBeanBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.ObjectName;
+import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A <b>Cluster </b> implementation using simple multicast. Responsible for

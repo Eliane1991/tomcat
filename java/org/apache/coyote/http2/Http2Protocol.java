@@ -16,28 +16,7 @@
  */
 package org.apache.coyote.http2;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-
-import javax.management.ObjectName;
-
-import org.apache.coyote.Adapter;
-import org.apache.coyote.CompressionConfig;
-import org.apache.coyote.ContinueResponseTiming;
-import org.apache.coyote.Processor;
-import org.apache.coyote.Request;
-import org.apache.coyote.RequestGroupInfo;
-import org.apache.coyote.Response;
-import org.apache.coyote.UpgradeProtocol;
-import org.apache.coyote.UpgradeToken;
+import org.apache.coyote.*;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.coyote.http11.upgrade.InternalHttpUpgradeHandler;
 import org.apache.coyote.http11.upgrade.UpgradeProcessorInternal;
@@ -47,6 +26,12 @@ import org.apache.tomcat.util.buf.StringUtils;
 import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.ObjectName;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public class Http2Protocol implements UpgradeProtocol {
 

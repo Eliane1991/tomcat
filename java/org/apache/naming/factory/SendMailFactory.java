@@ -17,12 +17,6 @@
 
 package org.apache.naming.factory;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
-
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -32,6 +26,11 @@ import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * Factory class that creates a JNDI named javamail MimePartDataSource

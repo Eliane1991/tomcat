@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.ssi;
 
+import org.apache.tomcat.util.http.RequestUtil;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.tomcat.util.http.RequestUtil;
 
 public class SSIServletRequestUtil {
     /**

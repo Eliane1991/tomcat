@@ -17,16 +17,16 @@
 
 package org.apache.catalina.tribes.membership;
 
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.transport.SenderState;
+import org.apache.catalina.tribes.util.StringManager;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.transport.SenderState;
-import org.apache.catalina.tribes.util.StringManager;
 
 /**
  * A <b>membership</b> implementation using simple multicast.

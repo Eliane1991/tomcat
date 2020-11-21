@@ -16,9 +16,8 @@
  */
 package javax.servlet.http;
 
-import java.util.Enumeration;
-
 import javax.servlet.ServletContext;
+import java.util.Enumeration;
 
 /**
  * Provides a way to identify a user across more than one page request or visit

@@ -16,9 +16,9 @@
  */
 package org.apache.catalina;
 
-import java.security.Principal;
-
 import org.ietf.jgss.GSSCredential;
+
+import java.security.Principal;
 
 /**
  * Defines additional methods implemented by {@link Principal}s created by

@@ -17,22 +17,17 @@
 package org.apache.catalina.valves;
 
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-
 import org.apache.catalina.AccessLog;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.tomcat.util.ExceptionUtils;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.sql.*;
+import java.util.Properties;
 
 /**
  * <p>

@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.Serializable;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Session;
+
+import java.io.Serializable;
 
 /**
  * Key used by SSO to identify a session. This key is used rather than the

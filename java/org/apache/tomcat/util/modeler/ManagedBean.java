@@ -19,27 +19,15 @@
 package org.apache.tomcat.util.modeler;
 
 
+import org.apache.tomcat.util.buf.StringUtils;
+import org.apache.tomcat.util.buf.StringUtils.Function;
+
+import javax.management.*;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.ReflectionException;
-import javax.management.RuntimeOperationsException;
-import javax.management.ServiceNotFoundException;
-
-import org.apache.tomcat.util.buf.StringUtils;
-import org.apache.tomcat.util.buf.StringUtils.Function;
 
 
 /**

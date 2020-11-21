@@ -16,6 +16,21 @@
  */
 package org.apache.tomcat.util.net;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.jni.Error;
+import org.apache.tomcat.jni.SSLContext;
+import org.apache.tomcat.jni.*;
+import org.apache.tomcat.jni.SSLContext.SNICallBack;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.buf.ByteBufferUtils;
+import org.apache.tomcat.util.collections.SynchronizedStack;
+import org.apache.tomcat.util.net.AbstractEndpoint.Acceptor.AcceptorState;
+import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
+import org.apache.tomcat.util.net.openssl.OpenSSLContext;
+import org.apache.tomcat.util.net.openssl.OpenSSLUtil;
+
+import javax.net.ssl.KeyManager;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -35,32 +50,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
-
-import javax.net.ssl.KeyManager;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.jni.Address;
-import org.apache.tomcat.jni.Error;
-import org.apache.tomcat.jni.File;
-import org.apache.tomcat.jni.Library;
-import org.apache.tomcat.jni.OS;
-import org.apache.tomcat.jni.Poll;
-import org.apache.tomcat.jni.Pool;
-import org.apache.tomcat.jni.SSL;
-import org.apache.tomcat.jni.SSLContext;
-import org.apache.tomcat.jni.SSLContext.SNICallBack;
-import org.apache.tomcat.jni.SSLSocket;
-import org.apache.tomcat.jni.Sockaddr;
-import org.apache.tomcat.jni.Socket;
-import org.apache.tomcat.jni.Status;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.buf.ByteBufferUtils;
-import org.apache.tomcat.util.collections.SynchronizedStack;
-import org.apache.tomcat.util.net.AbstractEndpoint.Acceptor.AcceptorState;
-import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
-import org.apache.tomcat.util.net.openssl.OpenSSLContext;
-import org.apache.tomcat.util.net.openssl.OpenSSLUtil;
+import java.lang.Thread;
 
 
 /**

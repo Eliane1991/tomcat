@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.storeconfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * store StandardContext Attributes ...

@@ -16,9 +16,8 @@
  */
 package org.apache.tomcat.websocket;
 
-import java.io.IOException;
-
 import javax.websocket.CloseReason;
+import java.io.IOException;
 
 /**
  * Allows the WebSocket implementation to throw an {@link IOException} that

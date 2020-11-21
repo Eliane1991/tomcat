@@ -16,6 +16,13 @@
  */
 package org.apache.catalina.connector;
 
+import org.apache.catalina.Globals;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.AccessController;
@@ -24,14 +31,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
 import java.util.Locale;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Globals;
-import org.apache.catalina.security.SecurityUtil;
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Facade class that wraps a Coyote response object.

@@ -16,20 +16,19 @@
  */
 package org.apache.catalina.valves;
 
+import org.apache.catalina.Globals;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
+import javax.servlet.ServletException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
-import javax.servlet.ServletException;
-
-import org.apache.catalina.Globals;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /**
  * When using mod_proxy_http, the client SSL information is not included in the

@@ -16,6 +16,11 @@
  */
 package org.apache.tomcat.util.descriptor;
 
+import org.apache.tomcat.util.res.StringManager;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.EntityResolver2;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,11 +28,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
-
-import org.apache.tomcat.util.res.StringManager;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.EntityResolver2;
 
 /**
  * A resolver for locally cached XML resources.

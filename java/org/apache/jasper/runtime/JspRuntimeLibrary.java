@@ -16,13 +16,11 @@
  */
 package org.apache.jasper.runtime;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.compiler.Localizer;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.InstanceManager;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -35,12 +33,13 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.Tag;
-
-import org.apache.jasper.JasperException;
-import org.apache.jasper.compiler.Localizer;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.InstanceManager;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
 
 /**
  * Bunch of util methods that are used by code generated for useBean,

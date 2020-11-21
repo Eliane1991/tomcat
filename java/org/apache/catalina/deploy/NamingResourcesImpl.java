@@ -16,27 +16,7 @@
  */
 package org.apache.catalina.deploy;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.JmxEnabled;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleState;
-import org.apache.catalina.Server;
+import org.apache.catalina.*;
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.util.Introspection;
 import org.apache.catalina.util.LifecycleMBeanBase;
@@ -44,19 +24,17 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.naming.ContextBindings;
 import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.descriptor.web.ContextEjb;
-import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
-import org.apache.tomcat.util.descriptor.web.ContextLocalEjb;
-import org.apache.tomcat.util.descriptor.web.ContextResource;
-import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
-import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
-import org.apache.tomcat.util.descriptor.web.ContextService;
-import org.apache.tomcat.util.descriptor.web.ContextTransaction;
-import org.apache.tomcat.util.descriptor.web.InjectionTarget;
-import org.apache.tomcat.util.descriptor.web.MessageDestinationRef;
-import org.apache.tomcat.util.descriptor.web.NamingResources;
-import org.apache.tomcat.util.descriptor.web.ResourceBase;
+import org.apache.tomcat.util.descriptor.web.*;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.naming.NamingException;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 
 /**

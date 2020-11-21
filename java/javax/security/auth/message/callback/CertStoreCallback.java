@@ -16,9 +16,8 @@
  */
 package javax.security.auth.message.callback;
 
-import java.security.cert.CertStore;
-
 import javax.security.auth.callback.Callback;
+import java.security.cert.CertStore;
 
 /**
  * Callback that enables a runtime to inform authentication modules of the

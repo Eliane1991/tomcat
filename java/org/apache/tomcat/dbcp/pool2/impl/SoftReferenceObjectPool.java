@@ -16,16 +16,16 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
+import org.apache.tomcat.dbcp.pool2.BaseObjectPool;
+import org.apache.tomcat.dbcp.pool2.PoolUtils;
+import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
+
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.apache.tomcat.dbcp.pool2.BaseObjectPool;
-import org.apache.tomcat.dbcp.pool2.PoolUtils;
-import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
 
 /**
  * A {@link java.lang.ref.SoftReference SoftReference} based

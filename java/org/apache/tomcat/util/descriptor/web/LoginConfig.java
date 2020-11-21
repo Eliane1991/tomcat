@@ -16,9 +16,9 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
-import java.io.Serializable;
-
 import org.apache.tomcat.util.buf.UDecoder;
+
+import java.io.Serializable;
 
 /**
  * Representation of a login configuration element for a web application,

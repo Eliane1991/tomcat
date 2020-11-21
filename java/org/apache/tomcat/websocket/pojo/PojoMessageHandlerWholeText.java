@@ -16,11 +16,8 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.websocket.Util;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
@@ -28,9 +25,11 @@ import javax.websocket.Decoder.Text;
 import javax.websocket.Decoder.TextStream;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
-
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.websocket.Util;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

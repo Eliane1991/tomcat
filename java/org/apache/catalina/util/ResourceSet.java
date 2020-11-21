@@ -19,10 +19,10 @@
 package org.apache.catalina.util;
 
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.util.Collection;
 import java.util.HashSet;
-
-import org.apache.tomcat.util.res.StringManager;
 
 
 /**

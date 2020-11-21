@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.http.parser;
 
+import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.tomcat.util.buf.MessageBytes;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
-import org.apache.tomcat.util.buf.ByteChunk;
-import org.apache.tomcat.util.buf.MessageBytes;
 
 public class Host {
 

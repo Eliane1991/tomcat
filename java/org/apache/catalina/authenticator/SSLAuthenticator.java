@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.security.cert.X509Certificate;
+import org.apache.catalina.connector.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.connector.Request;
+import java.io.IOException;
+import java.security.Principal;
+import java.security.cert.X509Certificate;
 
 /**
  * An <b>Authenticator</b> and <b>Valve</b> implementation of authentication

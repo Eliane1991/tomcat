@@ -16,16 +16,10 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.apache.tomcat.dbcp.pool2.*;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,12 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
-import org.apache.tomcat.dbcp.pool2.KeyedPooledObjectFactory;
-import org.apache.tomcat.dbcp.pool2.PoolUtils;
-import org.apache.tomcat.dbcp.pool2.PooledObject;
-import org.apache.tomcat.dbcp.pool2.PooledObjectState;
 
 /**
  * A configurable {@code KeyedObjectPool} implementation.

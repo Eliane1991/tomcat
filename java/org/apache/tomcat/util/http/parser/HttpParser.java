@@ -16,12 +16,12 @@
  */
 package org.apache.tomcat.util.http.parser;
 
-import java.io.IOException;
-import java.io.Reader;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * HTTP header value parser implementation. Parsing HTTP headers as per RFC2616

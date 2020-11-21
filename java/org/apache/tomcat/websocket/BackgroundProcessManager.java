@@ -16,13 +16,13 @@
  */
 package org.apache.tomcat.websocket;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Provides a background processing mechanism that triggers roughly once a

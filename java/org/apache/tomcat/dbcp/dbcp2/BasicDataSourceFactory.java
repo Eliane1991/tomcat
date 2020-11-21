@@ -17,30 +17,20 @@
 
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
+import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
 
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.dbcp.pool2.impl.BaseObjectPoolConfig;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.util.*;
 
 /**
  * <p>

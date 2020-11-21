@@ -17,19 +17,18 @@
 
 package org.apache.tomcat.dbcp.dbcp2.datasources;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
+import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPool;
+import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 import javax.sql.ConnectionPoolDataSource;
-
-import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * <p>

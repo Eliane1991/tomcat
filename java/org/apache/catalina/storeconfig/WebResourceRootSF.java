@@ -17,10 +17,10 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
+
+import java.io.PrintWriter;
 
 /**
  * Generate Resources element

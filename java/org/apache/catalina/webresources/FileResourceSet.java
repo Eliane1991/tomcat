@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.webresources;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Set;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.util.ResourceSet;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * Represents a {@link org.apache.catalina.WebResourceSet} based on a single

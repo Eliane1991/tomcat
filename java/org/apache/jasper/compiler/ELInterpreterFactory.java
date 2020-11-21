@@ -16,9 +16,9 @@
  */
 package org.apache.jasper.compiler;
 
-import javax.servlet.ServletContext;
-
 import org.apache.jasper.JspCompilationContext;
+
+import javax.servlet.ServletContext;
 
 /**
  * Provides {@link ELInterpreter} instances for JSP compilation.

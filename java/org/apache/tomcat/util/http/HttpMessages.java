@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.util.http;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Handle (internationalized) HTTP messages.

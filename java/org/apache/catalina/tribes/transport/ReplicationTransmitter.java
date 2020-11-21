@@ -16,15 +16,11 @@
  */
 package org.apache.catalina.tribes.transport;
 
-import javax.management.ObjectName;
-
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.ChannelSender;
-import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.*;
 import org.apache.catalina.tribes.jmx.JmxRegistry;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
+
+import javax.management.ObjectName;
 
 /**
  * Transmit message to other cluster members

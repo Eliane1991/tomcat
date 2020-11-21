@@ -17,14 +17,14 @@
 
 package org.apache.catalina.ha.session;
 
-import java.util.Map;
-
 import org.apache.catalina.ha.ClusterListener;
 import org.apache.catalina.ha.ClusterManager;
 import org.apache.catalina.ha.ClusterMessage;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.util.Map;
 
 /**
  * Receive replicated SessionMessage form other cluster node.

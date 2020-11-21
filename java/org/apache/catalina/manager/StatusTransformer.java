@@ -18,27 +18,20 @@
 
 package org.apache.catalina.manager;
 
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.security.Escape;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.security.Escape;
+import java.util.*;
 
 /**
  * This is a refactoring of the servlet to externalize

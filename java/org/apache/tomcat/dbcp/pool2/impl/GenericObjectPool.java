@@ -16,21 +16,12 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import org.apache.tomcat.dbcp.pool2.*;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.tomcat.dbcp.pool2.ObjectPool;
-import org.apache.tomcat.dbcp.pool2.PoolUtils;
-import org.apache.tomcat.dbcp.pool2.PooledObject;
-import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
-import org.apache.tomcat.dbcp.pool2.PooledObjectState;
-import org.apache.tomcat.dbcp.pool2.UsageTracking;
 
 /**
  * A configurable {@link ObjectPool} implementation.

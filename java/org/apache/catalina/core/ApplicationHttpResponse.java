@@ -16,12 +16,11 @@
  */
 package org.apache.catalina.core;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.util.Locale;
 
 
 /**

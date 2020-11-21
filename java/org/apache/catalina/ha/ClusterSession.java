@@ -18,9 +18,9 @@
 
 package org.apache.catalina.ha;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.catalina.Session;
+
+import javax.servlet.http.HttpSession;
 
 public interface ClusterSession extends Session, HttpSession {
    /**

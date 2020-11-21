@@ -16,29 +16,14 @@
  */
 package org.apache.tomcat.dbcp.dbcp2;
 
+import javax.sql.CommonDataSource;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Date;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.concurrent.Executor;
 import java.util.logging.Logger;
-
-import javax.sql.CommonDataSource;
 
 /**
  * Defines bridge methods to JDBC 4.1 (Java 7) methods to allow call sites to operate safely (without

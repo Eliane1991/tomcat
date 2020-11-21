@@ -16,17 +16,16 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.ByteArrayInputStream;
-import java.io.CharArrayWriter;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.jsp.tagext.PageData;
-
 import org.apache.jasper.JasperException;
 import org.apache.tomcat.util.security.Escape;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
+import javax.servlet.jsp.tagext.PageData;
+import java.io.ByteArrayInputStream;
+import java.io.CharArrayWriter;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * An implementation of <code>javax.servlet.jsp.tagext.PageData</code> which

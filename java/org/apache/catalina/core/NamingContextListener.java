@@ -19,16 +19,16 @@
 package org.apache.catalina.core;
 
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import org.apache.catalina.*;
+import org.apache.catalina.deploy.NamingResourcesImpl;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.naming.*;
+import org.apache.naming.factory.Constants;
+import org.apache.naming.factory.ResourceLinkFactory;
+import org.apache.tomcat.util.descriptor.web.*;
+import org.apache.tomcat.util.modeler.Registry;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -36,45 +36,12 @@ import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-
-import org.apache.catalina.ContainerEvent;
-import org.apache.catalina.ContainerListener;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Server;
-import org.apache.catalina.deploy.NamingResourcesImpl;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.naming.ContextAccessController;
-import org.apache.naming.ContextBindings;
-import org.apache.naming.EjbRef;
-import org.apache.naming.HandlerRef;
-import org.apache.naming.LookupRef;
-import org.apache.naming.NamingContext;
-import org.apache.naming.ResourceEnvRef;
-import org.apache.naming.ResourceLinkRef;
-import org.apache.naming.ResourceRef;
-import org.apache.naming.ServiceRef;
-import org.apache.naming.TransactionRef;
-import org.apache.naming.factory.Constants;
-import org.apache.naming.factory.ResourceLinkFactory;
-import org.apache.tomcat.util.descriptor.web.ContextEjb;
-import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
-import org.apache.tomcat.util.descriptor.web.ContextHandler;
-import org.apache.tomcat.util.descriptor.web.ContextLocalEjb;
-import org.apache.tomcat.util.descriptor.web.ContextResource;
-import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
-import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
-import org.apache.tomcat.util.descriptor.web.ContextService;
-import org.apache.tomcat.util.descriptor.web.ContextTransaction;
-import org.apache.tomcat.util.descriptor.web.MessageDestinationRef;
-import org.apache.tomcat.util.descriptor.web.ResourceBase;
-import org.apache.tomcat.util.modeler.Registry;
-import org.apache.tomcat.util.res.StringManager;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 
 /**

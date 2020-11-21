@@ -16,6 +16,12 @@
  */
 package org.apache.jasper.compiler;
 
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.tomcat.Jar;
+import org.apache.tomcat.util.descriptor.tld.*;
+
+import javax.servlet.jsp.tagext.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,33 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.jsp.tagext.FunctionInfo;
-import javax.servlet.jsp.tagext.PageData;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagFileInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagLibraryValidator;
-import javax.servlet.jsp.tagext.TagVariableInfo;
-import javax.servlet.jsp.tagext.ValidationMessage;
-
-import org.apache.jasper.JasperException;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.tomcat.Jar;
-import org.apache.tomcat.util.descriptor.tld.TagFileXml;
-import org.apache.tomcat.util.descriptor.tld.TagXml;
-import org.apache.tomcat.util.descriptor.tld.TaglibXml;
-import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
-import org.apache.tomcat.util.descriptor.tld.ValidatorXml;
+import java.util.*;
 
 /**
  * Implementation of the TagLibraryInfo class from the JSP spec.

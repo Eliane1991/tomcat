@@ -16,26 +16,6 @@
  */
 package org.apache.jasper.servlet;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-import javax.servlet.descriptor.JspConfigDescriptor;
-import javax.servlet.descriptor.TaglibDescriptor;
-
 import org.apache.jasper.compiler.JarScannerFactory;
 import org.apache.jasper.compiler.Localizer;
 import org.apache.juli.logging.Log;
@@ -48,6 +28,19 @@ import org.apache.tomcat.util.descriptor.tld.TaglibXml;
 import org.apache.tomcat.util.descriptor.tld.TldParser;
 import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletContext;
+import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.descriptor.TaglibDescriptor;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 /**
  * Scans for and loads Tag Library Descriptors contained in a web application.

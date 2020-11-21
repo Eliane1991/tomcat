@@ -17,27 +17,20 @@
 
 package org.apache.jasper.compiler;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Vector;
-
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagFileInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
-import javax.servlet.jsp.tagext.VariableInfo;
-
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.runtime.JspSourceDependent;
 import org.apache.jasper.servlet.JspServletWrapper;
 import org.apache.tomcat.Jar;
 import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
+
+import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.servlet.jsp.tagext.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Vector;
 
 /**
  * 1. Processes and extracts the directive info in a tag file. 2. Compiles and

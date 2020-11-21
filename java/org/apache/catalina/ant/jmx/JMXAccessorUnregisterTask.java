@@ -16,10 +16,10 @@
  */
 package org.apache.catalina.ant.jmx;
 
+import org.apache.tools.ant.BuildException;
+
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-
-import org.apache.tools.ant.BuildException;
 
 /**
  * unregister an MBean at <em>JMX</em> JSR 160 MBeans Server.

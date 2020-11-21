@@ -17,15 +17,6 @@
 
 package org.apache.tomcat.dbcp.dbcp2;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.management.ObjectName;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.dbcp.pool2.KeyedObjectPool;
@@ -35,6 +26,14 @@ import org.apache.tomcat.dbcp.pool2.PooledObjectFactory;
 import org.apache.tomcat.dbcp.pool2.impl.DefaultPooledObject;
 import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPool;
 import org.apache.tomcat.dbcp.pool2.impl.GenericKeyedObjectPoolConfig;
+
+import javax.management.ObjectName;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A {@link PooledObjectFactory} that creates {@link PoolableConnection}s.

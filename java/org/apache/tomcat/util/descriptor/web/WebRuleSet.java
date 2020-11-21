@@ -16,18 +16,13 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.digester.CallMethodRule;
-import org.apache.tomcat.util.digester.CallParamRule;
-import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.digester.Rule;
-import org.apache.tomcat.util.digester.RuleSetBase;
-import org.apache.tomcat.util.digester.SetNextRule;
+import org.apache.tomcat.util.digester.*;
 import org.apache.tomcat.util.res.StringManager;
 import org.xml.sax.Attributes;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 
 /**

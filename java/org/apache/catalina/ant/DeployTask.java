@@ -16,6 +16,8 @@
  */
 package org.apache.catalina.ant;
 
+import org.apache.tools.ant.BuildException;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,8 +27,6 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.util.regex.Pattern;
-
-import org.apache.tools.ant.BuildException;
 
 /**
  * Ant task that implements the <code>/deploy</code> command, supported by the

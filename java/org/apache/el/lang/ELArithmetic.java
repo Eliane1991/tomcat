@@ -17,11 +17,11 @@
 
 package org.apache.el.lang;
 
+import org.apache.el.util.MessageFactory;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-
-import org.apache.el.util.MessageFactory;
 
 
 /**

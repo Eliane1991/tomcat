@@ -16,6 +16,11 @@
  */
 package org.apache.el.util;
 
+import org.apache.el.lang.ELSupport;
+import org.apache.el.lang.EvaluationContext;
+
+import javax.el.ELException;
+import javax.el.MethodNotFoundException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,12 +30,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.el.ELException;
-import javax.el.MethodNotFoundException;
-
-import org.apache.el.lang.ELSupport;
-import org.apache.el.lang.EvaluationContext;
 
 
 /**

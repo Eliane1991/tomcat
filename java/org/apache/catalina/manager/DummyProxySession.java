@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.manager;
 
-import java.security.Principal;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionListener;
+
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.Iterator;
 
 public class DummyProxySession implements Session {
 

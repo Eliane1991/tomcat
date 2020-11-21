@@ -16,12 +16,6 @@
  */
 package org.apache.catalina.mbeans;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
@@ -29,6 +23,11 @@ import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
 import org.apache.tomcat.util.modeler.BaseModelMBean;
 import org.apache.tomcat.util.modeler.ManagedBean;
 import org.apache.tomcat.util.modeler.Registry;
+
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the

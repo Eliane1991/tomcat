@@ -16,14 +16,10 @@
  */
 package org.apache.catalina.util;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tomcat.util.res.StringManager;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Implementation of <strong>java.util.Map</strong> that includes a

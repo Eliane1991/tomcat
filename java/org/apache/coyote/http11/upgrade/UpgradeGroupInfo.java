@@ -16,10 +16,10 @@
  */
 package org.apache.coyote.http11.upgrade;
 
+import org.apache.tomcat.util.modeler.BaseModelMBean;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.tomcat.util.modeler.BaseModelMBean;
 
 /**
  *  This aggregates the data collected from each UpgradeInfo instance.

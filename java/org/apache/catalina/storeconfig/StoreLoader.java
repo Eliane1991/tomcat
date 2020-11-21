@@ -16,16 +16,16 @@
  */
 package org.apache.catalina.storeconfig;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.digester.Digester;
+import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.util.digester.Digester;
-import org.xml.sax.SAXException;
 
 /**
  * <b>XML Format </b>

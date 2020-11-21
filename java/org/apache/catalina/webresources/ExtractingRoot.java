@@ -16,19 +16,14 @@
  */
 package org.apache.catalina.webresources;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.servlet.ServletContext;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.startup.ExpandWar;
 import org.apache.catalina.util.IOTools;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.servlet.ServletContext;
+import java.io.*;
 
 /**
  * If the main resources are packaged as a WAR file then any JARs will be

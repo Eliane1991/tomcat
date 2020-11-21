@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.util.List;
-
 import javax.security.auth.Subject;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
+import java.util.List;
 
 /**
  * Basic implementation primarily intended for use when using third-party

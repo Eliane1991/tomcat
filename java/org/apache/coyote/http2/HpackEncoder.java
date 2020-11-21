@@ -16,20 +16,13 @@
  */
 package org.apache.coyote.http2;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.http.MimeHeaders;
 import org.apache.tomcat.util.res.StringManager;
+
+import java.nio.ByteBuffer;
+import java.util.*;
 
 /**
  * Encoder for HPACK frames.

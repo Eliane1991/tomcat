@@ -16,14 +16,13 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
+
+import javax.websocket.HandshakeResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.websocket.HandshakeResponse;
-
-import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 
 /**
  * Represents the response to a WebSocket handshake.

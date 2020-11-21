@@ -16,16 +16,15 @@
  */
 package org.apache.coyote.http11.upgrade;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import javax.servlet.http.WebConnection;
-
 import org.apache.coyote.AbstractProcessorLight;
 import org.apache.coyote.Request;
 import org.apache.coyote.UpgradeToken;
 import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
 import org.apache.tomcat.util.net.SocketWrapperBase;
+
+import javax.servlet.http.WebConnection;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public abstract class UpgradeProcessorBase extends AbstractProcessorLight implements WebConnection {
 

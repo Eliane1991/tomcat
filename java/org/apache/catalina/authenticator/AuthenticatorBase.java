@@ -16,41 +16,7 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.security.cert.X509Certificate;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.message.AuthException;
-import javax.security.auth.message.AuthStatus;
-import javax.security.auth.message.MessageInfo;
-import javax.security.auth.message.config.AuthConfigFactory;
-import javax.security.auth.message.config.AuthConfigProvider;
-import javax.security.auth.message.config.ClientAuthConfig;
-import javax.security.auth.message.config.RegistrationListener;
-import javax.security.auth.message.config.ServerAuthConfig;
-import javax.security.auth.message.config.ServerAuthContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.Authenticator;
-import org.apache.catalina.Contained;
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
-import org.apache.catalina.TomcatPrincipal;
-import org.apache.catalina.Valve;
+import org.apache.catalina.*;
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -72,6 +38,25 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.http.FastHttpDateFormat;
 import org.apache.tomcat.util.http.RequestUtil;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.message.AuthException;
+import javax.security.auth.message.AuthStatus;
+import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.config.*;
+import javax.servlet.DispatcherType;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.Principal;
+import java.security.cert.X509Certificate;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Basic implementation of the <b>Valve</b> interface that enforces the

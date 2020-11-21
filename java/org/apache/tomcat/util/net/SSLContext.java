@@ -17,16 +17,10 @@
 
 package org.apache.tomcat.util.net;
 
+import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSessionContext;
-import javax.net.ssl.TrustManager;
 
 /**
  * This interface is needed to override the default SSLContext class

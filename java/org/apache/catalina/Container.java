@@ -16,14 +16,13 @@
  */
 package org.apache.catalina;
 
-import java.beans.PropertyChangeListener;
-import java.io.File;
-
-import javax.management.ObjectName;
-
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.juli.logging.Log;
+
+import javax.management.ObjectName;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 
 
 /**

@@ -16,14 +16,9 @@
  */
 package org.apache.catalina.tribes.group;
 
-import java.io.Serializable;
+import org.apache.catalina.tribes.*;
 
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelListener;
-import org.apache.catalina.tribes.ErrorHandler;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.UniqueId;
+import java.io.Serializable;
 
 public interface GroupChannelMBean {
 

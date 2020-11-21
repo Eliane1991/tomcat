@@ -16,14 +16,13 @@
  */
 package org.apache.catalina.authenticator.jaspic;
 
-import java.util.Map;
-
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
+import java.util.Map;
 
 /**
  * Basic implementation primarily intended for use when using third-party

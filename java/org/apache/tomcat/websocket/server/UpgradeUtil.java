@@ -16,15 +16,12 @@
  */
 package org.apache.tomcat.websocket.server;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.util.security.ConcurrentMessageDigest;
+import org.apache.tomcat.websocket.Constants;
+import org.apache.tomcat.websocket.*;
+import org.apache.tomcat.websocket.pojo.PojoEndpointServer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -35,16 +32,10 @@ import javax.websocket.Endpoint;
 import javax.websocket.Extension;
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.ServerEndpointConfig;
-
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.util.security.ConcurrentMessageDigest;
-import org.apache.tomcat.websocket.Constants;
-import org.apache.tomcat.websocket.Transformation;
-import org.apache.tomcat.websocket.TransformationFactory;
-import org.apache.tomcat.websocket.Util;
-import org.apache.tomcat.websocket.WsHandshakeResponse;
-import org.apache.tomcat.websocket.pojo.PojoEndpointServer;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class UpgradeUtil {
 

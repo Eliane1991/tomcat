@@ -19,15 +19,14 @@
 package org.apache.catalina.ant.jmx;
 
 
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.tools.ant.BuildException;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-
-import org.apache.tools.ant.BuildException;
+import java.util.Iterator;
+import java.util.Set;
 
 
 /**

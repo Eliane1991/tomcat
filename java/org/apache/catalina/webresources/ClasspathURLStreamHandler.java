@@ -16,13 +16,13 @@
  */
 package org.apache.catalina.webresources;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-
-import org.apache.tomcat.util.res.StringManager;
 
 public class ClasspathURLStreamHandler extends URLStreamHandler {
 

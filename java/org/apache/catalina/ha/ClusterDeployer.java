@@ -17,11 +17,11 @@
 
 package org.apache.catalina.ha;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.tribes.ChannelListener;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * A <b>ClusterDeployer</b> interface allows to plug in and out the

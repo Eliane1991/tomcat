@@ -18,18 +18,14 @@
 
 package org.apache.catalina.ha.backend;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.StringTokenizer;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 /*
  * Sender to proxies using multicast socket.

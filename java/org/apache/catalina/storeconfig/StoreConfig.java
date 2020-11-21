@@ -16,13 +16,6 @@
  */
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-import java.net.URL;
-
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.Server;
@@ -32,6 +25,12 @@ import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import java.io.PrintWriter;
+import java.net.URL;
 
 /**
  * Store Server/Service/Host/Context at file or PrintWriter. Default server.xml

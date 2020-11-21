@@ -16,15 +16,14 @@
 */
 package org.apache.catalina.filters;
 
-import java.io.IOException;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
+import java.io.IOException;
 
 
 /**

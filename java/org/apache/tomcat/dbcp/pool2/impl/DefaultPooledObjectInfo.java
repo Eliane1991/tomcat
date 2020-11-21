@@ -16,11 +16,11 @@
  */
 package org.apache.tomcat.dbcp.pool2.impl;
 
+import org.apache.tomcat.dbcp.pool2.PooledObject;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-
-import org.apache.tomcat.dbcp.pool2.PooledObject;
 
 /**
  * Implementation of object that is used to provide information on pooled

@@ -16,14 +16,9 @@
  */
 package org.apache.catalina.authenticator;
 
-import java.io.Serializable;
+import org.apache.catalina.*;
 
-import org.apache.catalina.Authenticator;
-import org.apache.catalina.Context;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Session;
-import org.apache.catalina.SessionEvent;
-import org.apache.catalina.SessionListener;
+import java.io.Serializable;
 
 public class SingleSignOnListener implements SessionListener, Serializable {
 

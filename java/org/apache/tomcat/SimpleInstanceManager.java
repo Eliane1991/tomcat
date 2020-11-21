@@ -16,9 +16,8 @@
  */
 package org.apache.tomcat;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * SimpleInstanceManager

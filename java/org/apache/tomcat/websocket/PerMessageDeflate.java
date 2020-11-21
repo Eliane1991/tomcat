@@ -16,6 +16,11 @@
  */
 package org.apache.tomcat.websocket;
 
+import org.apache.tomcat.util.res.StringManager;
+
+import javax.websocket.Extension;
+import javax.websocket.Extension.Parameter;
+import javax.websocket.SendHandler;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -23,12 +28,6 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
-import javax.websocket.Extension;
-import javax.websocket.Extension.Parameter;
-import javax.websocket.SendHandler;
-
-import org.apache.tomcat.util.res.StringManager;
 
 public class PerMessageDeflate implements Transformation {
 

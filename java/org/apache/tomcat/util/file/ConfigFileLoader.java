@@ -17,14 +17,14 @@
  */
 package org.apache.tomcat.util.file;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-
-import org.apache.tomcat.util.res.StringManager;
 
 /**
  * This class is used to obtain {@link InputStream}s for configuration files

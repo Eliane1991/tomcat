@@ -19,12 +19,12 @@
 package org.apache.catalina.startup;
 
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 
 /**

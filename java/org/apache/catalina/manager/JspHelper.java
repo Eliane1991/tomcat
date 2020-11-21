@@ -17,14 +17,14 @@
 
 package org.apache.catalina.manager;
 
+import org.apache.catalina.Session;
+import org.apache.catalina.manager.util.SessionUtils;
+
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import org.apache.catalina.Session;
-import org.apache.catalina.manager.util.SessionUtils;
 
 
 /**

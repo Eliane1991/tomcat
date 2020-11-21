@@ -16,14 +16,14 @@
  */
 package org.apache.catalina.util;
 
+import org.apache.tomcat.util.buf.B2CConverter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.BitSet;
-
-import org.apache.tomcat.util.buf.B2CConverter;
 
 /**
  *

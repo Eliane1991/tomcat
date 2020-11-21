@@ -16,13 +16,12 @@
  */
 package org.apache.catalina.connector;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Coyote implementation of the servlet output stream.

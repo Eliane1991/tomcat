@@ -20,13 +20,12 @@ package org.apache.catalina.ha.backend;
 
 /* for MBean to read ready and busy */
 
-import java.util.Set;
+import org.apache.tomcat.util.modeler.Registry;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-
-import org.apache.tomcat.util.modeler.Registry;
+import java.util.Set;
 
 /*
  * Listener to provider informations to mod_heartbeat.c

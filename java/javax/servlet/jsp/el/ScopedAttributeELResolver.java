@@ -16,19 +16,14 @@
  */
 package javax.servlet.jsp.el;
 
-import java.beans.FeatureDescriptor;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import javax.el.ELClass;
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.ImportHandler;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.PageContext;
+import java.beans.FeatureDescriptor;
+import java.util.*;
 
 /**
 *

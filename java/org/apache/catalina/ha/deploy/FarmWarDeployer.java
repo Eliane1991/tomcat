@@ -17,18 +17,7 @@
 
 package org.apache.catalina.ha.deploy;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
+import org.apache.catalina.*;
 import org.apache.catalina.ha.ClusterDeployer;
 import org.apache.catalina.ha.ClusterListener;
 import org.apache.catalina.ha.ClusterMessage;
@@ -38,6 +27,12 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomcat.util.res.StringManager;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 
 
 /**

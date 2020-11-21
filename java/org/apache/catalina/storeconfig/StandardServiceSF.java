@@ -17,14 +17,14 @@
 
 package org.apache.catalina.storeconfig;
 
-import java.io.PrintWriter;
-
 import org.apache.catalina.Engine;
 import org.apache.catalina.Executor;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardService;
+
+import java.io.PrintWriter;
 
 /**
  * Store server.xml Element Service and all children

@@ -17,9 +17,8 @@
 
 package org.apache.tomcat.util.descriptor.web;
 
-import java.util.EnumSet;
-
 import javax.servlet.SessionTrackingMode;
+import java.util.EnumSet;
 
 /**
  * Representation of a session configuration element for a web application,

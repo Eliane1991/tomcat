@@ -18,10 +18,10 @@
 
 package org.apache.catalina;
 
-import java.io.File;
-
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.startup.Catalina;
+
+import java.io.File;
 
 /**
  * A <code>Server</code> element represents the entire Catalina

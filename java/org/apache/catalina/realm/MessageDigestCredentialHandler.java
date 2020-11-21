@@ -16,18 +16,18 @@
  */
 package org.apache.catalina.realm;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.security.ConcurrentMessageDigest;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
  * This credential handler supports the following forms of stored passwords:

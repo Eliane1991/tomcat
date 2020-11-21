@@ -16,9 +16,9 @@
  */
 package org.apache.catalina.ha;
 
-import java.io.Serializable;
-
 import org.apache.catalina.tribes.Member;
+
+import java.io.Serializable;
 
 public interface ClusterMessage extends Serializable {
     public Member getAddress();

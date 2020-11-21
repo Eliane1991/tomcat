@@ -16,13 +16,12 @@
  */
 package org.apache.tomcat.websocket.pojo;
 
-import java.util.Map;
+import org.apache.tomcat.util.res.StringManager;
 
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
-
-import org.apache.tomcat.util.res.StringManager;
+import java.util.Map;
 
 /**
  * Wrapper class for instances of POJOs annotated with
