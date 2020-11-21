@@ -16,22 +16,16 @@
  */
 package websocket.chat;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import util.HTMLFilter;
+
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
-
-import util.HTMLFilter;
 
 @ServerEndpoint(value = "/websocket/chat")
 public class ChatAnnotation {

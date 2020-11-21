@@ -16,13 +16,12 @@
 */
 package compressionFilters;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 
 /**
  * Implementation of <b>ServletOutputStream</b> that works with

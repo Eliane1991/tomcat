@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@page session="false" import="java.util.Date,java.text.SimpleDateFormat"%>
+<%@page session="false" import="java.text.SimpleDateFormat,java.util.Date"%>
 Output from async3.jsp
 Type is <%=request.getDispatcherType()%>
 <%
