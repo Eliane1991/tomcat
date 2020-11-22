@@ -210,6 +210,9 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
             serverSock = ServerSocketChannel.open();
             socketProperties.setProperties(serverSock.socket());
             InetSocketAddress addr = (getAddress()!=null?new InetSocketAddress(getAddress(),getPort()):new InetSocketAddress(getPort()));
+            /**
+             * 完成本地地址和端口的绑定
+             */
             serverSock.socket().bind(addr,getAcceptCount());
         } else {
             // Retrieve the channel provided by the OS

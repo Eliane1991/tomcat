@@ -589,7 +589,10 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         String endpointName = getName();
         endpoint.setName(endpointName.substring(1, endpointName.length()-1));
         endpoint.setDomain(domain);
-
+        /**
+         * endpoint的实现类有 nioPoint,nio2Point,aprPoint
+         * endpoint的init()初始化方法完成了,本地sock端口的绑定,并且为了使用nio的处理方式,打开了selectorPool
+         */
         endpoint.init();
     }
 

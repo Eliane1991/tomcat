@@ -132,6 +132,9 @@ public final class Bootstrap {
     private Object catalinaDaemon = null;
 
     ClassLoader commonLoader = null;
+    /**
+     * serverLoader
+     */
     ClassLoader catalinaLoader = null;
     ClassLoader sharedLoader = null;
 
@@ -141,11 +144,21 @@ public final class Bootstrap {
 
     private void initClassLoaders() {
         try {
+            /**
+             * commonLoader的父类加载器最终由ClassLoader的构造方法赋值，是由getSystemClassLoader()得到的AppClassLoader
+             */
             commonLoader = createClassLoader("common", null);
             if (commonLoader == null) {
                 // no config file, default to this loader - we might be in a 'single' env.
                 commonLoader = this.getClass().getClassLoader();
             }
+            /**
+             * CatalinaProperties.getProperty(name + ".loader") 默认情况下返回的是空值
+             * 所以commonLoader,catalinaLoader,sharedLoader都是同一个对象.
+             * 如果需要开启,需要下catalina.config 或者 catalina.properties配置文件中配置项
+             * server.loader= 代码加载路径
+             * shared.loader= 代码加载路径
+             */
             catalinaLoader = createClassLoader("server", commonLoader);
             sharedLoader = createClassLoader("shared", commonLoader);
         } catch (Throwable t) {
@@ -248,9 +261,40 @@ public final class Bootstrap {
      * @throws Exception Fatal initialization error
      */
     public void init() throws Exception {
-
+        /**
+         *  初始化tomcat的内部类加载器
+         *  tomcat通过这个类加载器打破了传统类加载的双亲委派机制
+         *  这是基于以下原因:
+         *  1.webApp自身的class类需要和tomcat web容器的类,基于安全考虑,需要做隔离.
+         *    相同类,webApp可能会处于业务的原因做修改.tomcat的class先加载了的话,webApp的类就不会生效了.
+         *  2.每个WebAPP中都有自己的jar包,webApp之间的类库需要做隔离,因为这些jar包会出现相同依赖class但是不同版本,
+         *    如果不打破双亲委派,那么整个tomcat jvm中就只能存在一份class.
+         *  3.webApp中jsp文件都会被编译成class文件加载,如果jsp文件修改了,但是因为类加载机制在,修改后的class文件就不会被加载了.
+         *   因为jvm内存中已经有了以一个类在内存了.所以需要这么一个jsp文件对应一个唯一的类加载器,
+         *   如果文件修改了,只需要把这个类加载器直接卸载掉就好了.重新创建jsp classload,重新加载jsp文件
+         *
+         *  commonLoader是catalinaLoader,sharedLoader这2个类加载器的父类加载器
+         *      tomcat最基本的类加载器，加载路径中的class可以被Tomcat容器本身以及各个Webapp访问,
+         *      以System Class Loader 为父类加载器, 是位于Tomcat 应用服务器顶层的公用类加载器,默认是加载$CATALINE_HOME/lib 下的jar 包
+         *  catalinaLoader是Tomcat容器私有的类加载器，加载路径中的class对于Webapp不可见
+         *      以Common Class Loader 为父加载器.用于加载 Tomcat 应用服务器本身的.
+         *  sharedLoader是各个Webapp共享的类加载器，加载路径中的class对于所有Webapp可见，但是对于Tomcat容器不可见
+         *      以Common 为父加载器,是所有web应用的父加载器
+         *
+         *  默认情况下catalina.porperties中的"server.loader"、"shared.loader"配置都为空，所以catalinaLoader、sharedLoader、commonLoader三者是同一个对象
+         *
+         *
+         *      因为代码中 src文件夹中的文件java以及webContent中的JSP都会在tomcat启动时，被编译成class文件放在 WEB-INF/class 中。
+         *      而外部引用的jar包，则相当于放在 WEB-INF/lib 中。
+         *      因此肯定是 java文件或者JSP文件编译出的class优先加载。
+         *
+         */
         initClassLoaders();
-
+        /**
+         * 这里也是为了打破双亲委派,设置线程的上下文类加载器为catalinaLoader后,如果出现父类需要加载子类的情况,
+         * 例如jdbc jdni应用,那么就会使用catalinaLoader 去加载子类
+         *
+         */
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
         SecurityClassLoad.securityClassLoad(catalinaLoader);
@@ -258,6 +302,9 @@ public final class Bootstrap {
         // Load our startup class and call its process() method
         if (log.isDebugEnabled())
             log.debug("Loading startup class");
+        /**
+         * 调用默认的构造方法,实例化catalina
+         */
         Class<?> startupClass = catalinaLoader.loadClass("org.apache.catalina.startup.Catalina");
         Object startupInstance = startupClass.getConstructor().newInstance();
 
@@ -265,12 +312,20 @@ public final class Bootstrap {
         if (log.isDebugEnabled())
             log.debug("Setting startup class properties");
         String methodName = "setParentClassLoader";
+
         Class<?> paramTypes[] = new Class[1];
         paramTypes[0] = Class.forName("java.lang.ClassLoader");
+
         Object paramValues[] = new Object[1];
         paramValues[0] = sharedLoader;
-        Method method =
-                startupInstance.getClass().getMethod(methodName, paramTypes);
+
+        /**
+         * todo
+         * 通过反射,调用Catalina的setParentClassLoader(classload)方法,设置catalina的parentClassLoader为sharedLoader
+         * 也相当于设置了Engine 容器的的类加载器
+         *
+         */
+        Method method = startupInstance.getClass().getMethod(methodName, paramTypes);
         method.invoke(startupInstance, paramValues);
 
         catalinaDaemon = startupInstance;
@@ -444,10 +499,12 @@ public final class Bootstrap {
         synchronized (daemonLock) {
             if (daemon == null) {
                 // Don't set daemon until init() has completed
-                //实例化bootstrap对象,Bootstrap 的static静态代码块中,初始化了home path路径和base path路径
-                //catalina.home(tomcat运行程序路径)指向公用信息的位置，就是bin和lib的父目录。
-                //catalina.base(工作路径)指向每个Tomcat目录私有信息的位置，就是conf、logs、temp、webapps和work的父目录。
-                //仅运行一个Tomcat实例时，这两个属性指向的位置是相同的。
+                /**
+                 * 实例化bootstrap对象,Bootstrap 的static静态代码块中,初始化了home path路径和base path路径
+                 * catalina.home(tomcat运行程序路径)指向公用信息的位置，就是bin和lib的父目录。
+                 * catalina.base(工作路径)指向每个Tomcat目录私有信息的位置，就是conf、logs、temp、webapps和work的父目录。
+                 * 仅运行一个Tomcat实例时，这两个属性指向的位置是相同的。
+                 */
                 Bootstrap bootstrap = new Bootstrap();
                 try {
                     bootstrap.init();
@@ -473,7 +530,17 @@ public final class Bootstrap {
 
             if (command.equals("startd")) {
                 args[args.length - 1] = "start";
+                /**
+                 * 主要是调用catalina类的load方法,完成tomcat各个组件的初始化
+                 * server.init() -->service.init()  完成了server.xml的解析,构建了整体的初始化环境,然后责任链交给了service.init()
+                 * service.init() --> engine.init() --> executor.init --> mapperListener.init() -->connector.init()
+                 * 涉及到的组件有
+                 * service->engine->executor->mapperListener->connector->Adapter->endpoint
+                 */
                 daemon.load(args);
+                /**
+                 * 主要是调用catalina类的start,启动tomcat的各个组件
+                 */
                 daemon.start();
             } else if (command.equals("stopd")) {
                 args[args.length - 1] = "stop";

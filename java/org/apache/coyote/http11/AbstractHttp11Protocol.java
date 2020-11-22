@@ -61,7 +61,9 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
         for (UpgradeProtocol upgradeProtocol : upgradeProtocols) {
             configureUpgradeProtocol(upgradeProtocol);
         }
-
+        /**
+         *调用AbstractProtocol父类的初始化方法,完成EndPotint的初始化
+         */
         super.init();
 
         // Set the Http11Protocol (i.e. this) for any upgrade protocols once
