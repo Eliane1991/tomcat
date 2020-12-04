@@ -31,9 +31,6 @@ public class OpenSSLCipherConfigurationParser {
 
     private static final Log log = LogFactory.getLog(OpenSSLCipherConfigurationParser.class);
     private static final StringManager sm = StringManager.getManager(OpenSSLCipherConfigurationParser.class);
-
-    private static boolean initialized = false;
-
     private static final String SEPARATOR = ":|,| ";
     /**
      * If ! is used then the ciphers are permanently deleted from the list. The ciphers deleted can never reappear in the list
@@ -50,7 +47,7 @@ public class OpenSSLCipherConfigurationParser {
      * matching existing ones.
      */
     private static final String TO_END = "+";
-     /**
+    /**
      * Lists of cipher suites can be combined in a single cipher string using the + character.
      * This is used as a logical and operation.
      * For example SHA1+DES represents all cipher suites containing the SHA1 and the DES algorithms.
@@ -60,7 +57,6 @@ public class OpenSSLCipherConfigurationParser {
      * All ciphers by their openssl alias name.
      */
     private static final Map<String, List<Cipher>> aliases = new LinkedHashMap<>();
-
     /**
      * the 'NULL' ciphers that is those offering no encryption. Because these offer no encryption at all and are a security risk
      * they are disabled unless explicitly included.
@@ -71,7 +67,6 @@ public class OpenSSLCipherConfigurationParser {
      * vulnerable to a 'man in the middle' attack and so their use is normally discouraged.
      */
     private static final String aNULL = "aNULL";
-
     /**
      * 'high' encryption cipher suites. This currently means those with key lengths larger than 128 bits, and some cipher suites
      * with 128-bit keys.
@@ -380,14 +375,12 @@ public class OpenSSLCipherConfigurationParser {
     private static final String kRSAPSK = "kRSAPSK";
     private static final String kECDHEPSK = "kECDHEPSK";
     private static final String kDHEPSK = "kDHEPSK";
-
     private static final String DEFAULT = "DEFAULT";
     private static final String COMPLEMENTOFDEFAULT = "COMPLEMENTOFDEFAULT";
-
     private static final String ALL = "ALL";
     private static final String COMPLEMENTOFALL = "COMPLEMENTOFALL";
-
-    private static final Map<String,String> jsseToOpenSSL = new HashMap<>();
+    private static final Map<String, String> jsseToOpenSSL = new HashMap<>();
+    private static boolean initialized = false;
 
     private static final void init() {
 
@@ -530,7 +523,7 @@ public class OpenSSLCipherConfigurationParser {
         // Despite what the OpenSSL docs say, DEFAULT also excludes SSLv2
         addListAlias(DEFAULT, parse("ALL:!EXPORT:!eNULL:!aNULL:!SSLv2:!DES:!RC2:!RC4:!DSS:!SEED:!IDEA:!CAMELLIA:!AESCCM:!3DES:!ARIA"));
         // COMPLEMENTOFDEFAULT is also not exactly as defined by the docs
-        LinkedHashSet<Cipher> complementOfDefault = filterByKeyExchange(all, new HashSet<>(Arrays.asList(KeyExchange.EDH,KeyExchange.EECDH)));
+        LinkedHashSet<Cipher> complementOfDefault = filterByKeyExchange(all, new HashSet<>(Arrays.asList(KeyExchange.EDH, KeyExchange.EECDH)));
         complementOfDefault = filterByAuthentication(complementOfDefault, Collections.singleton(Authentication.aNULL));
         complementOfDefault.removeAll(aliases.get(eNULL));
         complementOfDefault.addAll(aliases.get(Constants.SSL_PROTO_SSLv2));
@@ -678,7 +671,7 @@ public class OpenSSLCipherConfigurationParser {
     }
 
     static LinkedHashSet<Cipher> filter(Set<Cipher> ciphers, Set<Protocol> protocol, Set<KeyExchange> kx,
-            Set<Authentication> au, Set<Encryption> enc, Set<EncryptionLevel> level, Set<MessageDigest> mac) {
+                                        Set<Authentication> au, Set<Encryption> enc, Set<EncryptionLevel> level, Set<MessageDigest> mac) {
         LinkedHashSet<Cipher> result = new LinkedHashSet<>(ciphers.size());
         for (Cipher cipher : ciphers) {
             if (protocol != null && protocol.contains(cipher.getProtocol())) {
@@ -735,14 +728,14 @@ public class OpenSSLCipherConfigurationParser {
                 add(ciphers, element);
             } else if (element.contains(AND)) {
                 String[] intersections = element.split("\\" + AND);
-                if(intersections.length > 0 && aliases.containsKey(intersections[0])) {
+                if (intersections.length > 0 && aliases.containsKey(intersections[0])) {
                     List<Cipher> result = new ArrayList<>(aliases.get(intersections[0]));
-                    for(int i = 1; i < intersections.length; i++) {
-                        if(aliases.containsKey(intersections[i])) {
+                    for (int i = 1; i < intersections.length; i++) {
+                        if (aliases.containsKey(intersections[i])) {
                             result.retainAll(aliases.get(intersections[i]));
                         }
                     }
-                     ciphers.addAll(result);
+                    ciphers.addAll(result);
                 }
             }
         }
@@ -777,7 +770,6 @@ public class OpenSSLCipherConfigurationParser {
      * Converts a JSSE cipher name to an OpenSSL cipher name.
      *
      * @param jsseCipherName The JSSE name for a cipher
-     *
      * @return The OpenSSL name for the specified JSSE cipher
      */
     public static String jsseToOpenSSL(String jsseCipherName) {
@@ -792,9 +784,8 @@ public class OpenSSLCipherConfigurationParser {
      * Converts an OpenSSL cipher name to a JSSE cipher name.
      *
      * @param opensslCipherName The OpenSSL name for a cipher
-     *
      * @return The JSSE name for the specified OpenSSL cipher. If none is known,
-     *         the IANA standard name will be returned instead
+     * the IANA standard name will be returned instead
      */
     public static String openSSLToJsse(String opensslCipherName) {
         if (!initialized) {
@@ -842,26 +833,23 @@ public class OpenSSLCipherConfigurationParser {
         System.out.println(" -v          Provide detailed cipher listing");
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         boolean verbose = false;
         boolean useOpenSSLNames = false;
         int argindex;
-        for(argindex = 0; argindex < args.length; ++argindex)
-        {
+        for (argindex = 0; argindex < args.length; ++argindex) {
             String arg = args[argindex];
-            if("--verbose".equals(arg) || "-v".equals(arg))
+            if ("--verbose".equals(arg) || "-v".equals(arg))
                 verbose = true;
-            else if("--openssl".equals(arg))
+            else if ("--openssl".equals(arg))
                 useOpenSSLNames = true;
-            else if("--help".equals(arg) || "-h".equals(arg)) {
+            else if ("--help".equals(arg) || "-h".equals(arg)) {
                 usage();
                 System.exit(0);
-            }
-            else if("--".equals(arg)) {
+            } else if ("--".equals(arg)) {
                 ++argindex;
                 break;
-            } else if(arg.startsWith("-")) {
+            } else if (arg.startsWith("-")) {
                 System.out.println("Unknown option: " + arg);
                 usage();
                 System.exit(1);
@@ -872,27 +860,26 @@ public class OpenSSLCipherConfigurationParser {
         }
 
         String cipherSpec;
-        if(argindex < args.length) {
+        if (argindex < args.length) {
             cipherSpec = args[argindex];
         } else {
             cipherSpec = "DEFAULT";
         }
         Set<Cipher> ciphers = parse(cipherSpec);
         boolean first = true;
-        if(null != ciphers && 0 < ciphers.size()) {
-            for(Cipher cipher : ciphers)
-            {
-                if(first) {
+        if (null != ciphers && 0 < ciphers.size()) {
+            for (Cipher cipher : ciphers) {
+                if (first) {
                     first = false;
                 } else {
-                    if(!verbose)
+                    if (!verbose)
                         System.out.print(',');
                 }
-                if(useOpenSSLNames)
+                if (useOpenSSLNames)
                     System.out.print(cipher.getOpenSSLAlias());
                 else
                     System.out.print(cipher.name());
-                if(verbose) {
+                if (verbose) {
                     System.out.println("\t" + cipher.getProtocol() + "\tKx=" + cipher.getKx() + "\tAu=" + cipher.getAu() + "\tEnc=" + cipher.getEnc() + "\tMac=" + cipher.getMac());
                 }
             }

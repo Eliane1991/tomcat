@@ -53,8 +53,8 @@ public class PojoMethodMapping {
 
 
     public PojoMethodMapping(Class<?> clazzPojo,
-            List<Class<? extends Decoder>> decoderClazzes, String wsPath)
-                    throws DeploymentException {
+                             List<Class<? extends Decoder>> decoderClazzes, String wsPath)
+            throws DeploymentException {
 
         this.wsPath = wsPath;
 
@@ -124,7 +124,7 @@ public class PojoMethodMapping {
                         if (messageHandler.targetsSameWebSocketMessageType(otherMessageHandler)) {
                             found = true;
                             if (currentClazz == clazzPojo ||
-                                !isMethodOverride(messageHandler.m, otherMessageHandler.m)) {
+                                    !isMethodOverride(messageHandler.m, otherMessageHandler.m)) {
                                 // Duplicate annotation
                                 throw new DeploymentException(sm.getString(
                                         "pojoMethodMapping.duplicateAnnotation",
@@ -176,94 +176,8 @@ public class PojoMethodMapping {
         onErrorParams = getPathParams(onError, MethodType.ON_ERROR);
     }
 
-
-    private void checkPublic(Method m) throws DeploymentException {
-        if (!Modifier.isPublic(m.getModifiers())) {
-            throw new DeploymentException(sm.getString(
-                    "pojoMethodMapping.methodNotPublic", m.getName()));
-        }
-    }
-
-
-    private boolean isMethodOverride(Method method1, Method method2) {
-        return method1.getName().equals(method2.getName())
-                && method1.getReturnType().equals(method2.getReturnType())
-                && Arrays.equals(method1.getParameterTypes(), method2.getParameterTypes());
-    }
-
-
-    private boolean isOverridenWithoutAnnotation(Method[] methods,
-            Method superclazzMethod, Class<? extends Annotation> annotation) {
-        for (Method method : methods) {
-            if (isMethodOverride(method, superclazzMethod)
-                    && (method.getAnnotation(annotation) == null)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    public String getWsPath() {
-        return wsPath;
-    }
-
-
-    public Method getOnOpen() {
-        return onOpen;
-    }
-
-
-    public Object[] getOnOpenArgs(Map<String,String> pathParameters,
-            Session session, EndpointConfig config) throws DecodeException {
-        return buildArgs(onOpenParams, pathParameters, session, config, null,
-                null);
-    }
-
-
-    public Method getOnClose() {
-        return onClose;
-    }
-
-
-    public Object[] getOnCloseArgs(Map<String,String> pathParameters,
-            Session session, CloseReason closeReason) throws DecodeException {
-        return buildArgs(onCloseParams, pathParameters, session, null, null,
-                closeReason);
-    }
-
-
-    public Method getOnError() {
-        return onError;
-    }
-
-
-    public Object[] getOnErrorArgs(Map<String,String> pathParameters,
-            Session session, Throwable throwable) throws DecodeException {
-        return buildArgs(onErrorParams, pathParameters, session, null,
-                throwable, null);
-    }
-
-
-    public boolean hasMessageHandlers() {
-        return !onMessage.isEmpty();
-    }
-
-
-    public Set<MessageHandler> getMessageHandlers(Object pojo,
-            Map<String,String> pathParameters, Session session,
-            EndpointConfig config) {
-        Set<MessageHandler> result = new HashSet<>();
-        for (MessageHandlerInfo messageMethod : onMessage) {
-            result.addAll(messageMethod.getMessageHandlers(pojo, pathParameters,
-                    session, config));
-        }
-        return result;
-    }
-
-
     private static PojoPathParam[] getPathParams(Method m,
-            MethodType methodType) throws DeploymentException {
+                                                 MethodType methodType) throws DeploymentException {
         if (m == null) {
             return new PojoPathParam[0];
         }
@@ -311,10 +225,9 @@ public class PojoMethodMapping {
         return result;
     }
 
-
     private static Object[] buildArgs(PojoPathParam[] pathParams,
-            Map<String,String> pathParameters, Session session,
-            EndpointConfig config, Throwable throwable, CloseReason closeReason)
+                                      Map<String, String> pathParameters, Session session,
+                                      EndpointConfig config, Throwable throwable, CloseReason closeReason)
             throws DecodeException {
         Object[] result = new Object[pathParams.length];
         for (int i = 0; i < pathParams.length; i++) {
@@ -342,6 +255,85 @@ public class PojoMethodMapping {
         return result;
     }
 
+    private void checkPublic(Method m) throws DeploymentException {
+        if (!Modifier.isPublic(m.getModifiers())) {
+            throw new DeploymentException(sm.getString(
+                    "pojoMethodMapping.methodNotPublic", m.getName()));
+        }
+    }
+
+    private boolean isMethodOverride(Method method1, Method method2) {
+        return method1.getName().equals(method2.getName())
+                && method1.getReturnType().equals(method2.getReturnType())
+                && Arrays.equals(method1.getParameterTypes(), method2.getParameterTypes());
+    }
+
+    private boolean isOverridenWithoutAnnotation(Method[] methods,
+                                                 Method superclazzMethod, Class<? extends Annotation> annotation) {
+        for (Method method : methods) {
+            if (isMethodOverride(method, superclazzMethod)
+                    && (method.getAnnotation(annotation) == null)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getWsPath() {
+        return wsPath;
+    }
+
+    public Method getOnOpen() {
+        return onOpen;
+    }
+
+    public Object[] getOnOpenArgs(Map<String, String> pathParameters,
+                                  Session session, EndpointConfig config) throws DecodeException {
+        return buildArgs(onOpenParams, pathParameters, session, config, null,
+                null);
+    }
+
+    public Method getOnClose() {
+        return onClose;
+    }
+
+    public Object[] getOnCloseArgs(Map<String, String> pathParameters,
+                                   Session session, CloseReason closeReason) throws DecodeException {
+        return buildArgs(onCloseParams, pathParameters, session, null, null,
+                closeReason);
+    }
+
+    public Method getOnError() {
+        return onError;
+    }
+
+    public Object[] getOnErrorArgs(Map<String, String> pathParameters,
+                                   Session session, Throwable throwable) throws DecodeException {
+        return buildArgs(onErrorParams, pathParameters, session, null,
+                throwable, null);
+    }
+
+    public boolean hasMessageHandlers() {
+        return !onMessage.isEmpty();
+    }
+
+    public Set<MessageHandler> getMessageHandlers(Object pojo,
+                                                  Map<String, String> pathParameters, Session session,
+                                                  EndpointConfig config) {
+        Set<MessageHandler> result = new HashSet<>();
+        for (MessageHandlerInfo messageMethod : onMessage) {
+            result.addAll(messageMethod.getMessageHandlers(pojo, pathParameters,
+                    session, config));
+        }
+        return result;
+    }
+
+
+    private enum MethodType {
+        ON_OPEN,
+        ON_CLOSE,
+        ON_ERROR
+    }
 
     private static class MessageHandlerInfo {
 
@@ -355,7 +347,7 @@ public class PojoMethodMapping {
         private int indexInputStream = -1;
         private int indexReader = -1;
         private int indexPrimitive = -1;
-        private Map<Integer,PojoPathParam> indexPathParams = new HashMap<>();
+        private Map<Integer, PojoPathParam> indexPathParams = new HashMap<>();
         private int indexPayload = -1;
         private DecoderMatch decoderMatch = null;
         private long maxMessageSize = -1;
@@ -555,12 +547,12 @@ public class PojoMethodMapping {
                         "pojoMethodMapping.partialPong",
                         m.getName(), m.getDeclaringClass().getName()));
             }
-            if(indexReader != -1 && indexBoolean != -1) {
+            if (indexReader != -1 && indexBoolean != -1) {
                 throw new DeploymentException(sm.getString(
                         "pojoMethodMapping.partialReader",
                         m.getName(), m.getDeclaringClass().getName()));
             }
-            if(indexInputStream != -1 && indexBoolean != -1) {
+            if (indexInputStream != -1 && indexBoolean != -1) {
                 throw new DeploymentException(sm.getString(
                         "pojoMethodMapping.partialInputStream",
                         m.getName(), m.getDeclaringClass().getName()));
@@ -604,11 +596,11 @@ public class PojoMethodMapping {
 
 
         public Set<MessageHandler> getMessageHandlers(Object pojo,
-                Map<String,String> pathParameters, Session session,
-                EndpointConfig config) {
+                                                      Map<String, String> pathParameters, Session session,
+                                                      EndpointConfig config) {
             Object[] params = new Object[m.getParameterTypes().length];
 
-            for (Map.Entry<Integer,PojoPathParam> entry :
+            for (Map.Entry<Integer, PojoPathParam> entry :
                     indexPathParams.entrySet()) {
                 PojoPathParam pathParam = entry.getValue();
                 String valueString = pathParameters.get(pathParam.getName());
@@ -616,11 +608,11 @@ public class PojoMethodMapping {
                 try {
                     value = Util.coerceToType(pathParam.getType(), valueString);
                 } catch (Exception e) {
-                    DecodeException de =  new DecodeException(valueString,
+                    DecodeException de = new DecodeException(valueString,
                             sm.getString(
                                     "pojoMethodMapping.decodePathParamFail",
                                     valueString, pathParam.getType()), e);
-                    params = new Object[] { de };
+                    params = new Object[]{de};
                     break;
                 }
                 params[entry.getKey().intValue()] = value;
@@ -696,12 +688,5 @@ public class PojoMethodMapping {
             }
             return results;
         }
-    }
-
-
-    private enum MethodType {
-        ON_OPEN,
-        ON_CLOSE,
-        ON_ERROR
     }
 }

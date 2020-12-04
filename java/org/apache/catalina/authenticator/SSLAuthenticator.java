@@ -39,10 +39,9 @@ public class SSLAuthenticator extends AuthenticatorBase {
      * chain, validating it against the trust manager for the connector and then
      * validating the user's identity against the configured Realm.
      *
-     * @param request Request we are processing
+     * @param request  Request we are processing
      * @param response Response we are creating
-     *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     protected boolean doAuthenticate(Request request, HttpServletResponse response)
@@ -83,7 +82,7 @@ public class SSLAuthenticator extends AuthenticatorBase {
                 containerLog.debug("  Realm.authenticate() returned false");
             }
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                               sm.getString("authenticator.unauthorized"));
+                    sm.getString("authenticator.unauthorized"));
             return false;
         }
 

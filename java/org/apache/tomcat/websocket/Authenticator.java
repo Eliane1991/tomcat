@@ -30,23 +30,26 @@ public abstract class Authenticator {
 
     /**
      * Generate the authentication header that will be sent to the server.
-     * @param requestUri The request URI
+     *
+     * @param requestUri      The request URI
      * @param WWWAuthenticate The server auth challenge
-     * @param UserProperties The user information
+     * @param UserProperties  The user information
      * @return The auth header
      * @throws AuthenticationException When an error occurs
      */
     public abstract String getAuthorization(String requestUri, String WWWAuthenticate,
-            Map<String, Object> UserProperties) throws AuthenticationException;
+                                            Map<String, Object> UserProperties) throws AuthenticationException;
 
     /**
      * Get the authentication method.
+     *
      * @return the auth scheme
      */
     public abstract String getSchemeName();
 
     /**
      * Utility method to parse the authentication header.
+     *
      * @param WWWAuthenticate The server auth challenge
      * @return the parsed header
      */

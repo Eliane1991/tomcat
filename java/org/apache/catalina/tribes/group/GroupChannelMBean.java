@@ -48,9 +48,9 @@ public interface GroupChannelMBean {
 
     public void removeChannelListener(ChannelListener listener);
 
-    public boolean hasMembers() ;
+    public boolean hasMembers();
 
-    public Member[] getMembers() ;
+    public Member[] getMembers();
 
     public Member getLocalMember(boolean incAlive);
 

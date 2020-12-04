@@ -43,6 +43,23 @@ public class MemoryUser extends AbstractUser {
 
 
     /**
+     * The {@link MemoryUserDatabase} that owns this user.
+     */
+    protected final MemoryUserDatabase database;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The set of {@link Group}s that this user is a member of.
+     */
+    protected final ArrayList<Group> groups = new ArrayList<>();
+    /**
+     * The set of {@link Role}s associated with this user.
+     */
+    protected final ArrayList<Role> roles = new ArrayList<>();
+
+
+    /**
      * Package-private constructor used by the factory method in
      * {@link MemoryUserDatabase}.
      *
@@ -63,29 +80,7 @@ public class MemoryUser extends AbstractUser {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The {@link MemoryUserDatabase} that owns this user.
-     */
-    protected final MemoryUserDatabase database;
-
-
-    /**
-     * The set of {@link Group}s that this user is a member of.
-     */
-    protected final ArrayList<Group> groups = new ArrayList<>();
-
-
-    /**
-     * The set of {@link Role}s associated with this user.
-     */
-    protected final ArrayList<Role> roles = new ArrayList<>();
-
-
     // ------------------------------------------------------------- Properties
-
 
     /**
      * Return the set of {@link Group}s to which this user belongs.
@@ -246,6 +241,7 @@ public class MemoryUser extends AbstractUser {
      * the reader that processes this entry will accept either
      * <code>username</code> or <code>name</code> for the username
      * property.</p>
+     *
      * @return the XML representation
      */
     public String toXml() {
@@ -264,7 +260,8 @@ public class MemoryUser extends AbstractUser {
             if (groups.size() > 0) {
                 sb.append(" groups=\"");
                 StringUtils.join(groups, ',', new Function<Group>() {
-                    @Override public String apply(Group t) {
+                    @Override
+                    public String apply(Group t) {
                         return Escape.xml(t.getGroupname());
                     }
                 }, sb);
@@ -275,7 +272,8 @@ public class MemoryUser extends AbstractUser {
             if (roles.size() > 0) {
                 sb.append(" roles=\"");
                 StringUtils.join(roles, ',', new Function<Role>() {
-                    @Override public String apply(Role t) {
+                    @Override
+                    public String apply(Role t) {
                         return Escape.xml(t.getRolename());
                     }
                 }, sb);
@@ -305,7 +303,8 @@ public class MemoryUser extends AbstractUser {
             if (groups.size() > 0) {
                 sb.append(", groups=\"");
                 StringUtils.join(groups, ',', new Function<Group>() {
-                    @Override public String apply(Group t) {
+                    @Override
+                    public String apply(Group t) {
                         return Escape.xml(t.getGroupname());
                     }
                 }, sb);
@@ -316,7 +315,8 @@ public class MemoryUser extends AbstractUser {
             if (roles.size() > 0) {
                 sb.append(", roles=\"");
                 StringUtils.join(roles, ',', new Function<Role>() {
-                    @Override public String apply(Role t) {
+                    @Override
+                    public String apply(Role t) {
                         return Escape.xml(t.getRolename());
                     }
                 }, sb);

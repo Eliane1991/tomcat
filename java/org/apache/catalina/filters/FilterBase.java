@@ -43,7 +43,6 @@ public abstract class FilterBase implements Filter {
      *
      * @param filterConfig The configuration information associated with the
      *                     filter instance being initialised
-     *
      * @throws ServletException if {@link #isConfigProblemFatal()} returns
      *                          {@code true} and a configured parameter does not
      *                          have a matching setter
@@ -77,7 +76,7 @@ public abstract class FilterBase implements Filter {
      * turn will prevent the web application from starting.
      *
      * @return <code>true</code> if a problem should trigger the failure of this
-     *         filter, else <code>false</code>
+     * filter, else <code>false</code>
      */
     protected boolean isConfigProblemFatal() {
         return false;

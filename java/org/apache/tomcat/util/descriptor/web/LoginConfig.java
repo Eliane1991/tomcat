@@ -34,6 +34,27 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * The authentication method to use for application login.  Must be
+     * BASIC, DIGEST, FORM, or CLIENT-CERT.
+     */
+    private String authMethod = null;
+    /**
+     * The context-relative URI of the error page for form login.
+     */
+    private String errorPage = null;
+
+
+    // ------------------------------------------------------------- Properties
+    /**
+     * The context-relative URI of the login page for form login.
+     */
+    private String loginPage = null;
+    /**
+     * The realm name used when challenging the user for authentication
+     * credentials.
+     */
+    private String realmName = null;
 
     /**
      * Construct a new LoginConfig with default properties.
@@ -49,9 +70,9 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
      * Construct a new LoginConfig with the specified properties.
      *
      * @param authMethod The authentication method
-     * @param realmName The realm name
-     * @param loginPage The login page URI
-     * @param errorPage The error page URI
+     * @param realmName  The realm name
+     * @param loginPage  The login page URI
+     * @param errorPage  The error page URI
      */
     public LoginConfig(String authMethod, String realmName,
                        String loginPage, String errorPage) {
@@ -64,16 +85,6 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
 
     }
 
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The authentication method to use for application login.  Must be
-     * BASIC, DIGEST, FORM, or CLIENT-CERT.
-     */
-    private String authMethod = null;
-
     public String getAuthMethod() {
         return this.authMethod;
     }
@@ -81,12 +92,6 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
     }
-
-
-    /**
-     * The context-relative URI of the error page for form login.
-     */
-    private String errorPage = null;
 
     public String getErrorPage() {
         return this.errorPage;
@@ -99,12 +104,6 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
         this.errorPage = UDecoder.URLDecode(errorPage, getCharset());
     }
 
-
-    /**
-     * The context-relative URI of the login page for form login.
-     */
-    private String loginPage = null;
-
     public String getLoginPage() {
         return this.loginPage;
     }
@@ -115,13 +114,6 @@ public class LoginConfig extends XmlEncodingBase implements Serializable {
         //                ("Login Page resource path must start with a '/'");
         this.loginPage = UDecoder.URLDecode(loginPage, getCharset());
     }
-
-
-    /**
-     * The realm name used when challenging the user for authentication
-     * credentials.
-     */
-    private String realmName = null;
 
     public String getRealmName() {
         return this.realmName;

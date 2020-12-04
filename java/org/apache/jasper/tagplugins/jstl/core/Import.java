@@ -29,7 +29,7 @@ public class Import implements TagPlugin {
         boolean hasContext, hasVar, hasScope, hasVarReader, hasCharEncoding;
 
         //flags
-        hasContext  = ctxt.isAttributeSpecified("context");
+        hasContext = ctxt.isAttributeSpecified("context");
         hasVar = ctxt.isAttributeSpecified("var");
         hasScope = ctxt.isAttributeSpecified("scope");
         hasVarReader = ctxt.isAttributeSpecified("varReader");
@@ -67,7 +67,7 @@ public class Import implements TagPlugin {
         //validate the url
         ctxt.generateJavaSource("if(" + urlName + " == null || " + urlName + ".equals(\"\")){");
         ctxt.generateJavaSource("    throw new JspTagException(\"The \\\"url\\\" attribute " +
-        "illegally evaluated to \\\"null\\\" or \\\"\\\" in &lt;import&gt;\");");
+                "illegally evaluated to \\\"null\\\" or \\\"\\\" in &lt;import&gt;\");");
         ctxt.generateJavaSource("}");
 
         //initialize the is_absolute_url
@@ -75,7 +75,7 @@ public class Import implements TagPlugin {
                 "org.apache.jasper.tagplugins.jstl.Util.isAbsoluteUrl(" + urlName + ");");
 
         //validate the context
-        if(hasContext){
+        if (hasContext) {
 
             ctxt.generateJavaSource("String " + contextName + " = ");
             ctxt.generateAttribute("context");
@@ -85,7 +85,7 @@ public class Import implements TagPlugin {
                     "|| (!" + urlName + ".startsWith(\"/\"))){");
             ctxt.generateJavaSource("    throw new JspTagException" +
                     "(\"In URL tags, when the \\\"context\\\" attribute is specified, " +
-            "values of both \\\"context\\\" and \\\"url\\\" must start with \\\"/\\\".\");");
+                    "values of both \\\"context\\\" and \\\"url\\\" must start with \\\"/\\\".\");");
             ctxt.generateJavaSource("}");
 
         }
@@ -94,7 +94,7 @@ public class Import implements TagPlugin {
         ctxt.generateJavaSource("String " + charSetName + " = null;");
 
         //if the charEncoding attribute is specified
-        if(hasCharEncoding){
+        if (hasCharEncoding) {
 
             //initialize the charEncoding
             ctxt.generateJavaSource("String " + charEncodingName + " = ");
@@ -110,17 +110,17 @@ public class Import implements TagPlugin {
         }
 
         //reshape the url string
-        ctxt.generateJavaSource("if(!"+iauName+"){");
+        ctxt.generateJavaSource("if(!" + iauName + "){");
         ctxt.generateJavaSource("    if(!" + urlName + ".startsWith(\"/\")){");
         ctxt.generateJavaSource("        String " + servletPathName + " = " +
-        "((HttpServletRequest)pageContext.getRequest()).getServletPath();");
+                "((HttpServletRequest)pageContext.getRequest()).getServletPath();");
         ctxt.generateJavaSource("        " + urlName + " = "
                 + servletPathName + ".substring(0," + servletPathName + ".lastIndexOf('/')) + '/' + " + urlName + ";");
         ctxt.generateJavaSource("    }");
         ctxt.generateJavaSource("}");
 
         //if the varReader attribute specified
-        if(hasVarReader){
+        if (hasVarReader) {
 
             //get the String value of varReader
             ctxt.generateJavaSource("String " + varReaderName + " = ");
@@ -150,7 +150,7 @@ public class Import implements TagPlugin {
             ctxt.generateJavaSource("        }");
             ctxt.generateJavaSource("    }");
 
-            if(!hasCharEncoding){
+            if (!hasCharEncoding) {
                 ctxt.generateJavaSource("    String " + contentTypeName + " = " + ucName + ".getContentType();");
             }
 
@@ -180,34 +180,34 @@ public class Import implements TagPlugin {
 
             //if the url is relative, http request is needed
             ctxt.generateJavaSource("    if (!(pageContext.getRequest() instanceof HttpServletRequest  " +
-            "&& pageContext.getResponse() instanceof HttpServletResponse)){");
+                    "&& pageContext.getResponse() instanceof HttpServletResponse)){");
             ctxt.generateJavaSource("        throw new JspTagException(\"Relative &lt;import&gt; from non-HTTP request not allowed\");");
             ctxt.generateJavaSource("    }");
 
             //get the servlet context of the context defined in the context attribute
             ctxt.generateJavaSource("    ServletContext " + servletContextName + " = null;");
-            if(hasContext){
+            if (hasContext) {
                 ctxt.generateJavaSource("    if(null != " + contextName + "){");
-                ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext().getContext(" + contextName + ");" );
+                ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext().getContext(" + contextName + ");");
                 ctxt.generateJavaSource("    }else{");
                 ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext();");
                 ctxt.generateJavaSource("    }");
-            }else{
+            } else {
                 ctxt.generateJavaSource("    " + servletContextName + " = pageContext.getServletContext();");
             }
 
             //
             ctxt.generateJavaSource("    if(" + servletContextName + " == null){");
-            if(hasContext){
+            if (hasContext) {
                 ctxt.generateJavaSource("        throw new JspTagException(\"Unable to get RequestDispatcher for Context: \\\" \"+" + contextName + "+\" \\\" and URL: \\\" \" +" + urlName + "+ \" \\\". Verify values and/or enable cross context access.\");");
-            }else{
+            } else {
                 ctxt.generateJavaSource("        throw new JspTagException(\"Unable to get RequestDispatcher for  URL: \\\" \" +" + urlName + "+ \" \\\". Verify values and/or enable cross context access.\");");
             }
             ctxt.generateJavaSource("    }");
 
             //get the request dispatcher
-            ctxt.generateJavaSource("    RequestDispatcher " + requestDispatcherName + " = " + servletContextName + ".getRequestDispatcher(org.apache.jasper.tagplugins.jstl.Util.stripSession("+urlName+"));");
-            ctxt.generateJavaSource("    if(" + requestDispatcherName + " == null) throw new JspTagException(org.apache.jasper.tagplugins.jstl.Util.stripSession("+urlName+"));");
+            ctxt.generateJavaSource("    RequestDispatcher " + requestDispatcherName + " = " + servletContextName + ".getRequestDispatcher(org.apache.jasper.tagplugins.jstl.Util.stripSession(" + urlName + "));");
+            ctxt.generateJavaSource("    if(" + requestDispatcherName + " == null) throw new JspTagException(org.apache.jasper.tagplugins.jstl.Util.stripSession(" + urlName + "));");
 
             //initialize a ImportResponseWrapper to include the resource
             ctxt.generateJavaSource("    org.apache.jasper.tagplugins.jstl.Util.ImportResponseWrapper " + irwName + " = new org.apache.jasper.tagplugins.jstl.Util.ImportResponseWrapper((HttpServletResponse) pageContext.getResponse());");
@@ -250,14 +250,14 @@ public class Import implements TagPlugin {
         }
 
         //if the varReader is not specified
-        else{
+        else {
 
             ctxt.generateJavaSource("pageContext.setAttribute(\"url_without_param\"," + urlName + ");");
             ctxt.generateBody();
             ctxt.generateJavaSource(urlName + " = (String)pageContext.getAttribute(\"url_without_param\");");
             ctxt.generateJavaSource("pageContext.removeAttribute(\"url_without_param\");");
             String strScope = "page";
-            if(hasScope){
+            if (hasScope) {
                 strScope = ctxt.getConstantAttribute("scope");
             }
             int iScope = Util.getScope(strScope);
@@ -304,41 +304,41 @@ public class Import implements TagPlugin {
             ctxt.generateJavaSource("    StringBuilder " + sbName + " = new StringBuilder();");
             String index = ctxt.getTemporaryVariableName();
             ctxt.generateJavaSource("    int " + index + ";");
-            ctxt.generateJavaSource("    while(("+index+" = "+brName+".read()) != -1) "+sbName+".append((char)"+index+");");
-            ctxt.generateJavaSource("    " + tempStringName + " = " +sbName + ".toString();");
+            ctxt.generateJavaSource("    while((" + index + " = " + brName + ".read()) != -1) " + sbName + ".append((char)" + index + ");");
+            ctxt.generateJavaSource("    " + tempStringName + " = " + sbName + ".toString();");
 
             ctxt.generateJavaSource("}else{");
 
             //if the url is relative, http request is needed.
             ctxt.generateJavaSource("    if (!(pageContext.getRequest() instanceof HttpServletRequest  " +
-            "&& pageContext.getResponse() instanceof HttpServletResponse)){");
+                    "&& pageContext.getResponse() instanceof HttpServletResponse)){");
             ctxt.generateJavaSource("        throw new JspTagException(\"Relative &lt;import&gt; from non-HTTP request not allowed\");");
             ctxt.generateJavaSource("    }");
 
             //get the servlet context of the context defined in the context attribute
             ctxt.generateJavaSource("    ServletContext " + servletContextName + " = null;");
-            if(hasContext){
+            if (hasContext) {
                 ctxt.generateJavaSource("    if(null != " + contextName + "){");
-                ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext().getContext(" + contextName + ");" );
+                ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext().getContext(" + contextName + ");");
                 ctxt.generateJavaSource("    }else{");
                 ctxt.generateJavaSource("        " + servletContextName + " = pageContext.getServletContext();");
                 ctxt.generateJavaSource("    }");
-            }else{
+            } else {
                 ctxt.generateJavaSource("    " + servletContextName + " = pageContext.getServletContext();");
             }
 
             //
             ctxt.generateJavaSource("    if(" + servletContextName + " == null){");
-            if(hasContext){
+            if (hasContext) {
                 ctxt.generateJavaSource("        throw new JspTagException(\"Unable to get RequestDispatcher for Context: \\\" \" +" + contextName + "+ \" \\\" and URL: \\\" \" +" + urlName + "+ \" \\\". Verify values and/or enable cross context access.\");");
-            }else{
+            } else {
                 ctxt.generateJavaSource("        throw new JspTagException(\"Unable to get RequestDispatcher for URL: \\\" \" +" + urlName + "+ \" \\\". Verify values and/or enable cross context access.\");");
             }
             ctxt.generateJavaSource("    }");
 
             //get the request dispatcher
-            ctxt.generateJavaSource("    RequestDispatcher " + requestDispatcherName + " = " + servletContextName + ".getRequestDispatcher(org.apache.jasper.tagplugins.jstl.Util.stripSession("+urlName+"));");
-            ctxt.generateJavaSource("    if(" + requestDispatcherName + " == null) throw new JspTagException(org.apache.jasper.tagplugins.jstl.Util.stripSession("+urlName+"));");
+            ctxt.generateJavaSource("    RequestDispatcher " + requestDispatcherName + " = " + servletContextName + ".getRequestDispatcher(org.apache.jasper.tagplugins.jstl.Util.stripSession(" + urlName + "));");
+            ctxt.generateJavaSource("    if(" + requestDispatcherName + " == null) throw new JspTagException(org.apache.jasper.tagplugins.jstl.Util.stripSession(" + urlName + "));");
 
             //initialize a ImportResponseWrapper to include the resource
             ctxt.generateJavaSource("    org.apache.jasper.tagplugins.jstl.Util.ImportResponseWrapper " + irwName + " = new org.apache.jasper.tagplugins.jstl.Util.ImportResponseWrapper((HttpServletResponse) pageContext.getResponse());");
@@ -369,10 +369,10 @@ public class Import implements TagPlugin {
 
             ctxt.generateJavaSource("}");
 
-            if(hasVar){
+            if (hasVar) {
                 String strVar = ctxt.getConstantAttribute("var");
-                ctxt.generateJavaSource("pageContext.setAttribute(\""+strVar+"\"," + tempStringName + "," + iScope + ");");
-            }else{
+                ctxt.generateJavaSource("pageContext.setAttribute(\"" + strVar + "\"," + tempStringName + "," + iScope + ");");
+            } else {
                 ctxt.generateJavaSource("pageContext.getOut().print(" + tempStringName + ");");
             }
         }

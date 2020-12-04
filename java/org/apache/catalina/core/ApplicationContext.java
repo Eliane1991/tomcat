@@ -61,7 +61,23 @@ public class ApplicationContext implements ServletContext {
     protected static final boolean STRICT_SERVLET_COMPLIANCE;
 
     protected static final boolean GET_RESOURCE_REQUIRE_SLASH;
+    /**
+     * Empty String collection to serve as the basis for empty enumerations.
+     */
+    private static final List<String> emptyString = Collections.emptyList();
 
+    // ----------------------------------------------------------- Constructors
+    /**
+     * Empty Servlet collection to serve as the basis for empty enumerations.
+     */
+    private static final List<Servlet> emptyServlet = Collections.emptyList();
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The string manager for this package.
+     */
+    private static final StringManager sm = StringManager.getManager(Constants.Package);
 
     static {
         STRICT_SERVLET_COMPLIANCE = Globals.STRICT_SERVLET_COMPLIANCE;
@@ -75,8 +91,50 @@ public class ApplicationContext implements ServletContext {
         }
     }
 
-    // ----------------------------------------------------------- Constructors
-
+    /**
+     * List of read only attributes for this context.
+     */
+    private final Map<String, String> readOnlyAttributes = new ConcurrentHashMap<>();
+    /**
+     * The Context instance with which we are associated.
+     */
+    private final StandardContext context;
+    /**
+     * The Service instance with which we are associated.
+     */
+    private final Service service;
+    /**
+     * The facade around this object.
+     */
+    private final ServletContext facade = new ApplicationContextFacade(this);
+    /**
+     * The merged context initialization parameters for this Context.
+     */
+    private final ConcurrentMap<String, String> parameters = new ConcurrentHashMap<>();
+    /**
+     * Thread local data used during request dispatch.
+     */
+    private final ThreadLocal<DispatchData> dispatchData = new ThreadLocal<>();
+    /**
+     * The context attributes for this context.
+     */
+    protected Map<String, Object> attributes = new ConcurrentHashMap<>();
+    /**
+     * Session Cookie config
+     */
+    private SessionCookieConfig sessionCookieConfig;
+    /**
+     * Session tracking modes
+     */
+    private Set<SessionTrackingMode> sessionTrackingModes = null;
+    private Set<SessionTrackingMode> defaultSessionTrackingModes = null;
+    private Set<SessionTrackingMode> supportedSessionTrackingModes = null;
+    /**
+     * Flag that indicates if a new {@link ServletContextListener} may be added
+     * to the application. Once the first {@link ServletContextListener} is
+     * called, no more may be added.
+     */
+    private boolean newServletContextListenerAllowed = true;
 
     /**
      * Construct a new instance of this class, associated with the specified
@@ -95,103 +153,45 @@ public class ApplicationContext implements ServletContext {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The context attributes for this context.
-     */
-    protected Map<String,Object> attributes = new ConcurrentHashMap<>();
-
-
-    /**
-     * List of read only attributes for this context.
-     */
-    private final Map<String,String> readOnlyAttributes = new ConcurrentHashMap<>();
-
-
-    /**
-     * The Context instance with which we are associated.
-     */
-    private final StandardContext context;
-
-
-    /**
-     * The Service instance with which we are associated.
-     */
-    private final Service service;
-
-
-    /**
-     * Empty String collection to serve as the basis for empty enumerations.
-     */
-    private static final List<String> emptyString = Collections.emptyList();
-
-
-    /**
-     * Empty Servlet collection to serve as the basis for empty enumerations.
-     */
-    private static final List<Servlet> emptyServlet = Collections.emptyList();
-
-
-    /**
-     * The facade around this object.
-     */
-    private final ServletContext facade = new ApplicationContextFacade(this);
-
-
-    /**
-     * The merged context initialization parameters for this Context.
-     */
-    private final ConcurrentMap<String,String> parameters = new ConcurrentHashMap<>();
-
-
-    /**
-     * The string manager for this package.
-     */
-    private static final StringManager sm = StringManager.getManager(Constants.Package);
-
-
-    /**
-     * Thread local data used during request dispatch.
-     */
-    private final ThreadLocal<DispatchData> dispatchData = new ThreadLocal<>();
-
-
-    /**
-     * Session Cookie config
-     */
-    private SessionCookieConfig sessionCookieConfig;
-
-    /**
-     * Session tracking modes
-     */
-    private Set<SessionTrackingMode> sessionTrackingModes = null;
-    private Set<SessionTrackingMode> defaultSessionTrackingModes = null;
-    private Set<SessionTrackingMode> supportedSessionTrackingModes = null;
-
-    /**
-     * Flag that indicates if a new {@link ServletContextListener} may be added
-     * to the application. Once the first {@link ServletContextListener} is
-     * called, no more may be added.
-     */
-    private boolean newServletContextListenerAllowed = true;
-
-
     // ------------------------------------------------- ServletContext Methods
+
+    // Package private to facilitate testing
+    static String stripPathParams(String input) {
+        // Shortcut
+        if (input.indexOf(';') < 0) {
+            return input;
+        }
+
+        StringBuilder sb = new StringBuilder(input.length());
+        int pos = 0;
+        int limit = input.length();
+        while (pos < limit) {
+            int nextSemiColon = input.indexOf(';', pos);
+            if (nextSemiColon < 0) {
+                nextSemiColon = limit;
+            }
+            sb.append(input.substring(pos, nextSemiColon));
+            int followingSlash = input.indexOf('/', nextSemiColon);
+            if (followingSlash < 0) {
+                pos = limit;
+            } else {
+                pos = followingSlash;
+            }
+        }
+
+        return sb.toString();
+    }
 
     @Override
     public Object getAttribute(String name) {
         return attributes.get(name);
     }
 
-
     @Override
     public Enumeration<String> getAttributeNames() {
         Set<String> names = new HashSet<>(attributes.keySet());
         return Collections.enumeration(names);
     }
-
 
     @Override
     public ServletContext getContext(String uri) {
@@ -253,12 +253,10 @@ public class ApplicationContext implements ServletContext {
         }
     }
 
-
     @Override
     public String getContextPath() {
         return context.getPath();
     }
-
 
     @Override
     public String getInitParameter(final String name) {
@@ -277,7 +275,6 @@ public class ApplicationContext implements ServletContext {
         return parameters.get(name);
     }
 
-
     @Override
     public Enumeration<String> getInitParameterNames() {
         Set<String> names = new HashSet<>(parameters.keySet());
@@ -292,18 +289,15 @@ public class ApplicationContext implements ServletContext {
         return Collections.enumeration(names);
     }
 
-
     @Override
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
 
-
     @Override
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
-
 
     /**
      * Return the MIME type of the specified file, or <code>null</code> if
@@ -325,7 +319,6 @@ public class ApplicationContext implements ServletContext {
         return context.findMimeMapping(extension);
 
     }
-
 
     /**
      * Return a <code>RequestDispatcher</code> object that acts as a
@@ -349,13 +342,11 @@ public class ApplicationContext implements ServletContext {
 
     }
 
-
     @Override
     public String getRealPath(String path) {
         String validatedPath = validateResourcePath(path, true);
         return context.getRealPath(validatedPath);
     }
-
 
     @Override
     public RequestDispatcher getRequestDispatcher(final String path) {
@@ -463,35 +454,6 @@ public class ApplicationContext implements ServletContext {
         }
     }
 
-
-    // Package private to facilitate testing
-    static String stripPathParams(String input) {
-        // Shortcut
-        if (input.indexOf(';') < 0) {
-            return input;
-        }
-
-        StringBuilder sb = new StringBuilder(input.length());
-        int pos = 0;
-        int limit = input.length();
-        while (pos < limit) {
-            int nextSemiColon = input.indexOf(';', pos);
-            if (nextSemiColon < 0) {
-                nextSemiColon = limit;
-            }
-            sb.append(input.substring(pos, nextSemiColon));
-            int followingSlash = input.indexOf('/', nextSemiColon);
-            if (followingSlash < 0) {
-                pos = limit;
-            } else {
-                pos = followingSlash;
-            }
-        }
-
-        return sb.toString();
-    }
-
-
     @Override
     public URL getResource(String path) throws MalformedURLException {
 
@@ -562,7 +524,7 @@ public class ApplicationContext implements ServletContext {
             return null;
         }
         if (!path.startsWith("/")) {
-            throw new IllegalArgumentException (sm.getString("applicationContext.resourcePaths.iae", path));
+            throw new IllegalArgumentException(sm.getString("applicationContext.resourcePaths.iae", path));
         }
 
         WebResourceRoot resources = context.getResources();
@@ -633,7 +595,7 @@ public class ApplicationContext implements ServletContext {
 
         // Remove the specified attribute
         // Check for read only attribute
-        if (readOnlyAttributes.containsKey(name)){
+        if (readOnlyAttributes.containsKey(name)) {
             return;
         }
         value = attributes.remove(name);
@@ -744,13 +706,13 @@ public class ApplicationContext implements ServletContext {
 
     @Override
     public FilterRegistration.Dynamic addFilter(String filterName,
-            Class<? extends Filter> filterClass) {
+                                                Class<? extends Filter> filterClass) {
         return addFilter(filterName, filterClass.getName(), null);
     }
 
 
     private FilterRegistration.Dynamic addFilter(String filterName,
-            String filterClass, Filter filter) throws IllegalStateException {
+                                                 String filterClass, Filter filter) throws IllegalStateException {
 
         if (filterName == null || filterName.equals("")) {
             throw new IllegalArgumentException(sm.getString(
@@ -829,7 +791,7 @@ public class ApplicationContext implements ServletContext {
 
     @Override
     public ServletRegistration.Dynamic addServlet(String servletName,
-            Class<? extends Servlet> servletClass) {
+                                                  Class<? extends Servlet> servletClass) {
         return addServlet(servletName, servletClass.getName(), null, null);
     }
 
@@ -843,7 +805,7 @@ public class ApplicationContext implements ServletContext {
         }
 
         String jspServletClassName = null;
-        Map<String,String> jspFileInitParams = new HashMap<>();
+        Map<String, String> jspFileInitParams = new HashMap<>();
 
         Wrapper jspServlet = (Wrapper) context.findChild("jsp");
 
@@ -870,7 +832,7 @@ public class ApplicationContext implements ServletContext {
 
 
     private ServletRegistration.Dynamic addServlet(String servletName, String servletClass,
-            Servlet servlet, Map<String,String> initParams) throws IllegalStateException {
+                                                   Servlet servlet, Map<String, String> initParams) throws IllegalStateException {
 
         if (servletName == null || servletName.equals("")) {
             throw new IllegalArgumentException(sm.getString(
@@ -919,7 +881,7 @@ public class ApplicationContext implements ServletContext {
         }
 
         if (initParams != null) {
-            for (Map.Entry<String, String> initParam: initParams.entrySet()) {
+            for (Map.Entry<String, String> initParam : initParams.entrySet()) {
                 wrapper.addInitParameter(initParam.getKey(), initParam.getValue());
             }
         }
@@ -1086,7 +1048,7 @@ public class ApplicationContext implements ServletContext {
             throw new IllegalArgumentException(sm.getString(
                     "applicationContext.addListener.iae.cnfe", className),
                     e);
-        } catch (ReflectiveOperationException| NamingException e) {
+        } catch (ReflectiveOperationException | NamingException e) {
             throw new IllegalArgumentException(sm.getString(
                     "applicationContext.addListener.iae.cnfe", className),
                     e);

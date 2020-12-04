@@ -33,8 +33,24 @@ public class ContextHandler extends ResourceBase {
     private static final long serialVersionUID = 1L;
 
     // ------------------------------------------------------------- Properties
-
-
+    /**
+     * A list of QName specifying the SOAP Headers the handler will work on.
+     * -namespace and localpart values must be found inside the WSDL.
+     * <p>
+     * A service-qname is composed by a namespaceURI and a localpart.
+     * <p>
+     * soapHeader[0] : namespaceURI
+     * soapHeader[1] : localpart
+     */
+    private final HashMap<String, String> soapHeaders = new HashMap<>();
+    /**
+     * The soapRole.
+     */
+    private final ArrayList<String> soapRoles = new ArrayList<>();
+    /**
+     * The portName.
+     */
+    private final ArrayList<String> portNames = new ArrayList<>();
     /**
      * The Handler reference class.
      */
@@ -47,17 +63,6 @@ public class ContextHandler extends ResourceBase {
     public void setHandlerclass(String handlerclass) {
         this.handlerclass = handlerclass;
     }
-
-    /**
-     * A list of QName specifying the SOAP Headers the handler will work on.
-     * -namespace and localpart values must be found inside the WSDL.
-     *
-     * A service-qname is composed by a namespaceURI and a localpart.
-     *
-     * soapHeader[0] : namespaceURI
-     * soapHeader[1] : localpart
-     */
-    private final HashMap<String, String> soapHeaders = new HashMap<>();
 
     public Iterator<String> getLocalparts() {
         return soapHeaders.keySet().iterator();
@@ -73,17 +78,13 @@ public class ContextHandler extends ResourceBase {
 
     /**
      * Set a configured property.
-     * @param name The property name
+     *
+     * @param name  The property name
      * @param value The property value
      */
     public void setProperty(String name, String value) {
         this.setProperty(name, (Object) value);
     }
-
-    /**
-     * The soapRole.
-     */
-    private final ArrayList<String> soapRoles = new ArrayList<>();
 
     public String getSoapRole(int i) {
         return this.soapRoles.get(i);
@@ -96,11 +97,6 @@ public class ContextHandler extends ResourceBase {
     public void addSoapRole(String soapRole) {
         this.soapRoles.add(soapRole);
     }
-
-    /**
-     * The portName.
-     */
-    private final ArrayList<String> portNames = new ArrayList<>();
 
     public String getPortName(int i) {
         return this.portNames.get(i);

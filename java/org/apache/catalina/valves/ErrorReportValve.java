@@ -67,11 +67,10 @@ public class ErrorReportValve extends ValveBase {
      * or an uncaught exception was thrown then the error handling will be
      * triggered.
      *
-     * @param request The servlet request to be processed
+     * @param request  The servlet request to be processed
      * @param response The servlet response to be created
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
@@ -134,10 +133,10 @@ public class ErrorReportValve extends ValveBase {
     /**
      * Prints out an error report.
      *
-     * @param request The request being processed
-     * @param response The response being generated
+     * @param request   The request being processed
+     * @param response  The response being generated
      * @param throwable The exception that occurred (which possibly wraps
-     *  a root cause exception
+     *                  a root cause exception
      */
     protected void report(Request request, Response response, Throwable throwable) {
 
@@ -299,6 +298,7 @@ public class ErrorReportValve extends ValveBase {
     /**
      * Print out a partial servlet stack trace (truncating at the last
      * occurrence of javax.servlet.).
+     *
      * @param t The stack trace to process
      * @return the stack trace relative to the application layer
      */
@@ -309,19 +309,23 @@ public class ErrorReportValve extends ValveBase {
         int pos = elements.length;
         for (int i = elements.length - 1; i >= 0; i--) {
             if ((elements[i].getClassName().startsWith
-                 ("org.apache.catalina.core.ApplicationFilterChain"))
-                && (elements[i].getMethodName().equals("internalDoFilter"))) {
+                    ("org.apache.catalina.core.ApplicationFilterChain"))
+                    && (elements[i].getMethodName().equals("internalDoFilter"))) {
                 pos = i;
                 break;
             }
         }
         for (int i = 0; i < pos; i++) {
             if (!(elements[i].getClassName().startsWith
-                  ("org.apache.catalina.core."))) {
+                    ("org.apache.catalina.core."))) {
                 trace.append('\t').append(elements[i].toString()).append(System.lineSeparator());
             }
         }
         return trace.toString();
+    }
+
+    public boolean isShowReport() {
+        return showReport;
     }
 
     /**
@@ -333,8 +337,8 @@ public class ErrorReportValve extends ValveBase {
         this.showReport = showReport;
     }
 
-    public boolean isShowReport() {
-        return showReport;
+    public boolean isShowServerInfo() {
+        return showServerInfo;
     }
 
     /**
@@ -344,9 +348,5 @@ public class ErrorReportValve extends ValveBase {
      */
     public void setShowServerInfo(boolean showServerInfo) {
         this.showServerInfo = showServerInfo;
-    }
-
-    public boolean isShowServerInfo() {
-        return showServerInfo;
     }
 }

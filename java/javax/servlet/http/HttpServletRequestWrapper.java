@@ -38,9 +38,7 @@ public class HttpServletRequestWrapper extends ServletRequestWrapper implements
      * Constructs a request object wrapping the given request.
      *
      * @param request The request to wrap
-     *
-     * @throws java.lang.IllegalArgumentException
-     *             if the request is null
+     * @throws java.lang.IllegalArgumentException if the request is null
      */
     public HttpServletRequestWrapper(HttpServletRequest request) {
         super(request);

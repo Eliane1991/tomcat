@@ -27,23 +27,26 @@ import java.io.IOException;
  * The channel sender must support "silent" members, ie, be able to send a message to a member
  * that is not in the membership, but is part of the destination parameter
  */
-public interface ChannelSender extends Heartbeat
-{
+public interface ChannelSender extends Heartbeat {
     /**
      * Notify the sender of a member being added to the group.<br>
      * Optional. This can be an empty implementation, that does nothing
+     *
      * @param member Member
      */
     public void add(Member member);
+
     /**
      * Notification that a member has been removed or crashed.
      * Can be used to clean up open connections etc
+     *
      * @param member Member
      */
     public void remove(Member member);
 
     /**
      * Start the channel sender
+     *
      * @throws IOException if preprocessing takes place and an error happens
      */
     public void start() throws IOException;
@@ -57,26 +60,29 @@ public interface ChannelSender extends Heartbeat
      * A channel heartbeat, use this method to clean up resources
      */
     @Override
-    public void heartbeat() ;
+    public void heartbeat();
 
     /**
      * Send a message to one or more recipients.
-     * @param message ChannelMessage - the message to be sent
+     *
+     * @param message     ChannelMessage - the message to be sent
      * @param destination Member[] - the destinations
      * @throws ChannelException - if an error happens, the ChannelSender MUST report
-     * individual send failures on a per member basis, using ChannelException.addFaultyMember
-     * @see ChannelException#addFaultyMember(Member,java.lang.Exception)
+     *                          individual send failures on a per member basis, using ChannelException.addFaultyMember
+     * @see ChannelException#addFaultyMember(Member, java.lang.Exception)
      */
     public void sendMessage(ChannelMessage message, Member[] destination) throws ChannelException;
 
     /**
      * Return the channel that is related to this ChannelSender
+     *
      * @return Channel
      */
     public Channel getChannel();
 
     /**
      * Set the channel that is related to this ChannelSender
+     *
      * @param channel The channel
      */
     public void setChannel(Channel channel);

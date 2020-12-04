@@ -37,20 +37,20 @@
  * </p>
  *
  * <code>
- *  &lt;Resource name="jdbc/bookstore" auth="Container"
- *             type="org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolPoolDataSource"/&gt;
- *   &lt;ResourceParams name="jdbc/bookstore"&gt;
- *     &lt;parameter&gt;
- *       &lt;name&gt;factory&lt;/name&gt;
- *       &lt;value&gt;org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolDataSourceFactory&lt;/value&gt;
- *     &lt;/parameter&gt;
- *     &lt;parameter&gt;
- *       &lt;name&gt;dataSourceName&lt;/name&gt;&lt;value&gt;java:comp/env/jdbc/bookstoreCPDS&lt;/value&gt;
- *     &lt;/parameter&gt;
- *     &lt;parameter&gt;
- *       &lt;name&gt;defaultMaxTotal&lt;/name&gt;&lt;value&gt;30&lt;/value&gt;
- *     &lt;/parameter&gt;
- *   &lt;/ResourceParams&gt;
+ * &lt;Resource name="jdbc/bookstore" auth="Container"
+ * type="org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolPoolDataSource"/&gt;
+ * &lt;ResourceParams name="jdbc/bookstore"&gt;
+ * &lt;parameter&gt;
+ * &lt;name&gt;factory&lt;/name&gt;
+ * &lt;value&gt;org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolDataSourceFactory&lt;/value&gt;
+ * &lt;/parameter&gt;
+ * &lt;parameter&gt;
+ * &lt;name&gt;dataSourceName&lt;/name&gt;&lt;value&gt;java:comp/env/jdbc/bookstoreCPDS&lt;/value&gt;
+ * &lt;/parameter&gt;
+ * &lt;parameter&gt;
+ * &lt;name&gt;defaultMaxTotal&lt;/name&gt;&lt;value&gt;30&lt;/value&gt;
+ * &lt;/parameter&gt;
+ * &lt;/ResourceParams&gt;
  * </code>
  *
  * <p>
@@ -60,20 +60,20 @@
  *
  * <code>
  * &lt;resource-ref&gt;
- *   &lt;description&gt;
- *     Resource reference to a factory for java.sql.Connection
- *     instances that may be used for talking to a particular
- *     database that is configured in the server.xml file.
- *   &lt;/description&gt;
- *   &lt;res-ref-name&gt;
- *     jdbc/bookstore
- *   &lt;/res-ref-name&gt;
- *   &lt;res-type&gt;
- *     org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolDataSource
- *   &lt;/res-type&gt;
- *   &lt;res-auth&gt;
- *     Container
- *   &lt;/res-auth&gt;
+ * &lt;description&gt;
+ * Resource reference to a factory for java.sql.Connection
+ * instances that may be used for talking to a particular
+ * database that is configured in the server.xml file.
+ * &lt;/description&gt;
+ * &lt;res-ref-name&gt;
+ * jdbc/bookstore
+ * &lt;/res-ref-name&gt;
+ * &lt;res-type&gt;
+ * org.apache.tomcat.dbcp.dbcp2.datasources.PerUserPoolDataSource
+ * &lt;/res-type&gt;
+ * &lt;res-auth&gt;
+ * Container
+ * &lt;/res-auth&gt;
  * &lt;/resource-ref&gt;
  * </code>
  *
@@ -91,23 +91,23 @@
  * </p>
  *
  * <code>
- *
- *     Context ctx = new InitialContext();
- *     DataSource ds = (DataSource)
- *         ctx.lookup("java:comp/env/jdbc/bookstore");
- *     Connection con = null;
- *     try
- *     {
- *         con = ds.getConnection();
- *         ...
- *         use the connection
- *         ...
- *     }
- *     finally
- *     {
- *         if (con != null)
- *             con.close();
- *     }
+ * <p>
+ * Context ctx = new InitialContext();
+ * DataSource ds = (DataSource)
+ * ctx.lookup("java:comp/env/jdbc/bookstore");
+ * Connection con = null;
+ * try
+ * {
+ * con = ds.getConnection();
+ * ...
+ * use the connection
+ * ...
+ * }
+ * finally
+ * {
+ * if (con != null)
+ * con.close();
+ * }
  *
  * </code>
  *
@@ -131,31 +131,31 @@
  * </p>
  *
  * <code>
- *
+ * <p>
  * public class Pool
  * {
- *     private static DataSource ds;
- *
- *     static
- *     {
- *         DriverAdapterCPDS cpds = new DriverAdapterCPDS();
- *         cpds.setDriver("org.gjt.mm.mysql.Driver");
- *         cpds.setUrl("jdbc:mysql://localhost:3306/bookstore");
- *         cpds.setUser("foo");
- *         cpds.setPassword(null);
- *
- *         SharedPoolDataSource tds = new SharedPoolDataSource();
- *         tds.setConnectionPoolDataSource(cpds);
- *         tds.setMaxTotal(10);
- *         tds.setMaxWaitMillis(50);
- *
- *         ds = tds;
- *     }
- *
- *     public static getConnection()
- *     {
- *         return ds.getConnection();
- *     }
+ * private static DataSource ds;
+ * <p>
+ * static
+ * {
+ * DriverAdapterCPDS cpds = new DriverAdapterCPDS();
+ * cpds.setDriver("org.gjt.mm.mysql.Driver");
+ * cpds.setUrl("jdbc:mysql://localhost:3306/bookstore");
+ * cpds.setUser("foo");
+ * cpds.setPassword(null);
+ * <p>
+ * SharedPoolDataSource tds = new SharedPoolDataSource();
+ * tds.setConnectionPoolDataSource(cpds);
+ * tds.setMaxTotal(10);
+ * tds.setMaxWaitMillis(50);
+ * <p>
+ * ds = tds;
+ * }
+ * <p>
+ * public static getConnection()
+ * {
+ * return ds.getConnection();
+ * }
  * }
  *
  * </code>
@@ -165,19 +165,19 @@
  * </p>
  *
  * <code>
- *     Connection con = null;
- *     try
- *     {
- *         con = Pool.getConnection();
- *         ...
- *         use the connection
- *         ...
- *     }
- *     finally
- *     {
- *         if (con != null)
- *             con.close();
- *     }
+ * Connection con = null;
+ * try
+ * {
+ * con = Pool.getConnection();
+ * ...
+ * use the connection
+ * ...
+ * }
+ * finally
+ * {
+ * if (con != null)
+ * con.close();
+ * }
  * </code>
  */
 package org.apache.tomcat.dbcp.dbcp2.datasources;

@@ -16,8 +16,8 @@
   limitations under the License.
 -->
 <!DOCTYPE document [
-  <!ENTITY project SYSTEM "project.xml">
-]>
+        <!ENTITY project SYSTEM "project.xml">
+        ]>
 <document url="mbeans-descriptors-howto.html">
 
     &project;
@@ -27,37 +27,42 @@
         <title>MBeans Descriptors How To</title>
     </properties>
 
-<body>
+    <body>
 
-<section name="Table of Contents">
-<toc/>
-</section>
+        <section name="Table of Contents">
+            <toc/>
+        </section>
 
-<section name="Introduction">
+        <section name="Introduction">
 
-<p>Tomcat uses JMX MBeans as the technology for implementing
-manageability of Tomcat.</p>
+            <p>Tomcat uses JMX MBeans as the technology for implementing
+                manageability of Tomcat.
+            </p>
 
-<p>The descriptions of JMX MBeans for Catalina are in the mbeans-descriptors.xml
-file in each package.</p>
+            <p>The descriptions of JMX MBeans for Catalina are in the mbeans-descriptors.xml
+                file in each package.
+            </p>
 
-<p>You will need to add MBean descriptions for your custom components
-in order to avoid a "ManagedBean is not found" exception.</p>
+            <p>You will need to add MBean descriptions for your custom components
+                in order to avoid a "ManagedBean is not found" exception.
+            </p>
 
-</section>
+        </section>
 
-<section name="Adding MBean descriptions">
+        <section name="Adding MBean descriptions">
 
-<p>You may also add MBean descriptions for custom components in
-an mbeans-descriptors.xml file, located in the same package as the class files
-it describes.</p>
+            <p>You may also add MBean descriptions for custom components in
+                an mbeans-descriptors.xml file, located in the same package as the class files
+                it describes.
+            </p>
 
-<p>The permitted syntax for the mbeans-descriptors.xml is defined by
-the <a href="mbeans-descriptors.dtd">DTD</a> file.</p>
+            <p>The permitted syntax for the mbeans-descriptors.xml is defined by
+                the <a href="mbeans-descriptors.dtd">DTD</a> file.
+            </p>
 
-<p>The entries for a custom LDAP authentication Realm may look like this:</p>
+            <p>The entries for a custom LDAP authentication Realm may look like this:</p>
 
-<source><![CDATA[  <mbean         name="LDAPRealm"
+            <source><![CDATA[  <mbean         name="LDAPRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Custom LDAPRealm"
                domain="Catalina"
@@ -79,8 +84,8 @@ the <a href="mbeans-descriptors.dtd">DTD</a> file.</p>
   </mbean>]]></source>
 
 
-</section>
+        </section>
 
-</body>
+    </body>
 
 </document>

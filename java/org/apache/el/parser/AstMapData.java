@@ -32,7 +32,7 @@ public class AstMapData extends SimpleNode {
 
     @Override
     public Object getValue(EvaluationContext ctx) throws ELException {
-        Map<Object,Object> result = new HashMap<>();
+        Map<Object, Object> result = new HashMap<>();
 
         if (children != null) {
             for (Node child : children) {

@@ -31,22 +31,16 @@ import java.util.Set;
  */
 public class BackgroundProcessManager {
 
-    private final Log log =
-            LogFactory.getLog(BackgroundProcessManager.class);
     private static final StringManager sm =
             StringManager.getManager(BackgroundProcessManager.class);
     private static final BackgroundProcessManager instance;
-
 
     static {
         instance = new BackgroundProcessManager();
     }
 
-
-    public static BackgroundProcessManager getInstance() {
-        return instance;
-    }
-
+    private final Log log =
+            LogFactory.getLog(BackgroundProcessManager.class);
     private final Set<BackgroundProcess> processes = new HashSet<>();
     private final Object processesLock = new Object();
     private WsBackgroundThread wsBackgroundThread = null;
@@ -55,6 +49,9 @@ public class BackgroundProcessManager {
         // Hide default constructor
     }
 
+    public static BackgroundProcessManager getInstance() {
+        return instance;
+    }
 
     public void register(BackgroundProcess process) {
         synchronized (processesLock) {

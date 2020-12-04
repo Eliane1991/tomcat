@@ -106,7 +106,7 @@ public interface Manager {
      * same time.
      *
      * @param maxActive Maximum number of sessions that have been active at
-     * the same time.
+     *                  the same time.
      */
     public void setMaxActive(int maxActive);
 
@@ -159,7 +159,7 @@ public interface Manager {
      * alive.
      *
      * @param sessionMaxAliveTime Longest time (in seconds) that an expired
-     * session had been alive.
+     *                            session had been alive.
      */
     public void setSessionMaxAliveTime(int sessionMaxAliveTime);
 
@@ -178,7 +178,7 @@ public interface Manager {
      * Gets the current rate of session creation (in session per minute). This
      * may be based on sample data.
      *
-     * @return  The current rate (in sessions per minute) of session creation
+     * @return The current rate (in sessions per minute) of session creation
      */
     public int getSessionCreateRate();
 
@@ -187,7 +187,7 @@ public interface Manager {
      * Gets the current rate of session expiration (in session per minute). This
      * may be based on sample data
      *
-     * @return  The current rate (in sessions per minute) of session expiration
+     * @return The current rate (in sessions per minute) of session expiration
      */
     public int getSessionExpireRate();
 
@@ -214,7 +214,7 @@ public interface Manager {
      * Change the session ID of the current session to a new randomly generated
      * session ID.
      *
-     * @param session   The session to change the session ID for
+     * @param session The session to change the session ID for
      */
     public void changeSessionId(Session session);
 
@@ -222,7 +222,7 @@ public interface Manager {
     /**
      * Change the session ID of the current session to a specified session ID.
      *
-     * @param session   The session to change the session ID for
+     * @param session The session to change the session ID for
      * @param newId   new session ID
      */
     public void changeSessionId(Session session, String newId);
@@ -246,14 +246,13 @@ public interface Manager {
      * <code>null</code>.
      *
      * @param sessionId The session id which should be used to create the
-     *  new session; if <code>null</code>, the session
-     *  id will be assigned by this method, and available via the getId()
-     *  method of the returned session.
-     * @exception IllegalStateException if a new session cannot be
-     *  instantiated for any reason
-     *
+     *                  new session; if <code>null</code>, the session
+     *                  id will be assigned by this method, and available via the getId()
+     *                  method of the returned session.
      * @return An empty Session object with the given ID or a newly created
-     *         session ID if none was specified
+     * session ID if none was specified
+     * @throws IllegalStateException if a new session cannot be
+     *                               instantiated for any reason
      */
     public Session createSession(String sessionId);
 
@@ -263,14 +262,12 @@ public interface Manager {
      * specified session id (if any); otherwise return <code>null</code>.
      *
      * @param id The session id for the session to be returned
-     *
-     * @exception IllegalStateException if a new session cannot be
-     *  instantiated for any reason
-     * @exception IOException if an input/output error occurs while
-     *  processing this request
-     *
      * @return the request session or {@code null} if a session with the
-     *         requested ID could not be found
+     * requested ID could not be found
+     * @throws IllegalStateException if a new session cannot be
+     *                               instantiated for any reason
+     * @throws IOException           if an input/output error occurs while
+     *                               processing this request
      */
     public Session findSession(String id) throws IOException;
 
@@ -289,9 +286,9 @@ public interface Manager {
      * to the appropriate persistence mechanism, if any.  If persistence is not
      * supported, this method returns without doing anything.
      *
-     * @exception ClassNotFoundException if a serialized class cannot be
-     *  found during the reload
-     * @exception IOException if an input/output error occurs
+     * @throws ClassNotFoundException if a serialized class cannot be
+     *                                found during the reload
+     * @throws IOException            if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException;
 
@@ -307,8 +304,8 @@ public interface Manager {
     /**
      * Remove this Session from the active Sessions for this Manager.
      *
-     * @param session   Session to be removed
-     * @param update    Should the expiration statistics be updated
+     * @param session Session to be removed
+     * @param update  Should the expiration statistics be updated
      */
     public void remove(Session session, boolean update);
 
@@ -326,7 +323,7 @@ public interface Manager {
      * mechanism, if any.  If persistence is not supported, this method
      * returns without doing anything.
      *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public void unload() throws IOException;
 
@@ -346,9 +343,8 @@ public interface Manager {
      *
      * @param name  The attribute name
      * @param value The attribute value
-     *
      * @return {@code true} if the Manager would distribute the given attribute
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
     public boolean willAttributeDistribute(String name, Object value);
 }

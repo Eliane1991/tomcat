@@ -31,14 +31,12 @@ import java.net.URL;
 
 public class WebXmlParser {
 
-    private final Log log = LogFactory.getLog(WebXmlParser.class); // must not be static
-
     /**
      * The string resources for this package.
      */
     private static final StringManager sm =
-        StringManager.getManager(Constants.PACKAGE_NAME);
-
+            StringManager.getManager(Constants.PACKAGE_NAME);
+    private final Log log = LogFactory.getLog(WebXmlParser.class); // must not be static
     /**
      * The <code>Digester</code> we will use to process web application
      * deployment descriptor files.
@@ -55,7 +53,7 @@ public class WebXmlParser {
 
 
     public WebXmlParser(boolean namespaceAware, boolean validation,
-            boolean blockExternal) {
+                        boolean blockExternal) {
         webRuleSet = new WebRuleSet(false);
         webDigester = DigesterFactory.newDigester(validation,
                 namespaceAware, webRuleSet, blockExternal);
@@ -70,8 +68,8 @@ public class WebXmlParser {
     /**
      * Parse a web descriptor at a location.
      *
-     * @param url the location; if null no load will be attempted
-     * @param dest the instance to be populated by the parse operation
+     * @param url      the location; if null no load will be attempted
+     * @param dest     the instance to be populated by the parse operation
      * @param fragment indicate if the descriptor is a web-app or web-fragment
      * @return true if the descriptor was successfully parsed
      * @throws IOException if there was a problem reading from the URL
@@ -87,7 +85,7 @@ public class WebXmlParser {
 
 
     public boolean parseWebXml(InputSource source, WebXml dest,
-            boolean fragment) {
+                               boolean fragment) {
 
         boolean ok = true;
 
@@ -110,7 +108,7 @@ public class WebXmlParser {
         digester.push(dest);
         digester.setErrorHandler(handler);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("webXmlParser.applicationStart",
                     source.getSystemId()));
         }
@@ -127,8 +125,8 @@ public class WebXmlParser {
             log.error(sm.getString("webXmlParser.applicationParse",
                     source.getSystemId()), e);
             log.error(sm.getString("webXmlParser.applicationPosition",
-                             "" + e.getLineNumber(),
-                             "" + e.getColumnNumber()));
+                    "" + e.getLineNumber(),
+                    "" + e.getColumnNumber()));
             ok = false;
         } catch (Exception e) {
             log.error(sm.getString("webXmlParser.applicationParse",
@@ -146,6 +144,7 @@ public class WebXmlParser {
 
     /**
      * Sets the ClassLoader to be used for creating descriptor objects.
+     *
      * @param classLoader the ClassLoader to be used for creating descriptor objects
      */
     public void setClassLoader(ClassLoader classLoader) {

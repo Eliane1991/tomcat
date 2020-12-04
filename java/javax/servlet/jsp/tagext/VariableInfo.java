@@ -184,30 +184,31 @@ public class VariableInfo {
      * Scope information that scripting variable is visible after end tag.
      */
     public static final int AT_END = 2;
+    // == private data
+    private final String varName;
+
+    // Accessor methods
+    private final String className;
+    private final boolean declare;
+    private final int scope;
 
     /**
      * Constructor These objects can be created (at translation time) by the
      * TagExtraInfo instances.
      *
-     * @param varName
-     *            The name of the scripting variable
-     * @param className
-     *            The type of this variable
-     * @param declare
-     *            If true, it is a new variable (in some languages this will
-     *            require a declaration)
-     * @param scope
-     *            Indication on the lexical scope of the variable
+     * @param varName   The name of the scripting variable
+     * @param className The type of this variable
+     * @param declare   If true, it is a new variable (in some languages this will
+     *                  require a declaration)
+     * @param scope     Indication on the lexical scope of the variable
      */
     public VariableInfo(String varName, String className, boolean declare,
-            int scope) {
+                        int scope) {
         this.varName = varName;
         this.className = className;
         this.declare = declare;
         this.scope = scope;
     }
-
-    // Accessor methods
 
     /**
      * Returns the name of the scripting variable.
@@ -241,7 +242,7 @@ public class VariableInfo {
      * Returns the lexical scope of the variable.
      *
      * @return the lexical scope of the variable, either AT_BEGIN, AT_END, or
-     *         NESTED.
+     * NESTED.
      * @see #AT_BEGIN
      * @see #AT_END
      * @see #NESTED
@@ -249,10 +250,4 @@ public class VariableInfo {
     public int getScope() {
         return scope;
     }
-
-    // == private data
-    private final String varName;
-    private final String className;
-    private final boolean declare;
-    private final int scope;
 }

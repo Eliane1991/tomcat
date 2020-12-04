@@ -31,10 +31,6 @@ public class QuotedStringTokenizer {
     private int tokenCount;
     private int returnedTokens = 0;
 
-    enum WordMode {
-        SPACES, QUOTED, ESCAPED, SIMPLE, COMMENT
-    }
-
     public QuotedStringTokenizer(String text) {
         List<String> tokens;
         if (text != null) {
@@ -55,27 +51,27 @@ public class QuotedStringTokenizer {
         while (pos < length) {
             char currentChar = inputText.charAt(pos);
             switch (currentMode) {
-            case SPACES:
-                currentMode = handleSpaces(currentToken, currentChar);
-                break;
-            case QUOTED:
-                currentMode = handleQuoted(tokens, currentToken, currentChar);
-                break;
-            case ESCAPED:
-                currentToken.append(currentChar);
-                currentMode = WordMode.QUOTED;
-                break;
-            case SIMPLE:
-                currentMode = handleSimple(tokens, currentToken, currentChar);
-                break;
-            case COMMENT:
-                if (currentChar == '\r' || currentChar == '\n') {
-                    currentMode = WordMode.SPACES;
-                }
-                break;
-            default:
-                throw new IllegalStateException(sm.getString("quotedStringTokenizer.tokenizeError",
-                                inputText, Integer.valueOf(pos), currentMode));
+                case SPACES:
+                    currentMode = handleSpaces(currentToken, currentChar);
+                    break;
+                case QUOTED:
+                    currentMode = handleQuoted(tokens, currentToken, currentChar);
+                    break;
+                case ESCAPED:
+                    currentToken.append(currentChar);
+                    currentMode = WordMode.QUOTED;
+                    break;
+                case SIMPLE:
+                    currentMode = handleSimple(tokens, currentToken, currentChar);
+                    break;
+                case COMMENT:
+                    if (currentChar == '\r' || currentChar == '\n') {
+                        currentMode = WordMode.SPACES;
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException(sm.getString("quotedStringTokenizer.tokenizeError",
+                            inputText, Integer.valueOf(pos), currentMode));
             }
             pos++;
         }
@@ -135,5 +131,9 @@ public class QuotedStringTokenizer {
 
     public int countTokens() {
         return tokenCount - returnedTokens;
+    }
+
+    enum WordMode {
+        SPACES, QUOTED, ESCAPED, SIMPLE, COMMENT
     }
 }

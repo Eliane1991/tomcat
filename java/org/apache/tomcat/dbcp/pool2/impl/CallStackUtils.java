@@ -26,10 +26,16 @@ import java.security.AccessControlException;
 public final class CallStackUtils {
 
     /**
+     * Hidden constructor.
+     */
+    private CallStackUtils() {
+    }
+
+    /**
      * Returns whether the caller can create a security manager in the current environment.
      *
      * @return {@code true} if it is able to create a security manager in the current environment, {@code false}
-     *         otherwise.
+     * otherwise.
      */
     private static boolean canCreateSecurityManager() {
         final SecurityManager manager = System.getSecurityManager();
@@ -73,13 +79,7 @@ public final class CallStackUtils {
                                          final boolean useTimestamp,
                                          final boolean requireFullStackTrace) {
         return canCreateSecurityManager() && !requireFullStackTrace ?
-            new SecurityManagerCallStack(messageFormat, useTimestamp) :
-            new ThrowableCallStack(messageFormat, useTimestamp);
-    }
-
-    /**
-     * Hidden constructor.
-     */
-    private CallStackUtils() {
+                new SecurityManagerCallStack(messageFormat, useTimestamp) :
+                new ThrowableCallStack(messageFormat, useTimestamp);
     }
 }

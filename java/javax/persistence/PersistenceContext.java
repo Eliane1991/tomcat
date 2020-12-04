@@ -25,9 +25,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 
 public @interface PersistenceContext {
-   String name() default "";
-   String unitName() default "";
-   PersistenceContextType type() default PersistenceContextType.TRANSACTION;
-   PersistenceProperty[] properties() default {};
-   SynchronizationType synchronization() default SynchronizationType.SYNCHRONIZED;
+    String name() default "";
+
+    String unitName() default "";
+
+    PersistenceContextType type() default PersistenceContextType.TRANSACTION;
+
+    PersistenceProperty[] properties() default {};
+
+    SynchronizationType synchronization() default SynchronizationType.SYNCHRONIZED;
 }

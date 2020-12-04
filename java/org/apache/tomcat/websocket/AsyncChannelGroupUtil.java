@@ -38,10 +38,9 @@ public class AsyncChannelGroupUtil {
 
     private static final StringManager sm =
             StringManager.getManager(AsyncChannelGroupUtil.class);
-
+    private static final Object lock = new Object();
     private static AsynchronousChannelGroup group = null;
     private static int usageCount = 0;
-    private static final Object lock = new Object();
 
 
     private AsyncChannelGroupUtil() {
@@ -134,6 +133,10 @@ public class AsyncChannelGroupUtil {
                 this.r = r;
             }
 
+            private static void load() {
+                // NO-OP. Just provides a hook to enable the class to be loaded
+            }
+
             @Override
             public Thread run() {
                 Thread t = new Thread(r);
@@ -141,10 +144,6 @@ public class AsyncChannelGroupUtil {
                 t.setContextClassLoader(this.getClass().getClassLoader());
                 t.setDaemon(true);
                 return t;
-            }
-
-            private static void load() {
-                // NO-OP. Just provides a hook to enable the class to be loaded
             }
         }
     }

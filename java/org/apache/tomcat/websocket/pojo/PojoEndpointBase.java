@@ -34,18 +34,17 @@ import java.util.Set;
  */
 public abstract class PojoEndpointBase extends Endpoint {
 
-    private final Log log = LogFactory.getLog(PojoEndpointBase.class); // must not be static
     private static final StringManager sm = StringManager.getManager(PojoEndpointBase.class);
-
+    private final Log log = LogFactory.getLog(PojoEndpointBase.class); // must not be static
     private Object pojo;
-    private Map<String,String> pathParameters;
+    private Map<String, String> pathParameters;
     private PojoMethodMapping methodMapping;
 
 
     protected final void doOnOpen(Session session, EndpointConfig config) {
         PojoMethodMapping methodMapping = getMethodMapping();
         Object pojo = getPojo();
-        Map<String,String> pathParameters = getPathParameters();
+        Map<String, String> pathParameters = getPathParameters();
 
         // Add message handlers before calling onOpen since that may trigger a
         // message which in turn could trigger a response and/or close the
@@ -134,17 +133,28 @@ public abstract class PojoEndpointBase extends Endpoint {
         }
     }
 
-    protected Object getPojo() { return pojo; }
-    protected void setPojo(Object pojo) { this.pojo = pojo; }
+    protected Object getPojo() {
+        return pojo;
+    }
+
+    protected void setPojo(Object pojo) {
+        this.pojo = pojo;
+    }
 
 
-    protected Map<String,String> getPathParameters() { return pathParameters; }
-    protected void setPathParameters(Map<String,String> pathParameters) {
+    protected Map<String, String> getPathParameters() {
+        return pathParameters;
+    }
+
+    protected void setPathParameters(Map<String, String> pathParameters) {
         this.pathParameters = pathParameters;
     }
 
 
-    protected PojoMethodMapping getMethodMapping() { return methodMapping; }
+    protected PojoMethodMapping getMethodMapping() {
+        return methodMapping;
+    }
+
     protected void setMethodMapping(PojoMethodMapping methodMapping) {
         this.methodMapping = methodMapping;
     }

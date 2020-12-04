@@ -23,7 +23,7 @@ import java.io.IOException;
  *
  * @since Servlet 3.1
  */
-public interface ReadListener extends java.util.EventListener{
+public interface ReadListener extends java.util.EventListener {
 
     /**
      * Invoked when data is available to read. The container will invoke this

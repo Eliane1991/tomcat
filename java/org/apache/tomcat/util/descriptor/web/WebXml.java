@@ -49,69 +49,479 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         DocumentProperties.Charset {
 
     protected static final String ORDER_OTHERS =
-        "org.apache.catalina.order.others";
+            "org.apache.catalina.order.others";
 
     private static final StringManager sm =
-        StringManager.getManager(Constants.PACKAGE_NAME);
-
+            StringManager.getManager(Constants.PACKAGE_NAME);
+    private static final String INDENT2 = "  ";
+    private static final String INDENT4 = "    ";
+    private static final String INDENT6 = "      ";
     private final Log log = LogFactory.getLog(WebXml.class); // must not be static
-
+    /**
+     * web-fragment.xml only elements
+     * Relative ordering
+     */
+    private final Set<String> after = new LinkedHashSet<>();
+    private final Set<String> before = new LinkedHashSet<>();
+    // context-param
+    // TODO: description (multiple with language) is ignored
+    private final Map<String, String> contextParams = new HashMap<>();
+    // filter
+    // TODO: Should support multiple description elements with language
+    // TODO: Should support multiple display-name elements with language
+    // TODO: Should support multiple icon elements
+    // TODO: Description for init-param is ignored
+    private final Map<String, FilterDef> filters = new LinkedHashMap<>();
+    // filter-mapping
+    private final Set<FilterMap> filterMaps = new LinkedHashSet<>();
+    private final Set<String> filterMappingNames = new HashSet<>();
+    // listener
+    // TODO: description (multiple with language) is ignored
+    // TODO: display-name (multiple with language) is ignored
+    // TODO: icon (multiple) is ignored
+    private final Set<String> listeners = new LinkedHashSet<>();
+    // servlet
+    // TODO: description (multiple with language) is ignored
+    // TODO: display-name (multiple with language) is ignored
+    // TODO: icon (multiple) is ignored
+    // TODO: init-param/description (multiple with language) is ignored
+    // TODO: security-role-ref/description (multiple with language) is ignored
+    private final Map<String, ServletDef> servlets = new HashMap<>();
+    // servlet-mapping
+    // Note: URLPatterns from web.xml may be URL encoded
+    //       (https://svn.apache.org/r285186)
+    private final Map<String, String> servletMappings = new HashMap<>();
+    private final Set<String> servletMappingNames = new HashSet<>();
+    // mime-mapping
+    private final Map<String, String> mimeMappings = new HashMap<>();
+    // welcome-file-list
+    private final Set<String> welcomeFiles = new LinkedHashSet<>();
+    // error-page
+    private final Map<String, ErrorPage> errorPages = new HashMap<>();
+    // Digester will check there is only one jsp-config
+    // jsp-config/taglib or taglib (2.3 and earlier)
+    private final Map<String, String> taglibs = new HashMap<>();
+    // jsp-config/jsp-property-group
+    private final Set<JspPropertyGroup> jspPropertyGroups = new LinkedHashSet<>();
+    // security-constraint
+    // TODO: Should support multiple display-name elements with language
+    // TODO: Should support multiple description elements with language
+    private final Set<SecurityConstraint> securityConstraints = new HashSet<>();
+    // security-role
+    // TODO: description (multiple with language) is ignored
+    private final Set<String> securityRoles = new HashSet<>();
+    // env-entry
+    // TODO: Should support multiple description elements with language
+    private final Map<String, ContextEnvironment> envEntries = new HashMap<>();
+    // ejb-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String, ContextEjb> ejbRefs = new HashMap<>();
+    // ejb-local-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String, ContextLocalEjb> ejbLocalRefs = new HashMap<>();
+    // service-ref
+    // TODO: Should support multiple description elements with language
+    // TODO: Should support multiple display-names elements with language
+    // TODO: Should support multiple icon elements ???
+    private final Map<String, ContextService> serviceRefs = new HashMap<>();
+    // resource-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String, ContextResource> resourceRefs = new HashMap<>();
+    // resource-env-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String, ContextResourceEnvRef> resourceEnvRefs = new HashMap<>();
+    // message-destination-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String, MessageDestinationRef> messageDestinationRefs =
+            new HashMap<>();
+    // message-destination
+    // TODO: Should support multiple description elements with language
+    // TODO: Should support multiple display-names elements with language
+    // TODO: Should support multiple icon elements ???
+    private final Map<String, MessageDestination> messageDestinations =
+            new HashMap<>();
+    // locale-encoding-mapping-list
+    private final Map<String, String> localeEncodingMappings = new HashMap<>();
     /**
      * Global defaults are overridable but Servlets and Servlet mappings need to
      * be unique. Duplicates normally trigger an error. This flag indicates if
      * newly added Servlet elements are marked as overridable.
      */
     private boolean overridable = false;
-    public boolean isOverridable() {
-        return overridable;
-    }
-    public void setOverridable(boolean overridable) {
-        this.overridable = overridable;
-    }
-
     /*
      * Ideally, fragment names will be unique. If they are not, Tomcat needs
      * to know as the action that the specification requires (see 8.2.2 1.e and
      * 2.c) varies depending on the ordering method used.
      */
     private boolean duplicated = false;
-    public boolean isDuplicated() {
-        return duplicated;
-    }
-    public void setDuplicated(boolean duplicated) {
-        this.duplicated = duplicated;
-    }
-
     /**
      * web.xml only elements
      * Absolute Ordering
      */
     private Set<String> absoluteOrdering = null;
+    // Optional publicId attribute
+    private String publicId = null;
+    // Optional metadata-complete attribute
+    private boolean metadataComplete = false;
+
+    // web-app elements
+    // TODO: Ignored elements:
+    // - description
+    // - icon
+    // Optional name element
+    private String name = null;
+    // Derived major and minor version attributes
+    // Default to 3,1
+    private int majorVersion = 3;
+    private int minorVersion = 1;
+    // display-name - TODO should support multiple with language
+    private String displayName = null;
+    // distributable
+    private boolean distributable = false;
+    // deny-uncovered-http-methods
+    private boolean denyUncoveredHttpMethods = false;
+    // session-config
+    // Digester will check there is only one of these
+    private SessionConfig sessionConfig = new SessionConfig();
+    // welcome-file-list merge control
+    private boolean replaceWelcomeFiles = false;
+    private boolean alwaysAddWelcomeFiles = true;
+    // login-config
+    // Digester will check there is only one of these
+    private LoginConfig loginConfig = null;
+    // post-construct elements
+    private Map<String, String> postConstructMethods = new HashMap<>();
+    // pre-destroy elements
+    private Map<String, String> preDestroyMethods = new HashMap<>();
+    // URL of JAR / exploded JAR for this web-fragment
+    private URL uRL = null;
+    // Name of jar file
+    private String jarName = null;
+    // Is this JAR part of the application or is it a container JAR? Assume it
+    // is.
+    private boolean webappJar = true;
+    // Does this web application delegate first for class loading?
+    private boolean delegate = false;
+
+    private static void appendElement(StringBuilder sb, String indent,
+                                      String elementName, String value) {
+        if (value == null) {
+            return;
+        }
+        if (value.length() == 0) {
+            sb.append(indent);
+            sb.append('<');
+            sb.append(elementName);
+            sb.append("/>\n");
+        } else {
+            sb.append(indent);
+            sb.append('<');
+            sb.append(elementName);
+            sb.append('>');
+            sb.append(Escape.xml(value));
+            sb.append("</");
+            sb.append(elementName);
+            sb.append(">\n");
+        }
+    }
+
+    private static void appendElement(StringBuilder sb, String indent,
+                                      String elementName, Object value) {
+        if (value == null) return;
+        appendElement(sb, indent, elementName, value.toString());
+    }
+
+    private static boolean mergeFilter(FilterDef src, FilterDef dest,
+                                       boolean failOnConflict) {
+        if (dest.getAsyncSupported() == null) {
+            dest.setAsyncSupported(src.getAsyncSupported());
+        } else if (src.getAsyncSupported() != null) {
+            if (failOnConflict &&
+                    !src.getAsyncSupported().equals(dest.getAsyncSupported())) {
+                return false;
+            }
+        }
+
+        if (dest.getFilterClass() == null) {
+            dest.setFilterClass(src.getFilterClass());
+        } else if (src.getFilterClass() != null) {
+            if (failOnConflict &&
+                    !src.getFilterClass().equals(dest.getFilterClass())) {
+                return false;
+            }
+        }
+
+        for (Map.Entry<String, String> srcEntry :
+                src.getParameterMap().entrySet()) {
+            if (dest.getParameterMap().containsKey(srcEntry.getKey())) {
+                if (failOnConflict && !dest.getParameterMap().get(
+                        srcEntry.getKey()).equals(srcEntry.getValue())) {
+                    return false;
+                }
+            } else {
+                dest.addInitParameter(srcEntry.getKey(), srcEntry.getValue());
+            }
+        }
+        return true;
+    }
+
+    private static boolean mergeServlet(ServletDef src, ServletDef dest,
+                                        boolean failOnConflict) {
+        // These tests should be unnecessary...
+        if (dest.getServletClass() != null && dest.getJspFile() != null) {
+            return false;
+        }
+        if (src.getServletClass() != null && src.getJspFile() != null) {
+            return false;
+        }
+
+
+        if (dest.getServletClass() == null && dest.getJspFile() == null) {
+            dest.setServletClass(src.getServletClass());
+            dest.setJspFile(src.getJspFile());
+        } else if (failOnConflict) {
+            if (src.getServletClass() != null &&
+                    (dest.getJspFile() != null ||
+                            !src.getServletClass().equals(dest.getServletClass()))) {
+                return false;
+            }
+            if (src.getJspFile() != null &&
+                    (dest.getServletClass() != null ||
+                            !src.getJspFile().equals(dest.getJspFile()))) {
+                return false;
+            }
+        }
+
+        // Additive
+        for (SecurityRoleRef securityRoleRef : src.getSecurityRoleRefs()) {
+            dest.addSecurityRoleRef(securityRoleRef);
+        }
+
+        if (dest.getLoadOnStartup() == null) {
+            if (src.getLoadOnStartup() != null) {
+                dest.setLoadOnStartup(src.getLoadOnStartup().toString());
+            }
+        } else if (src.getLoadOnStartup() != null) {
+            if (failOnConflict &&
+                    !src.getLoadOnStartup().equals(dest.getLoadOnStartup())) {
+                return false;
+            }
+        }
+
+        if (dest.getEnabled() == null) {
+            if (src.getEnabled() != null) {
+                dest.setEnabled(src.getEnabled().toString());
+            }
+        } else if (src.getEnabled() != null) {
+            if (failOnConflict &&
+                    !src.getEnabled().equals(dest.getEnabled())) {
+                return false;
+            }
+        }
+
+        for (Map.Entry<String, String> srcEntry :
+                src.getParameterMap().entrySet()) {
+            if (dest.getParameterMap().containsKey(srcEntry.getKey())) {
+                if (failOnConflict && !dest.getParameterMap().get(
+                        srcEntry.getKey()).equals(srcEntry.getValue())) {
+                    return false;
+                }
+            } else {
+                dest.addInitParameter(srcEntry.getKey(), srcEntry.getValue());
+            }
+        }
+
+        if (dest.getMultipartDef() == null) {
+            dest.setMultipartDef(src.getMultipartDef());
+        } else if (src.getMultipartDef() != null) {
+            return mergeMultipartDef(src.getMultipartDef(),
+                    dest.getMultipartDef(), failOnConflict);
+        }
+
+        if (dest.getAsyncSupported() == null) {
+            if (src.getAsyncSupported() != null) {
+                dest.setAsyncSupported(src.getAsyncSupported().toString());
+            }
+        } else if (src.getAsyncSupported() != null) {
+            if (failOnConflict &&
+                    !src.getAsyncSupported().equals(dest.getAsyncSupported())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean mergeMultipartDef(MultipartDef src, MultipartDef dest,
+                                             boolean failOnConflict) {
+
+        if (dest.getLocation() == null) {
+            dest.setLocation(src.getLocation());
+        } else if (src.getLocation() != null) {
+            if (failOnConflict &&
+                    !src.getLocation().equals(dest.getLocation())) {
+                return false;
+            }
+        }
+
+        if (dest.getFileSizeThreshold() == null) {
+            dest.setFileSizeThreshold(src.getFileSizeThreshold());
+        } else if (src.getFileSizeThreshold() != null) {
+            if (failOnConflict &&
+                    !src.getFileSizeThreshold().equals(
+                            dest.getFileSizeThreshold())) {
+                return false;
+            }
+        }
+
+        if (dest.getMaxFileSize() == null) {
+            dest.setMaxFileSize(src.getMaxFileSize());
+        } else if (src.getMaxFileSize() != null) {
+            if (failOnConflict &&
+                    !src.getMaxFileSize().equals(dest.getMaxFileSize())) {
+                return false;
+            }
+        }
+
+        if (dest.getMaxRequestSize() == null) {
+            dest.setMaxRequestSize(src.getMaxRequestSize());
+        } else if (src.getMaxRequestSize() != null) {
+            if (failOnConflict &&
+                    !src.getMaxRequestSize().equals(
+                            dest.getMaxRequestSize())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Generates the sub-set of the web-fragment.xml files to be processed in
+     * the order that the fragments must be processed as per the rules in the
+     * Servlet spec.
+     *
+     * @param application    The application web.xml file
+     * @param fragments      The map of fragment names to web fragments
+     * @param servletContext The servlet context the fragments are associated
+     *                       with
+     * @return Ordered list of web-fragment.xml files to process
+     */
+    public static Set<WebXml> orderWebFragments(WebXml application,
+                                                Map<String, WebXml> fragments, ServletContext servletContext) {
+        return application.orderWebFragments(fragments, servletContext);
+    }
+
+    private static void decoupleOtherGroups(Set<WebXml> group) {
+        Set<String> names = new HashSet<>();
+        for (WebXml fragment : group) {
+            names.add(fragment.getName());
+        }
+        for (WebXml fragment : group) {
+            Iterator<String> after = fragment.getAfterOrdering().iterator();
+            while (after.hasNext()) {
+                String entry = after.next();
+                if (!names.contains(entry)) {
+                    after.remove();
+                }
+            }
+        }
+    }
+
+    private static void orderFragments(Set<WebXml> orderedFragments,
+                                       Set<WebXml> unordered) {
+        Set<WebXml> addedThisRound = new HashSet<>();
+        Set<WebXml> addedLastRound = new HashSet<>();
+        while (unordered.size() > 0) {
+            Iterator<WebXml> source = unordered.iterator();
+            while (source.hasNext()) {
+                WebXml fragment = source.next();
+                for (WebXml toRemove : addedLastRound) {
+                    fragment.getAfterOrdering().remove(toRemove.getName());
+                }
+                if (fragment.getAfterOrdering().isEmpty()) {
+                    addedThisRound.add(fragment);
+                    orderedFragments.add(fragment);
+                    source.remove();
+                }
+            }
+            if (addedThisRound.size() == 0) {
+                // Circular
+                throw new IllegalArgumentException(
+                        sm.getString("webXml.mergeConflictOrder"));
+            }
+            addedLastRound.clear();
+            addedLastRound.addAll(addedThisRound);
+            addedThisRound.clear();
+        }
+    }
+
+    private static void makeBeforeOthersExplicit(Set<String> beforeOrdering,
+                                                 Map<String, WebXml> fragments) {
+        for (String before : beforeOrdering) {
+            if (!before.equals(ORDER_OTHERS)) {
+                WebXml webXml = fragments.get(before);
+                if (!webXml.getBeforeOrdering().contains(ORDER_OTHERS)) {
+                    webXml.addBeforeOrderingOthers();
+                    makeBeforeOthersExplicit(webXml.getAfterOrdering(), fragments);
+                }
+            }
+        }
+    }
+
+    private static void makeAfterOthersExplicit(Set<String> afterOrdering,
+                                                Map<String, WebXml> fragments) {
+        for (String after : afterOrdering) {
+            if (!after.equals(ORDER_OTHERS)) {
+                WebXml webXml = fragments.get(after);
+                if (!webXml.getAfterOrdering().contains(ORDER_OTHERS)) {
+                    webXml.addAfterOrderingOthers();
+                    makeAfterOthersExplicit(webXml.getBeforeOrdering(), fragments);
+                }
+            }
+        }
+    }
+
+    public boolean isOverridable() {
+        return overridable;
+    }
+
+    public void setOverridable(boolean overridable) {
+        this.overridable = overridable;
+    }
+
+    public boolean isDuplicated() {
+        return duplicated;
+    }
+
+    public void setDuplicated(boolean duplicated) {
+        this.duplicated = duplicated;
+    }
+
     public void createAbsoluteOrdering() {
         if (absoluteOrdering == null) {
             absoluteOrdering = new LinkedHashSet<>();
         }
     }
+
     public void addAbsoluteOrdering(String fragmentName) {
         createAbsoluteOrdering();
         absoluteOrdering.add(fragmentName);
     }
+
     public void addAbsoluteOrderingOthers() {
         createAbsoluteOrdering();
         absoluteOrdering.add(ORDER_OTHERS);
     }
+
     public Set<String> getAbsoluteOrdering() {
         return absoluteOrdering;
     }
 
-    /**
-     * web-fragment.xml only elements
-     * Relative ordering
-     */
-    private final Set<String> after = new LinkedHashSet<>();
     public void addAfterOrdering(String fragmentName) {
         after.add(fragmentName);
     }
+
     public void addAfterOrderingOthers() {
         if (before.contains(ORDER_OTHERS)) {
             throw new IllegalArgumentException(sm.getString(
@@ -119,12 +529,15 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         after.add(ORDER_OTHERS);
     }
-    public Set<String> getAfterOrdering() { return after; }
 
-    private final Set<String> before = new LinkedHashSet<>();
+    public Set<String> getAfterOrdering() {
+        return after;
+    }
+
     public void addBeforeOrdering(String fragmentName) {
         before.add(fragmentName);
     }
+
     public void addBeforeOrderingOthers() {
         if (after.contains(ORDER_OTHERS)) {
             throw new IllegalArgumentException(sm.getString(
@@ -132,7 +545,10 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         before.add(ORDER_OTHERS);
     }
-    public Set<String> getBeforeOrdering() { return before; }
+
+    public Set<String> getBeforeOrdering() {
+        return before;
+    }
 
     // Common elements and attributes
     // Required attribute of web-app element
@@ -143,9 +559,11 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         sb.append(minorVersion);
         return sb.toString();
     }
+
     /**
      * Set the version for this web.xml file
-     * @param version   Values of <code>null</code> will be ignored
+     *
+     * @param version Values of <code>null</code> will be ignored
      */
     public void setVersion(String version) {
         if (version == null) {
@@ -173,11 +591,10 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
     }
 
+    public String getPublicId() {
+        return publicId;
+    }
 
-
-    // Optional publicId attribute
-    private String publicId = null;
-    public String getPublicId() { return publicId; }
     public void setPublicId(String publicId) {
         // Update major and minor version
         if (publicId == null) {
@@ -200,15 +617,18 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
     }
 
-    // Optional metadata-complete attribute
-    private boolean metadataComplete = false;
-    public boolean isMetadataComplete() { return metadataComplete; }
-    public void setMetadataComplete(boolean metadataComplete) {
-        this.metadataComplete = metadataComplete; }
+    public boolean isMetadataComplete() {
+        return metadataComplete;
+    }
 
-    // Optional name element
-    private String name = null;
-    public String getName() { return name; }
+    public void setMetadataComplete(boolean metadataComplete) {
+        this.metadataComplete = metadataComplete;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         if (ORDER_OTHERS.equalsIgnoreCase(name)) {
             // This is unusual. This name will be ignored. Log the fact.
@@ -218,55 +638,46 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
     }
 
-    // Derived major and minor version attributes
-    // Default to 3,1
-    private int majorVersion = 3;
-    private int minorVersion = 1;
-    public int getMajorVersion() { return majorVersion; }
-    public int getMinorVersion() { return minorVersion; }
+    public int getMajorVersion() {
+        return majorVersion;
+    }
 
-    // web-app elements
-    // TODO: Ignored elements:
-    // - description
-    // - icon
+    public int getMinorVersion() {
+        return minorVersion;
+    }
 
-    // display-name - TODO should support multiple with language
-    private String displayName = null;
-    public String getDisplayName() { return displayName; }
+    public String getDisplayName() {
+        return displayName;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    // distributable
-    private boolean distributable = false;
-    public boolean isDistributable() { return distributable; }
+    public boolean isDistributable() {
+        return distributable;
+    }
+
     public void setDistributable(boolean distributable) {
         this.distributable = distributable;
     }
 
-    // deny-uncovered-http-methods
-    private boolean denyUncoveredHttpMethods = false;
     public boolean getDenyUncoveredHttpMethods() {
         return denyUncoveredHttpMethods;
     }
+
     public void setDenyUncoveredHttpMethods(boolean denyUncoveredHttpMethods) {
         this.denyUncoveredHttpMethods = denyUncoveredHttpMethods;
     }
 
-    // context-param
-    // TODO: description (multiple with language) is ignored
-    private final Map<String,String> contextParams = new HashMap<>();
     public void addContextParam(String param, String value) {
         contextParams.put(param, value);
     }
-    public Map<String,String> getContextParams() { return contextParams; }
 
-    // filter
-    // TODO: Should support multiple description elements with language
-    // TODO: Should support multiple display-name elements with language
-    // TODO: Should support multiple icon elements
-    // TODO: Description for init-param is ignored
-    private final Map<String,FilterDef> filters = new LinkedHashMap<>();
+    public Map<String, String> getContextParams() {
+        return contextParams;
+    }
+
     public void addFilter(FilterDef filter) {
         if (filters.containsKey(filter.getFilterName())) {
             // Filter names must be unique within a web(-fragment).xml
@@ -276,51 +687,44 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         filters.put(filter.getFilterName(), filter);
     }
-    public Map<String,FilterDef> getFilters() { return filters; }
 
-    // filter-mapping
-    private final Set<FilterMap> filterMaps = new LinkedHashSet<>();
-    private final Set<String> filterMappingNames = new HashSet<>();
+    public Map<String, FilterDef> getFilters() {
+        return filters;
+    }
+
     public void addFilterMapping(FilterMap filterMap) {
         filterMap.setCharset(getCharset());
         filterMaps.add(filterMap);
         filterMappingNames.add(filterMap.getFilterName());
     }
-    public Set<FilterMap> getFilterMappings() { return filterMaps; }
 
-    // listener
-    // TODO: description (multiple with language) is ignored
-    // TODO: display-name (multiple with language) is ignored
-    // TODO: icon (multiple) is ignored
-    private final Set<String> listeners = new LinkedHashSet<>();
+    public Set<FilterMap> getFilterMappings() {
+        return filterMaps;
+    }
+
     public void addListener(String className) {
         listeners.add(className);
     }
-    public Set<String> getListeners() { return listeners; }
 
-    // servlet
-    // TODO: description (multiple with language) is ignored
-    // TODO: display-name (multiple with language) is ignored
-    // TODO: icon (multiple) is ignored
-    // TODO: init-param/description (multiple with language) is ignored
-    // TODO: security-role-ref/description (multiple with language) is ignored
-    private final Map<String,ServletDef> servlets = new HashMap<>();
+    public Set<String> getListeners() {
+        return listeners;
+    }
+
     public void addServlet(ServletDef servletDef) {
         servlets.put(servletDef.getServletName(), servletDef);
         if (overridable) {
             servletDef.setOverridable(overridable);
         }
     }
-    public Map<String,ServletDef> getServlets() { return servlets; }
 
-    // servlet-mapping
-    // Note: URLPatterns from web.xml may be URL encoded
-    //       (https://svn.apache.org/r285186)
-    private final Map<String,String> servletMappings = new HashMap<>();
-    private final Set<String> servletMappingNames = new HashSet<>();
+    public Map<String, ServletDef> getServlets() {
+        return servlets;
+    }
+
     public void addServletMapping(String urlPattern, String servletName) {
         addServletMappingDecoded(UDecoder.URLDecode(urlPattern, getCharset()), servletName);
     }
+
     public void addServletMappingDecoded(String urlPattern, String servletName) {
         String oldServletName = servletMappings.put(urlPattern, servletName);
         if (oldServletName != null) {
@@ -332,46 +736,48 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         servletMappingNames.add(servletName);
     }
-    public Map<String,String> getServletMappings() { return servletMappings; }
 
-    // session-config
-    // Digester will check there is only one of these
-    private SessionConfig sessionConfig = new SessionConfig();
+    public Map<String, String> getServletMappings() {
+        return servletMappings;
+    }
+
+    public SessionConfig getSessionConfig() {
+        return sessionConfig;
+    }
+
     public void setSessionConfig(SessionConfig sessionConfig) {
         this.sessionConfig = sessionConfig;
     }
-    public SessionConfig getSessionConfig() { return sessionConfig; }
 
-    // mime-mapping
-    private final Map<String,String> mimeMappings = new HashMap<>();
     public void addMimeMapping(String extension, String mimeType) {
         mimeMappings.put(extension, mimeType);
     }
-    public Map<String,String> getMimeMappings() { return mimeMappings; }
 
-    // welcome-file-list merge control
-    private boolean replaceWelcomeFiles = false;
-    private boolean alwaysAddWelcomeFiles = true;
+    public Map<String, String> getMimeMappings() {
+        return mimeMappings;
+    }
+
     /**
      * When merging/parsing web.xml files into this web.xml should the current
      * set be completely replaced?
+     *
      * @param replaceWelcomeFiles <code>true</code> to replace welcome files
-     *  rather than add to the list
+     *                            rather than add to the list
      */
     public void setReplaceWelcomeFiles(boolean replaceWelcomeFiles) {
         this.replaceWelcomeFiles = replaceWelcomeFiles;
     }
+
     /**
      * When merging from this web.xml, should the welcome files be added to the
      * target web.xml even if it already contains welcome file definitions.
+     *
      * @param alwaysAddWelcomeFiles <code>true</code> to add welcome files
      */
     public void setAlwaysAddWelcomeFiles(boolean alwaysAddWelcomeFiles) {
         this.alwaysAddWelcomeFiles = alwaysAddWelcomeFiles;
     }
 
-    // welcome-file-list
-    private final Set<String> welcomeFiles = new LinkedHashSet<>();
     public void addWelcomeFile(String welcomeFile) {
         if (replaceWelcomeFiles) {
             welcomeFiles.clear();
@@ -379,19 +785,20 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         welcomeFiles.add(welcomeFile);
     }
-    public Set<String> getWelcomeFiles() { return welcomeFiles; }
 
-    // error-page
-    private final Map<String,ErrorPage> errorPages = new HashMap<>();
+    public Set<String> getWelcomeFiles() {
+        return welcomeFiles;
+    }
+
     public void addErrorPage(ErrorPage errorPage) {
         errorPage.setCharset(getCharset());
         errorPages.put(errorPage.getName(), errorPage);
     }
-    public Map<String,ErrorPage> getErrorPages() { return errorPages; }
 
-    // Digester will check there is only one jsp-config
-    // jsp-config/taglib or taglib (2.3 and earlier)
-    private final Map<String,String> taglibs = new HashMap<>();
+    public Map<String, ErrorPage> getErrorPages() {
+        return errorPages;
+    }
+
     public void addTaglib(String uri, String location) {
         if (taglibs.containsKey(uri)) {
             // Taglib URIs must be unique within a web(-fragment).xml
@@ -400,50 +807,46 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         taglibs.put(uri, location);
     }
-    public Map<String,String> getTaglibs() { return taglibs; }
 
-    // jsp-config/jsp-property-group
-    private final Set<JspPropertyGroup> jspPropertyGroups = new LinkedHashSet<>();
+    public Map<String, String> getTaglibs() {
+        return taglibs;
+    }
+
     public void addJspPropertyGroup(JspPropertyGroup propertyGroup) {
         propertyGroup.setCharset(getCharset());
         jspPropertyGroups.add(propertyGroup);
     }
+
     public Set<JspPropertyGroup> getJspPropertyGroups() {
         return jspPropertyGroups;
     }
 
-    // security-constraint
-    // TODO: Should support multiple display-name elements with language
-    // TODO: Should support multiple description elements with language
-    private final Set<SecurityConstraint> securityConstraints = new HashSet<>();
     public void addSecurityConstraint(SecurityConstraint securityConstraint) {
         securityConstraint.setCharset(getCharset());
         securityConstraints.add(securityConstraint);
     }
+
     public Set<SecurityConstraint> getSecurityConstraints() {
         return securityConstraints;
     }
 
-    // login-config
-    // Digester will check there is only one of these
-    private LoginConfig loginConfig = null;
+    public LoginConfig getLoginConfig() {
+        return loginConfig;
+    }
+
     public void setLoginConfig(LoginConfig loginConfig) {
         loginConfig.setCharset(getCharset());
         this.loginConfig = loginConfig;
     }
-    public LoginConfig getLoginConfig() { return loginConfig; }
 
-    // security-role
-    // TODO: description (multiple with language) is ignored
-    private final Set<String> securityRoles = new HashSet<>();
     public void addSecurityRole(String securityRole) {
         securityRoles.add(securityRole);
     }
-    public Set<String> getSecurityRoles() { return securityRoles; }
 
-    // env-entry
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextEnvironment> envEntries = new HashMap<>();
+    public Set<String> getSecurityRoles() {
+        return securityRoles;
+    }
+
     public void addEnvEntry(ContextEnvironment envEntry) {
         if (envEntries.containsKey(envEntry.getName())) {
             // env-entry names must be unique within a web(-fragment).xml
@@ -451,41 +854,39 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
                     sm.getString("webXml.duplicateEnvEntry",
                             envEntry.getName()));
         }
-        envEntries.put(envEntry.getName(),envEntry);
+        envEntries.put(envEntry.getName(), envEntry);
     }
-    public Map<String,ContextEnvironment> getEnvEntries() { return envEntries; }
 
-    // ejb-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextEjb> ejbRefs = new HashMap<>();
+    public Map<String, ContextEnvironment> getEnvEntries() {
+        return envEntries;
+    }
+
     public void addEjbRef(ContextEjb ejbRef) {
-        ejbRefs.put(ejbRef.getName(),ejbRef);
+        ejbRefs.put(ejbRef.getName(), ejbRef);
     }
-    public Map<String,ContextEjb> getEjbRefs() { return ejbRefs; }
 
-    // ejb-local-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextLocalEjb> ejbLocalRefs = new HashMap<>();
-    public void addEjbLocalRef(ContextLocalEjb ejbLocalRef) {
-        ejbLocalRefs.put(ejbLocalRef.getName(),ejbLocalRef);
+    public Map<String, ContextEjb> getEjbRefs() {
+        return ejbRefs;
     }
-    public Map<String,ContextLocalEjb> getEjbLocalRefs() {
+
+    public void addEjbLocalRef(ContextLocalEjb ejbLocalRef) {
+        ejbLocalRefs.put(ejbLocalRef.getName(), ejbLocalRef);
+    }
+
+    public Map<String, ContextLocalEjb> getEjbLocalRefs() {
         return ejbLocalRefs;
     }
 
-    // service-ref
-    // TODO: Should support multiple description elements with language
-    // TODO: Should support multiple display-names elements with language
-    // TODO: Should support multiple icon elements ???
-    private final Map<String,ContextService> serviceRefs = new HashMap<>();
+    // Attributes not defined in web.xml or web-fragment.xml
+
     public void addServiceRef(ContextService serviceRef) {
         serviceRefs.put(serviceRef.getName(), serviceRef);
     }
-    public Map<String,ContextService> getServiceRefs() { return serviceRefs; }
 
-    // resource-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextResource> resourceRefs = new HashMap<>();
+    public Map<String, ContextService> getServiceRefs() {
+        return serviceRefs;
+    }
+
     public void addResourceRef(ContextResource resourceRef) {
         if (resourceRefs.containsKey(resourceRef.getName())) {
             // resource-ref names must be unique within a web(-fragment).xml
@@ -495,13 +896,11 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         resourceRefs.put(resourceRef.getName(), resourceRef);
     }
-    public Map<String,ContextResource> getResourceRefs() {
+
+    public Map<String, ContextResource> getResourceRefs() {
         return resourceRefs;
     }
 
-    // resource-env-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextResourceEnvRef> resourceEnvRefs = new HashMap<>();
     public void addResourceEnvRef(ContextResourceEnvRef resourceEnvRef) {
         if (resourceEnvRefs.containsKey(resourceEnvRef.getName())) {
             // resource-env-ref names must be unique within a web(-fragment).xml
@@ -511,14 +910,11 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
         resourceEnvRefs.put(resourceEnvRef.getName(), resourceEnvRef);
     }
-    public Map<String,ContextResourceEnvRef> getResourceEnvRefs() {
+
+    public Map<String, ContextResourceEnvRef> getResourceEnvRefs() {
         return resourceEnvRefs;
     }
 
-    // message-destination-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,MessageDestinationRef> messageDestinationRefs =
-        new HashMap<>();
     public void addMessageDestinationRef(
             MessageDestinationRef messageDestinationRef) {
         if (messageDestinationRefs.containsKey(
@@ -532,16 +928,11 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         messageDestinationRefs.put(messageDestinationRef.getName(),
                 messageDestinationRef);
     }
-    public Map<String,MessageDestinationRef> getMessageDestinationRefs() {
+
+    public Map<String, MessageDestinationRef> getMessageDestinationRefs() {
         return messageDestinationRefs;
     }
 
-    // message-destination
-    // TODO: Should support multiple description elements with language
-    // TODO: Should support multiple display-names elements with language
-    // TODO: Should support multiple icon elements ???
-    private final Map<String,MessageDestination> messageDestinations =
-            new HashMap<>();
     public void addMessageDestination(
             MessageDestination messageDestination) {
         if (messageDestinations.containsKey(
@@ -555,37 +946,35 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         messageDestinations.put(messageDestination.getName(),
                 messageDestination);
     }
-    public Map<String,MessageDestination> getMessageDestinations() {
+
+    public Map<String, MessageDestination> getMessageDestinations() {
         return messageDestinations;
     }
 
-    // locale-encoding-mapping-list
-    private final Map<String,String> localeEncodingMappings = new HashMap<>();
     public void addLocaleEncodingMapping(String locale, String encoding) {
         localeEncodingMappings.put(locale, encoding);
     }
-    public Map<String,String> getLocaleEncodingMappings() {
+
+    public Map<String, String> getLocaleEncodingMappings() {
         return localeEncodingMappings;
     }
 
-    // post-construct elements
-    private Map<String, String> postConstructMethods = new HashMap<>();
     public void addPostConstructMethods(String clazz, String method) {
         if (!postConstructMethods.containsKey(clazz)) {
             postConstructMethods.put(clazz, method);
         }
     }
+
     public Map<String, String> getPostConstructMethods() {
         return postConstructMethods;
     }
 
-    // pre-destroy elements
-    private Map<String, String> preDestroyMethods = new HashMap<>();
     public void addPreDestroyMethods(String clazz, String method) {
         if (!preDestroyMethods.containsKey(clazz)) {
             preDestroyMethods.put(clazz, method);
         }
     }
+
     public Map<String, String> getPreDestroyMethods() {
         return preDestroyMethods;
     }
@@ -613,28 +1002,37 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         return new JspConfigDescriptorImpl(descriptors, tlds);
     }
 
-    // Attributes not defined in web.xml or web-fragment.xml
+    public URL getURL() {
+        return uRL;
+    }
 
-    // URL of JAR / exploded JAR for this web-fragment
-    private URL uRL = null;
-    public void setURL(URL url) { this.uRL = url; }
-    public URL getURL() { return uRL; }
+    public void setURL(URL url) {
+        this.uRL = url;
+    }
 
-    // Name of jar file
-    private String jarName = null;
-    public void setJarName(String jarName) { this.jarName = jarName; }
-    public String getJarName() { return jarName; }
+    public String getJarName() {
+        return jarName;
+    }
 
-    // Is this JAR part of the application or is it a container JAR? Assume it
-    // is.
-    private boolean webappJar = true;
-    public void setWebappJar(boolean webappJar) { this.webappJar = webappJar; }
-    public boolean getWebappJar() { return webappJar; }
+    public void setJarName(String jarName) {
+        this.jarName = jarName;
+    }
 
-    // Does this web application delegate first for class loading?
-    private boolean delegate = false;
-    public boolean getDelegate() { return delegate; }
-    public void setDelegate(boolean delegate) { this.delegate = delegate; }
+    public boolean getWebappJar() {
+        return webappJar;
+    }
+
+    public void setWebappJar(boolean webappJar) {
+        this.webappJar = webappJar;
+    }
+
+    public boolean getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(boolean delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
     public String toString() {
@@ -645,10 +1043,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         buf.append(getURL());
         return buf.toString();
     }
-
-    private static final String INDENT2 = "  ";
-    private static final String INDENT4 = "    ";
-    private static final String INDENT6 = "      ";
 
     /**
      * Generate a web.xml in String form that matches the representation stored
@@ -1082,10 +1476,10 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
             sb.append("  <login-config>\n");
             appendElement(sb, INDENT4, "auth-method",
                     loginConfig.getAuthMethod());
-            appendElement(sb,INDENT4, "realm-name",
+            appendElement(sb, INDENT4, "realm-name",
                     loginConfig.getRealmName());
             if (loginConfig.getErrorPage() != null ||
-                        loginConfig.getLoginPage() != null) {
+                    loginConfig.getLoginPage() != null) {
                 sb.append("    <form-login-config>\n");
                 appendElement(sb, INDENT6, "form-login-page",
                         loginConfig.getLoginPage());
@@ -1325,7 +1719,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         return sb.toString();
     }
 
-
     private String encodeUrl(String input) {
         try {
             return URLEncoder.encode(input, "UTF-8");
@@ -1335,42 +1728,12 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
     }
 
-
-    private static void appendElement(StringBuilder sb, String indent,
-            String elementName, String value) {
-        if (value == null) {
-            return;
-        }
-        if (value.length() == 0) {
-            sb.append(indent);
-            sb.append('<');
-            sb.append(elementName);
-            sb.append("/>\n");
-        } else {
-            sb.append(indent);
-            sb.append('<');
-            sb.append(elementName);
-            sb.append('>');
-            sb.append(Escape.xml(value));
-            sb.append("</");
-            sb.append(elementName);
-            sb.append(">\n");
-        }
-    }
-
-    private static void appendElement(StringBuilder sb, String indent,
-            String elementName, Object value) {
-        if (value == null) return;
-        appendElement(sb, indent, elementName, value.toString());
-    }
-
-
     /**
      * Merge the supplied web fragments into this main web.xml.
      *
-     * @param fragments     The fragments to merge in
+     * @param fragments The fragments to merge in
      * @return <code>true</code> if merge is successful, else
-     *         <code>false</code>
+     * <code>false</code>
      */
     public boolean merge(Set<WebXml> fragments) {
         // As far as possible, process in alphabetical order so it is easy to
@@ -1475,7 +1838,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
 
         for (WebXml fragment : fragments) {
-            for (Map.Entry<String,FilterDef> entry :
+            for (Map.Entry<String, FilterDef> entry :
                     fragment.getFilters().entrySet()) {
                 if (filters.containsKey(entry.getKey())) {
                     mergeFilter(entry.getValue(),
@@ -1610,9 +1973,9 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         // fragments override those in annotations
         // Skip servlet definitions and mappings from fragments that are
         // defined in web.xml
-        List<Map.Entry<String,String>> servletMappingsToAdd = new ArrayList<>();
+        List<Map.Entry<String, String>> servletMappingsToAdd = new ArrayList<>();
         for (WebXml fragment : fragments) {
-            for (Map.Entry<String,String> servletMap :
+            for (Map.Entry<String, String> servletMap :
                     fragment.getServletMappings().entrySet()) {
                 if (!servletMappingNames.contains(servletMap.getValue()) &&
                         !servletMappings.containsKey(servletMap.getKey())) {
@@ -1622,12 +1985,12 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         }
 
         // Add fragment mappings
-        for (Map.Entry<String,String> mapping : servletMappingsToAdd) {
+        for (Map.Entry<String, String> mapping : servletMappingsToAdd) {
             addServletMappingDecoded(mapping.getKey(), mapping.getValue());
         }
 
         for (WebXml fragment : fragments) {
-            for (Map.Entry<String,ServletDef> entry :
+            for (Map.Entry<String, ServletDef> entry :
                     fragment.getServlets().entrySet()) {
                 if (servlets.containsKey(entry.getKey())) {
                     mergeServlet(entry.getValue(),
@@ -1833,7 +2196,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         if (sessionConfig.getSessionTrackingModes().size() == 0) {
             for (WebXml fragment : fragments) {
                 EnumSet<SessionTrackingMode> value =
-                    fragment.getSessionConfig().getSessionTrackingModes();
+                        fragment.getSessionConfig().getSessionTrackingModes();
                 if (value.size() > 0) {
                     if (temp.getSessionConfig().getSessionTrackingModes().size() == 0) {
                         temp.getSessionConfig().getSessionTrackingModes().addAll(value);
@@ -1922,9 +2285,9 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         return true;
     }
 
-    private <T> boolean mergeMap(Map<String,T> fragmentMap,
-            Map<String,T> mainMap, Map<String,T> tempMap, WebXml fragment,
-            String mapName) {
+    private <T> boolean mergeMap(Map<String, T> fragmentMap,
+                                 Map<String, T> mainMap, Map<String, T> tempMap, WebXml fragment,
+                                 String mapName) {
         for (Entry<String, T> entry : fragmentMap.entrySet()) {
             final String key = entry.getKey();
             if (!mainMap.containsKey(key)) {
@@ -1949,172 +2312,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         return true;
     }
 
-    private static boolean mergeFilter(FilterDef src, FilterDef dest,
-            boolean failOnConflict) {
-        if (dest.getAsyncSupported() == null) {
-            dest.setAsyncSupported(src.getAsyncSupported());
-        } else if (src.getAsyncSupported() != null) {
-            if (failOnConflict &&
-                    !src.getAsyncSupported().equals(dest.getAsyncSupported())) {
-                return false;
-            }
-        }
-
-        if (dest.getFilterClass()  == null) {
-            dest.setFilterClass(src.getFilterClass());
-        } else if (src.getFilterClass() != null) {
-            if (failOnConflict &&
-                    !src.getFilterClass().equals(dest.getFilterClass())) {
-                return false;
-            }
-        }
-
-        for (Map.Entry<String,String> srcEntry :
-                src.getParameterMap().entrySet()) {
-            if (dest.getParameterMap().containsKey(srcEntry.getKey())) {
-                if (failOnConflict && !dest.getParameterMap().get(
-                        srcEntry.getKey()).equals(srcEntry.getValue())) {
-                    return false;
-                }
-            } else {
-                dest.addInitParameter(srcEntry.getKey(), srcEntry.getValue());
-            }
-        }
-        return true;
-    }
-
-    private static boolean mergeServlet(ServletDef src, ServletDef dest,
-            boolean failOnConflict) {
-        // These tests should be unnecessary...
-        if (dest.getServletClass() != null && dest.getJspFile() != null) {
-            return false;
-        }
-        if (src.getServletClass() != null && src.getJspFile() != null) {
-            return false;
-        }
-
-
-        if (dest.getServletClass() == null && dest.getJspFile() == null) {
-            dest.setServletClass(src.getServletClass());
-            dest.setJspFile(src.getJspFile());
-        } else if (failOnConflict) {
-            if (src.getServletClass() != null &&
-                    (dest.getJspFile() != null ||
-                            !src.getServletClass().equals(dest.getServletClass()))) {
-                return false;
-            }
-            if (src.getJspFile() != null &&
-                    (dest.getServletClass() != null ||
-                            !src.getJspFile().equals(dest.getJspFile()))) {
-                return false;
-            }
-        }
-
-        // Additive
-        for (SecurityRoleRef securityRoleRef : src.getSecurityRoleRefs()) {
-            dest.addSecurityRoleRef(securityRoleRef);
-        }
-
-        if (dest.getLoadOnStartup() == null) {
-            if (src.getLoadOnStartup() != null) {
-                dest.setLoadOnStartup(src.getLoadOnStartup().toString());
-            }
-        } else if (src.getLoadOnStartup() != null) {
-            if (failOnConflict &&
-                    !src.getLoadOnStartup().equals(dest.getLoadOnStartup())) {
-                return false;
-            }
-        }
-
-        if (dest.getEnabled() == null) {
-            if (src.getEnabled() != null) {
-                dest.setEnabled(src.getEnabled().toString());
-            }
-        } else if (src.getEnabled() != null) {
-            if (failOnConflict &&
-                    !src.getEnabled().equals(dest.getEnabled())) {
-                return false;
-            }
-        }
-
-        for (Map.Entry<String,String> srcEntry :
-                src.getParameterMap().entrySet()) {
-            if (dest.getParameterMap().containsKey(srcEntry.getKey())) {
-                if (failOnConflict && !dest.getParameterMap().get(
-                        srcEntry.getKey()).equals(srcEntry.getValue())) {
-                    return false;
-                }
-            } else {
-                dest.addInitParameter(srcEntry.getKey(), srcEntry.getValue());
-            }
-        }
-
-        if (dest.getMultipartDef() == null) {
-            dest.setMultipartDef(src.getMultipartDef());
-        } else if (src.getMultipartDef() != null) {
-            return mergeMultipartDef(src.getMultipartDef(),
-                    dest.getMultipartDef(), failOnConflict);
-        }
-
-        if (dest.getAsyncSupported() == null) {
-            if (src.getAsyncSupported() != null) {
-                dest.setAsyncSupported(src.getAsyncSupported().toString());
-            }
-        } else if (src.getAsyncSupported() != null) {
-            if (failOnConflict &&
-                    !src.getAsyncSupported().equals(dest.getAsyncSupported())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static boolean mergeMultipartDef(MultipartDef src, MultipartDef dest,
-            boolean failOnConflict) {
-
-        if (dest.getLocation() == null) {
-            dest.setLocation(src.getLocation());
-        } else if (src.getLocation() != null) {
-            if (failOnConflict &&
-                    !src.getLocation().equals(dest.getLocation())) {
-                return false;
-            }
-        }
-
-        if (dest.getFileSizeThreshold() == null) {
-            dest.setFileSizeThreshold(src.getFileSizeThreshold());
-        } else if (src.getFileSizeThreshold() != null) {
-            if (failOnConflict &&
-                    !src.getFileSizeThreshold().equals(
-                            dest.getFileSizeThreshold())) {
-                return false;
-            }
-        }
-
-        if (dest.getMaxFileSize() == null) {
-            dest.setMaxFileSize(src.getMaxFileSize());
-        } else if (src.getMaxFileSize() != null) {
-            if (failOnConflict &&
-                    !src.getMaxFileSize().equals(dest.getMaxFileSize())) {
-                return false;
-            }
-        }
-
-        if (dest.getMaxRequestSize() == null) {
-            dest.setMaxRequestSize(src.getMaxRequestSize());
-        } else if (src.getMaxRequestSize() != null) {
-            if (failOnConflict &&
-                    !src.getMaxRequestSize().equals(
-                            dest.getMaxRequestSize())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
     private boolean mergeLifecycleCallback(
             Map<String, String> fragmentMap, Map<String, String> tempMap,
             WebXml fragment, String mapName) {
@@ -2134,26 +2331,8 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
         return true;
     }
 
-
-    /**
-     * Generates the sub-set of the web-fragment.xml files to be processed in
-     * the order that the fragments must be processed as per the rules in the
-     * Servlet spec.
-     *
-     * @param application    The application web.xml file
-     * @param fragments      The map of fragment names to web fragments
-     * @param servletContext The servlet context the fragments are associated
-     *                       with
-     * @return Ordered list of web-fragment.xml files to process
-     */
-    public static Set<WebXml> orderWebFragments(WebXml application,
-            Map<String,WebXml> fragments, ServletContext servletContext) {
-        return application.orderWebFragments(fragments, servletContext);
-    }
-
-
-    private Set<WebXml> orderWebFragments(Map<String,WebXml> fragments,
-            ServletContext servletContext) {
+    private Set<WebXml> orderWebFragments(Map<String, WebXml> fragments,
+                                          ServletContext servletContext) {
 
         Set<WebXml> orderedFragments = new LinkedHashSet<>();
 
@@ -2181,7 +2360,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
                     if (fragment != null) {
                         orderedFragments.add(fragment);
                     } else {
-                        log.warn(sm.getString("webXml.wrongFragmentName",requestedName));
+                        log.warn(sm.getString("webXml.wrongFragmentName", requestedName));
                     }
                 }
             }
@@ -2290,7 +2469,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
             List<String> orderedJarFileNames = null;
             if (orderingPresent) {
                 orderedJarFileNames = new ArrayList<>();
-                for (WebXml fragment: orderedFragments) {
+                for (WebXml fragment : orderedFragments) {
                     orderedJarFileNames.add(fragment.getJarName());
                 }
             }
@@ -2312,75 +2491,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Encodi
             return result;
         } else {
             return orderedFragments;
-        }
-    }
-
-    private static void decoupleOtherGroups(Set<WebXml> group) {
-        Set<String> names = new HashSet<>();
-        for (WebXml fragment : group) {
-            names.add(fragment.getName());
-        }
-        for (WebXml fragment : group) {
-            Iterator<String> after = fragment.getAfterOrdering().iterator();
-            while (after.hasNext()) {
-                String entry = after.next();
-                if (!names.contains(entry)) {
-                    after.remove();
-                }
-            }
-        }
-    }
-    private static void orderFragments(Set<WebXml> orderedFragments,
-            Set<WebXml> unordered) {
-        Set<WebXml> addedThisRound = new HashSet<>();
-        Set<WebXml> addedLastRound = new HashSet<>();
-        while (unordered.size() > 0) {
-            Iterator<WebXml> source = unordered.iterator();
-            while (source.hasNext()) {
-                WebXml fragment = source.next();
-                for (WebXml toRemove : addedLastRound) {
-                    fragment.getAfterOrdering().remove(toRemove.getName());
-                }
-                if (fragment.getAfterOrdering().isEmpty()) {
-                    addedThisRound.add(fragment);
-                    orderedFragments.add(fragment);
-                    source.remove();
-                }
-            }
-            if (addedThisRound.size() == 0) {
-                // Circular
-                throw new IllegalArgumentException(
-                        sm.getString("webXml.mergeConflictOrder"));
-            }
-            addedLastRound.clear();
-            addedLastRound.addAll(addedThisRound);
-            addedThisRound.clear();
-        }
-    }
-
-    private static void makeBeforeOthersExplicit(Set<String> beforeOrdering,
-            Map<String, WebXml> fragments) {
-        for (String before : beforeOrdering) {
-            if (!before.equals(ORDER_OTHERS)) {
-                WebXml webXml = fragments.get(before);
-                if (!webXml.getBeforeOrdering().contains(ORDER_OTHERS)) {
-                    webXml.addBeforeOrderingOthers();
-                    makeBeforeOthersExplicit(webXml.getAfterOrdering(), fragments);
-                }
-            }
-        }
-    }
-
-    private static void makeAfterOthersExplicit(Set<String> afterOrdering,
-            Map<String, WebXml> fragments) {
-        for (String after : afterOrdering) {
-            if (!after.equals(ORDER_OTHERS)) {
-                WebXml webXml = fragments.get(after);
-                if (!webXml.getAfterOrdering().contains(ORDER_OTHERS)) {
-                    webXml.addAfterOrderingOthers();
-                    makeAfterOthersExplicit(webXml.getBeforeOrdering(), fragments);
-                }
-            }
         }
     }
 }

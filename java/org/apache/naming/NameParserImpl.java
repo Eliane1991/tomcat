@@ -29,7 +29,7 @@ import javax.naming.NamingException;
  * @author Remy Maucherat
  */
 public class NameParserImpl
-    implements NameParser {
+        implements NameParser {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -47,7 +47,7 @@ public class NameParserImpl
      */
     @Override
     public Name parse(String name)
-        throws NamingException {
+            throws NamingException {
         return new CompositeName(name);
     }
 

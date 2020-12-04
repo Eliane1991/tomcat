@@ -61,7 +61,7 @@ public class ExtractingRoot extends StandardRoot {
                     File dest = new File(expansionTarget, possibleJar.getName());
                     dest = dest.getCanonicalFile();
                     try (InputStream sourceStream = possibleJar.getInputStream();
-                            OutputStream destStream= new FileOutputStream(dest)) {
+                         OutputStream destStream = new FileOutputStream(dest)) {
                         IOTools.flow(sourceStream, destStream);
                     }
 

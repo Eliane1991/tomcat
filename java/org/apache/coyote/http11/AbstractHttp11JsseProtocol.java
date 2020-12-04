@@ -41,11 +41,19 @@ public abstract class AbstractHttp11JsseProtocol<S>
         return "jsse";
     }
 
-    public String getSslImplementationName() { return getEndpoint().getSslImplementationName(); }
-    public void setSslImplementationName(String s) { getEndpoint().setSslImplementationName(s); }
+    public String getSslImplementationName() {
+        return getEndpoint().getSslImplementationName();
+    }
+
+    public void setSslImplementationName(String s) {
+        getEndpoint().setSslImplementationName(s);
+    }
 
 
-    public int getSniParseLimit() { return getEndpoint().getSniParseLimit(); }
+    public int getSniParseLimit() {
+        return getEndpoint().getSniParseLimit();
+    }
+
     public void setSniParseLimit(int sniParseLimit) {
         getEndpoint().setSniParseLimit(sniParseLimit);
     }

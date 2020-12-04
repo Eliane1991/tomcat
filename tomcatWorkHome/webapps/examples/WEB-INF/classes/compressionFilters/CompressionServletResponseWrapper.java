@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package compressionFilters;
 
 import javax.servlet.ServletOutputStream;
@@ -39,27 +39,16 @@ public class CompressionServletResponseWrapper
     // ----------------------------------------------------- Constructor
 
     /**
-     * Calls the parent constructor which creates a ServletResponse adaptor
-     * wrapping the given response object.
-     *
-     * @param response The response object to be wrapped.
-     */
-    public CompressionServletResponseWrapper(HttpServletResponse response) {
-        super(response);
-        origResponse = response;
-        if (debug > 1) {
-            System.out.println("CompressionServletResponseWrapper constructor gets called");
-        }
-    }
-
-
-    // ----------------------------------------------------- Instance Variables
-
-    /**
      * Original response
      */
     protected final HttpServletResponse origResponse;
 
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * keeps a copy of all headers set
+     */
+    private final Map<String, String> headerCopies = new HashMap<>();
     /**
      * The ServletOutputStream that has been returned by
      * <code>getOutputStream()</code>, if any.
@@ -94,13 +83,21 @@ public class CompressionServletResponseWrapper
     protected int debug = 0;
 
     /**
-     * keeps a copy of all headers set
+     * Calls the parent constructor which creates a ServletResponse adaptor
+     * wrapping the given response object.
+     *
+     * @param response The response object to be wrapped.
      */
-    private final Map<String,String> headerCopies = new HashMap<>();
+    public CompressionServletResponseWrapper(HttpServletResponse response) {
+        super(response);
+        origResponse = response;
+        if (debug > 1) {
+            System.out.println("CompressionServletResponseWrapper constructor gets called");
+        }
+    }
 
 
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Set threshold number.
@@ -154,10 +151,9 @@ public class CompressionServletResponseWrapper
      * Create and return a ServletOutputStream to write the content
      * associated with this Response.
      *
-     * @exception IOException if an input/output error occurs
-     *
      * @return A new servlet output stream that compressed any data written to
-     *         it
+     * it
+     * @throws IOException if an input/output error occurs
      */
     protected ServletOutputStream createOutputStream() throws IOException {
         if (debug > 1) {
@@ -198,23 +194,23 @@ public class CompressionServletResponseWrapper
     /**
      * Flush the buffer and commit this response.
      *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     public void flushBuffer() throws IOException {
         if (debug > 1) {
             System.out.println("flush buffer @ GZipServletResponseWrapper");
         }
-        ((CompressionResponseStream)stream).flush();
+        ((CompressionResponseStream) stream).flush();
 
     }
 
     /**
      * Return the servlet output stream associated with this Response.
      *
-     * @exception IllegalStateException if <code>getWriter</code> has
-     *  already been called for this response
-     * @exception IOException if an input/output error occurs
+     * @throws IllegalStateException if <code>getWriter</code> has
+     *                               already been called for this response
+     * @throws IOException           if an input/output error occurs
      */
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
@@ -225,7 +221,7 @@ public class CompressionServletResponseWrapper
         if (stream == null)
             stream = createOutputStream();
         if (debug > 1) {
-            System.out.println("stream is set to "+stream+" in getOutputStream");
+            System.out.println("stream is set to " + stream + " in getOutputStream");
         }
 
         return stream;
@@ -234,9 +230,9 @@ public class CompressionServletResponseWrapper
     /**
      * Return the writer associated with this Response.
      *
-     * @exception IllegalStateException if <code>getOutputStream</code> has
-     *  already been called for this response
-     * @exception IOException if an input/output error occurs
+     * @throws IllegalStateException if <code>getOutputStream</code> has
+     *                               already been called for this response
+     * @throws IOException           if an input/output error occurs
      */
     @Override
     public PrintWriter getWriter() throws IOException {
@@ -249,7 +245,7 @@ public class CompressionServletResponseWrapper
 
         stream = createOutputStream();
         if (debug > 1) {
-            System.out.println("stream is set to "+stream+" in getWriter");
+            System.out.println("stream is set to " + stream + " in getWriter");
         }
         String charEnc = origResponse.getCharacterEncoding();
         if (debug > 1) {
@@ -269,7 +265,8 @@ public class CompressionServletResponseWrapper
     public void addHeader(String name, String value) {
         if (headerCopies.containsKey(name)) {
             String existingValue = headerCopies.get(name);
-            if ((existingValue != null) && (existingValue.length() > 0)) headerCopies.put(name, existingValue + "," + value);
+            if ((existingValue != null) && (existingValue.length() > 0))
+                headerCopies.put(name, existingValue + "," + value);
             else headerCopies.put(name, value);
         } else headerCopies.put(name, value);
         super.addHeader(name, value);

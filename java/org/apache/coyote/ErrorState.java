@@ -55,7 +55,7 @@ public enum ErrorState {
     private final boolean connectionIoAllowed;
 
     private ErrorState(boolean error, int severity, boolean ioAllowed,
-            boolean connectionIoAllowed) {
+                       boolean connectionIoAllowed) {
         this.error = error;
         this.severity = severity;
         this.ioAllowed = ioAllowed;
@@ -71,9 +71,8 @@ public enum ErrorState {
      * severe.
      *
      * @param input The error state to compare to this one
-     *
      * @return The most severe error state from the the provided error state and
-     *         this one
+     * this one
      */
     public ErrorState getMostSevere(ErrorState input) {
         if (input.severity > this.severity) {

@@ -46,7 +46,6 @@ package org.apache.jasper.xmlparser;
  *
  * @author Eric Ye, IBM
  * @author Andy Clark, IBM
- *
  * @deprecated Will be removed in Tomcat 9.0.x onwards
  */
 @Deprecated
@@ -133,15 +132,15 @@ public class XMLString {
         if (s == null) {
             return false;
         }
-        if ( length != s.length() ) {
+        if (length != s.length()) {
             return false;
         }
 
         // is this faster than call s.toCharArray first and compare the
         // two arrays directly, which will possibly involve creating a
         // new char array object.
-        for (int i=0; i<length; i++) {
-            if (ch[offset+i] != s.charAt(i)) {
+        for (int i = 0; i < length; i++) {
+            if (ch[offset + i] != s.charAt(i)) {
                 return false;
             }
         }

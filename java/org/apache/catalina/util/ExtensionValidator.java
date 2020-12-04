@@ -38,7 +38,7 @@ import java.util.jar.Manifest;
  * Ensures that all extension dependencies are resolved for a WEB application
  * are met. This class builds a master list of extensions available to an
  * application and then validates those extensions.
- *
+ * <p>
  * See http://docs.oracle.com/javase/1.4.2/docs/guide/extensions/spec.html
  * for a detailed explanation of the extension mechanism in Java.
  *
@@ -54,15 +54,13 @@ public final class ExtensionValidator {
      */
     private static final StringManager sm =
             StringManager.getManager("org.apache.catalina.util");
-
-    private static volatile ArrayList<Extension> containerAvailableExtensions =
-            null;
     private static final ArrayList<ManifestResource> containerManifestResources =
             new ArrayList<>();
+    private static volatile ArrayList<Extension> containerAvailableExtensions =
+            null;
 
 
     // ----------------------------------------------------- Static Initializer
-
 
     /**
      *  This static initializer loads the container level extensions that are
@@ -78,7 +76,7 @@ public final class ExtensionValidator {
         String systemClasspath = System.getProperty("java.class.path");
 
         StringTokenizer strTok = new StringTokenizer(systemClasspath,
-                                                     File.pathSeparator);
+                File.pathSeparator);
 
         // build a list of jar files in the classpath
         while (strTok.hasMoreTokens()) {
@@ -90,7 +88,7 @@ public final class ExtensionValidator {
                         addSystemResource(item);
                     } catch (IOException e) {
                         log.error(sm.getString
-                                  ("extensionValidator.failload", item), e);
+                                ("extensionValidator.failload", item), e);
                     }
                 }
             }
@@ -106,7 +104,7 @@ public final class ExtensionValidator {
 
     /**
      * Runtime validation of a Web Application.
-     *
+     * <p>
      * This method uses JNDI to look up the resources located under a
      * <code>DirContext</code>. It locates Web Application MANIFEST.MF
      * file in the /META-INF/ directory of the application and all
@@ -118,14 +116,13 @@ public final class ExtensionValidator {
      * @param resources The resources configured for this Web Application
      * @param context   The context from which the Logger and path to the
      *                  application
-     *
      * @return true if all required extensions satisfied
      * @throws IOException Error reading resources needed for validation
      */
     public static synchronized boolean validateApplication(
-                                           WebResourceRoot resources,
-                                           Context context)
-                    throws IOException {
+            WebResourceRoot resources,
+            Context context)
+            throws IOException {
 
         String appName = context.getName();
         ArrayList<ManifestResource> appManifestResources = new ArrayList<>();
@@ -136,8 +133,8 @@ public final class ExtensionValidator {
             try (InputStream inputStream = resource.getInputStream()) {
                 Manifest manifest = new Manifest(inputStream);
                 ManifestResource mre = new ManifestResource
-                    (sm.getString("extensionValidator.web-application-manifest"),
-                    manifest, ManifestResource.WAR);
+                        (sm.getString("extensionValidator.web-application-manifest"),
+                                manifest, ManifestResource.WAR);
                 appManifestResources.add(mre);
             }
         }
@@ -192,19 +189,18 @@ public final class ExtensionValidator {
      * <code>false</false> is returned if the extension dependencies
      * represented by any given <code>ManifestResource</code> objects
      * is not met.
-     *
+     * <p>
      * This method should also provide static validation of a Web Application
      * if provided with the necessary parameters.
      *
-     * @param appName The name of the Application that will appear in the
-     *                error messages
+     * @param appName   The name of the Application that will appear in the
+     *                  error messages
      * @param resources A list of <code>ManifestResource</code> objects
      *                  to be validated.
-     *
      * @return true if manifest resource file requirements are met
      */
     private static boolean validateManifestResources(String appName,
-            ArrayList<ManifestResource> resources) {
+                                                     ArrayList<ManifestResource> resources) {
         boolean passes = true;
         int failureCount = 0;
         ArrayList<Extension> availableExtensions = null;
@@ -224,7 +220,7 @@ public final class ExtensionValidator {
             // yet
             if (containerAvailableExtensions == null) {
                 containerAvailableExtensions
-                    = buildAvailableExtensionsList(containerManifestResources);
+                        = buildAvailableExtensionsList(containerManifestResources);
             }
 
             // iterate through the list of required extensions
@@ -253,9 +249,9 @@ public final class ExtensionValidator {
                 if (!found) {
                     // Failure
                     log.info(sm.getString(
-                        "extensionValidator.extension-not-found-error",
-                        appName, mre.getResourceName(),
-                        requiredExt.getExtensionName()));
+                            "extensionValidator.extension-not-found-error",
+                            appName, mre.getResourceName(),
+                            requiredExt.getExtensionName()));
                     passes = false;
                     failureCount++;
                 }
@@ -264,30 +260,30 @@ public final class ExtensionValidator {
 
         if (!passes) {
             log.info(sm.getString(
-                     "extensionValidator.extension-validation-error", appName,
-                     failureCount + ""));
+                    "extensionValidator.extension-validation-error", appName,
+                    failureCount + ""));
         }
 
         return passes;
     }
 
-   /*
-    * Build this list of available extensions so that we do not have to
-    * re-build this list every time we iterate through the list of required
-    * extensions. All available extensions in all of the
-    * <code>ManifestResource</code> objects will be added to a
-    * <code>HashMap</code> which is returned on the first dependency list
-    * processing pass.
-    *
-    * The key is the name + implementation version.
-    *
-    * NOTE: A list is built only if there is a dependency that needs
-    * to be checked (performance optimization).
-    *
-    * @param resources A list of <code>ManifestResource</code> objects
-    *
-    * @return HashMap Map of available extensions
-    */
+    /*
+     * Build this list of available extensions so that we do not have to
+     * re-build this list every time we iterate through the list of required
+     * extensions. All available extensions in all of the
+     * <code>ManifestResource</code> objects will be added to a
+     * <code>HashMap</code> which is returned on the first dependency list
+     * processing pass.
+     *
+     * The key is the name + implementation version.
+     *
+     * NOTE: A list is built only if there is a dependency that needs
+     * to be checked (performance optimization).
+     *
+     * @param resources A list of <code>ManifestResource</code> objects
+     *
+     * @return HashMap Map of available extensions
+     */
     private static ArrayList<Extension> buildAvailableExtensionsList(
             ArrayList<ManifestResource> resources) {
 
@@ -334,7 +330,7 @@ public final class ExtensionValidator {
         String extensionsDir = System.getProperty(property);
         if (extensionsDir != null) {
             StringTokenizer extensionsTok
-                = new StringTokenizer(extensionsDir, File.pathSeparator);
+                    = new StringTokenizer(extensionsDir, File.pathSeparator);
             while (extensionsTok.hasMoreTokens()) {
                 File targetDir = new File(extensionsTok.nextToken());
                 if (!targetDir.isDirectory()) {

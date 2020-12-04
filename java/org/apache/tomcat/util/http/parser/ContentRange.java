@@ -34,34 +34,11 @@ public class ContentRange {
         this.length = length;
     }
 
-
-    public String getUnits() {
-        return units;
-    }
-
-
-    public long getStart() {
-        return start;
-    }
-
-
-    public long getEnd() {
-        return end;
-    }
-
-
-    public long getLength() {
-        return length;
-    }
-
-
     /**
      * Parses a Content-Range header from an HTTP header.
      *
      * @param input a reader over the header text
-     *
      * @return the range parsed from the input, or null if not valid
-     *
      * @throws IOException if there was a problem reading the input
      */
     public static ContentRange parse(StringReader input) throws IOException {
@@ -104,5 +81,21 @@ public class ContentRange {
         }
 
         return new ContentRange(units, start, end, length);
+    }
+
+    public String getUnits() {
+        return units;
+    }
+
+    public long getStart() {
+        return start;
+    }
+
+    public long getEnd() {
+        return end;
+    }
+
+    public long getLength() {
+        return length;
     }
 }

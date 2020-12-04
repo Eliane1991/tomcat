@@ -33,6 +33,24 @@ public class ApplicationMapping {
         this.mappingData = mappingData;
     }
 
+    public static ApplicationMappingImpl getHttpServletMapping(HttpServletRequest request) {
+        if (request instanceof RequestFacade) {
+            return ((RequestFacade) request).getHttpServletMapping();
+        } else if (request instanceof Request) {
+            return ((Request) request).getHttpServletMapping();
+        } else if (request instanceof ApplicationHttpRequest) {
+            return ((ApplicationHttpRequest) request).getHttpServletMapping();
+        }
+        return (new ApplicationMapping(null)).getHttpServletMapping();
+    }
+
+    public static ApplicationMappingImpl getHttpServletMapping(HttpServletRequestWrapper wrapper) {
+        if (wrapper instanceof ApplicationHttpRequest) {
+            return ((ApplicationHttpRequest) wrapper).getHttpServletMapping();
+        }
+        return (new ApplicationMapping(null)).getHttpServletMapping();
+    }
+
     public ApplicationMappingImpl getHttpServletMapping() {
         if (mapping == null) {
             if (mappingData == null) {
@@ -87,25 +105,5 @@ public class ApplicationMapping {
 
     public void recycle() {
         mapping = null;
-    }
-
-
-    public static ApplicationMappingImpl getHttpServletMapping(HttpServletRequest request) {
-        if (request instanceof RequestFacade) {
-            return ((RequestFacade) request).getHttpServletMapping();
-        } else if (request instanceof Request) {
-            return ((Request) request).getHttpServletMapping();
-        } else if (request instanceof ApplicationHttpRequest) {
-            return ((ApplicationHttpRequest) request).getHttpServletMapping();
-        }
-        return (new ApplicationMapping(null)).getHttpServletMapping();
-    }
-
-
-    public static ApplicationMappingImpl getHttpServletMapping(HttpServletRequestWrapper wrapper) {
-        if (wrapper instanceof ApplicationHttpRequest) {
-            return ((ApplicationHttpRequest) wrapper).getHttpServletMapping();
-        }
-        return (new ApplicationMapping(null)).getHttpServletMapping();
     }
 }

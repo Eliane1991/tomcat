@@ -40,12 +40,12 @@ public class TldParser {
     private final Digester digester;
 
     public TldParser(boolean namespaceAware, boolean validation,
-            boolean blockExternal) {
+                     boolean blockExternal) {
         this(namespaceAware, validation, new TldRuleSet(), blockExternal);
     }
 
     public TldParser(boolean namespaceAware, boolean validation, RuleSet ruleSet,
-            boolean blockExternal) {
+                     boolean blockExternal) {
         digester = DigesterFactory.newDigester(
                 validation, namespaceAware, ruleSet, blockExternal);
     }

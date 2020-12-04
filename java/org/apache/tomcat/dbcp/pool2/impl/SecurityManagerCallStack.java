@@ -47,7 +47,7 @@ public class SecurityManagerCallStack implements CallStack {
      * Create a new instance.
      *
      * @param messageFormat message format
-     * @param useTimestamp whether to format the dates in the output message or not
+     * @param useTimestamp  whether to format the dates in the output message or not
      */
     public SecurityManagerCallStack(final String messageFormat, final boolean useTimestamp) {
         this.messageFormat = messageFormat;

@@ -44,7 +44,7 @@ public class InterceptorSF extends StoreFactoryBase {
                             elementDesc.getTag(), aElement));
                 getStoreAppender().printIndent(aWriter, indent + 2);
                 getStoreAppender().printOpenTag(aWriter, indent + 2, aElement,
-                            elementDesc);
+                        elementDesc);
                 storeChildren(aWriter, indent + 2, aElement, elementDesc);
                 getStoreAppender().printIndent(aWriter, indent + 2);
                 getStoreAppender().printCloseTag(aWriter, elementDesc);
@@ -61,23 +61,18 @@ public class InterceptorSF extends StoreFactoryBase {
     /**
      * Store the specified Interceptor child.
      *
-     * @param aWriter
-     *            PrintWriter to which we are storing
-     * @param indent
-     *            Number of spaces to indent this element
-     * @param aInterceptor
-     *            Channel whose properties are being stored
-     *
-     * @exception Exception
-     *                if an exception occurs while storing
+     * @param aWriter      PrintWriter to which we are storing
+     * @param indent       Number of spaces to indent this element
+     * @param aInterceptor Channel whose properties are being stored
+     * @throws Exception if an exception occurs while storing
      */
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aInterceptor,
-            StoreDescription parentDesc) throws Exception {
+                              StoreDescription parentDesc) throws Exception {
         if (aInterceptor instanceof StaticMembershipInterceptor) {
             ChannelInterceptor interceptor = (ChannelInterceptor) aInterceptor;
             // Store nested <Member> elements
             storeElementArray(aWriter, indent + 2, interceptor.getMembers());
-       }
+        }
     }
 }

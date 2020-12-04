@@ -31,6 +31,21 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
     // Singleton instance
     private static volatile TomcatURLStreamHandlerFactory instance = null;
+    private final boolean registered;
+    // List of factories for application defined stream handler factories.
+    private final List<URLStreamHandlerFactory> userFactories =
+            new CopyOnWriteArrayList<>();
+
+
+    private TomcatURLStreamHandlerFactory(boolean register) {
+        // Hide default constructor
+        // Singleton pattern to ensure there is only one instance of this
+        // factory
+        this.registered = register;
+        if (register) {
+            URL.setURLStreamHandlerFactory(this);
+        }
+    }
 
     /**
      * Obtain a reference to the singleton instance. It is recommended that
@@ -44,7 +59,6 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
         return instance;
     }
 
-
     private static TomcatURLStreamHandlerFactory getInstanceInternal(boolean register) {
         // Double checked locking. OK because instance is volatile.
         if (instance == null) {
@@ -57,41 +71,31 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
         return instance;
     }
 
-
-    private final boolean registered;
-
-    // List of factories for application defined stream handler factories.
-    private final List<URLStreamHandlerFactory> userFactories =
-            new CopyOnWriteArrayList<>();
-
     /**
      * Register this factory with the JVM. May be called more than once. The
      * implementation ensures that registration only occurs once.
      *
      * @return <code>true</code> if the factory is already registered with the
-     *         JVM or was successfully registered as a result of this call.
-     *         <code>false</code> if the factory was disabled prior to this
-     *         call.
+     * JVM or was successfully registered as a result of this call.
+     * <code>false</code> if the factory was disabled prior to this
+     * call.
      */
     public static boolean register() {
         return getInstanceInternal(true).isRegistered();
     }
-
 
     /**
      * Prevent this this factory from registering with the JVM. May be called
      * more than once.
      *
      * @return <code>true</code> if the factory is already disabled or was
-     *         successfully disabled as a result of this call.
-     *         <code>false</code> if the factory was already registered prior
-     *         to this call.
-
+     * successfully disabled as a result of this call.
+     * <code>false</code> if the factory was already registered prior
+     * to this call.
      */
     public static boolean disable() {
         return !getInstanceInternal(false).isRegistered();
     }
-
 
     /**
      * Release references to any user provided factories that have been loaded
@@ -119,18 +123,6 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
             }
         }
     }
-
-
-    private TomcatURLStreamHandlerFactory(boolean register) {
-        // Hide default constructor
-        // Singleton pattern to ensure there is only one instance of this
-        // factory
-        this.registered = register;
-        if (register) {
-            URL.setURLStreamHandlerFactory(this);
-        }
-    }
-
 
     public boolean isRegistered() {
         return registered;
@@ -165,7 +157,7 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
         // Application handlers
         for (URLStreamHandlerFactory factory : userFactories) {
             URLStreamHandler handler =
-                factory.createURLStreamHandler(protocol);
+                    factory.createURLStreamHandler(protocol);
             if (handler != null) {
                 return handler;
             }

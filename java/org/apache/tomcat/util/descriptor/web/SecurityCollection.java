@@ -41,6 +41,34 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
     private static final long serialVersionUID = 1L;
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * Description of this web resource collection.
+     */
+    private String description = null;
+    /**
+     * The HTTP methods explicitly covered by this web resource collection.
+     */
+    private String methods[] = new String[0];
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The HTTP methods explicitly excluded from this web resource collection.
+     */
+    private String omittedMethods[] = new String[0];
+    /**
+     * The name of this web resource collection.
+     */
+    private String name = null;
+    /**
+     * The URL patterns protected by this security collection.
+     */
+    private String patterns[] = new String[0];
+    /**
+     * This security collection was established by a deployment descriptor.
+     * Defaults to <code>true</code>.
+     */
+    private boolean isFromDescriptor = true;
 
 
     /**
@@ -56,7 +84,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
     /**
      * Construct a new security collection instance with specified values.
      *
-     * @param name Name of this security collection
+     * @param name        Name of this security collection
      * @param description Description of this security collection
      */
     public SecurityCollection(String name, String description) {
@@ -67,47 +95,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
 
     }
 
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Description of this web resource collection.
-     */
-    private String description = null;
-
-
-    /**
-     * The HTTP methods explicitly covered by this web resource collection.
-     */
-    private String methods[] = new String[0];
-
-
-    /**
-     * The HTTP methods explicitly excluded from this web resource collection.
-     */
-    private String omittedMethods[] = new String[0];
-
-    /**
-     * The name of this web resource collection.
-     */
-    private String name = null;
-
-
-    /**
-     * The URL patterns protected by this security collection.
-     */
-    private String patterns[] = new String[0];
-
-
-    /**
-     * This security collection was established by a deployment descriptor.
-     * Defaults to <code>true</code>.
-     */
-    private boolean isFromDescriptor = true;
-
     // ------------------------------------------------------------- Properties
-
 
     /**
      * @return the description of this web resource collection.
@@ -155,6 +143,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
 
     /**
      * Set if this constraint was defined in a deployment descriptor.
+     *
      * @param isFromDescriptor <code>true</code> was declared in a descriptor
      */
     public void setFromDescriptor(boolean isFromDescriptor) {
@@ -168,6 +157,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
     /**
      * Add an HTTP request method to be explicitly part of this web resource
      * collection.
+     *
      * @param method The method
      */
     public void addMethod(String method) {
@@ -186,6 +176,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
     /**
      * Add an HTTP request method to the methods explicitly excluded from this
      * web resource collection.
+     *
      * @param method The method
      */
     public void addOmittedMethod(String method) {
@@ -200,11 +191,13 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
 
     /**
      * Add a URL pattern to be part of this web resource collection.
+     *
      * @param pattern The pattern
      */
     public void addPattern(String pattern) {
         addPatternDecoded(UDecoder.URLDecode(pattern, StandardCharsets.UTF_8));
     }
+
     public void addPatternDecoded(String pattern) {
 
         if (pattern == null)
@@ -219,6 +212,7 @@ public class SecurityCollection extends XmlEncodingBase implements Serializable 
 
     /**
      * Check if the collection applies to the specified method.
+     *
      * @param method Request method to check
      * @return <code>true</code> if the specified HTTP request method is
      * part of this web resource collection.

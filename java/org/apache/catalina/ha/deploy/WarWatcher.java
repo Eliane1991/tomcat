@@ -73,7 +73,7 @@ public class WarWatcher {
         File[] list = watchDir.listFiles(new WarFilter());
         if (list == null) {
             log.warn(sm.getString("warWatcher.cantListWatchDir",
-                                  watchDir));
+                    watchDir));
 
             list = new File[0];
         }
@@ -87,13 +87,13 @@ public class WarWatcher {
         }
 
         // Check all the status codes and update the FarmDeployer
-        for (Iterator<Map.Entry<String,WarInfo>> i =
-                currentStatus.entrySet().iterator(); i.hasNext();) {
-            Map.Entry<String,WarInfo> entry = i.next();
+        for (Iterator<Map.Entry<String, WarInfo>> i =
+             currentStatus.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<String, WarInfo> entry = i.next();
             WarInfo info = entry.getValue();
-            if(log.isTraceEnabled())
+            if (log.isTraceEnabled())
                 log.trace(sm.getString("warWatcher.checkingWar",
-                                       info.getWar()));
+                        info.getWar()));
             int check = info.check();
             if (check == 1) {
                 listener.fileModified(info.getWar());
@@ -102,16 +102,17 @@ public class WarWatcher {
                 //no need to keep in memory
                 i.remove();
             }
-            if(log.isTraceEnabled())
+            if (log.isTraceEnabled())
                 log.trace(sm.getString("warWatcher.checkWarResult",
-                                       Integer.valueOf(check),
-                                       info.getWar()));
+                        Integer.valueOf(check),
+                        info.getWar()));
         }
 
     }
 
     /**
      * add cluster war to the watcher state
+     *
      * @param warfile The WAR to add
      */
     protected void addWarInfo(File warfile) {

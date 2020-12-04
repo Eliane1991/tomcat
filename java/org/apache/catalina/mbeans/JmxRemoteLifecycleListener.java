@@ -55,18 +55,16 @@ import java.util.Locale;
  * properties for configuring JMX.
  *
  * @deprecated The features provided by this listener are now available in the
- *             remote JMX capability included with the JRE.
- *             This listener will be removed in Tomcat 10 and may be removed
- *             from Tomcat 8.5.x some time after 2020-12-31.
+ * remote JMX capability included with the JRE.
+ * This listener will be removed in Tomcat 10 and may be removed
+ * from Tomcat 8.5.x some time after 2020-12-31.
  */
 @Deprecated
 public class JmxRemoteLifecycleListener implements LifecycleListener {
 
-    private static final Log log = LogFactory.getLog(JmxRemoteLifecycleListener.class);
-
     protected static final StringManager sm =
             StringManager.getManager(JmxRemoteLifecycleListener.class);
-
+    private static final Log log = LogFactory.getLog(JmxRemoteLifecycleListener.class);
     protected String rmiBindAddress = null;
     protected int rmiRegistryPortPlatform = -1;
     protected int rmiServerPortPlatform = -1;
@@ -85,6 +83,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
     /**
      * Get the inet address on which the Platform RMI server is exported.
+     *
      * @return The textual representation of inet address
      */
     public String getRmiBindAddress() {
@@ -93,6 +92,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
     /**
      * Set the inet address on which the Platform RMI server is exported.
+     *
      * @param theRmiBindAddress The textual representation of inet address
      */
     public void setRmiBindAddress(String theRmiBindAddress) {
@@ -102,6 +102,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
     /**
      * Get the port on which the Platform RMI server is exported. This is the
      * port that is normally chosen by the RMI stack.
+     *
      * @return The port number
      */
     public int getRmiServerPortPlatform() {
@@ -111,6 +112,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
     /**
      * Set the port on which the Platform RMI server is exported. This is the
      * port that is normally chosen by the RMI stack.
+     *
      * @param theRmiServerPortPlatform The port number
      */
     public void setRmiServerPortPlatform(int theRmiServerPortPlatform) {
@@ -119,6 +121,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
     /**
      * Get the port on which the Platform RMI registry is exported.
+     *
      * @return The port number
      */
     public int getRmiRegistryPortPlatform() {
@@ -127,6 +130,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
     /**
      * Set the port on which the Platform RMI registry is exported.
+     *
      * @param theRmiRegistryPortPlatform The port number
      */
     public void setRmiRegistryPortPlatform(int theRmiRegistryPortPlatform) {
@@ -137,6 +141,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
      * Get the flag that indicates that local ports should be used for all
      * connections. If using SSH tunnels, or similar, this should be set to
      * true to ensure the RMI client uses the tunnel.
+     *
      * @return <code>true</code> if local ports should be used
      */
     public boolean getUseLocalPorts() {
@@ -147,6 +152,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
      * Set the flag that indicates that local ports should be used for all
      * connections. If using SSH tunnels, or similar, this should be set to
      * true to ensure the RMI client uses the tunnel.
+     *
      * @param useLocalPorts Set to <code>true</code> if local ports should be
      *                      used
      */
@@ -203,7 +209,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
     public void lifecycleEvent(LifecycleEvent event) {
         if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType())) {
             log.warn(sm.getString("jmxRemoteLifecycleListener.deprecated"));
-        } else  if (Lifecycle.START_EVENT.equals(event.getType())) {
+        } else if (Lifecycle.START_EVENT.equals(event.getType())) {
             // When the server starts, configure JMX/RMI
 
             // Configure using standard JMX system properties
@@ -213,7 +219,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
             System.setProperty("java.rmi.server.randomIDs", "true");
 
             // Create the environment
-            HashMap<String,Object> env = new HashMap<>();
+            HashMap<String, Object> env = new HashMap<>();
 
             RMIClientSocketFactory registryCsf = null;
             RMIServerSocketFactory registrySsf = null;
@@ -266,9 +272,9 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
                 serverCsf = new RmiClientLocalhostSocketFactory(serverCsf);
             }
 
-            env.put("jmx.remote.rmi.server.credential.types", new String[] {
+            env.put("jmx.remote.rmi.server.credential.types", new String[]{
                     String[].class.getName(),
-                    String.class.getName() });
+                    String.class.getName()});
 
             // Populate the env properties used to create the server
             if (serverCsf != null) {
@@ -297,10 +303,10 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
 
     private JMXConnectorServer createServer(String serverName,
-            String bindAddress, int theRmiRegistryPort, int theRmiServerPort,
-            HashMap<String,Object> theEnv,
-            RMIClientSocketFactory registryCsf, RMIServerSocketFactory registrySsf,
-            RMIClientSocketFactory serverCsf, RMIServerSocketFactory serverSsf) {
+                                            String bindAddress, int theRmiRegistryPort, int theRmiServerPort,
+                                            HashMap<String, Object> theEnv,
+                                            RMIClientSocketFactory registryCsf, RMIServerSocketFactory registrySsf,
+                                            RMIClientSocketFactory serverCsf, RMIServerSocketFactory serverSsf) {
 
         if (bindAddress == null) {
             bindAddress = "localhost";
@@ -351,14 +357,14 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
 
 
     private void destroyServer(String serverName,
-            JMXConnectorServer theConnectorServer) {
+                               JMXConnectorServer theConnectorServer) {
         if (theConnectorServer != null) {
             try {
                 theConnectorServer.stop();
             } catch (IOException e) {
                 log.error(sm.getString(
                         "jmxRemoteLifecycleListener.destroyServerFailed",
-                        serverName),e);
+                        serverName), e);
             }
         }
     }
@@ -406,7 +412,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
         }
 
         @Override
-        public ServerSocket createServerSocket(int port) throws IOException  {
+        public ServerSocket createServerSocket(int port) throws IOException {
             return new ServerSocket(port, 0, bindAddress);
         }
     }
@@ -440,7 +446,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
         private final InetAddress bindAddress;
 
         public SslRmiServerBindSocketFactory(String[] enabledCipherSuites,
-                String[] enabledProtocols, boolean needClientAuth, String address) {
+                                             String[] enabledProtocols, boolean needClientAuth, String address) {
             super(enabledCipherSuites, enabledProtocols, needClientAuth);
             InetAddress bindAddress = null;
             try {
@@ -455,7 +461,7 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
         }
 
         @Override
-        public ServerSocket createServerSocket(int port) throws IOException  {
+        public ServerSocket createServerSocket(int port) throws IOException {
             SSLServerSocket sslServerSocket =
                     (SSLServerSocket) sslServerSocketFactory.createServerSocket(port, 0, bindAddress);
             if (getEnabledCipherSuites() != null) {
@@ -507,32 +513,38 @@ public class JmxRemoteLifecycleListener implements LifecycleListener {
         private static final long serialVersionUID = -3772054804656428217L;
         private final String jmxName;
         private final Remote jmxServer;
+
         public JmxRegistry(int port, RMIClientSocketFactory csf,
-                RMIServerSocketFactory ssf, String jmxName, Remote jmxServer) throws RemoteException {
+                           RMIServerSocketFactory ssf, String jmxName, Remote jmxServer) throws RemoteException {
             super(port, csf, ssf);
             this.jmxName = jmxName;
             this.jmxServer = jmxServer;
         }
+
         @Override
         public Remote lookup(String name)
                 throws RemoteException, NotBoundException {
             return (jmxName.equals(name)) ? jmxServer : null;
         }
+
         @Override
         public void bind(String name, Remote obj)
                 throws RemoteException, AlreadyBoundException, AccessException {
         }
+
         @Override
         public void unbind(String name)
                 throws RemoteException, NotBoundException, AccessException {
         }
+
         @Override
         public void rebind(String name, Remote obj)
                 throws RemoteException, AccessException {
         }
+
         @Override
         public String[] list() throws RemoteException {
-            return new String[] { jmxName };
+            return new String[]{jmxName};
         }
     }
 

@@ -54,8 +54,7 @@ public abstract class CsrfPreventionFilterBase extends FilterBase {
      * Set response status code that is used to reject denied request. If none
      * set, the default value of 403 will be used.
      *
-     * @param denyStatus
-     *            HTTP status code
+     * @param denyStatus HTTP status code
      */
     public void setDenyStatus(int denyStatus) {
         this.denyStatus = denyStatus;
@@ -65,8 +64,7 @@ public abstract class CsrfPreventionFilterBase extends FilterBase {
      * Specify the class to use to generate the nonces. Must be in instance of
      * {@link Random}.
      *
-     * @param randomClass
-     *            The name of the class to use
+     * @param randomClass The name of the class to use
      */
     public void setRandomClass(String randomClass) {
         this.randomClass = randomClass;

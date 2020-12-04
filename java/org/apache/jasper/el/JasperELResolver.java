@@ -30,13 +30,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class JasperELResolver extends CompositeELResolver {
 
     private static final int STANDARD_RESOLVERS_COUNT = 9;
-
+    private final int appResolversSize;
     private AtomicInteger resolversSize = new AtomicInteger(0);
     private volatile ELResolver[] resolvers;
-    private final int appResolversSize;
 
     public JasperELResolver(List<ELResolver> appResolvers,
-            ELResolver streamResolver) {
+                            ELResolver streamResolver) {
         appResolversSize = appResolvers.size();
         resolvers = new ELResolver[appResolversSize + STANDARD_RESOLVERS_COUNT];
 
@@ -52,6 +51,21 @@ public class JasperELResolver extends CompositeELResolver {
         add(new ArrayELResolver());
         add(new BeanELResolver());
         add(new ScopedAttributeELResolver());
+    }
+
+    /*
+     * Copied from org.apache.el.lang.ELSupport#coerceToString(ELContext,Object)
+     */
+    private static final String coerceToString(final Object obj) {
+        if (obj == null) {
+            return "";
+        } else if (obj instanceof String) {
+            return (String) obj;
+        } else if (obj instanceof Enum<?>) {
+            return ((Enum<?>) obj).name();
+        } else {
+            return obj.toString();
+        }
     }
 
     @Override
@@ -74,7 +88,7 @@ public class JasperELResolver extends CompositeELResolver {
 
     @Override
     public Object getValue(ELContext context, Object base, Object property)
-        throws NullPointerException, PropertyNotFoundException, ELException {
+            throws NullPointerException, PropertyNotFoundException, ELException {
         context.setPropertyResolved(false);
 
         int start;
@@ -110,7 +124,7 @@ public class JasperELResolver extends CompositeELResolver {
 
     @Override
     public Object invoke(ELContext context, Object base, Object method,
-            Class<?>[] paramTypes, Object[] params) {
+                         Class<?>[] paramTypes, Object[] params) {
         String targetMethod = coerceToString(method);
         if (targetMethod.length() == 0) {
             throw new ELException(new NoSuchMethodException());
@@ -145,20 +159,5 @@ public class JasperELResolver extends CompositeELResolver {
         }
 
         return null;
-    }
-
-    /*
-     * Copied from org.apache.el.lang.ELSupport#coerceToString(ELContext,Object)
-     */
-    private static final String coerceToString(final Object obj) {
-        if (obj == null) {
-            return "";
-        } else if (obj instanceof String) {
-            return (String) obj;
-        } else if (obj instanceof Enum<?>) {
-            return ((Enum<?>) obj).name();
-        } else {
-            return obj.toString();
-        }
     }
 }

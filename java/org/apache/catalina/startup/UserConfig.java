@@ -43,70 +43,53 @@ import java.util.regex.Pattern;
  * @author Craig R. McClanahan
  */
 public final class UserConfig
-    implements LifecycleListener {
+        implements LifecycleListener {
 
 
     private static final Log log = LogFactory.getLog(UserConfig.class);
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The Java class name of the Context configuration class we should use.
-     */
-    private String configClass = "org.apache.catalina.startup.ContextConfig";
-
-
-    /**
-     * The Java class name of the Context implementation we should use.
-     */
-    private String contextClass = "org.apache.catalina.core.StandardContext";
-
-
-    /**
-     * The directory name to be searched for within each user home directory.
-     */
-    private String directoryName = "public_html";
-
-
-    /**
-     * The base directory containing user home directories.
-     */
-    private String homeBase = null;
-
-
-    /**
-     * The Host we are associated with.
-     */
-    private Host host = null;
-
-
     /**
      * The string resources for this package.
      */
     private static final StringManager sm =
-        StringManager.getManager(Constants.Package);
-
-
-    /**
-     * The Java class name of the user database class we should use.
-     */
-    private String userClass =
-        "org.apache.catalina.startup.PasswdUserDatabase";
-
+            StringManager.getManager(Constants.Package);
     /**
      * A regular expression defining user who deployment is allowed.
      */
     Pattern allow = null;
-
     /**
      * A regular expression defining user who deployment is denied.
      */
     Pattern deny = null;
+    /**
+     * The Java class name of the Context configuration class we should use.
+     */
+    private String configClass = "org.apache.catalina.startup.ContextConfig";
+    /**
+     * The Java class name of the Context implementation we should use.
+     */
+    private String contextClass = "org.apache.catalina.core.StandardContext";
+    /**
+     * The directory name to be searched for within each user home directory.
+     */
+    private String directoryName = "public_html";
+    /**
+     * The base directory containing user home directories.
+     */
+    private String homeBase = null;
+    /**
+     * The Host we are associated with.
+     */
+    private Host host = null;
+    /**
+     * The Java class name of the user database class we should use.
+     */
+    private String userClass =
+            "org.apache.catalina.startup.PasswdUserDatabase";
 
     // ------------------------------------------------------------- Properties
-
 
     /**
      * @return the Context configuration class name.
@@ -190,6 +173,7 @@ public final class UserConfig
 
     /**
      * Set the user database class name for this component.
+     *
      * @param userClass The user database class name
      */
     public void setUserClass(String userClass) {
@@ -377,7 +361,7 @@ public final class UserConfig
      * Test allow and deny rules for the provided user.
      *
      * @return <code>true</code> if this user is allowed to deploy,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     private boolean isDeployAllowed(String user) {
         if (deny != null && deny.matcher(user).matches()) {
@@ -402,7 +386,7 @@ public final class UserConfig
         public DeployUserDirectory(UserConfig config, String user, String home) {
             this.config = config;
             this.user = user;
-            this.home= home;
+            this.home = home;
         }
 
         @Override

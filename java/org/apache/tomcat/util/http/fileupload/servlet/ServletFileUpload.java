@@ -48,25 +48,6 @@ public class ServletFileUpload extends FileUpload {
     // ---------------------------------------------------------- Class methods
 
     /**
-     * Utility method that determines whether the request contains multipart
-     * content.
-     *
-     * @param request The servlet request to be evaluated. Must be non-null.
-     *
-     * @return {@code true} if the request is multipart;
-     *         {@code false} otherwise.
-     */
-    public static final boolean isMultipartContent(
-            HttpServletRequest request) {
-        if (!POST_METHOD.equalsIgnoreCase(request.getMethod())) {
-            return false;
-        }
-        return FileUploadBase.isMultipartContent(new ServletRequestContext(request));
-    }
-
-    // ----------------------------------------------------------- Constructors
-
-    /**
      * Constructs an uninitialised instance of this class. A factory must be
      * configured, using {@code setFileItemFactory()}, before attempting
      * to parse requests.
@@ -77,15 +58,33 @@ public class ServletFileUpload extends FileUpload {
         super();
     }
 
+    // ----------------------------------------------------------- Constructors
+
     /**
      * Constructs an instance of this class which uses the supplied factory to
      * create {@code FileItem} instances.
      *
-     * @see FileUpload#FileUpload()
      * @param fileItemFactory The factory to use for creating file items.
+     * @see FileUpload#FileUpload()
      */
     public ServletFileUpload(FileItemFactory fileItemFactory) {
         super(fileItemFactory);
+    }
+
+    /**
+     * Utility method that determines whether the request contains multipart
+     * content.
+     *
+     * @param request The servlet request to be evaluated. Must be non-null.
+     * @return {@code true} if the request is multipart;
+     * {@code false} otherwise.
+     */
+    public static final boolean isMultipartContent(
+            HttpServletRequest request) {
+        if (!POST_METHOD.equalsIgnoreCase(request.getMethod())) {
+            return false;
+        }
+        return FileUploadBase.isMultipartContent(new ServletRequestContext(request));
     }
 
     // --------------------------------------------------------- Public methods
@@ -95,12 +94,9 @@ public class ServletFileUpload extends FileUpload {
      * compliant {@code multipart/form-data} stream.
      *
      * @param request The servlet request to be parsed.
-     *
      * @return A map of {@code FileItem} instances parsed from the request.
-     *
      * @throws FileUploadException if there are problems reading/parsing
      *                             the request or storing files.
-     *
      * @since 1.3
      */
     public Map<String, List<FileItem>> parseParameterMap(HttpServletRequest request)
@@ -113,19 +109,17 @@ public class ServletFileUpload extends FileUpload {
      * compliant {@code multipart/form-data} stream.
      *
      * @param request The servlet request to be parsed.
-     *
      * @return An iterator to instances of {@code FileItemStream}
-     *         parsed from the request, in the order that they were
-     *         transmitted.
-     *
+     * parsed from the request, in the order that they were
+     * transmitted.
      * @throws FileUploadException if there are problems reading/parsing
      *                             the request or storing files.
-     * @throws IOException An I/O error occurred. This may be a network
-     *   error while communicating with the client or a problem while
-     *   storing the uploaded content.
+     * @throws IOException         An I/O error occurred. This may be a network
+     *                             error while communicating with the client or a problem while
+     *                             storing the uploaded content.
      */
     public FileItemIterator getItemIterator(HttpServletRequest request)
-    throws FileUploadException, IOException {
+            throws FileUploadException, IOException {
         return super.getItemIterator(new ServletRequestContext(request));
     }
 

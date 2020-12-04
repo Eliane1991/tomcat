@@ -40,7 +40,7 @@ import java.security.cert.X509Certificate;
  *
  * <b>Note: Ensure that the headers are always set by httpd for all requests to
  * prevent a client spoofing SSL information by sending fake headers. </b><p>
- *
+ * <p>
  * In httpd.conf add the following:
  * <pre>
  * &lt;IfModule ssl_module&gt;
@@ -50,7 +50,7 @@ import java.security.cert.X509Certificate;
  *   RequestHeader set SSL_CIPHER_USEKEYSIZE "%{SSL_CIPHER_USEKEYSIZE}s"
  * &lt;/IfModule&gt;
  * </pre>
- *
+ * <p>
  * In server.xml, configure this valve under the Engine element in server.xml:
  * <pre>
  * &lt;Engine ...&gt;
@@ -142,7 +142,7 @@ public class SSLValve extends ValveBase {
         if (headerValue != null) {
             headerValue = headerValue.trim();
             if (headerValue.length() > 27) {
-                String body = headerValue.substring(27, headerValue .length() - 25);
+                String body = headerValue.substring(27, headerValue.length() - 25);
                 body = body.replace(' ', '\n');
                 body = body.replace('\t', '\n');
                 String header = "-----BEGIN CERTIFICATE-----\n";

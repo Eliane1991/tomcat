@@ -41,12 +41,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
 
-    private final Log log =
-            LogFactory.getLog(AsyncChannelWrapperSecure.class);
     private static final StringManager sm =
             StringManager.getManager(AsyncChannelWrapperSecure.class);
-
     private static final ByteBuffer DUMMY = ByteBuffer.allocate(16921);
+    private final Log log =
+            LogFactory.getLog(AsyncChannelWrapperSecure.class);
     private final AsynchronousSocketChannel socketChannel;
     private final SSLEngine sslEngine;
     private final ByteBuffer socketReadBuffer;
@@ -58,7 +57,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
     private AtomicBoolean reading = new AtomicBoolean(false);
 
     public AsyncChannelWrapperSecure(AsynchronousSocketChannel socketChannel,
-            SSLEngine sslEngine) {
+                                     SSLEngine sslEngine) {
         this.socketChannel = socketChannel;
         this.sslEngine = sslEngine;
 
@@ -69,7 +68,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
 
     @Override
     public Future<Integer> read(ByteBuffer dst) {
-        WrapperFuture<Integer,Void> future = new WrapperFuture<>();
+        WrapperFuture<Integer, Void> future = new WrapperFuture<>();
 
         if (!reading.compareAndSet(false, true)) {
             throw new IllegalStateException(sm.getString(
@@ -84,10 +83,10 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
     }
 
     @Override
-    public <B,A extends B> void read(ByteBuffer dst, A attachment,
-            CompletionHandler<Integer,B> handler) {
+    public <B, A extends B> void read(ByteBuffer dst, A attachment,
+                                      CompletionHandler<Integer, B> handler) {
 
-        WrapperFuture<Integer,B> future =
+        WrapperFuture<Integer, B> future =
                 new WrapperFuture<>(handler, attachment);
 
         if (!reading.compareAndSet(false, true)) {
@@ -103,7 +102,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
     @Override
     public Future<Integer> write(ByteBuffer src) {
 
-        WrapperFuture<Long,Void> inner = new WrapperFuture<>();
+        WrapperFuture<Long, Void> inner = new WrapperFuture<>();
 
         if (!writing.compareAndSet(false, true)) {
             throw new IllegalStateException(sm.getString(
@@ -111,7 +110,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
         }
 
         WriteTask writeTask =
-                new WriteTask(new ByteBuffer[] {src}, 0, 1, inner);
+                new WriteTask(new ByteBuffer[]{src}, 0, 1, inner);
 
         executor.execute(writeTask);
 
@@ -120,11 +119,11 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
     }
 
     @Override
-    public <B,A extends B> void write(ByteBuffer[] srcs, int offset, int length,
-            long timeout, TimeUnit unit, A attachment,
-            CompletionHandler<Long,B> handler) {
+    public <B, A extends B> void write(ByteBuffer[] srcs, int offset, int length,
+                                       long timeout, TimeUnit unit, A attachment,
+                                       CompletionHandler<Long, B> handler) {
 
-        WrapperFuture<Long,B> future =
+        WrapperFuture<Long, B> future =
                 new WrapperFuture<>(handler, attachment);
 
         if (!writing.compareAndSet(false, true)) {
@@ -150,7 +149,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
     @Override
     public Future<Void> handshake() throws SSLException {
 
-        WrapperFuture<Void,Void> wFuture = new WrapperFuture<>();
+        WrapperFuture<Void, Void> wFuture = new WrapperFuture<>();
 
         Thread t = new WebSocketSslHandshakeThread(wFuture);
         t.start();
@@ -164,283 +163,9 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
         return socketChannel.getLocalAddress();
     }
 
+    private static class WrapperFuture<T, A> implements Future<T> {
 
-    private class WriteTask implements Runnable {
-
-        private final ByteBuffer[] srcs;
-        private final int offset;
-        private final int length;
-        private final WrapperFuture<Long,?> future;
-
-        public WriteTask(ByteBuffer[] srcs, int offset, int length,
-                WrapperFuture<Long,?> future) {
-            this.srcs = srcs;
-            this.future = future;
-            this.offset = offset;
-            this.length = length;
-        }
-
-        @Override
-        public void run() {
-            long written = 0;
-
-            try {
-                for (int i = offset; i < offset + length; i++) {
-                    ByteBuffer src = srcs[i];
-                    while (src.hasRemaining()) {
-                        socketWriteBuffer.clear();
-
-                        // Encrypt the data
-                        SSLEngineResult r = sslEngine.wrap(src, socketWriteBuffer);
-                        written += r.bytesConsumed();
-                        Status s = r.getStatus();
-
-                        if (s == Status.OK || s == Status.BUFFER_OVERFLOW) {
-                            // Need to write out the bytes and may need to read from
-                            // the source again to empty it
-                        } else {
-                            // Status.BUFFER_UNDERFLOW - only happens on unwrap
-                            // Status.CLOSED - unexpected
-                            throw new IllegalStateException(sm.getString(
-                                    "asyncChannelWrapperSecure.statusWrap"));
-                        }
-
-                        // Check for tasks
-                        if (r.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {
-                            Runnable runnable = sslEngine.getDelegatedTask();
-                            while (runnable != null) {
-                                runnable.run();
-                                runnable = sslEngine.getDelegatedTask();
-                            }
-                        }
-
-                        socketWriteBuffer.flip();
-
-                        // Do the write
-                        int toWrite = r.bytesProduced();
-                        while (toWrite > 0) {
-                            Future<Integer> f =
-                                    socketChannel.write(socketWriteBuffer);
-                            Integer socketWrite = f.get();
-                            toWrite -= socketWrite.intValue();
-                        }
-                    }
-                }
-
-
-                if (writing.compareAndSet(true, false)) {
-                    future.complete(Long.valueOf(written));
-                } else {
-                    future.fail(new IllegalStateException(sm.getString(
-                            "asyncChannelWrapperSecure.wrongStateWrite")));
-                }
-            } catch (Exception e) {
-                writing.set(false);
-                future.fail(e);
-            }
-        }
-    }
-
-
-    private class ReadTask implements Runnable {
-
-        private final ByteBuffer dest;
-        private final WrapperFuture<Integer,?> future;
-
-        public ReadTask(ByteBuffer dest, WrapperFuture<Integer,?> future) {
-            this.dest = dest;
-            this.future = future;
-        }
-
-        @Override
-        public void run() {
-            int read = 0;
-
-            boolean forceRead = false;
-
-            try {
-                while (read == 0) {
-                    socketReadBuffer.compact();
-
-                    if (forceRead) {
-                        forceRead = false;
-                        Future<Integer> f = socketChannel.read(socketReadBuffer);
-                        Integer socketRead = f.get();
-                        if (socketRead.intValue() == -1) {
-                            throw new EOFException(sm.getString("asyncChannelWrapperSecure.eof"));
-                        }
-                    }
-
-                    socketReadBuffer.flip();
-
-                    if (socketReadBuffer.hasRemaining()) {
-                        // Decrypt the data in the buffer
-                        SSLEngineResult r = sslEngine.unwrap(socketReadBuffer, dest);
-                        read += r.bytesProduced();
-                        Status s = r.getStatus();
-
-                        if (s == Status.OK) {
-                            // Bytes available for reading and there may be
-                            // sufficient data in the socketReadBuffer to
-                            // support further reads without reading from the
-                            // socket
-                        } else if (s == Status.BUFFER_UNDERFLOW) {
-                            // There is partial data in the socketReadBuffer
-                            if (read == 0) {
-                                // Need more data before the partial data can be
-                                // processed and some output generated
-                                forceRead = true;
-                            }
-                            // else return the data we have and deal with the
-                            // partial data on the next read
-                        } else if (s == Status.BUFFER_OVERFLOW) {
-                            // Not enough space in the destination buffer to
-                            // store all of the data. We could use a bytes read
-                            // value of -bufferSizeRequired to signal the new
-                            // buffer size required but an explicit exception is
-                            // clearer.
-                            if (reading.compareAndSet(true, false)) {
-                                throw new ReadBufferOverflowException(sslEngine.
-                                        getSession().getApplicationBufferSize());
-                            } else {
-                                future.fail(new IllegalStateException(sm.getString(
-                                        "asyncChannelWrapperSecure.wrongStateRead")));
-                            }
-                        } else {
-                            // Status.CLOSED - unexpected
-                            throw new IllegalStateException(sm.getString(
-                                    "asyncChannelWrapperSecure.statusUnwrap"));
-                        }
-
-                        // Check for tasks
-                        if (r.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {
-                            Runnable runnable = sslEngine.getDelegatedTask();
-                            while (runnable != null) {
-                                runnable.run();
-                                runnable = sslEngine.getDelegatedTask();
-                            }
-                        }
-                    } else {
-                        forceRead = true;
-                    }
-                }
-
-
-                if (reading.compareAndSet(true, false)) {
-                    future.complete(Integer.valueOf(read));
-                } else {
-                    future.fail(new IllegalStateException(sm.getString(
-                            "asyncChannelWrapperSecure.wrongStateRead")));
-                }
-            } catch (RuntimeException | ReadBufferOverflowException | SSLException | EOFException |
-                    ExecutionException | InterruptedException e) {
-                reading.set(false);
-                future.fail(e);
-            }
-        }
-    }
-
-
-    private class WebSocketSslHandshakeThread extends Thread {
-
-        private final WrapperFuture<Void,Void> hFuture;
-
-        private HandshakeStatus handshakeStatus;
-        private Status resultStatus;
-
-        public WebSocketSslHandshakeThread(WrapperFuture<Void,Void> hFuture) {
-            this.hFuture = hFuture;
-        }
-
-        @Override
-        public void run() {
-            try {
-                sslEngine.beginHandshake();
-                // So the first compact does the right thing
-                socketReadBuffer.position(socketReadBuffer.limit());
-
-                handshakeStatus = sslEngine.getHandshakeStatus();
-                resultStatus = Status.OK;
-
-                boolean handshaking = true;
-
-                while(handshaking) {
-                    switch (handshakeStatus) {
-                        case NEED_WRAP: {
-                            socketWriteBuffer.clear();
-                            SSLEngineResult r =
-                                    sslEngine.wrap(DUMMY, socketWriteBuffer);
-                            checkResult(r, true);
-                            socketWriteBuffer.flip();
-                            Future<Integer> fWrite =
-                                    socketChannel.write(socketWriteBuffer);
-                            fWrite.get();
-                            break;
-                        }
-                        case NEED_UNWRAP: {
-                            socketReadBuffer.compact();
-                            if (socketReadBuffer.position() == 0 ||
-                                    resultStatus == Status.BUFFER_UNDERFLOW) {
-                                Future<Integer> fRead =
-                                        socketChannel.read(socketReadBuffer);
-                                fRead.get();
-                            }
-                            socketReadBuffer.flip();
-                            SSLEngineResult r =
-                                    sslEngine.unwrap(socketReadBuffer, DUMMY);
-                            checkResult(r, false);
-                            break;
-                        }
-                        case NEED_TASK: {
-                            Runnable r = null;
-                            while ((r = sslEngine.getDelegatedTask()) != null) {
-                                r.run();
-                            }
-                            handshakeStatus = sslEngine.getHandshakeStatus();
-                            break;
-                        }
-                        case FINISHED: {
-                            handshaking = false;
-                            break;
-                        }
-                        case NOT_HANDSHAKING: {
-                            throw new SSLException(
-                                    sm.getString("asyncChannelWrapperSecure.notHandshaking"));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                hFuture.fail(e);
-                return;
-            }
-
-            hFuture.complete(null);
-        }
-
-        private void checkResult(SSLEngineResult result, boolean wrap)
-                throws SSLException {
-
-            handshakeStatus = result.getHandshakeStatus();
-            resultStatus = result.getStatus();
-
-            if (resultStatus != Status.OK &&
-                    (wrap || resultStatus != Status.BUFFER_UNDERFLOW)) {
-                throw new SSLException(
-                        sm.getString("asyncChannelWrapperSecure.check.notOk", resultStatus));
-            }
-            if (wrap && result.bytesConsumed() != 0) {
-                throw new SSLException(sm.getString("asyncChannelWrapperSecure.check.wrap"));
-            }
-            if (!wrap && result.bytesProduced() != 0) {
-                throw new SSLException(sm.getString("asyncChannelWrapperSecure.check.unwrap"));
-            }
-        }
-    }
-
-
-    private static class WrapperFuture<T,A> implements Future<T> {
-
-        private final CompletionHandler<T,A> handler;
+        private final CompletionHandler<T, A> handler;
         private final A attachment;
 
         private volatile T result = null;
@@ -451,7 +176,7 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
             this(null, null);
         }
 
-        public WrapperFuture(CompletionHandler<T,A> handler, A attachment) {
+        public WrapperFuture(CompletionHandler<T, A> handler, A attachment) {
             this.handler = handler;
             this.attachment = attachment;
         }
@@ -559,7 +284,6 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
         }
     }
 
-
     private static class SecureIOThreadFactory implements ThreadFactory {
 
         private AtomicInteger count = new AtomicInteger(0);
@@ -572,6 +296,276 @@ public class AsyncChannelWrapperSecure implements AsyncChannelWrapper {
             // cleaned up when the connection is closed.
             t.setDaemon(true);
             return t;
+        }
+    }
+
+    private class WriteTask implements Runnable {
+
+        private final ByteBuffer[] srcs;
+        private final int offset;
+        private final int length;
+        private final WrapperFuture<Long, ?> future;
+
+        public WriteTask(ByteBuffer[] srcs, int offset, int length,
+                         WrapperFuture<Long, ?> future) {
+            this.srcs = srcs;
+            this.future = future;
+            this.offset = offset;
+            this.length = length;
+        }
+
+        @Override
+        public void run() {
+            long written = 0;
+
+            try {
+                for (int i = offset; i < offset + length; i++) {
+                    ByteBuffer src = srcs[i];
+                    while (src.hasRemaining()) {
+                        socketWriteBuffer.clear();
+
+                        // Encrypt the data
+                        SSLEngineResult r = sslEngine.wrap(src, socketWriteBuffer);
+                        written += r.bytesConsumed();
+                        Status s = r.getStatus();
+
+                        if (s == Status.OK || s == Status.BUFFER_OVERFLOW) {
+                            // Need to write out the bytes and may need to read from
+                            // the source again to empty it
+                        } else {
+                            // Status.BUFFER_UNDERFLOW - only happens on unwrap
+                            // Status.CLOSED - unexpected
+                            throw new IllegalStateException(sm.getString(
+                                    "asyncChannelWrapperSecure.statusWrap"));
+                        }
+
+                        // Check for tasks
+                        if (r.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {
+                            Runnable runnable = sslEngine.getDelegatedTask();
+                            while (runnable != null) {
+                                runnable.run();
+                                runnable = sslEngine.getDelegatedTask();
+                            }
+                        }
+
+                        socketWriteBuffer.flip();
+
+                        // Do the write
+                        int toWrite = r.bytesProduced();
+                        while (toWrite > 0) {
+                            Future<Integer> f =
+                                    socketChannel.write(socketWriteBuffer);
+                            Integer socketWrite = f.get();
+                            toWrite -= socketWrite.intValue();
+                        }
+                    }
+                }
+
+
+                if (writing.compareAndSet(true, false)) {
+                    future.complete(Long.valueOf(written));
+                } else {
+                    future.fail(new IllegalStateException(sm.getString(
+                            "asyncChannelWrapperSecure.wrongStateWrite")));
+                }
+            } catch (Exception e) {
+                writing.set(false);
+                future.fail(e);
+            }
+        }
+    }
+
+    private class ReadTask implements Runnable {
+
+        private final ByteBuffer dest;
+        private final WrapperFuture<Integer, ?> future;
+
+        public ReadTask(ByteBuffer dest, WrapperFuture<Integer, ?> future) {
+            this.dest = dest;
+            this.future = future;
+        }
+
+        @Override
+        public void run() {
+            int read = 0;
+
+            boolean forceRead = false;
+
+            try {
+                while (read == 0) {
+                    socketReadBuffer.compact();
+
+                    if (forceRead) {
+                        forceRead = false;
+                        Future<Integer> f = socketChannel.read(socketReadBuffer);
+                        Integer socketRead = f.get();
+                        if (socketRead.intValue() == -1) {
+                            throw new EOFException(sm.getString("asyncChannelWrapperSecure.eof"));
+                        }
+                    }
+
+                    socketReadBuffer.flip();
+
+                    if (socketReadBuffer.hasRemaining()) {
+                        // Decrypt the data in the buffer
+                        SSLEngineResult r = sslEngine.unwrap(socketReadBuffer, dest);
+                        read += r.bytesProduced();
+                        Status s = r.getStatus();
+
+                        if (s == Status.OK) {
+                            // Bytes available for reading and there may be
+                            // sufficient data in the socketReadBuffer to
+                            // support further reads without reading from the
+                            // socket
+                        } else if (s == Status.BUFFER_UNDERFLOW) {
+                            // There is partial data in the socketReadBuffer
+                            if (read == 0) {
+                                // Need more data before the partial data can be
+                                // processed and some output generated
+                                forceRead = true;
+                            }
+                            // else return the data we have and deal with the
+                            // partial data on the next read
+                        } else if (s == Status.BUFFER_OVERFLOW) {
+                            // Not enough space in the destination buffer to
+                            // store all of the data. We could use a bytes read
+                            // value of -bufferSizeRequired to signal the new
+                            // buffer size required but an explicit exception is
+                            // clearer.
+                            if (reading.compareAndSet(true, false)) {
+                                throw new ReadBufferOverflowException(sslEngine.
+                                        getSession().getApplicationBufferSize());
+                            } else {
+                                future.fail(new IllegalStateException(sm.getString(
+                                        "asyncChannelWrapperSecure.wrongStateRead")));
+                            }
+                        } else {
+                            // Status.CLOSED - unexpected
+                            throw new IllegalStateException(sm.getString(
+                                    "asyncChannelWrapperSecure.statusUnwrap"));
+                        }
+
+                        // Check for tasks
+                        if (r.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {
+                            Runnable runnable = sslEngine.getDelegatedTask();
+                            while (runnable != null) {
+                                runnable.run();
+                                runnable = sslEngine.getDelegatedTask();
+                            }
+                        }
+                    } else {
+                        forceRead = true;
+                    }
+                }
+
+
+                if (reading.compareAndSet(true, false)) {
+                    future.complete(Integer.valueOf(read));
+                } else {
+                    future.fail(new IllegalStateException(sm.getString(
+                            "asyncChannelWrapperSecure.wrongStateRead")));
+                }
+            } catch (RuntimeException | ReadBufferOverflowException | SSLException | EOFException |
+                    ExecutionException | InterruptedException e) {
+                reading.set(false);
+                future.fail(e);
+            }
+        }
+    }
+
+    private class WebSocketSslHandshakeThread extends Thread {
+
+        private final WrapperFuture<Void, Void> hFuture;
+
+        private HandshakeStatus handshakeStatus;
+        private Status resultStatus;
+
+        public WebSocketSslHandshakeThread(WrapperFuture<Void, Void> hFuture) {
+            this.hFuture = hFuture;
+        }
+
+        @Override
+        public void run() {
+            try {
+                sslEngine.beginHandshake();
+                // So the first compact does the right thing
+                socketReadBuffer.position(socketReadBuffer.limit());
+
+                handshakeStatus = sslEngine.getHandshakeStatus();
+                resultStatus = Status.OK;
+
+                boolean handshaking = true;
+
+                while (handshaking) {
+                    switch (handshakeStatus) {
+                        case NEED_WRAP: {
+                            socketWriteBuffer.clear();
+                            SSLEngineResult r =
+                                    sslEngine.wrap(DUMMY, socketWriteBuffer);
+                            checkResult(r, true);
+                            socketWriteBuffer.flip();
+                            Future<Integer> fWrite =
+                                    socketChannel.write(socketWriteBuffer);
+                            fWrite.get();
+                            break;
+                        }
+                        case NEED_UNWRAP: {
+                            socketReadBuffer.compact();
+                            if (socketReadBuffer.position() == 0 ||
+                                    resultStatus == Status.BUFFER_UNDERFLOW) {
+                                Future<Integer> fRead =
+                                        socketChannel.read(socketReadBuffer);
+                                fRead.get();
+                            }
+                            socketReadBuffer.flip();
+                            SSLEngineResult r =
+                                    sslEngine.unwrap(socketReadBuffer, DUMMY);
+                            checkResult(r, false);
+                            break;
+                        }
+                        case NEED_TASK: {
+                            Runnable r = null;
+                            while ((r = sslEngine.getDelegatedTask()) != null) {
+                                r.run();
+                            }
+                            handshakeStatus = sslEngine.getHandshakeStatus();
+                            break;
+                        }
+                        case FINISHED: {
+                            handshaking = false;
+                            break;
+                        }
+                        case NOT_HANDSHAKING: {
+                            throw new SSLException(
+                                    sm.getString("asyncChannelWrapperSecure.notHandshaking"));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                hFuture.fail(e);
+                return;
+            }
+
+            hFuture.complete(null);
+        }
+
+        private void checkResult(SSLEngineResult result, boolean wrap)
+                throws SSLException {
+
+            handshakeStatus = result.getHandshakeStatus();
+            resultStatus = result.getStatus();
+
+            if (resultStatus != Status.OK &&
+                    (wrap || resultStatus != Status.BUFFER_UNDERFLOW)) {
+                throw new SSLException(
+                        sm.getString("asyncChannelWrapperSecure.check.notOk", resultStatus));
+            }
+            if (wrap && result.bytesConsumed() != 0) {
+                throw new SSLException(sm.getString("asyncChannelWrapperSecure.check.wrap"));
+            }
+            if (!wrap && result.bytesProduced() != 0) {
+                throw new SSLException(sm.getString("asyncChannelWrapperSecure.check.unwrap"));
+            }
         }
     }
 }

@@ -80,7 +80,7 @@ import java.util.*;
  * @author Aner Perez [aner at ncstech.com]
  */
 public class BeanFactory
-    implements ObjectFactory {
+        implements ObjectFactory {
 
     // ----------------------------------------------------------- Constructors
 
@@ -104,8 +104,8 @@ public class BeanFactory
      */
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
-                                    Hashtable<?,?> environment)
-        throws NamingException {
+                                    Hashtable<?, ?> environment)
+            throws NamingException {
 
         if (obj instanceof ResourceRef) {
 
@@ -115,22 +115,22 @@ public class BeanFactory
                 String beanClassName = ref.getClassName();
                 Class<?> beanClass = null;
                 ClassLoader tcl =
-                    Thread.currentThread().getContextClassLoader();
+                        Thread.currentThread().getContextClassLoader();
                 if (tcl != null) {
                     try {
                         beanClass = tcl.loadClass(beanClassName);
-                    } catch(ClassNotFoundException e) {
+                    } catch (ClassNotFoundException e) {
                     }
                 } else {
                     try {
                         beanClass = Class.forName(beanClassName);
-                    } catch(ClassNotFoundException e) {
+                    } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
                 if (beanClass == null) {
                     throw new NamingException
-                        ("Class not found: " + beanClassName);
+                            ("Class not found: " + beanClassName);
                 }
 
                 BeanInfo bi = Introspector.getBeanInfo(beanClass);
@@ -144,14 +144,14 @@ public class BeanFactory
                 String value;
 
                 if (ra != null) {
-                    value = (String)ra.getContent();
+                    value = (String) ra.getContent();
                     Class<?> paramTypes[] = new Class[1];
                     paramTypes[0] = String.class;
                     String setterName;
                     int index;
 
                     /* Items are given as comma separated list */
-                    for (String param: value.split(",")) {
+                    for (String param : value.split(",")) {
                         param = param.trim();
                         /* A single item can either be of the form name=method
                          * or just a property name (and we will use a standard
@@ -162,16 +162,16 @@ public class BeanFactory
                             param = param.substring(0, index).trim();
                         } else {
                             setterName = "set" +
-                                         param.substring(0, 1).toUpperCase(Locale.ENGLISH) +
-                                         param.substring(1);
+                                    param.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                                    param.substring(1);
                         }
                         try {
                             forced.put(param,
-                                       beanClass.getMethod(setterName, paramTypes));
-                        } catch (NoSuchMethodException|SecurityException ex) {
+                                    beanClass.getMethod(setterName, paramTypes));
+                        } catch (NoSuchMethodException | SecurityException ex) {
                             throw new NamingException
-                                ("Forced String setter " + setterName +
-                                 " not found for property " + param);
+                                    ("Forced String setter " + setterName +
+                                            " not found for property " + param);
                         }
                     }
                 }
@@ -184,13 +184,13 @@ public class BeanFactory
                     String propName = ra.getType();
 
                     if (propName.equals(Constants.FACTORY) ||
-                        propName.equals("scope") || propName.equals("auth") ||
-                        propName.equals("forceString") ||
-                        propName.equals("singleton")) {
+                            propName.equals("scope") || propName.equals("auth") ||
+                            propName.equals("forceString") ||
+                            propName.equals("singleton")) {
                         continue;
                     }
 
-                    value = (String)ra.getContent();
+                    value = (String) ra.getContent();
 
                     Object[] valueArray = new Object[1];
 
@@ -200,18 +200,18 @@ public class BeanFactory
                         valueArray[0] = value;
                         try {
                             method.invoke(bean, valueArray);
-                        } catch (IllegalAccessException|
-                                 IllegalArgumentException|
-                                 InvocationTargetException ex) {
+                        } catch (IllegalAccessException |
+                                IllegalArgumentException |
+                                InvocationTargetException ex) {
                             throw new NamingException
-                                ("Forced String setter " + method.getName() +
-                                 " threw exception for property " + propName);
+                                    ("Forced String setter " + method.getName() +
+                                            " threw exception for property " + propName);
                         }
                         continue;
                     }
 
                     int i = 0;
-                    for (i = 0; i<pda.length; i++) {
+                    for (i = 0; i < pda.length; i++) {
 
                         if (pda[i].getName().equals(propName)) {
 
@@ -220,35 +220,35 @@ public class BeanFactory
                             if (propType.equals(String.class)) {
                                 valueArray[0] = value;
                             } else if (propType.equals(Character.class)
-                                       || propType.equals(char.class)) {
+                                    || propType.equals(char.class)) {
                                 valueArray[0] =
-                                    Character.valueOf(value.charAt(0));
+                                        Character.valueOf(value.charAt(0));
                             } else if (propType.equals(Byte.class)
-                                       || propType.equals(byte.class)) {
+                                    || propType.equals(byte.class)) {
                                 valueArray[0] = Byte.valueOf(value);
                             } else if (propType.equals(Short.class)
-                                       || propType.equals(short.class)) {
+                                    || propType.equals(short.class)) {
                                 valueArray[0] = Short.valueOf(value);
                             } else if (propType.equals(Integer.class)
-                                       || propType.equals(int.class)) {
+                                    || propType.equals(int.class)) {
                                 valueArray[0] = Integer.valueOf(value);
                             } else if (propType.equals(Long.class)
-                                       || propType.equals(long.class)) {
+                                    || propType.equals(long.class)) {
                                 valueArray[0] = Long.valueOf(value);
                             } else if (propType.equals(Float.class)
-                                       || propType.equals(float.class)) {
+                                    || propType.equals(float.class)) {
                                 valueArray[0] = Float.valueOf(value);
                             } else if (propType.equals(Double.class)
-                                       || propType.equals(double.class)) {
+                                    || propType.equals(double.class)) {
                                 valueArray[0] = Double.valueOf(value);
                             } else if (propType.equals(Boolean.class)
-                                       || propType.equals(boolean.class)) {
+                                    || propType.equals(boolean.class)) {
                                 valueArray[0] = Boolean.valueOf(value);
                             } else {
                                 throw new NamingException
-                                    ("String conversion for property " + propName +
-                                     " of type '" + propType.getName() +
-                                     "' not available");
+                                        ("String conversion for property " + propName +
+                                                " of type '" + propType.getName() +
+                                                "' not available");
                             }
 
                             Method setProp = pda[i].getWriteMethod();
@@ -256,8 +256,8 @@ public class BeanFactory
                                 setProp.invoke(bean, valueArray);
                             } else {
                                 throw new NamingException
-                                    ("Write not allowed for property: "
-                                     + propName);
+                                        ("Write not allowed for property: "
+                                                + propName);
                             }
 
                             break;
@@ -268,7 +268,7 @@ public class BeanFactory
 
                     if (i == pda.length) {
                         throw new NamingException
-                            ("No set method found for property: " + propName);
+                                ("No set method found for property: " + propName);
                     }
 
                 }

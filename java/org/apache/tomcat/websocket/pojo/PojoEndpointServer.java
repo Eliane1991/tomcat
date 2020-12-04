@@ -50,7 +50,7 @@ public class PojoEndpointServer extends PojoEndpointBase {
         setPojo(pojo);
 
         @SuppressWarnings("unchecked")
-        Map<String,String> pathParameters =
+        Map<String, String> pathParameters =
                 (Map<String, String>) sec.getUserProperties().get(
                         Constants.POJO_PATH_PARAM_KEY);
         setPathParameters(pathParameters);

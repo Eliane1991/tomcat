@@ -28,19 +28,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
  */
 public final class PoolUtils {
 
-    private static final String MSG_MIN_IDLE = "minIdle must be non-negative.";
     public static final String MSG_NULL_KEY = "key must not be null.";
-    private static final String MSG_NULL_KEYED_POOL = "keyedPool must not be null.";
     public static final String MSG_NULL_KEYS = "keys must not be null.";
+    private static final String MSG_MIN_IDLE = "minIdle must be non-negative.";
+    private static final String MSG_NULL_KEYED_POOL = "keyedPool must not be null.";
     private static final String MSG_NULL_POOL = "pool must not be null.";
-
-    /**
-     * Timer used to periodically check pools idle object count. Because a
-     * {@link Timer} creates a {@link Thread}, an IODH is used.
-     */
-    static class TimerHolder {
-        static final Timer MIN_IDLE_TIMER = new Timer(true);
-    }
 
     /**
      * PoolUtils instances should NOT be constructed in standard programming.
@@ -57,12 +49,9 @@ public final class PoolUtils {
      * error handling for operations that throw exceptions that normally need to
      * be ignored.
      *
-     * @param t
-     *            The Throwable to check
-     * @throws ThreadDeath
-     *             if that is passed in
-     * @throws VirtualMachineError
-     *             if that is passed in
+     * @param t The Throwable to check
+     * @throws ThreadDeath         if that is passed in
+     * @throws VirtualMachineError if that is passed in
      */
     public static void checkRethrow(final Throwable t) {
         if (t instanceof ThreadDeath) {
@@ -79,24 +68,20 @@ public final class PoolUtils {
      * object will be added per period. If there is an exception when calling
      * {@link ObjectPool#addObject()} then no more checks will be performed.
      *
-     * @param pool
-     *            the pool to check periodically.
-     * @param minIdle
-     *            if the {@link ObjectPool#getNumIdle()} is less than this then
-     *            add an idle object.
-     * @param period
-     *            the frequency to check the number of idle objects in a pool,
-     *            see {@link Timer#schedule(TimerTask, long, long)}.
-     * @param <T> the type of objects in the pool
+     * @param pool    the pool to check periodically.
+     * @param minIdle if the {@link ObjectPool#getNumIdle()} is less than this then
+     *                add an idle object.
+     * @param period  the frequency to check the number of idle objects in a pool,
+     *                see {@link Timer#schedule(TimerTask, long, long)}.
+     * @param <T>     the type of objects in the pool
      * @return the {@link TimerTask} that will periodically check the pools idle
-     *         object count.
-     * @throws IllegalArgumentException
-     *             when {@code pool} is {@code null} or when {@code minIdle} is
-     *             negative or when {@code period} isn't valid for
-     *             {@link Timer#schedule(TimerTask, long, long)}
+     * object count.
+     * @throws IllegalArgumentException when {@code pool} is {@code null} or when {@code minIdle} is
+     *                                  negative or when {@code period} isn't valid for
+     *                                  {@link Timer#schedule(TimerTask, long, long)}
      */
     public static <T> TimerTask checkMinIdle(final ObjectPool<T> pool,
-            final int minIdle, final long period)
+                                             final int minIdle, final long period)
             throws IllegalArgumentException {
         if (pool == null) {
             throw new IllegalArgumentException(MSG_NULL_KEYED_POOL);
@@ -115,24 +100,19 @@ public final class PoolUtils {
      * when calling {@link KeyedObjectPool#addObject(Object)} then no more
      * checks for that key will be performed.
      *
-     * @param keyedPool
-     *            the keyedPool to check periodically.
-     * @param key
-     *            the key to check the idle count of.
-     * @param minIdle
-     *            if the {@link KeyedObjectPool#getNumIdle(Object)} is less than
-     *            this then add an idle object.
-     * @param period
-     *            the frequency to check the number of idle objects in a
-     *            keyedPool, see {@link Timer#schedule(TimerTask, long, long)}.
-     * @param <K> the type of the pool key
-     * @param <V> the type of pool entries
+     * @param keyedPool the keyedPool to check periodically.
+     * @param key       the key to check the idle count of.
+     * @param minIdle   if the {@link KeyedObjectPool#getNumIdle(Object)} is less than
+     *                  this then add an idle object.
+     * @param period    the frequency to check the number of idle objects in a
+     *                  keyedPool, see {@link Timer#schedule(TimerTask, long, long)}.
+     * @param <K>       the type of the pool key
+     * @param <V>       the type of pool entries
      * @return the {@link TimerTask} that will periodically check the pools idle
-     *         object count.
-     * @throws IllegalArgumentException
-     *             when {@code keyedPool}, {@code key} is {@code null} or
-     *             when {@code minIdle} is negative or when {@code period} isn't
-     *             valid for {@link Timer#schedule(TimerTask, long, long)}.
+     * object count.
+     * @throws IllegalArgumentException when {@code keyedPool}, {@code key} is {@code null} or
+     *                                  when {@code minIdle} is negative or when {@code period} isn't
+     *                                  valid for {@link Timer#schedule(TimerTask, long, long)}.
      */
     public static <K, V> TimerTask checkMinIdle(
             final KeyedObjectPool<K, V> keyedPool, final K key,
@@ -158,25 +138,20 @@ public final class PoolUtils {
      * {@code Collection keys} in the keyedPool. At most one idle object will be
      * added per period.
      *
-     * @param keyedPool
-     *            the keyedPool to check periodically.
-     * @param keys
-     *            a collection of keys to check the idle object count.
-     * @param minIdle
-     *            if the {@link KeyedObjectPool#getNumIdle(Object)} is less than
-     *            this then add an idle object.
-     * @param period
-     *            the frequency to check the number of idle objects in a
-     *            keyedPool, see {@link Timer#schedule(TimerTask, long, long)}.
-     * @param <K> the type of the pool key
-     * @param <V> the type of pool entries
+     * @param keyedPool the keyedPool to check periodically.
+     * @param keys      a collection of keys to check the idle object count.
+     * @param minIdle   if the {@link KeyedObjectPool#getNumIdle(Object)} is less than
+     *                  this then add an idle object.
+     * @param period    the frequency to check the number of idle objects in a
+     *                  keyedPool, see {@link Timer#schedule(TimerTask, long, long)}.
+     * @param <K>       the type of the pool key
+     * @param <V>       the type of pool entries
      * @return a {@link Map} of key and {@link TimerTask} pairs that will
-     *         periodically check the pools idle object count.
-     * @throws IllegalArgumentException
-     *             when {@code keyedPool}, {@code keys}, or any of the values in
-     *             the collection is {@code null} or when {@code minIdle} is
-     *             negative or when {@code period} isn't valid for
-     *             {@link Timer#schedule(TimerTask, long, long)}.
+     * periodically check the pools idle object count.
+     * @throws IllegalArgumentException when {@code keyedPool}, {@code keys}, or any of the values in
+     *                                  the collection is {@code null} or when {@code minIdle} is
+     *                                  negative or when {@code period} isn't valid for
+     *                                  {@link Timer#schedule(TimerTask, long, long)}.
      * @see #checkMinIdle(KeyedObjectPool, Object, int, long)
      */
     public static <K, V> Map<K, TimerTask> checkMinIdle(
@@ -198,15 +173,11 @@ public final class PoolUtils {
      * Calls {@link ObjectPool#addObject()} on {@code pool} {@code count} number
      * of times.
      *
-     * @param pool
-     *            the pool to prefill.
-     * @param count
-     *            the number of idle objects to add.
-     * @param <T> the type of objects in the pool
-     * @throws Exception
-     *             when {@link ObjectPool#addObject()} fails.
-     * @throws IllegalArgumentException
-     *             when {@code pool} is {@code null}.
+     * @param pool  the pool to prefill.
+     * @param count the number of idle objects to add.
+     * @param <T>   the type of objects in the pool
+     * @throws Exception                when {@link ObjectPool#addObject()} fails.
+     * @throws IllegalArgumentException when {@code pool} is {@code null}.
      * @deprecated Use {@link ObjectPool#addObjects(int)}.
      */
     @Deprecated
@@ -222,23 +193,18 @@ public final class PoolUtils {
      * Calls {@link KeyedObjectPool#addObject(Object)} on {@code keyedPool} with
      * {@code key} {@code count} number of times.
      *
-     * @param keyedPool
-     *            the keyedPool to prefill.
-     * @param key
-     *            the key to add objects for.
-     * @param count
-     *            the number of idle objects to add for {@code key}.
-     * @param <K> the type of the pool key
-     * @param <V> the type of pool entries
-     * @throws Exception
-     *             when {@link KeyedObjectPool#addObject(Object)} fails.
-     * @throws IllegalArgumentException
-     *             when {@code keyedPool} or {@code key} is {@code null}.
+     * @param keyedPool the keyedPool to prefill.
+     * @param key       the key to add objects for.
+     * @param count     the number of idle objects to add for {@code key}.
+     * @param <K>       the type of the pool key
+     * @param <V>       the type of pool entries
+     * @throws Exception                when {@link KeyedObjectPool#addObject(Object)} fails.
+     * @throws IllegalArgumentException when {@code keyedPool} or {@code key} is {@code null}.
      * @deprecated Use {@link KeyedObjectPool#addObjects(Object, int)}.
      */
     @Deprecated
     public static <K, V> void prefill(final KeyedObjectPool<K, V> keyedPool,
-            final K key, final int count) throws Exception,
+                                      final K key, final int count) throws Exception,
             IllegalArgumentException {
         if (keyedPool == null) {
             throw new IllegalArgumentException(MSG_NULL_KEYED_POOL);
@@ -252,25 +218,20 @@ public final class PoolUtils {
      * the same effect as calling {@link #prefill(KeyedObjectPool, Object, int)}
      * for each key in the {@code keys} collection.
      *
-     * @param keyedPool
-     *            the keyedPool to prefill.
-     * @param keys
-     *            {@link Collection} of keys to add objects for.
-     * @param count
-     *            the number of idle objects to add for each {@code key}.
-     * @param <K> the type of the pool key
-     * @param <V> the type of pool entries
-     * @throws Exception
-     *             when {@link KeyedObjectPool#addObject(Object)} fails.
-     * @throws IllegalArgumentException
-     *             when {@code keyedPool}, {@code keys}, or any value in
-     *             {@code keys} is {@code null}.
+     * @param keyedPool the keyedPool to prefill.
+     * @param keys      {@link Collection} of keys to add objects for.
+     * @param count     the number of idle objects to add for each {@code key}.
+     * @param <K>       the type of the pool key
+     * @param <V>       the type of pool entries
+     * @throws Exception                when {@link KeyedObjectPool#addObject(Object)} fails.
+     * @throws IllegalArgumentException when {@code keyedPool}, {@code keys}, or any value in
+     *                                  {@code keys} is {@code null}.
      * @see #prefill(KeyedObjectPool, Object, int)
      * @deprecated Use {@link KeyedObjectPool#addObjects(Collection, int)}.
      */
     @Deprecated
     public static <K, V> void prefill(final KeyedObjectPool<K, V> keyedPool,
-            final Collection<K> keys, final int count) throws Exception,
+                                      final Collection<K> keys, final int count) throws Exception,
             IllegalArgumentException {
         if (keys == null) {
             throw new IllegalArgumentException(MSG_NULL_KEYS);
@@ -282,10 +243,9 @@ public final class PoolUtils {
      * Returns a synchronized (thread-safe) PooledObjectFactory backed by the
      * specified PooledObjectFactory.
      *
-     * @param factory
-     *            the PooledObjectFactory to be "wrapped" in a synchronized
-     *            PooledObjectFactory.
-     * @param <T> the type of objects in the pool
+     * @param factory the PooledObjectFactory to be "wrapped" in a synchronized
+     *                PooledObjectFactory.
+     * @param <T>     the type of objects in the pool
      * @return a synchronized view of the specified PooledObjectFactory.
      */
     public static <T> PooledObjectFactory<T> synchronizedPooledFactory(
@@ -297,11 +257,10 @@ public final class PoolUtils {
      * Returns a synchronized (thread-safe) KeyedPooledObjectFactory backed by
      * the specified KeyedPoolableObjectFactory.
      *
-     * @param keyedFactory
-     *            the KeyedPooledObjectFactory to be "wrapped" in a
-     *            synchronized KeyedPooledObjectFactory.
-     * @param <K> the type of the pool key
-     * @param <V> the type of pool entries
+     * @param keyedFactory the KeyedPooledObjectFactory to be "wrapped" in a
+     *                     synchronized KeyedPooledObjectFactory.
+     * @param <K>          the type of the pool key
+     * @param <V>          the type of pool entries
      * @return a synchronized view of the specified KeyedPooledObjectFactory.
      */
     public static <K, V> KeyedPooledObjectFactory<K, V> synchronizedKeyedPooledFactory(
@@ -319,6 +278,14 @@ public final class PoolUtils {
     }
 
     /**
+     * Timer used to periodically check pools idle object count. Because a
+     * {@link Timer} creates a {@link Thread}, an IODH is used.
+     */
+    static class TimerHolder {
+        static final Timer MIN_IDLE_TIMER = new Timer(true);
+    }
+
+    /**
      * Timer task that adds objects to the pool until the number of idle
      * instances reaches the configured minIdle. Note that this is not the same
      * as the pool's minIdle setting.
@@ -327,22 +294,23 @@ public final class PoolUtils {
      */
     private static final class ObjectPoolMinIdleTimerTask<T> extends TimerTask {
 
-        /** Minimum number of idle instances. Not the same as pool.getMinIdle(). */
+        /**
+         * Minimum number of idle instances. Not the same as pool.getMinIdle().
+         */
         private final int minIdle;
 
-        /** Object pool */
+        /**
+         * Object pool
+         */
         private final ObjectPool<T> pool;
 
         /**
          * Create a new ObjectPoolMinIdleTimerTask for the given pool with the
          * given minIdle setting.
          *
-         * @param pool
-         *            object pool
-         * @param minIdle
-         *            number of idle instances to maintain
-         * @throws IllegalArgumentException
-         *             if the pool is null
+         * @param pool    object pool
+         * @param minIdle number of idle instances to maintain
+         * @throws IllegalArgumentException if the pool is null
          */
         ObjectPoolMinIdleTimerTask(final ObjectPool<T> pool, final int minIdle)
                 throws IllegalArgumentException {
@@ -400,29 +368,31 @@ public final class PoolUtils {
     private static final class KeyedObjectPoolMinIdleTimerTask<K, V> extends
             TimerTask {
 
-        /** Minimum number of idle instances. Not the same as pool.getMinIdle(). */
+        /**
+         * Minimum number of idle instances. Not the same as pool.getMinIdle().
+         */
         private final int minIdle;
 
-        /** Key to ensure minIdle for */
+        /**
+         * Key to ensure minIdle for
+         */
         private final K key;
 
-        /** Keyed object pool */
+        /**
+         * Keyed object pool
+         */
         private final KeyedObjectPool<K, V> keyedPool;
 
         /**
          * Creates a new KeyedObjecPoolMinIdleTimerTask.
          *
-         * @param keyedPool
-         *            keyed object pool
-         * @param key
-         *            key to ensure minimum number of idle instances
-         * @param minIdle
-         *            minimum number of idle instances
-         * @throws IllegalArgumentException
-         *             if the key is null
+         * @param keyedPool keyed object pool
+         * @param key       key to ensure minimum number of idle instances
+         * @param minIdle   minimum number of idle instances
+         * @throws IllegalArgumentException if the key is null
          */
         KeyedObjectPoolMinIdleTimerTask(final KeyedObjectPool<K, V> keyedPool,
-                final K key, final int minIdle) throws IllegalArgumentException {
+                                        final K key, final int minIdle) throws IllegalArgumentException {
             if (keyedPool == null) {
                 throw new IllegalArgumentException(
                         MSG_NULL_KEYED_POOL);
@@ -485,20 +455,22 @@ public final class PoolUtils {
     private static final class SynchronizedPooledObjectFactory<T> implements
             PooledObjectFactory<T> {
 
-        /** Synchronization lock */
+        /**
+         * Synchronization lock
+         */
         private final WriteLock writeLock = new ReentrantReadWriteLock().writeLock();
 
-        /** Wrapped factory */
+        /**
+         * Wrapped factory
+         */
         private final PooledObjectFactory<T> factory;
 
         /**
          * Creates a SynchronizedPoolableObjectFactory wrapping the given
          * factory.
          *
-         * @param factory
-         *            underlying factory to wrap
-         * @throws IllegalArgumentException
-         *             if the factory is null
+         * @param factory underlying factory to wrap
+         * @throws IllegalArgumentException if the factory is null
          */
         SynchronizedPooledObjectFactory(final PooledObjectFactory<T> factory)
                 throws IllegalArgumentException {
@@ -602,20 +574,22 @@ public final class PoolUtils {
     private static final class SynchronizedKeyedPooledObjectFactory<K, V>
             implements KeyedPooledObjectFactory<K, V> {
 
-        /** Synchronization lock */
+        /**
+         * Synchronization lock
+         */
         private final WriteLock writeLock = new ReentrantReadWriteLock().writeLock();
 
-        /** Wrapped factory */
+        /**
+         * Wrapped factory
+         */
         private final KeyedPooledObjectFactory<K, V> keyedFactory;
 
         /**
          * Creates a SynchronizedKeyedPoolableObjectFactory wrapping the given
          * factory.
          *
-         * @param keyedFactory
-         *            underlying factory to wrap
-         * @throws IllegalArgumentException
-         *             if the factory is null
+         * @param keyedFactory underlying factory to wrap
+         * @throws IllegalArgumentException if the factory is null
          */
         SynchronizedKeyedPooledObjectFactory(
                 final KeyedPooledObjectFactory<K, V> keyedFactory)

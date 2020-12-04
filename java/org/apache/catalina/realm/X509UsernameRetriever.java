@@ -27,7 +27,7 @@ public interface X509UsernameRetriever {
      *
      * @param cert The certificate containing the user name.
      * @return An appropriate user name obtained from one or more fields
-     *         in the certificate.
+     * in the certificate.
      */
     public String getUsername(X509Certificate cert);
 }

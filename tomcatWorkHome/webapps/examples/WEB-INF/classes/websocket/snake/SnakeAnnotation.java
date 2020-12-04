@@ -38,6 +38,10 @@ public class SnakeAnnotation {
     private final int id;
     private Snake snake;
 
+    public SnakeAnnotation() {
+        this.id = snakeIds.getAndIncrement();
+    }
+
     public static String getRandomHexColor() {
         float hue = random.nextFloat();
         // sat between 0.1 and 0.3
@@ -48,13 +52,11 @@ public class SnakeAnnotation {
                 (color.getRGB() & 0xffffff) | 0x1000000).substring(1);
     }
 
-
     public static Location getRandomLocation() {
         int x = roundByGridSize(random.nextInt(PLAYFIELD_WIDTH));
         int y = roundByGridSize(random.nextInt(PLAYFIELD_HEIGHT));
         return new Location(x, y);
     }
-
 
     private static int roundByGridSize(int value) {
         value = value + (GRID_SIZE / 2);
@@ -63,18 +65,13 @@ public class SnakeAnnotation {
         return value;
     }
 
-    public SnakeAnnotation() {
-        this.id = snakeIds.getAndIncrement();
-    }
-
-
     @OnOpen
     public void onOpen(Session session) {
         this.snake = new Snake(id, session);
         SnakeTimer.addSnake(snake);
         StringBuilder sb = new StringBuilder();
         for (Iterator<Snake> iterator = SnakeTimer.getSnakes().iterator();
-                iterator.hasNext();) {
+             iterator.hasNext(); ) {
             Snake snake = iterator.next();
             sb.append(String.format("{\"id\": %d, \"color\": \"%s\"}",
                     Integer.valueOf(snake.getId()), snake.getHexColor()));
@@ -118,7 +115,7 @@ public class SnakeAnnotation {
         Throwable root = t;
         while (root.getCause() != null && count < 20) {
             root = root.getCause();
-            count ++;
+            count++;
         }
         if (root instanceof EOFException) {
             // Assume this is triggered by the user closing their browser and

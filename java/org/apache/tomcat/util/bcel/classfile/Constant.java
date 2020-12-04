@@ -27,7 +27,7 @@ import java.io.IOException;
  * in the constant pool of a class file. The classes keep closely to
  * the JVM specification.
  *
- * @author  <A HREF="mailto:m.dahm@gmx.de">M. Dahm</A>
+ * @author <A HREF="mailto:m.dahm@gmx.de">M. Dahm</A>
  */
 public abstract class Constant {
 
@@ -46,19 +46,11 @@ public abstract class Constant {
     }
 
     /**
-     * @return Tag of constant, i.e., its type. No setTag() method to avoid
-     * confusion.
-     */
-    public final byte getTag() {
-        return tag;
-    }
-
-    /**
      * Read one constant from the given input, the type depends on a tag byte.
      *
      * @param dataInput Input stream
      * @return Constant object
-     * @throws IOException if an I/O error occurs reading from the given {@code dataInput}.
+     * @throws IOException          if an I/O error occurs reading from the given {@code dataInput}.
      * @throws ClassFormatException if the next byte is not recognized
      */
     static Constant readConstant(final DataInput dataInput) throws IOException, ClassFormatException {
@@ -99,6 +91,14 @@ public abstract class Constant {
         }
         Utility.skipFully(dataInput, skipSize);
         return null;
+    }
+
+    /**
+     * @return Tag of constant, i.e., its type. No setTag() method to avoid
+     * confusion.
+     */
+    public final byte getTag() {
+        return tag;
     }
 
     @Override

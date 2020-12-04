@@ -31,18 +31,8 @@ public interface ClientEndpointConfig extends EndpointConfig {
     public final class Builder {
 
         private static final Configurator DEFAULT_CONFIGURATOR =
-                new Configurator() {};
-
-
-        public static Builder create() {
-            return new Builder();
-        }
-
-
-        private Builder() {
-            // Hide default constructor
-        }
-
+                new Configurator() {
+                };
         private Configurator configurator = DEFAULT_CONFIGURATOR;
         private List<String> preferredSubprotocols = Collections.emptyList();
         private List<Extension> extensions = Collections.emptyList();
@@ -51,6 +41,13 @@ public interface ClientEndpointConfig extends EndpointConfig {
         private List<Class<? extends Decoder>> decoders =
                 Collections.emptyList();
 
+        private Builder() {
+            // Hide default constructor
+        }
+
+        public static Builder create() {
+            return new Builder();
+        }
 
         public ClientEndpointConfig build() {
             return new DefaultClientEndpointConfig(preferredSubprotocols,
@@ -119,7 +116,7 @@ public interface ClientEndpointConfig extends EndpointConfig {
          * Provides the client with a mechanism to inspect and/or modify the headers
          * that are sent to the server to start the WebSocket handshake.
          *
-         * @param headers   The HTTP headers
+         * @param headers The HTTP headers
          */
         public void beforeRequest(Map<String, List<String>> headers) {
             // NO-OP

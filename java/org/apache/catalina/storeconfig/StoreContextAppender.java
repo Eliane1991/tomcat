@@ -36,11 +36,11 @@ public class StoreContextAppender extends StoreAppender {
     @Override
     protected void printAttribute(PrintWriter writer, int indent, Object bean, StoreDescription desc, String attributeName, Object bean2, Object value) {
         if (isPrintValue(bean, bean2, attributeName, desc)) {
-            if(attributeName.equals("docBase")) {
-                if(bean instanceof StandardContext) {
-                    String docBase = ((StandardContext)bean).getOriginalDocBase() ;
-                    if(docBase != null)
-                        value = docBase ;
+            if (attributeName.equals("docBase")) {
+                if (bean instanceof StandardContext) {
+                    String docBase = ((StandardContext) bean).getOriginalDocBase();
+                    if (docBase != null)
+                        value = docBase;
                 }
             }
             printValue(writer, indent, attributeName, value);
@@ -53,12 +53,12 @@ public class StoreContextAppender extends StoreAppender {
      * generate docBase for host.appBase webapps <LI></ul>
      *
      * @see org.apache.catalina.storeconfig.StoreAppender#isPrintValue(java.lang.Object,
-     *      java.lang.Object, java.lang.String,
-     *      org.apache.catalina.storeconfig.StoreDescription)
+     * java.lang.Object, java.lang.String,
+     * org.apache.catalina.storeconfig.StoreDescription)
      */
     @Override
     public boolean isPrintValue(Object bean, Object bean2, String attrName,
-            StoreDescription desc) {
+                                StoreDescription desc) {
         boolean isPrint = super.isPrintValue(bean, bean2, attrName, desc);
         if (isPrint) {
             StandardContext context = ((StandardContext) bean);
@@ -67,13 +67,13 @@ public class StoreContextAppender extends StoreAppender {
                 isPrint = !defaultWorkDir.equals(context.getWorkDir());
             } else if ("path".equals(attrName)) {
                 isPrint = desc.isStoreSeparate()
-                            && desc.isExternalAllowed()
-                            && context.getConfigFile() == null;
+                        && desc.isExternalAllowed()
+                        && context.getConfigFile() == null;
             } else if ("docBase".equals(attrName)) {
                 Container host = context.getParent();
                 if (host instanceof StandardHost) {
                     File appBase = getAppBase(((StandardHost) host));
-                    File docBase = getDocBase(context,appBase);
+                    File docBase = getDocBase(context, appBase);
                     isPrint = !appBase.equals(docBase.getParentFile());
                 }
             }
@@ -99,9 +99,9 @@ public class StoreContextAppender extends StoreAppender {
 
     protected File getDocBase(StandardContext context, File appBase) {
         File docBase;
-        String contextDocBase = context.getOriginalDocBase() ;
-        if(contextDocBase == null)
-            contextDocBase = context.getDocBase() ;
+        String contextDocBase = context.getOriginalDocBase();
+        if (contextDocBase == null)
+            contextDocBase = context.getDocBase();
         File file = new File(contextDocBase);
         if (!file.isAbsolute())
             file = new File(appBase, contextDocBase);

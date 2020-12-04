@@ -34,17 +34,13 @@ public class ServletRequestAttributeEvent extends ServletRequestEvent {
      * this web application, the ServletRequest whose attributes are changing
      * and the name and value of the attribute.
      *
-     * @param sc
-     *            the ServletContext that is sending the event.
-     * @param request
-     *            the ServletRequest that is sending the event.
-     * @param name
-     *            the name of the request attribute.
-     * @param value
-     *            the value of the request attribute.
+     * @param sc      the ServletContext that is sending the event.
+     * @param request the ServletRequest that is sending the event.
+     * @param name    the name of the request attribute.
+     * @param value   the value of the request attribute.
      */
     public ServletRequestAttributeEvent(ServletContext sc,
-            ServletRequest request, String name, Object value) {
+                                        ServletRequest request, String name, Object value) {
         super(sc, request);
         this.name = name;
         this.value = value;

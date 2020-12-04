@@ -30,9 +30,7 @@ public final class RequestUtil {
      * codes in the request URL that is often reported in error messages.
      *
      * @param message The message string to be filtered
-     *
      * @return the filtered message
-     *
      * @deprecated This method will be removed in Tomcat 9
      */
     @Deprecated
@@ -47,20 +45,20 @@ public final class RequestUtil {
         StringBuilder result = new StringBuilder(content.length + 50);
         for (int i = 0; i < content.length; i++) {
             switch (content[i]) {
-            case '<':
-                result.append("&lt;");
-                break;
-            case '>':
-                result.append("&gt;");
-                break;
-            case '&':
-                result.append("&amp;");
-                break;
-            case '"':
-                result.append("&quot;");
-                break;
-            default:
-                result.append(content[i]);
+                case '<':
+                    result.append("&lt;");
+                    break;
+                case '>':
+                    result.append("&gt;");
+                    break;
+                case '&':
+                    result.append("&amp;");
+                    break;
+                case '"':
+                    result.append("&quot;");
+                    break;
+                default:
+                    result.append(content[i]);
             }
         }
         return result.toString();

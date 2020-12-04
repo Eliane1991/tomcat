@@ -43,17 +43,16 @@ import java.util.Vector;
  * @author Remy Maucherat
  */
 public class StatusManagerServlet
-    extends HttpServlet implements NotificationListener {
+        extends HttpServlet implements NotificationListener {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm =
+            StringManager.getManager(Constants.Package);
 
     // ----------------------------------------------------- Instance Variables
-    /**
-     * MBean server.
-     */
-    protected MBeanServer mBeanServer = null;
-
-
+    private static final long serialVersionUID = 1L;
     /**
      * Vector of protocol handlers object names.
      */
@@ -76,17 +75,13 @@ public class StatusManagerServlet
      * Vector of global request processors object names.
      */
     protected final Vector<ObjectName> globalRequestProcessors = new Vector<>();
-
-
     /**
-     * The string manager for this package.
+     * MBean server.
      */
-    protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
+    protected MBeanServer mBeanServer = null;
 
 
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Initialize this servlet.
@@ -173,16 +168,15 @@ public class StatusManagerServlet
     /**
      * Process a GET request for the specified resource.
      *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet-specified error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet-specified error occurs
      */
     @Override
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
 
         StringManager smClient = StringManager.getManager(
                 Constants.Package, request.getLocales());
@@ -191,7 +185,7 @@ public class StatusManagerServlet
         int mode = 0;
         // if ?XML=true, set the mode to XML
         if (request.getParameter("XML") != null
-            && request.getParameter("XML").equals("true")) {
+                && request.getParameter("XML").equals("true")) {
             mode = 1;
         }
         StatusTransformer.setContentType(response, mode);
@@ -200,13 +194,13 @@ public class StatusManagerServlet
 
         boolean completeStatus = false;
         if ((request.getPathInfo() != null)
-            && (request.getPathInfo().equals("/all"))) {
+                && (request.getPathInfo().equals("/all"))) {
             completeStatus = true;
         }
         // use StatusTransformer to output status
         Object[] args = new Object[1];
         args[0] = request.getContextPath();
-        StatusTransformer.writeHeader(writer,args,mode);
+        StatusTransformer.writeHeader(writer, args, mode);
 
         // Body Header Section
         args = new Object[2];
@@ -217,7 +211,7 @@ public class StatusManagerServlet
             args[1] = smClient.getString("statusServlet.title");
         }
         // use StatusTransformer to output status
-        StatusTransformer.writeBody(writer,args,mode);
+        StatusTransformer.writeBody(writer, args, mode);
 
         // Manager Section
         args = new Object[9];
@@ -225,24 +219,24 @@ public class StatusManagerServlet
         args[1] = response.encodeURL(request.getContextPath() + "/html/list");
         args[2] = smClient.getString("htmlManagerServlet.list");
         args[3] = // External link
-            (request.getContextPath() + "/" +
-             smClient.getString("htmlManagerServlet.helpHtmlManagerFile"));
+                (request.getContextPath() + "/" +
+                        smClient.getString("htmlManagerServlet.helpHtmlManagerFile"));
         args[4] = smClient.getString("htmlManagerServlet.helpHtmlManager");
         args[5] = // External link
-            (request.getContextPath() + "/" +
-             smClient.getString("htmlManagerServlet.helpManagerFile"));
+                (request.getContextPath() + "/" +
+                        smClient.getString("htmlManagerServlet.helpManagerFile"));
         args[6] = smClient.getString("htmlManagerServlet.helpManager");
         if (completeStatus) {
             args[7] = response.encodeURL
-                (request.getContextPath() + "/status");
+                    (request.getContextPath() + "/status");
             args[8] = smClient.getString("statusServlet.title");
         } else {
             args[7] = response.encodeURL
-                (request.getContextPath() + "/status/all");
+                    (request.getContextPath() + "/status/all");
             args[8] = smClient.getString("statusServlet.complete");
         }
         // use StatusTransformer to output status
-        StatusTransformer.writeManager(writer,args,mode);
+        StatusTransformer.writeManager(writer, args, mode);
 
         // Server Header Section
         args = new Object[9];
@@ -256,7 +250,7 @@ public class StatusManagerServlet
         args[7] = smClient.getString("htmlManagerServlet.serverHostname");
         args[8] = smClient.getString("htmlManagerServlet.serverIPAddress");
         // use StatusTransformer to output status
-        StatusTransformer.writePageHeading(writer,args,mode);
+        StatusTransformer.writePageHeading(writer, args, mode);
 
         // Server Row Section
         args = new Object[8];
@@ -270,7 +264,7 @@ public class StatusManagerServlet
             InetAddress address = InetAddress.getLocalHost();
             args[6] = address.getHostName();
             args[7] = address.getHostAddress();
-         } catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             args[6] = "-";
             args[7] = "-";
         }
@@ -302,7 +296,7 @@ public class StatusManagerServlet
             args[7] = smClient.getString("htmlManagerServlet.jvmTableTitleMaximum");
             args[8] = smClient.getString("htmlManagerServlet.jvmTableTitleUsed");
             // use StatusTransformer to output status
-            StatusTransformer.writeVMState(writer,mode, args);
+            StatusTransformer.writeVMState(writer, mode, args);
 
             Enumeration<ObjectName> enumeration = threadPools.elements();
             while (enumeration.hasMoreElements()) {
@@ -330,17 +324,17 @@ public class StatusManagerServlet
                 args[18] = smClient.getString("htmlManagerServlet.connectorStateHint");
                 // use StatusTransformer to output status
                 StatusTransformer.writeConnectorState
-                    (writer, objectName,
-                     name, mBeanServer, globalRequestProcessors,
-                     requestProcessors, mode, args);
+                        (writer, objectName,
+                                name, mBeanServer, globalRequestProcessors,
+                                requestProcessors, mode, args);
             }
 
             if ((request.getPathInfo() != null)
-                && (request.getPathInfo().equals("/all"))) {
+                    && (request.getPathInfo().equals("/all"))) {
                 // Note: Retrieving the full status is much slower
                 // use StatusTransformer to output status
                 StatusTransformer.writeDetailedState
-                    (writer, mBeanServer, mode);
+                        (writer, mBeanServer, mode);
             }
 
         } catch (Exception e) {
@@ -361,9 +355,9 @@ public class StatusManagerServlet
 
         if (notification instanceof MBeanServerNotification) {
             ObjectName objectName =
-                ((MBeanServerNotification) notification).getMBeanName();
+                    ((MBeanServerNotification) notification).getMBeanName();
             if (notification.getType().equals
-                (MBeanServerNotification.REGISTRATION_NOTIFICATION)) {
+                    (MBeanServerNotification.REGISTRATION_NOTIFICATION)) {
                 String type = objectName.getKeyProperty("type");
                 if (type != null) {
                     if (type.equals("ProtocolHandler")) {
@@ -377,7 +371,7 @@ public class StatusManagerServlet
                     }
                 }
             } else if (notification.getType().equals
-                       (MBeanServerNotification.UNREGISTRATION_NOTIFICATION)) {
+                    (MBeanServerNotification.UNREGISTRATION_NOTIFICATION)) {
                 String type = objectName.getKeyProperty("type");
                 if (type != null) {
                     if (type.equals("ProtocolHandler")) {

@@ -59,11 +59,9 @@ public interface JspApplicationContext {
      * <li><code>ScopedAttributeELResolver</code></li>
      * </ul>
      *
-     * @param resolver
-     *            an additional resolver
-     * @throws IllegalStateException
-     *             if called after the application's
-     *             <code>ServletContextListeners</code> have been initialized.
+     * @param resolver an additional resolver
+     * @throws IllegalStateException if called after the application's
+     *                               <code>ServletContextListeners</code> have been initialized.
      */
     public void addELResolver(ELResolver resolver);
 

@@ -40,23 +40,23 @@ import java.util.List;
  */
 public class CombinedRealm extends RealmBase {
 
+    /**
+     * Descriptive information about this Realm implementation.
+     *
+     * @deprecated This will be removed in Tomcat 9 onwards.
+     */
+    @Deprecated
+    protected static final String name = "CombinedRealm";
     private static final Log log = LogFactory.getLog(CombinedRealm.class);
-
     /**
      * The list of Realms contained by this Realm.
      */
     protected final List<Realm> realms = new LinkedList<>();
 
     /**
-     * Descriptive information about this Realm implementation.
-     * @deprecated This will be removed in Tomcat 9 onwards.
-     */
-    @Deprecated
-    protected static final String name = "CombinedRealm";
-
-    /**
      * Add a realm to the list of realms that will be used to authenticate
      * users.
+     *
      * @param theRealm realm which should be wrapped by the combined realm
      */
     public void addRealm(Realm theRealm) {
@@ -78,7 +78,7 @@ public class CombinedRealm extends RealmBase {
         for (Realm realm : realms) {
             if (realm instanceof RealmBase) {
                 result[realms.indexOf(realm)] =
-                    ((RealmBase) realm).getObjectName();
+                        ((RealmBase) realm).getObjectName();
             }
         }
         return result;
@@ -96,18 +96,18 @@ public class CombinedRealm extends RealmBase {
      * matches the digest calculated using the given parameters using the
      * method described in RFC 2069; otherwise return <code>null</code>.
      *
-     * @param username Username of the Principal to look up
+     * @param username     Username of the Principal to look up
      * @param clientDigest Digest which has been submitted by the client
-     * @param nonce Unique (or supposedly unique) token which has been used
-     * for this request
-     * @param realmName Realm name
-     * @param md5a2 Second MD5 digest used to calculate the digest :
-     * MD5(Method + ":" + uri)
+     * @param nonce        Unique (or supposedly unique) token which has been used
+     *                     for this request
+     * @param realmName    Realm name
+     * @param md5a2        Second MD5 digest used to calculate the digest :
+     *                     MD5(Method + ":" + uri)
      */
     @Override
     public Principal authenticate(String username, String clientDigest,
-            String nonce, String nc, String cnonce, String qop,
-            String realmName, String md5a2) {
+                                  String nonce, String nc, String cnonce, String qop,
+                                  String realmName, String md5a2) {
         Principal authenticatedUser = null;
 
         for (Realm realm : realms) {
@@ -175,9 +175,9 @@ public class CombinedRealm extends RealmBase {
      * Return the Principal associated with the specified username and
      * credentials, if there is one; otherwise return <code>null</code>.
      *
-     * @param username Username of the Principal to look up
+     * @param username    Username of the Principal to look up
      * @param credentials Password or other credentials to use in
-     *  authenticating this username
+     *                    authenticating this username
      */
     @Override
     public Principal authenticate(String username, String credentials) {
@@ -215,7 +215,7 @@ public class CombinedRealm extends RealmBase {
      */
     @Override
     public void setContainer(Container container) {
-        for(Realm realm : realms) {
+        for (Realm realm : realms) {
             // Set the realmPath for JMX naming
             if (realm instanceof RealmBase) {
                 ((RealmBase) realm).setRealmPath(
@@ -234,8 +234,8 @@ public class CombinedRealm extends RealmBase {
      * component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected void startInternal() throws LifecycleException {
@@ -264,10 +264,10 @@ public class CombinedRealm extends RealmBase {
      * component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that needs to be reported
      */
-     @Override
+    @Override
     protected void stopInternal() throws LifecycleException {
         // Stop this realm, then the sub-realms (reverse order to start)
         super.stopInternal();
@@ -309,13 +309,13 @@ public class CombinedRealm extends RealmBase {
      * client certificates.  If there is none, return <code>null</code>.
      *
      * @param certs Array of client certificates, with the first one in
-     *  the array being the certificate of the client itself.
+     *              the array being the certificate of the client itself.
      */
     @Override
     public Principal authenticate(X509Certificate[] certs) {
         Principal authenticatedUser = null;
         String username = null;
-        if (certs != null && certs.length >0) {
+        if (certs != null && certs.length > 0) {
             username = certs[0].getSubjectDN().getName();
         }
 
@@ -451,8 +451,8 @@ public class CombinedRealm extends RealmBase {
         // This method should never be called
         // Stack trace will show where this was called from
         UnsupportedOperationException uoe =
-            new UnsupportedOperationException(
-                    sm.getString("combinedRealm.getPassword"));
+                new UnsupportedOperationException(
+                        sm.getString("combinedRealm.getPassword"));
         log.error(sm.getString("combinedRealm.unexpectedMethod"), uoe);
         throw uoe;
     }
@@ -462,8 +462,8 @@ public class CombinedRealm extends RealmBase {
         // This method should never be called
         // Stack trace will show where this was called from
         UnsupportedOperationException uoe =
-            new UnsupportedOperationException(
-                    sm.getString("combinedRealm.getPrincipal"));
+                new UnsupportedOperationException(
+                        sm.getString("combinedRealm.getPrincipal"));
         log.error(sm.getString("combinedRealm.unexpectedMethod"), uoe);
         throw uoe;
     }

@@ -35,7 +35,7 @@ public class UpgradeProcessorInternal extends UpgradeProcessorBase {
     private final InternalHttpUpgradeHandler internalHttpUpgradeHandler;
 
     public UpgradeProcessorInternal(SocketWrapperBase<?> wrapper, UpgradeToken upgradeToken,
-            UpgradeGroupInfo upgradeGroupInfo) {
+                                    UpgradeGroupInfo upgradeGroupInfo) {
         super(upgradeToken);
         this.internalHttpUpgradeHandler = (InternalHttpUpgradeHandler) upgradeToken.getHttpUpgradeHandler();
         /*

@@ -19,19 +19,17 @@ package org.apache.tomcat.util.net;
 public abstract class SendfileDataBase {
 
     /**
+     * The full path to the file that contains the data to be written to the
+     * socket.
+     */
+    public final String fileName;
+    /**
      * Is the current request being processed on a keep-alive connection? This
      * determines if the socket is closed once the send file completes or if
      * processing continues with the next request on the connection or waiting
      * for that next request to arrive.
      */
     public SendfileKeepAliveState keepAliveState = SendfileKeepAliveState.NONE;
-
-    /**
-     * The full path to the file that contains the data to be written to the
-     * socket.
-     */
-    public final String fileName;
-
     /**
      * The position of the next byte in the file to be written to the socket.
      * This is initialised to the start point and then updated as the file is

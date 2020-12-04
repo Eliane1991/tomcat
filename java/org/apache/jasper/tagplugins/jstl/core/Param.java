@@ -37,15 +37,15 @@ public class Param implements TagPlugin {
 
         //if the param tag has no parents, throw a exception
         TagPluginContext parent = ctxt.getParentContext();
-        if(parent == null){
+        if (parent == null) {
             ctxt.generateJavaSource(" throw new JspTagException" +
-            "(\"&lt;param&gt; outside &lt;import&gt; or &lt;urlEncode&gt;\");");
+                    "(\"&lt;param&gt; outside &lt;import&gt; or &lt;urlEncode&gt;\");");
             return;
         }
 
         //get the url string before adding this param
         ctxt.generateJavaSource("String " + urlName + " = " +
-        "(String)pageContext.getAttribute(\"url_without_param\");");
+                "(String)pageContext.getAttribute(\"url_without_param\");");
 
         //get the value of "name"
         ctxt.generateJavaSource("String " + nameName + " = ");

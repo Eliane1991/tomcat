@@ -23,7 +23,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<% Map<String,List<String>> trustedCertList = (Map<String,List<String>>) request.getAttribute("trustedCertList");
+<% Map<String, List<String>> trustedCertList = (Map<String, List<String>>) request.getAttribute("trustedCertList");
 %>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
@@ -40,37 +40,38 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
 <table border="1" cellpadding="2" cellspacing="2" width="100%">
     <thead>
-        <tr>
-            <th>Connector / TLS Virtual Host</th>
-            <th>Trusted Certificates</th>
-        </tr>
+    <tr>
+        <th>Connector / TLS Virtual Host</th>
+        <th>Trusted Certificates</th>
+    </tr>
     </thead>
     <tbody>
-        <%
+    <%
         for (Map.Entry<String, List<String>> entry : trustedCertList.entrySet()) {
-        %>
-        <tr>
-            <td><%=entry.getKey()%></td>
-            <td>
+    %>
+    <tr>
+        <td><%=entry.getKey()%>
+        </td>
+        <td>
             <%
-            for (String cert : entry.getValue()) {
+                for (String cert : entry.getValue()) {
             %>
-                <pre><%=cert%></pre>
+            <pre><%=cert%></pre>
             <%
-            }
+                }
             %>
-            </td>
-        </tr>
-        <%
+        </td>
+    </tr>
+    <%
         }
-        %>
+    %>
     </tbody>
 </table>
 
 <form method="get" action="<%=request.getContextPath()%>/html">
-  <p style="text-align: center;">
-    <input type="submit" value="Return to main page" />
-  </p>
+    <p style="text-align: center;">
+        <input type="submit" value="Return to main page"/>
+    </p>
 </form>
 
 <%--div style="display: none;">

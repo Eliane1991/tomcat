@@ -36,6 +36,10 @@ public class MessageDestinationRef extends ResourceBase {
      * The link of this destination ref.
      */
     private String link = null;
+    /**
+     * The usage of this destination ref.
+     */
+    private String usage = null;
 
     public String getLink() {
         return this.link;
@@ -44,12 +48,6 @@ public class MessageDestinationRef extends ResourceBase {
     public void setLink(String link) {
         this.link = link;
     }
-
-
-    /**
-     * The usage of this destination ref.
-     */
-    private String usage = null;
 
     public String getUsage() {
         return this.usage;

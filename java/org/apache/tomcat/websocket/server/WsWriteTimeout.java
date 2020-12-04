@@ -41,7 +41,7 @@ public class WsWriteTimeout implements BackgroundProcess {
     @Override
     public void backgroundProcess() {
         // This method gets called once a second.
-        backgroundProcessCount ++;
+        backgroundProcessCount++;
 
         if (backgroundProcessCount >= processPeriod) {
             backgroundProcessCount = 0;
@@ -62,16 +62,9 @@ public class WsWriteTimeout implements BackgroundProcess {
         }
     }
 
-
-    @Override
-    public void setProcessPeriod(int period) {
-        this.processPeriod = period;
-    }
-
-
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * The default value is 1 which means asynchronous write timeouts are
      * processed every 1 second.
      */
@@ -80,6 +73,10 @@ public class WsWriteTimeout implements BackgroundProcess {
         return processPeriod;
     }
 
+    @Override
+    public void setProcessPeriod(int period) {
+        this.processPeriod = period;
+    }
 
     public void register(WsRemoteEndpointImplServer endpoint) {
         boolean result = endpoints.add(endpoint);
@@ -111,7 +108,7 @@ public class WsWriteTimeout implements BackgroundProcess {
 
         @Override
         public int compare(WsRemoteEndpointImplServer o1,
-                WsRemoteEndpointImplServer o2) {
+                           WsRemoteEndpointImplServer o2) {
 
             long t1 = o1.getTimeoutExpiry();
             long t2 = o2.getTimeoutExpiry();

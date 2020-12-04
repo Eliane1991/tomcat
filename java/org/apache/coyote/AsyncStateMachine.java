@@ -124,55 +124,6 @@ public class AsyncStateMachine {
      * The string manager for this package.
      */
     private static final StringManager sm = StringManager.getManager(AsyncStateMachine.class);
-
-    private enum AsyncState {
-        DISPATCHED      (false, false, false, false),
-        STARTING        (true,  true,  false, false),
-        STARTED         (true,  true,  false, false),
-        MUST_COMPLETE   (true,  true,  true,  false),
-        COMPLETE_PENDING(true,  true,  false, false),
-        COMPLETING      (true,  false, true,  false),
-        TIMING_OUT      (true,  true,  false, false),
-        MUST_DISPATCH   (true,  true,  false, true),
-        DISPATCH_PENDING(true,  true,  false, false),
-        DISPATCHING     (true,  false, false, true),
-        READ_WRITE_OP   (true,  true,  false, false),
-        MUST_ERROR      (true,  true,  false, false),
-        ERROR           (true,  true,  false, false);
-
-        private final boolean isAsync;
-        private final boolean isStarted;
-        private final boolean isCompleting;
-        private final boolean isDispatching;
-
-        private AsyncState(boolean isAsync, boolean isStarted, boolean isCompleting,
-                boolean isDispatching) {
-            this.isAsync = isAsync;
-            this.isStarted = isStarted;
-            this.isCompleting = isCompleting;
-            this.isDispatching = isDispatching;
-        }
-
-        public boolean isAsync() {
-            return isAsync;
-        }
-
-        public boolean isStarted() {
-            return isStarted;
-        }
-
-        public boolean isDispatching() {
-            return isDispatching;
-        }
-
-        public boolean isCompleting() {
-            return isCompleting;
-        }
-    }
-
-
-    private volatile AsyncState state = AsyncState.DISPATCHED;
-    private volatile long lastAsyncStart = 0;
     /*
      * Tracks the current generation of async processing for this state machine.
      * The generation is incremented every time async processing is started. The
@@ -182,15 +133,15 @@ public class AsyncStateMachine {
      * e.g. CVE-2018-8037.
      */
     private final AtomicLong generation = new AtomicLong(0);
+    private final AbstractProcessor processor;
+    private volatile AsyncState state = AsyncState.DISPATCHED;
+    private volatile long lastAsyncStart = 0;
     // Need this to fire listener on complete
     private AsyncContextCallback asyncCtxt = null;
-    private final AbstractProcessor processor;
-
 
     public AsyncStateMachine(AbstractProcessor processor) {
         this.processor = processor;
     }
-
 
     public boolean isAsync() {
         return state.isAsync();
@@ -221,7 +172,7 @@ public class AsyncStateMachine {
      * processing.
      *
      * @return The time (as returned by {@link System#currentTimeMillis()}) that
-     *         this connection last transitioned to async
+     * this connection last transitioned to async
      */
     public long getLastAsyncStart() {
         return lastAsyncStart;
@@ -248,7 +199,7 @@ public class AsyncStateMachine {
     }
 
     public synchronized void asyncOperation() {
-        if (state==AsyncState.STARTED) {
+        if (state == AsyncState.STARTED) {
             state = AsyncState.READ_WRITE_OP;
         } else {
             throw new IllegalStateException(
@@ -271,7 +222,7 @@ public class AsyncStateMachine {
             clearNonBlockingListeners();
             state = AsyncState.DISPATCHING;
             return SocketState.ASYNC_END;
-        } else  if (state == AsyncState.STARTING || state == AsyncState.READ_WRITE_OP) {
+        } else if (state == AsyncState.STARTING || state == AsyncState.READ_WRITE_OP) {
             state = AsyncState.STARTED;
             return SocketState.LONG;
         } else if (state == AsyncState.MUST_COMPLETE || state == AsyncState.COMPLETING) {
@@ -296,7 +247,6 @@ public class AsyncStateMachine {
                             "asyncPostProcess()", state));
         }
     }
-
 
     public synchronized boolean asyncComplete() {
         if (!ContainerThreadMarker.isContainerThread() && state == AsyncState.STARTING) {
@@ -340,7 +290,6 @@ public class AsyncStateMachine {
         return triggerDispatch;
     }
 
-
     public synchronized boolean asyncTimeout() {
         if (state == AsyncState.STARTED) {
             state = AsyncState.TIMING_OUT;
@@ -357,7 +306,6 @@ public class AsyncStateMachine {
                             "asyncTimeout()", state));
         }
     }
-
 
     public synchronized boolean asyncDispatch() {
         if (!ContainerThreadMarker.isContainerThread() && state == AsyncState.STARTING) {
@@ -401,7 +349,6 @@ public class AsyncStateMachine {
         return triggerDispatch;
     }
 
-
     public synchronized void asyncDispatched() {
         if (state == AsyncState.DISPATCHING ||
                 state == AsyncState.MUST_DISPATCH) {
@@ -413,7 +360,6 @@ public class AsyncStateMachine {
                             "asyncDispatched()", state));
         }
     }
-
 
     public synchronized boolean asyncError() {
         clearNonBlockingListeners();
@@ -431,9 +377,8 @@ public class AsyncStateMachine {
         return !ContainerThreadMarker.isContainerThread();
     }
 
-
     public synchronized void asyncRun(Runnable runnable) {
-        if (state == AsyncState.STARTING || state ==  AsyncState.STARTED ||
+        if (state == AsyncState.STARTING || state == AsyncState.STARTED ||
                 state == AsyncState.READ_WRITE_OP) {
             // Execute the runnable using a container thread from the
             // Connector's thread pool. Use a wrapper to prevent a memory leak
@@ -472,7 +417,6 @@ public class AsyncStateMachine {
 
     }
 
-
     synchronized boolean isAvailable() {
         if (asyncCtxt == null) {
             // Async processing has probably been completed in another thread.
@@ -481,7 +425,6 @@ public class AsyncStateMachine {
         }
         return asyncCtxt.isAvailable();
     }
-
 
     public synchronized void recycle() {
         // Use lastAsyncStart to determine if this instance has been used since
@@ -498,9 +441,54 @@ public class AsyncStateMachine {
         lastAsyncStart = 0;
     }
 
-
     private void clearNonBlockingListeners() {
         processor.getRequest().listener = null;
         processor.getRequest().getResponse().listener = null;
+    }
+
+
+    private enum AsyncState {
+        DISPATCHED(false, false, false, false),
+        STARTING(true, true, false, false),
+        STARTED(true, true, false, false),
+        MUST_COMPLETE(true, true, true, false),
+        COMPLETE_PENDING(true, true, false, false),
+        COMPLETING(true, false, true, false),
+        TIMING_OUT(true, true, false, false),
+        MUST_DISPATCH(true, true, false, true),
+        DISPATCH_PENDING(true, true, false, false),
+        DISPATCHING(true, false, false, true),
+        READ_WRITE_OP(true, true, false, false),
+        MUST_ERROR(true, true, false, false),
+        ERROR(true, true, false, false);
+
+        private final boolean isAsync;
+        private final boolean isStarted;
+        private final boolean isCompleting;
+        private final boolean isDispatching;
+
+        private AsyncState(boolean isAsync, boolean isStarted, boolean isCompleting,
+                           boolean isDispatching) {
+            this.isAsync = isAsync;
+            this.isStarted = isStarted;
+            this.isCompleting = isCompleting;
+            this.isDispatching = isDispatching;
+        }
+
+        public boolean isAsync() {
+            return isAsync;
+        }
+
+        public boolean isStarted() {
+            return isStarted;
+        }
+
+        public boolean isDispatching() {
+            return isDispatching;
+        }
+
+        public boolean isCompleting() {
+            return isCompleting;
+        }
     }
 }

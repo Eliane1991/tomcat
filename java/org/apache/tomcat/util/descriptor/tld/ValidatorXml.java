@@ -23,8 +23,8 @@ import java.util.Map;
  * Model of a Tag Library Validator from the XML descriptor.
  */
 public class ValidatorXml {
-    private String validatorClass;
     private final Map<String, String> initParams = new HashMap<>();
+    private String validatorClass;
 
     public String getValidatorClass() {
         return validatorClass;

@@ -30,7 +30,7 @@ public interface AsyncContextCallback {
      * available.
      *
      * @return {@code true} if the associated web application is available,
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
     boolean isAvailable();
 

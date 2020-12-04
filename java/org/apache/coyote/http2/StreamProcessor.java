@@ -42,7 +42,7 @@ class StreamProcessor extends AbstractProcessor {
 
 
     StreamProcessor(Http2UpgradeHandler handler, Stream stream, Adapter adapter,
-            SocketWrapperBase<?> socketWrapper) {
+                    SocketWrapperBase<?> socketWrapper) {
         super(socketWrapper.getEndpoint(), stream.getCoyoteRequest(), stream.getCoyoteResponse());
         this.handler = handler;
         this.stream = stream;
@@ -50,6 +50,58 @@ class StreamProcessor extends AbstractProcessor {
         setSocketWrapper(socketWrapper);
     }
 
+    // Static so it can be used by Stream to build the MimeHeaders required for
+    // an ACK. For that use case coyoteRequest, protocol and stream will be null.
+    static void prepareHeaders(Request coyoteRequest, Response coyoteResponse,
+                               Http2Protocol protocol, Stream stream) {
+        MimeHeaders headers = coyoteResponse.getMimeHeaders();
+        int statusCode = coyoteResponse.getStatus();
+
+        // Add the pseudo header for status
+        headers.addValue(":status").setString(Integer.toString(statusCode));
+
+
+        // Compression can't be used with sendfile
+        // Need to check for compression (and set headers appropriately) before
+        // adding headers below
+        if (protocol != null && protocol.useCompression(coyoteRequest, coyoteResponse)) {
+            // Enable compression. Headers will have been set. Need to configure
+            // output filter at this point.
+            stream.addOutputFilter(new GzipOutputFilter());
+        }
+
+        // Check to see if a response body is present
+        if (!(statusCode < 200 || statusCode == 204 || statusCode == 205 || statusCode == 304)) {
+            String contentType = coyoteResponse.getContentType();
+            if (contentType != null) {
+                headers.setValue("content-type").setString(contentType);
+            }
+            String contentLanguage = coyoteResponse.getContentLanguage();
+            if (contentLanguage != null) {
+                headers.setValue("content-language").setString(contentLanguage);
+            }
+            // Add a content-length header if a content length has been set unless
+            // the application has already added one
+            long contentLength = coyoteResponse.getContentLengthLong();
+            if (contentLength != -1 && headers.getValue("content-length") == null) {
+                headers.addValue("content-length").setLong(contentLength);
+            }
+        } else {
+            if (statusCode == 205) {
+                // RFC 7231 requires the server to explicitly signal an empty
+                // response in this case
+                coyoteResponse.setContentLength(0);
+            } else {
+                coyoteResponse.setContentLength(-1);
+            }
+        }
+
+        // Add date header unless it is an informational response or the
+        // application has already set one
+        if (statusCode >= 200 && headers.getValue("date") == null) {
+            headers.addValue("date").setString(FastHttpDateFormat.getCurrentDate());
+        }
+    }
 
     final void process(SocketEvent event) {
         try {
@@ -109,68 +161,12 @@ class StreamProcessor extends AbstractProcessor {
         }
     }
 
-
     @Override
     protected final void prepareResponse() throws IOException {
         response.setCommitted(true);
         prepareHeaders(request, response, handler.getProtocol(), stream);
         stream.writeHeaders();
     }
-
-
-    // Static so it can be used by Stream to build the MimeHeaders required for
-    // an ACK. For that use case coyoteRequest, protocol and stream will be null.
-    static void prepareHeaders(Request coyoteRequest, Response coyoteResponse,
-            Http2Protocol protocol, Stream stream) {
-        MimeHeaders headers = coyoteResponse.getMimeHeaders();
-        int statusCode = coyoteResponse.getStatus();
-
-        // Add the pseudo header for status
-        headers.addValue(":status").setString(Integer.toString(statusCode));
-
-
-        // Compression can't be used with sendfile
-        // Need to check for compression (and set headers appropriately) before
-        // adding headers below
-        if (protocol != null && protocol.useCompression(coyoteRequest, coyoteResponse)) {
-            // Enable compression. Headers will have been set. Need to configure
-            // output filter at this point.
-            stream.addOutputFilter(new GzipOutputFilter());
-        }
-
-        // Check to see if a response body is present
-        if (!(statusCode < 200 || statusCode == 204 || statusCode == 205 || statusCode == 304)) {
-            String contentType = coyoteResponse.getContentType();
-            if (contentType != null) {
-                headers.setValue("content-type").setString(contentType);
-            }
-            String contentLanguage = coyoteResponse.getContentLanguage();
-            if (contentLanguage != null) {
-                headers.setValue("content-language").setString(contentLanguage);
-            }
-            // Add a content-length header if a content length has been set unless
-            // the application has already added one
-            long contentLength = coyoteResponse.getContentLengthLong();
-            if (contentLength != -1 && headers.getValue("content-length") == null) {
-                headers.addValue("content-length").setLong(contentLength);
-            }
-        } else {
-            if (statusCode == 205) {
-                // RFC 7231 requires the server to explicitly signal an empty
-                // response in this case
-                coyoteResponse.setContentLength(0);
-            } else {
-                coyoteResponse.setContentLength(-1);
-            }
-        }
-
-        // Add date header unless it is an informational response or the
-        // application has already set one
-        if (statusCode >= 200 && headers.getValue("date") == null) {
-            headers.addValue("date").setString(FastHttpDateFormat.getCurrentDate());
-        }
-    }
-
 
     @Override
     protected final void finishResponse() throws IOException {

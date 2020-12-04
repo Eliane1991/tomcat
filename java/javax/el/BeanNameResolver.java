@@ -28,7 +28,6 @@ public abstract class BeanNameResolver {
      * Can this resolver resolve the given bean name?
      *
      * @param beanName The bean name to resolve
-     *
      * @return This default implementation always returns <code>false</code>
      */
     public boolean isNameResolved(String beanName) {
@@ -40,7 +39,6 @@ public abstract class BeanNameResolver {
      * Returns the named bean.
      *
      * @param beanName The bean name to return
-     *
      * @return This default implementation always returns <code>null</code>
      */
     public Object getBean(String beanName) {
@@ -55,7 +53,6 @@ public abstract class BeanNameResolver {
      *
      * @param beanName The name of the bean to be set/create
      * @param value    The value of the bean to set/create
-     *
      * @throws PropertyNotWritableException if the bean is read only
      */
     public void setBeanValue(String beanName, Object value)
@@ -68,9 +65,8 @@ public abstract class BeanNameResolver {
      * Is the named bean read-only?
      *
      * @param beanName The name of the bean of interest
-     *
      * @return <code>true</code> if the bean is read only, otherwise
-     *         <code>false</code>
+     * <code>false</code>
      */
     public boolean isReadOnly(String beanName) {
         return true;
@@ -81,9 +77,8 @@ public abstract class BeanNameResolver {
      * Is it permitted to create a bean of the given name?
      *
      * @param beanName The name of the bean of interest
-     *
      * @return <code>true</code> if the bean may be created, otherwise
-     *         <code>false</code>
+     * <code>false</code>
      */
     public boolean canCreateBean(String beanName) {
         return false;

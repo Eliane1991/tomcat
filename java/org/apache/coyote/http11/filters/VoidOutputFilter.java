@@ -39,7 +39,7 @@ public class VoidOutputFilter implements OutputFilter {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doWrite(ByteBuffer)}
+     * {@link #doWrite(ByteBuffer)}
      */
     @Deprecated
     @Override
@@ -87,7 +87,7 @@ public class VoidOutputFilter implements OutputFilter {
 
 
     @Override
-    public void  end() throws IOException {
+    public void end() throws IOException {
         buffer.end();
     }
 }

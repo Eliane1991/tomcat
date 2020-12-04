@@ -39,7 +39,7 @@ public abstract class AbstractInputStreamJar implements Jar {
     private NonClosingJarInputStream jarInputStream = null;
     private JarEntry entry = null;
     private Boolean multiRelease = null;
-    private Map<String,String> mrMap = null;
+    private Map<String, String> mrMap = null;
 
     public AbstractInputStreamJar(URL jarFileUrl) {
         this.jarFileURL = jarFileUrl;
@@ -70,7 +70,7 @@ public abstract class AbstractInputStreamJar implements Jar {
                 while (entry != null &&
                         (mrMap.keySet().contains(entry.getName()) ||
                                 entry.getName().startsWith("META-INF/versions/") &&
-                                !mrMap.values().contains(entry.getName()))) {
+                                        !mrMap.values().contains(entry.getName()))) {
                     entry = jarInputStream.getNextJarEntry();
                 }
             } else {
@@ -245,7 +245,7 @@ public abstract class AbstractInputStreamJar implements Jar {
     private void populateMrMap() throws IOException {
         int targetVersion = JreCompat.getInstance().jarFileRuntimeMajorVersion();
 
-        Map<String,Integer> mrVersions = new HashMap<>();
+        Map<String, Integer> mrVersions = new HashMap<>();
 
         JarEntry jarEntry = jarInputStream.getNextJarEntry();
 
@@ -284,9 +284,9 @@ public abstract class AbstractInputStreamJar implements Jar {
 
         mrMap = new HashMap<>();
 
-        for (Entry<String,Integer> mrVersion : mrVersions.entrySet()) {
-            mrMap.put(mrVersion.getKey() , "META-INF/versions/" + mrVersion.getValue().toString() +
-                    "/" +  mrVersion.getKey());
+        for (Entry<String, Integer> mrVersion : mrVersions.entrySet()) {
+            mrMap.put(mrVersion.getKey(), "META-INF/versions/" + mrVersion.getValue().toString() +
+                    "/" + mrVersion.getKey());
         }
 
         // Reset stream back to the beginning of the JAR

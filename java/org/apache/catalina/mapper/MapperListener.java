@@ -41,22 +41,18 @@ public class MapperListener extends LifecycleMBeanBase
 
     // ----------------------------------------------------- Instance Variables
     /**
+     * The string manager for this package.
+     */
+    private static final StringManager sm =
+            StringManager.getManager(Constants.Package);
+    /**
      * Associated mapper.
      */
     private final Mapper mapper;
-
     /**
      * Associated service
      */
     private final Service service;
-
-
-    /**
-     * The string manager for this package.
-     */
-    private static final StringManager sm =
-        StringManager.getManager(Constants.Package);
-
     /**
      * The domain (effectively the engine) this mapper is associated with
      */
@@ -298,7 +294,7 @@ public class MapperListener extends LifecycleMBeanBase
         // Default host may have changed
         findDefaultHost();
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("mapperListener.registerHost",
                     host.getName(), domain, service));
         }
@@ -317,7 +313,7 @@ public class MapperListener extends LifecycleMBeanBase
         // Default host may have changed
         findDefaultHost();
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("mapperListener.unregisterHost", hostname,
                     domain, service));
         }
@@ -342,10 +338,10 @@ public class MapperListener extends LifecycleMBeanBase
         String[] mappings = wrapper.findMappings();
 
         for (String mapping : mappings) {
-            mapper.removeWrapper(hostName, contextPath, version,  mapping);
+            mapper.removeWrapper(hostName, contextPath, version, mapping);
         }
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("mapperListener.unregisterWrapper",
                     wrapperName, contextPath, service));
         }
@@ -361,7 +357,7 @@ public class MapperListener extends LifecycleMBeanBase
         if ("/".equals(contextPath)) {
             contextPath = "";
         }
-        Host host = (Host)context.getParent();
+        Host host = (Host) context.getParent();
 
         WebResourceRoot resources = context.getResources();
         String[] welcomeFiles = context.findWelcomeFiles();
@@ -370,7 +366,7 @@ public class MapperListener extends LifecycleMBeanBase
         for (Container container : context.findChildren()) {
             prepareWrapperMappingInfo(context, (Wrapper) container, wrappers);
 
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug(sm.getString("mapperListener.registerWrapper",
                         container.getName(), contextPath, service));
             }
@@ -380,7 +376,7 @@ public class MapperListener extends LifecycleMBeanBase
                 context.getWebappVersion(), context, welcomeFiles, resources,
                 wrappers);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("mapperListener.registerContext",
                     contextPath, service));
         }
@@ -435,7 +431,7 @@ public class MapperListener extends LifecycleMBeanBase
         prepareWrapperMappingInfo(context, wrapper, wrappers);
         mapper.addWrappers(hostName, contextPath, version, wrappers);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(sm.getString("mapperListener.registerWrapper",
                     wrapper.getName(), contextPath, service));
         }
@@ -450,13 +446,13 @@ public class MapperListener extends LifecycleMBeanBase
      * @param wrappers
      */
     private void prepareWrapperMappingInfo(Context context, Wrapper wrapper,
-            List<WrapperMappingInfo> wrappers) {
+                                           List<WrapperMappingInfo> wrappers) {
         String wrapperName = wrapper.getName();
         boolean resourceOnly = context.isResourceOnlyServlet(wrapperName);
         String[] mappings = wrapper.findMappings();
         for (String mapping : mappings) {
             boolean jspWildCard = (wrapperName.equals("jsp")
-                                   && mapping.endsWith("/*"));
+                    && mapping.endsWith("/*"));
             wrappers.add(new WrapperMappingInfo(mapping, wrapper, jspWildCard,
                     resourceOnly));
         }

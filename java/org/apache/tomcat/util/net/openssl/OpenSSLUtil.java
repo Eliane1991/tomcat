@@ -41,38 +41,6 @@ public class OpenSSLUtil extends SSLUtilBase {
         super(certificate);
     }
 
-
-    @Override
-    protected Log getLog() {
-        return log;
-    }
-
-
-    @Override
-    protected Set<String> getImplementedProtocols() {
-        return OpenSSLEngine.IMPLEMENTED_PROTOCOLS_SET;
-    }
-
-
-    @Override
-    protected Set<String> getImplementedCiphers() {
-        return OpenSSLEngine.AVAILABLE_CIPHER_SUITES;
-    }
-
-
-    @Override
-    protected boolean isTls13RenegAuthAvailable() {
-        // OpenSSL does support authentication after the initial handshake
-        return true;
-    }
-
-
-    @Override
-    public SSLContext createSSLContextInternal(List<String> negotiableProtocols) throws Exception {
-        return new OpenSSLContext(certificate, negotiableProtocols);
-    }
-
-
     public static X509KeyManager chooseKeyManager(KeyManager[] managers) throws Exception {
         if (managers == null) {
             return null;
@@ -90,6 +58,31 @@ public class OpenSSLUtil extends SSLUtilBase {
         throw new IllegalStateException(sm.getString("openssl.keyManagerMissing"));
     }
 
+    @Override
+    protected Log getLog() {
+        return log;
+    }
+
+    @Override
+    protected Set<String> getImplementedProtocols() {
+        return OpenSSLEngine.IMPLEMENTED_PROTOCOLS_SET;
+    }
+
+    @Override
+    protected Set<String> getImplementedCiphers() {
+        return OpenSSLEngine.AVAILABLE_CIPHER_SUITES;
+    }
+
+    @Override
+    protected boolean isTls13RenegAuthAvailable() {
+        // OpenSSL does support authentication after the initial handshake
+        return true;
+    }
+
+    @Override
+    public SSLContext createSSLContextInternal(List<String> negotiableProtocols) throws Exception {
+        return new OpenSSLContext(certificate, negotiableProtocols);
+    }
 
     @Override
     public KeyManager[] getKeyManagers() throws Exception {

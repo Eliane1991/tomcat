@@ -36,16 +36,16 @@ public class EvictionConfig {
      * Create a new eviction configuration with the specified parameters.
      * Instances are immutable.
      *
-     * @param poolIdleEvictTime Expected to be provided by
-     *        {@link BaseGenericObjectPool#getMinEvictableIdleTimeMillis()}
+     * @param poolIdleEvictTime     Expected to be provided by
+     *                              {@link BaseGenericObjectPool#getMinEvictableIdleTimeMillis()}
      * @param poolIdleSoftEvictTime Expected to be provided by
-     *        {@link BaseGenericObjectPool#getSoftMinEvictableIdleTimeMillis()}
-     * @param minIdle Expected to be provided by
-     *        {@link GenericObjectPool#getMinIdle()} or
-     *        {@link GenericKeyedObjectPool#getMinIdlePerKey()}
+     *                              {@link BaseGenericObjectPool#getSoftMinEvictableIdleTimeMillis()}
+     * @param minIdle               Expected to be provided by
+     *                              {@link GenericObjectPool#getMinIdle()} or
+     *                              {@link GenericKeyedObjectPool#getMinIdlePerKey()}
      */
     public EvictionConfig(final long poolIdleEvictTime, final long poolIdleSoftEvictTime,
-            final int minIdle) {
+                          final int minIdle) {
         if (poolIdleEvictTime > 0) {
             idleEvictTime = poolIdleEvictTime;
         } else {
@@ -54,7 +54,7 @@ public class EvictionConfig {
         if (poolIdleSoftEvictTime > 0) {
             idleSoftEvictTime = poolIdleSoftEvictTime;
         } else {
-            idleSoftEvictTime  = Long.MAX_VALUE;
+            idleSoftEvictTime = Long.MAX_VALUE;
         }
         this.minIdle = minIdle;
     }

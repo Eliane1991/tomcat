@@ -65,8 +65,7 @@ public class ManagerSF extends StoreFactoryBase {
      * Is this an instance of the default <code>Manager</code> configuration,
      * with all-default properties?
      *
-     * @param smanager
-     *            Manager to be tested
+     * @param smanager Manager to be tested
      * @return <code>true</code> if this is an instance of the default manager
      */
     protected boolean isDefaultManager(StandardManager smanager) {
@@ -81,7 +80,7 @@ public class ManagerSF extends StoreFactoryBase {
 
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aManager,
-            StoreDescription parentDesc) throws Exception {
+                              StoreDescription parentDesc) throws Exception {
         if (aManager instanceof Manager) {
             Manager manager = (Manager) aManager;
             // Store nested <SessionIdGenerator> element;

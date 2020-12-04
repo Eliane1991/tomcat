@@ -31,33 +31,29 @@ import java.net.URISyntaxException;
  */
 public class HttpHeaderSecurityFilter extends FilterBase {
 
+    // HSTS
+    private static final String HSTS_HEADER_NAME = "Strict-Transport-Security";
+    // Click-jacking protection
+    private static final String ANTI_CLICK_JACKING_HEADER_NAME = "X-Frame-Options";
+    // Block content sniffing
+    private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_NAME = "X-Content-Type-Options";
+    private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_VALUE = "nosniff";
+    // Cross-site scripting filter protection
+    private static final String XSS_PROTECTION_HEADER_NAME = "X-XSS-Protection";
+    private static final String XSS_PROTECTION_HEADER_VALUE = "1; mode=block";
     // Log must be non-static as loggers are created per class-loader and this
     // Filter may be used in multiple class loaders
     private final Log log = LogFactory.getLog(HttpHeaderSecurityFilter.class); // must not be static
-
-    // HSTS
-    private static final String HSTS_HEADER_NAME = "Strict-Transport-Security";
     private boolean hstsEnabled = true;
     private int hstsMaxAgeSeconds = 0;
     private boolean hstsIncludeSubDomains = false;
     private boolean hstsPreload = false;
     private String hstsHeaderValue;
-
-    // Click-jacking protection
-    private static final String ANTI_CLICK_JACKING_HEADER_NAME = "X-Frame-Options";
     private boolean antiClickJackingEnabled = true;
     private XFrameOption antiClickJackingOption = XFrameOption.DENY;
     private URI antiClickJackingUri;
     private String antiClickJackingHeaderValue;
-
-    // Block content sniffing
-    private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_NAME = "X-Content-Type-Options";
-    private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_VALUE = "nosniff";
     private boolean blockContentTypeSniffingEnabled = true;
-
-    // Cross-site scripting filter protection
-    private static final String XSS_PROTECTION_HEADER_NAME = "X-XSS-Protection";
-    private static final String XSS_PROTECTION_HEADER_VALUE = "1; mode=block";
     private boolean xssProtectionEnabled = true;
 
     @Override
@@ -87,7 +83,7 @@ public class HttpHeaderSecurityFilter extends FilterBase {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
         if (response instanceof HttpServletResponse) {
             HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -211,18 +207,6 @@ public class HttpHeaderSecurityFilter extends FilterBase {
         return antiClickJackingUri.toString();
     }
 
-
-    public boolean isBlockContentTypeSniffingEnabled() {
-        return blockContentTypeSniffingEnabled;
-    }
-
-
-    public void setBlockContentTypeSniffingEnabled(
-            boolean blockContentTypeSniffingEnabled) {
-        this.blockContentTypeSniffingEnabled = blockContentTypeSniffingEnabled;
-    }
-
-
     public void setAntiClickJackingUri(String antiClickJackingUri) {
         URI uri;
         try {
@@ -233,6 +217,14 @@ public class HttpHeaderSecurityFilter extends FilterBase {
         this.antiClickJackingUri = uri;
     }
 
+    public boolean isBlockContentTypeSniffingEnabled() {
+        return blockContentTypeSniffingEnabled;
+    }
+
+    public void setBlockContentTypeSniffingEnabled(
+            boolean blockContentTypeSniffingEnabled) {
+        this.blockContentTypeSniffingEnabled = blockContentTypeSniffingEnabled;
+    }
 
     public boolean isXssProtectionEnabled() {
         return xssProtectionEnabled;

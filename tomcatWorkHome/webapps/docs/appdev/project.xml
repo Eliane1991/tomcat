@@ -16,33 +16,33 @@
   limitations under the License.
 -->
 <project name="Application Developer's Guide"
-        href="https://tomcat.apache.org/">
+         href="https://tomcat.apache.org/">
 
     <title>Application Developer's Guide</title>
 
     <logo href="/images/tomcat.gif">
-      The Apache Tomcat Servlet/JSP Container
+        The Apache Tomcat Servlet/JSP Container
     </logo>
 
 
     <body>
 
-    <menu name="Links">
-        <item name="Docs Home"             href="../index.html"/>
-        <item name="App Dev Guide Home"    href="index.html"/>
-        <item name="FAQ"                   href="https://wiki.apache.org/tomcat/FAQ" />
-        <item name="User Comments"         href="#comments_section"/>
-    </menu>
+        <menu name="Links">
+            <item name="Docs Home" href="../index.html"/>
+            <item name="App Dev Guide Home" href="index.html"/>
+            <item name="FAQ" href="https://wiki.apache.org/tomcat/FAQ"/>
+            <item name="User Comments" href="#comments_section"/>
+        </menu>
 
-    <menu name="Contents">
-        <item name="Contents"              href="index.html"/>
-        <item name="Introduction"          href="introduction.html"/>
-        <item name="Installation"          href="installation.html"/>
-        <item name="Deployment"            href="deployment.html"/>
-        <item name="Source Code"           href="source.html"/>
-        <item name="Processes"             href="processes.html"/>
-        <item name="Example App"           href="sample/"/>
-    </menu>
+        <menu name="Contents">
+            <item name="Contents" href="index.html"/>
+            <item name="Introduction" href="introduction.html"/>
+            <item name="Installation" href="installation.html"/>
+            <item name="Deployment" href="deployment.html"/>
+            <item name="Source Code" href="source.html"/>
+            <item name="Processes" href="processes.html"/>
+            <item name="Example App" href="sample/"/>
+        </menu>
 
     </body>
 </project>

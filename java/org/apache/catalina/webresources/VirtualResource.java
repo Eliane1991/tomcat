@@ -23,7 +23,7 @@ public class VirtualResource extends EmptyResource {
     private final String name;
 
     public VirtualResource(WebResourceRoot root, String webAppPath,
-            String name) {
+                           String name) {
         super(root, webAppPath);
         this.name = name;
     }

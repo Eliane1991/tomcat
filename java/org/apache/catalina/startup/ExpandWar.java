@@ -40,33 +40,29 @@ import java.util.zip.ZipException;
  */
 public class ExpandWar {
 
-    private static final Log log = LogFactory.getLog(ExpandWar.class);
-
     /**
      * The string resources for this package.
      */
     protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
-
+            StringManager.getManager(Constants.Package);
+    private static final Log log = LogFactory.getLog(ExpandWar.class);
 
     /**
      * Expand the WAR file found at the specified URL into an unpacked
      * directory structure.
      *
-     * @param host Host war is being installed for
-     * @param war URL of the web application archive to be expanded
-     *  (must start with "jar:")
+     * @param host     Host war is being installed for
+     * @param war      URL of the web application archive to be expanded
+     *                 (must start with "jar:")
      * @param pathname Context path name for web application
-     *
-     * @exception IllegalArgumentException if this is not a "jar:" URL or if the
-     *            WAR file is invalid
-     * @exception IOException if an input/output error was encountered
-     *  during expansion
-     *
      * @return The absolute path to the expanded directory foe the given WAR
+     * @throws IllegalArgumentException if this is not a "jar:" URL or if the
+     *                                  WAR file is invalid
+     * @throws IOException              if an input/output error was encountered
+     *                                  during expansion
      */
     public static String expand(Host host, URL war, String pathname)
-        throws IOException {
+            throws IOException {
 
         /* Obtaining the last modified time opens an InputStream and there is no
          * explicit close method. We have to obtain and then close the
@@ -106,7 +102,7 @@ public class ExpandWar {
         }
 
         // Create the new document base directory
-        if(!docBase.mkdir() && !docBase.isDirectory()) {
+        if (!docBase.mkdir() && !docBase.isDirectory()) {
             throw new IOException(sm.getString("expandWar.createFailed", docBase));
         }
 
@@ -134,14 +130,14 @@ public class ExpandWar {
                     // Trying to expand outside the docBase
                     // Throw an exception to stop the deployment
                     throw new IllegalArgumentException(
-                            sm.getString("expandWar.illegalPath",war, name,
+                            sm.getString("expandWar.illegalPath", war, name,
                                     expandedFile.getCanonicalPath(),
                                     canonicalDocBasePrefix));
                 }
                 int last = name.lastIndexOf('/');
                 if (last >= 0) {
                     File parent = new File(docBase,
-                                           name.substring(0, last));
+                            name.substring(0, last));
                     if (!parent.mkdirs() && !parent.isDirectory()) {
                         throw new IOException(
                                 sm.getString("expandWar.createFailed", parent));
@@ -197,15 +193,14 @@ public class ExpandWar {
     /**
      * Validate the WAR file found at the specified URL.
      *
-     * @param host Host war is being installed for
-     * @param war URL of the web application archive to be validated
-     *  (must start with "jar:")
+     * @param host     Host war is being installed for
+     * @param war      URL of the web application archive to be validated
+     *                 (must start with "jar:")
      * @param pathname Context path name for web application
-     *
-     * @exception IllegalArgumentException if this is not a "jar:" URL or if the
-     *            WAR file is invalid
-     * @exception IOException if an input/output error was encountered
-     *            during validation
+     * @throws IllegalArgumentException if this is not a "jar:" URL or if the
+     *                                  WAR file is invalid
+     * @throws IOException              if an input/output error was encountered
+     *                                  during validation
      */
     public static void validate(Host host, URL war, String pathname) throws IOException {
 
@@ -229,7 +224,7 @@ public class ExpandWar {
                     // Entry located outside the docBase
                     // Throw an exception to stop the deployment
                     throw new IllegalArgumentException(
-                            sm.getString("expandWar.illegalPath",war, name,
+                            sm.getString("expandWar.illegalPath", war, name,
                                     expandedFile.getCanonicalPath(),
                                     canonicalDocBasePrefix));
                 }
@@ -243,7 +238,7 @@ public class ExpandWar {
     /**
      * Copy the specified file or directory to the destination.
      *
-     * @param src File object representing the source
+     * @param src  File object representing the source
      * @param dest File object representing the destination
      * @return <code>true</code> if the copy was successful
      */
@@ -269,7 +264,7 @@ public class ExpandWar {
                 result = copy(fileSrc, fileDest);
             } else {
                 try (FileChannel ic = (new FileInputStream(fileSrc)).getChannel();
-                        FileChannel oc = (new FileOutputStream(fileDest)).getChannel()) {
+                     FileChannel oc = (new FileOutputStream(fileDest)).getChannel()) {
                     ic.transferTo(0, ic.size(), oc);
                 } catch (IOException e) {
                     log.error(sm.getString("expandWar.copy", fileSrc, fileDest), e);
@@ -298,7 +293,7 @@ public class ExpandWar {
      * Delete the specified directory, including all of its contents and
      * sub-directories recursively.
      *
-     * @param dir File object representing the directory to be deleted
+     * @param dir        File object representing the directory to be deleted
      * @param logFailure <code>true</code> if failure to delete the resource
      *                   should be logged
      * @return <code>true</code> if the deletion was successful
@@ -338,7 +333,7 @@ public class ExpandWar {
      * Delete the specified directory, including all of its contents and
      * sub-directories recursively.
      *
-     * @param dir File object representing the directory to be deleted
+     * @param dir        File object representing the directory to be deleted
      * @param logFailure <code>true</code> if failure to delete the resource
      *                   should be logged
      * @return <code>true</code> if the deletion was successful
@@ -378,13 +373,12 @@ public class ExpandWar {
      * Expand the specified input stream into the specified file.
      *
      * @param input InputStream to be copied
-     * @param file The file to be created
-     *
-     * @exception IOException if an input/output error occurs
+     * @param file  The file to be created
+     * @throws IOException if an input/output error occurs
      */
     private static void expand(InputStream input, File file) throws IOException {
         try (BufferedOutputStream output =
-                new BufferedOutputStream(new FileOutputStream(file))) {
+                     new BufferedOutputStream(new FileOutputStream(file))) {
             byte buffer[] = new byte[2048];
             while (true) {
                 int n = input.read(buffer);

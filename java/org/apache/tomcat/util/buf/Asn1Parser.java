@@ -23,9 +23,9 @@ import java.math.BigInteger;
 /**
  * This is a very basic ASN.1 parser that provides the limited functionality
  * required by Tomcat. It is a long way from a complete parser.
- *
+ * <p>
  * TODO: Consider extending this parser and refactoring the SpnegoTokenFixer to
- *       use it.
+ * use it.
  */
 public class Asn1Parser {
 

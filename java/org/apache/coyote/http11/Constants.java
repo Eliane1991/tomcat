@@ -122,7 +122,7 @@ public final class Constants {
     public static final String CHUNKED = "chunked";
     /**
      * @deprecated This option will be removed in Tomcat 9. Reason phrase will
-     *             not be sent.
+     * not be sent.
      */
     @Deprecated
     public static final byte[] ACK_BYTES_REASON =

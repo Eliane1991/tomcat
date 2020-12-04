@@ -47,5 +47,5 @@ public final class PersistentManager extends PersistentManagerBase {
     public String getName() {
         return name;
     }
- }
+}
 

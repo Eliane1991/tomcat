@@ -84,7 +84,7 @@ public class IPv6Utils {
         }
 
         StringBuilder result = new StringBuilder();
-        char [][] groups = new char[MAX_NUMBER_OF_GROUPS][MAX_GROUP_LENGTH];
+        char[][] groups = new char[MAX_NUMBER_OF_GROUPS][MAX_GROUP_LENGTH];
         int groupCounter = 0;
         int charInGroupCounter = 0;
 
@@ -192,7 +192,7 @@ public class IPv6Utils {
                 }
                 if (groupCounter < (numberOfGroups - 1)
                         && (groupCounter != maxZeroGroupIndex - 1
-                                || maxZeroGroupLength <= 1)) {
+                        || maxZeroGroupLength <= 1)) {
                     result.append(':');
                 }
             } else if (groupCounter == maxZeroGroupIndex) {

@@ -49,46 +49,11 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
     private final ErrorDispatcher err;
 
     private final ParserController parserController;
-
-    private static void print(String name, String value, PrintWriter w) {
-        if (value != null) {
-            w.print(name + " = {\n\t");
-            w.print(value);
-            w.print("\n}\n");
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        print("tlibversion", tlibversion, out);
-        print("jspversion", jspversion, out);
-        print("shortname", shortname, out);
-        print("urn", urn, out);
-        print("info", info, out);
-        print("uri", uri, out);
-        print("tagLibraryValidator", "" + tagLibraryValidator, out);
-
-        for (TagInfo tag : tags) {
-            out.println(tag.toString());
-        }
-
-        for (TagFileInfo tagFile : tagFiles) {
-            out.println(tagFile.toString());
-        }
-
-        for (FunctionInfo function : functions) {
-            out.println(function.toString());
-        }
-
-        return sw.toString();
-    }
-
+    private TagLibraryValidator tagLibraryValidator;
 
     public TagLibraryInfoImpl(JspCompilationContext ctxt, ParserController pc,
-            PageInfo pi, String prefix, String uriIn,
-            TldResourcePath tldResourcePath, ErrorDispatcher err)
+                              PageInfo pi, String prefix, String uriIn,
+                              TldResourcePath tldResourcePath, ErrorDispatcher err)
             throws JasperException {
         super(prefix, uriIn);
 
@@ -209,6 +174,41 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
         }
     }
 
+    private static void print(String name, String value, PrintWriter w) {
+        if (value != null) {
+            w.print(name + " = {\n\t");
+            w.print(value);
+            w.print("\n}\n");
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
+        print("tlibversion", tlibversion, out);
+        print("jspversion", jspversion, out);
+        print("shortname", shortname, out);
+        print("urn", urn, out);
+        print("info", info, out);
+        print("uri", uri, out);
+        print("tagLibraryValidator", "" + tagLibraryValidator, out);
+
+        for (TagInfo tag : tags) {
+            out.println(tag.toString());
+        }
+
+        for (TagFileInfo tagFile : tagFiles) {
+            out.println(tagFile.toString());
+        }
+
+        for (FunctionInfo function : functions) {
+            out.println(function.toString());
+        }
+
+        return sw.toString();
+    }
+
     @Override
     public TagLibraryInfo[] getTagLibraryInfos() {
         Collection<TagLibraryInfo> coll = pi.getTaglibs();
@@ -222,7 +222,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
      * @return the location of the TLD identified by the uri
      */
     private TldResourcePath generateTldResourcePath(String uri,
-            JspCompilationContext ctxt) throws JasperException {
+                                                    JspCompilationContext ctxt) throws JasperException {
 
         // TODO: this matches the current implementation but the URL logic looks fishy
         // map URI to location per JSP 7.3.6.2
@@ -257,7 +257,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             }
             return new TldResourcePath(url, uri, "META-INF/taglib.tld");
         } else if (uri.startsWith("/WEB-INF/lib/") || uri.startsWith("/WEB-INF/classes/") ||
-                (uri.startsWith("/WEB-INF/tags/") && uri.endsWith(".tld")&& !uri.endsWith("implicit.tld"))) {
+                (uri.startsWith("/WEB-INF/tags/") && uri.endsWith(".tld") && !uri.endsWith("implicit.tld"))) {
             err.jspError("jsp.error.tld.invalid_tld_file", uri);
         }
         return new TldResourcePath(url, uri);
@@ -318,6 +318,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
         return new TagFileInfo(name, path, tagInfo);
     }
 
+    // *********************************************************************
+    // Until javax.servlet.jsp.tagext.TagLibraryInfo is fixed
+
     private TagLibraryValidator createValidator(ValidatorXml validatorXml) throws JasperException {
 
         if (validatorXml == null) {
@@ -329,7 +332,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             return null;
         }
 
-        Map<String,Object> initParams = new Hashtable<>();
+        Map<String, Object> initParams = new Hashtable<>();
         initParams.putAll(validatorXml.getInitParams());
 
         try {
@@ -342,9 +345,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             return null;
         }
     }
-
-    // *********************************************************************
-    // Until javax.servlet.jsp.tagext.TagLibraryInfo is fixed
 
     /**
      * The instance (if any) for the TagLibraryValidator class.
@@ -360,8 +360,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
      * page. This is a convenience method on the associated TagLibraryValidator
      * class.
      *
-     * @param thePage
-     *            The JSP page object
+     * @param thePage The JSP page object
      * @return A string indicating whether the page is valid or not.
      */
     public ValidationMessage[] validate(PageData thePage) {
@@ -376,6 +375,4 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
 
         return tlv.validate(getPrefixString(), uri, thePage);
     }
-
-    private TagLibraryValidator tagLibraryValidator;
 }

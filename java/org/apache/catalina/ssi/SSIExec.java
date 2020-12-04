@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+
 /**
  * Implements the Server-side #exec command
  *
@@ -33,16 +34,15 @@ import java.io.PrintWriter;
  * @author David Becker
  */
 public class SSIExec implements SSICommand {
-    protected final SSIInclude ssiInclude = new SSIInclude();
     protected static final int BUFFER_SIZE = 1024;
-
+    protected final SSIInclude ssiInclude = new SSIInclude();
 
     /**
      * @see SSICommand
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer) {
+                        String[] paramNames, String[] paramValues, PrintWriter writer) {
         long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         String paramName = paramNames[0];

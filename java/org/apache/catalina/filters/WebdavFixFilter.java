@@ -33,7 +33,7 @@ import java.io.IOException;
  *   <li>Cancelling the first authentication dialog box and then trying to
  *       reconnect.</li>
  * </ul>
- *
+ * <p>
  * Generally each different version of the MS client has a different set of
  * problems.
  * <p>
@@ -59,14 +59,14 @@ public class WebdavFixFilter implements Filter {
 
     /* Start string for all versions */
     private static final String UA_MINIDIR_START =
-        "Microsoft-WebDAV-MiniRedir";
+            "Microsoft-WebDAV-MiniRedir";
     /* XP 32-bit SP3 */
     private static final String UA_MINIDIR_5_1_2600 =
-        "Microsoft-WebDAV-MiniRedir/5.1.2600";
+            "Microsoft-WebDAV-MiniRedir/5.1.2600";
 
     /* XP 64-bit SP2 */
     private static final String UA_MINIDIR_5_2_3790 =
-        "Microsoft-WebDAV-MiniRedir/5.2.3790";
+            "Microsoft-WebDAV-MiniRedir/5.2.3790";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -84,7 +84,7 @@ public class WebdavFixFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
         if (!(request instanceof HttpServletRequest) ||
                 !(response instanceof HttpServletResponse)) {
             chain.doFilter(request, response);
@@ -122,7 +122,7 @@ public class WebdavFixFilter implements Filter {
 
     private String buildRedirect(HttpServletRequest request) {
         StringBuilder location =
-            new StringBuilder(request.getRequestURL().length());
+                new StringBuilder(request.getRequestURL().length());
         location.append(request.getScheme());
         location.append("://");
         location.append(request.getServerName());

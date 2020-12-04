@@ -30,12 +30,11 @@ public class Snake {
 
     private final int id;
     private final Session session;
-
+    private final Deque<Location> tail = new ArrayDeque<>();
+    private final String hexColor;
     private Direction direction;
     private int length = DEFAULT_LENGTH;
     private Location head;
-    private final Deque<Location> tail = new ArrayDeque<>();
-    private final String hexColor;
 
     public Snake(int id, Session session) {
         this.id = id;

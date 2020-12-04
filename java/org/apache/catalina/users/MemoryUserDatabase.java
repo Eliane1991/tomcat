@@ -76,6 +76,48 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * The set of {@link Group}s defined in this database, keyed by group name.
+     */
+    protected final Map<String, Group> groups = new ConcurrentHashMap<>();
+    /**
+     * The unique global identifier of this user database.
+     */
+    protected final String id;
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The set of {@link Role}s defined in this database, keyed by role name.
+     */
+    protected final Map<String, Role> roles = new ConcurrentHashMap<>();
+    /**
+     * The set of {@link User}s defined in this database, keyed by user name.
+     */
+    protected final Map<String, User> users = new ConcurrentHashMap<>();
+    private final ReentrantReadWriteLock dbLock = new ReentrantReadWriteLock();
+    private final Lock readLock = dbLock.readLock();
+    private final Lock writeLock = dbLock.writeLock();
+    /**
+     * The relative (to <code>catalina.base</code>) or absolute pathname to the
+     * XML file in which we will save our persistent information.
+     */
+    protected String pathname = "conf/tomcat-users.xml";
+    /**
+     * The relative or absolute pathname to the file in which our old
+     * information is stored while renaming is in progress.
+     */
+    protected String pathnameOld = pathname + ".old";
+    /**
+     * The relative or absolute pathname of the file in which we write our new
+     * information prior to renaming.
+     */
+    protected String pathnameNew = pathname + ".new";
+    /**
+     * A flag, indicating if the user database is read only.
+     */
+    protected boolean readonly = true;
+    private volatile long lastModified = 0;
+    private boolean watchSource = true;
 
     /**
      * Create a new instance with default values.
@@ -83,7 +125,6 @@ public class MemoryUserDatabase implements UserDatabase {
     public MemoryUserDatabase() {
         this(null);
     }
-
 
     /**
      * Create a new instance with the specified values.
@@ -93,58 +134,6 @@ public class MemoryUserDatabase implements UserDatabase {
     public MemoryUserDatabase(String id) {
         this.id = id;
     }
-
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The set of {@link Group}s defined in this database, keyed by group name.
-     */
-    protected final Map<String, Group> groups = new ConcurrentHashMap<>();
-
-    /**
-     * The unique global identifier of this user database.
-     */
-    protected final String id;
-
-    /**
-     * The relative (to <code>catalina.base</code>) or absolute pathname to the
-     * XML file in which we will save our persistent information.
-     */
-    protected String pathname = "conf/tomcat-users.xml";
-
-    /**
-     * The relative or absolute pathname to the file in which our old
-     * information is stored while renaming is in progress.
-     */
-    protected String pathnameOld = pathname + ".old";
-
-    /**
-     * The relative or absolute pathname of the file in which we write our new
-     * information prior to renaming.
-     */
-    protected String pathnameNew = pathname + ".new";
-
-    /**
-     * A flag, indicating if the user database is read only.
-     */
-    protected boolean readonly = true;
-
-    /**
-     * The set of {@link Role}s defined in this database, keyed by role name.
-     */
-    protected final Map<String, Role> roles = new ConcurrentHashMap<>();
-
-    /**
-     * The set of {@link User}s defined in this database, keyed by user name.
-     */
-    protected final Map<String, User> users = new ConcurrentHashMap<>();
-
-    private final ReentrantReadWriteLock dbLock = new ReentrantReadWriteLock();
-    private final Lock readLock = dbLock.readLock();
-    private final Lock writeLock = dbLock.writeLock();
-
-    private volatile long lastModified = 0;
-    private boolean watchSource = true;
 
 
     // ------------------------------------------------------------- Properties
@@ -215,7 +204,6 @@ public class MemoryUserDatabase implements UserDatabase {
     }
 
 
-
     public void setWatchSource(boolean watchSource) {
         this.watchSource = watchSource;
     }
@@ -254,7 +242,7 @@ public class MemoryUserDatabase implements UserDatabase {
     /**
      * Finalize access to this user database.
      *
-     * @exception Exception if any exception is thrown during closing
+     * @throws Exception if any exception is thrown during closing
      */
     @Override
     public void close() throws Exception {
@@ -274,7 +262,7 @@ public class MemoryUserDatabase implements UserDatabase {
     /**
      * Create and return a new {@link Group} defined in this user database.
      *
-     * @param groupname The group name of the new group (must be unique)
+     * @param groupname   The group name of the new group (must be unique)
      * @param description The description of this group
      */
     @Override
@@ -299,7 +287,7 @@ public class MemoryUserDatabase implements UserDatabase {
     /**
      * Create and return a new {@link Role} defined in this user database.
      *
-     * @param rolename The role name of the new group (must be unique)
+     * @param rolename    The role name of the new group (must be unique)
      * @param description The description of this group
      */
     @Override
@@ -402,7 +390,7 @@ public class MemoryUserDatabase implements UserDatabase {
     /**
      * Initialize access to this user database.
      *
-     * @exception Exception if any exception is thrown during opening
+     * @throws Exception if any exception is thrown during opening
      */
     @Override
     public void open() throws Exception {
@@ -549,7 +537,7 @@ public class MemoryUserDatabase implements UserDatabase {
      * Save any updated information to the persistent storage location for this
      * user database.
      *
-     * @exception Exception if any exception is thrown during saving
+     * @throws Exception if any exception is thrown during saving
      */
     @Override
     public void save() throws Exception {
@@ -573,8 +561,8 @@ public class MemoryUserDatabase implements UserDatabase {
         writeLock.lock();
         try {
             try (FileOutputStream fos = new FileOutputStream(fileNew);
-                    OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                    PrintWriter writer = new PrintWriter(osw)) {
+                 OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                 PrintWriter writer = new PrintWriter(osw)) {
 
                 // Print the file prolog
                 writer.println("<?xml version='1.0' encoding='utf-8'?>");
@@ -728,10 +716,12 @@ public class MemoryUserDatabase implements UserDatabase {
  */
 class MemoryGroupCreationFactory extends AbstractObjectCreationFactory {
 
+    private final MemoryUserDatabase database;
+
+
     public MemoryGroupCreationFactory(MemoryUserDatabase database) {
         this.database = database;
     }
-
 
     @Override
     public Object createObject(Attributes attributes) {
@@ -771,8 +761,6 @@ class MemoryGroupCreationFactory extends AbstractObjectCreationFactory {
         }
         return group;
     }
-
-    private final MemoryUserDatabase database;
 }
 
 
@@ -781,10 +769,12 @@ class MemoryGroupCreationFactory extends AbstractObjectCreationFactory {
  */
 class MemoryRoleCreationFactory extends AbstractObjectCreationFactory {
 
+    private final MemoryUserDatabase database;
+
+
     public MemoryRoleCreationFactory(MemoryUserDatabase database) {
         this.database = database;
     }
-
 
     @Override
     public Object createObject(Attributes attributes) {
@@ -802,8 +792,6 @@ class MemoryRoleCreationFactory extends AbstractObjectCreationFactory {
         }
         return existingRole;
     }
-
-    private final MemoryUserDatabase database;
 }
 
 
@@ -812,10 +800,12 @@ class MemoryRoleCreationFactory extends AbstractObjectCreationFactory {
  */
 class MemoryUserCreationFactory extends AbstractObjectCreationFactory {
 
+    private final MemoryUserDatabase database;
+
+
     public MemoryUserCreationFactory(MemoryUserDatabase database) {
         this.database = database;
     }
-
 
     @Override
     public Object createObject(Attributes attributes) {
@@ -873,6 +863,4 @@ class MemoryUserCreationFactory extends AbstractObjectCreationFactory {
         }
         return user;
     }
-
-    private final MemoryUserDatabase database;
 }

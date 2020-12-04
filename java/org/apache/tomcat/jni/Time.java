@@ -17,23 +17,27 @@
 
 package org.apache.tomcat.jni;
 
-/** Time
+/**
+ * Time
  *
  * @author Mladen Turk
  */
 public class Time {
 
-    /** number of microseconds per second */
-    public static final long APR_USEC_PER_SEC  = 1000000L;
-    /** number of milliseconds per microsecond */
+    /**
+     * number of microseconds per second
+     */
+    public static final long APR_USEC_PER_SEC = 1000000L;
+    /**
+     * number of milliseconds per microsecond
+     */
     public static final long APR_MSEC_PER_USEC = 1000L;
 
     /**
      * @param t The time
      * @return apr_time_t as a second
      */
-    public static long sec(long t)
-    {
+    public static long sec(long t) {
         return t / APR_USEC_PER_SEC;
     }
 
@@ -41,13 +45,13 @@ public class Time {
      * @param t The time
      * @return apr_time_t as a msec
      */
-    public static long msec(long t)
-    {
+    public static long msec(long t) {
         return t / APR_MSEC_PER_USEC;
     }
 
     /**
      * number of microseconds since 00:00:00 January 1, 1970 UTC
+     *
      * @return the current time
      */
     public static native long now();
@@ -55,6 +59,7 @@ public class Time {
     /**
      * Formats dates in the RFC822
      * format in an efficient manner.
+     *
      * @param t the time to convert
      * @return the formatted date
      */
@@ -65,6 +70,7 @@ public class Time {
      * in an efficient manner.
      * Unlike ANSI/ISO C ctime(), apr_ctime() does not include
      * a \n at the end of the string.
+     *
      * @param t the time to convert
      * @return the formatted date
      */
@@ -73,6 +79,7 @@ public class Time {
     /**
      * Sleep for the specified number of micro-seconds.
      * <br><b>Warning :</b> May sleep for longer than the specified time.
+     *
      * @param t desired amount of time to sleep.
      */
     public static native void sleep(long t);

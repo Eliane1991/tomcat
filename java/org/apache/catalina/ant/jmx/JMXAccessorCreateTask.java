@@ -61,7 +61,7 @@ public class JMXAccessorCreateTask extends JMXAccessorTask {
 
     private String className;
     private String classLoader;
-    private List<Arg> args=new ArrayList<>();
+    private List<Arg> args = new ArrayList<>();
 
     // ------------------------------------------------------------- Properties
 
@@ -93,7 +93,7 @@ public class JMXAccessorCreateTask extends JMXAccessorTask {
         this.className = className;
     }
 
-    public void addArg(Arg arg ) {
+    public void addArg(Arg arg) {
         args.add(arg);
     }
 
@@ -103,6 +103,7 @@ public class JMXAccessorCreateTask extends JMXAccessorTask {
     public List<Arg> getArgs() {
         return args;
     }
+
     /**
      * @param args The args to set.
      */
@@ -114,7 +115,7 @@ public class JMXAccessorCreateTask extends JMXAccessorTask {
 
     @Override
     public String jmxExecute(MBeanServerConnection jmxServerConnection)
-        throws Exception {
+            throws Exception {
 
         if (getName() == null) {
             throw new BuildException("Must specify a 'name'");
@@ -125,53 +126,53 @@ public class JMXAccessorCreateTask extends JMXAccessorTask {
         }
         jmxCreate(jmxServerConnection, getName());
         return null;
-     }
+    }
 
     /**
      * Create new MBean from ClassLoader identified by an ObjectName.
      *
      * @param jmxServerConnection Connection to the JMX server
-     * @param name MBean name
+     * @param name                MBean name
      * @throws Exception Error creating MBean
      */
     protected void jmxCreate(MBeanServerConnection jmxServerConnection,
-            String name) throws Exception {
+                             String name) throws Exception {
         Object argsA[] = null;
         String sigA[] = null;
         if (args != null) {
-           argsA = new Object[ args.size()];
-           sigA = new String[args.size()];
-           for( int i=0; i<args.size(); i++ ) {
-               Arg arg=args.get(i);
-               if (arg.getType() == null) {
-                   arg.setType("java.lang.String");
-                   sigA[i]=arg.getType();
-                   argsA[i]=arg.getValue();
-               } else {
-                   sigA[i]=arg.getType();
-                   argsA[i]=convertStringToType(arg.getValue(),arg.getType());
-               }
-           }
+            argsA = new Object[args.size()];
+            sigA = new String[args.size()];
+            for (int i = 0; i < args.size(); i++) {
+                Arg arg = args.get(i);
+                if (arg.getType() == null) {
+                    arg.setType("java.lang.String");
+                    sigA[i] = arg.getType();
+                    argsA[i] = arg.getValue();
+                } else {
+                    sigA[i] = arg.getType();
+                    argsA[i] = convertStringToType(arg.getValue(), arg.getType());
+                }
+            }
         }
         if (classLoader != null && !classLoader.isEmpty()) {
             if (isEcho()) {
                 handleOutput("create MBean " + name + " from class "
                         + className + " with classLoader " + classLoader);
             }
-            if(args == null)
+            if (args == null)
                 jmxServerConnection.createMBean(className, new ObjectName(name), new ObjectName(classLoader));
             else
-                jmxServerConnection.createMBean(className, new ObjectName(name), new ObjectName(classLoader),argsA,sigA);
+                jmxServerConnection.createMBean(className, new ObjectName(name), new ObjectName(classLoader), argsA, sigA);
 
         } else {
             if (isEcho()) {
                 handleOutput("create MBean " + name + " from class "
                         + className);
             }
-            if(args == null)
+            if (args == null)
                 jmxServerConnection.createMBean(className, new ObjectName(name));
             else
-                jmxServerConnection.createMBean(className, new ObjectName(name),argsA,sigA);
+                jmxServerConnection.createMBean(className, new ObjectName(name), argsA, sigA);
         }
     }
 

@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate;
 public interface SSLContext {
 
     public void init(KeyManager[] kms, TrustManager[] tms,
-            SecureRandom sr) throws KeyManagementException;
+                     SecureRandom sr) throws KeyManagementException;
 
     public void destroy();
 

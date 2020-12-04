@@ -79,6 +79,7 @@ public interface Host extends Container {
      * pathname, a relative pathname, or a URL.
      * If null, the base path defaults to
      * ${catalina.base}/conf/&lt;engine name&gt;/&lt;host name&gt; directory
+     *
      * @param xmlBase The new XML root
      */
     public void setXmlBase(String xmlBase);
@@ -95,15 +96,6 @@ public interface Host extends Container {
      */
     public String getAppBase();
 
-
-    /**
-     * @return an absolute {@link File} for the appBase of this Host. The file
-     * will be canonical if possible. There is no guarantee that that the
-     * appBase exists.
-     */
-    public File getAppBaseFile();
-
-
     /**
      * Set the application root for this Host.  This can be an absolute
      * pathname, a relative pathname, or a URL.
@@ -112,6 +104,12 @@ public interface Host extends Container {
      */
     public void setAppBase(String appBase);
 
+    /**
+     * @return an absolute {@link File} for the appBase of this Host. The file
+     * will be canonical if possible. There is no guarantee that that the
+     * appBase exists.
+     */
+    public File getAppBaseFile();
 
     /**
      * @return the value of the auto deploy flag.  If true, it indicates that
@@ -168,15 +166,6 @@ public interface Host extends Container {
      */
     public String getDeployIgnore();
 
-
-    /**
-     * @return the compiled regular expression that defines the files and
-     * directories in the host's appBase that will be ignored by the automatic
-     * deployment process.
-     */
-    public Pattern getDeployIgnorePattern();
-
-
     /**
      * Set the regular expression that defines the files and directories in
      * the host's appBase that will be ignored by the automatic deployment
@@ -186,6 +175,12 @@ public interface Host extends Container {
      */
     public void setDeployIgnore(String deployIgnore);
 
+    /**
+     * @return the compiled regular expression that defines the files and
+     * directories in the host's appBase that will be ignored by the automatic
+     * deployment process.
+     */
+    public Pattern getDeployIgnorePattern();
 
     /**
      * @return the executor that is used for starting and stopping contexts. This
@@ -198,6 +193,7 @@ public interface Host extends Container {
     /**
      * Returns <code>true</code> if the Host will attempt to create directories for appBase and xmlBase
      * unless they already exist.
+     *
      * @return true if the Host will attempt to create directories
      */
     public boolean getCreateDirs();

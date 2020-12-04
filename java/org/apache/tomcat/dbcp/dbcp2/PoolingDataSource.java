@@ -33,23 +33,26 @@ import java.util.logging.Logger;
 /**
  * A simple {@link DataSource} implementation that obtains {@link Connection}s from the specified {@link ObjectPool}.
  *
- * @param <C>
- *            The connection type
- *
+ * @param <C> The connection type
  * @since 2.0
  */
 public class PoolingDataSource<C extends Connection> implements DataSource, AutoCloseable {
 
     private static final Log log = LogFactory.getLog(PoolingDataSource.class);
-
-    /** Controls access to the underlying connection */
+    private final ObjectPool<C> pool;
+    /**
+     * Controls access to the underlying connection
+     */
     private boolean accessToUnderlyingConnectionAllowed;
+    /**
+     * My log writer.
+     */
+    private PrintWriter logWriter = null;
 
     /**
      * Constructs a new instance backed by the given connection pool.
      *
-     * @param pool
-     *            the given connection pool.
+     * @param pool the given connection pool.
      */
     public PoolingDataSource(final ObjectPool<C> pool) {
         Objects.requireNonNull(pool, "Pool must not be null.");
@@ -97,12 +100,12 @@ public class PoolingDataSource<C extends Connection> implements DataSource, Auto
      * Sets the value of the accessToUnderlyingConnectionAllowed property. It controls if the PoolGuard allows access to
      * the underlying connection. (Default: false)
      *
-     * @param allow
-     *            Access to the underlying connection is granted when true.
+     * @param allow Access to the underlying connection is granted when true.
      */
     public void setAccessToUnderlyingConnectionAllowed(final boolean allow) {
         this.accessToUnderlyingConnectionAllowed = allow;
     }
+    /* JDBC_4_ANT_KEY_END */
 
     /* JDBC_4_ANT_KEY_BEGIN */
     @Override
@@ -110,18 +113,17 @@ public class PoolingDataSource<C extends Connection> implements DataSource, Auto
         return false;
     }
 
+    // --- DataSource methods -----------------------------------------
+
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         throw new SQLException("PoolingDataSource is not a wrapper.");
     }
-    /* JDBC_4_ANT_KEY_END */
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException();
     }
-
-    // --- DataSource methods -----------------------------------------
 
     /**
      * Returns a {@link java.sql.Connection} from my pool, according to the contract specified by
@@ -153,8 +155,7 @@ public class PoolingDataSource<C extends Connection> implements DataSource, Auto
     /**
      * Throws {@link UnsupportedOperationException}
      *
-     * @throws UnsupportedOperationException
-     *             always thrown
+     * @throws UnsupportedOperationException always thrown
      */
     @Override
     public Connection getConnection(final String uname, final String passwd) throws SQLException {
@@ -173,28 +174,6 @@ public class PoolingDataSource<C extends Connection> implements DataSource, Auto
     }
 
     /**
-     * Throws {@link UnsupportedOperationException}.
-     *
-     * @throws UnsupportedOperationException
-     *             As this implementation does not support this feature.
-     */
-    @Override
-    public int getLoginTimeout() {
-        throw new UnsupportedOperationException("Login timeout is not supported.");
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     *
-     * @throws UnsupportedOperationException
-     *             As this implementation does not support this feature.
-     */
-    @Override
-    public void setLoginTimeout(final int seconds) {
-        throw new UnsupportedOperationException("Login timeout is not supported.");
-    }
-
-    /**
      * Sets my log writer.
      *
      * @see DataSource#setLogWriter
@@ -204,10 +183,25 @@ public class PoolingDataSource<C extends Connection> implements DataSource, Auto
         logWriter = out;
     }
 
-    /** My log writer. */
-    private PrintWriter logWriter = null;
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     *
+     * @throws UnsupportedOperationException As this implementation does not support this feature.
+     */
+    @Override
+    public int getLoginTimeout() {
+        throw new UnsupportedOperationException("Login timeout is not supported.");
+    }
 
-    private final ObjectPool<C> pool;
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     *
+     * @throws UnsupportedOperationException As this implementation does not support this feature.
+     */
+    @Override
+    public void setLoginTimeout(final int seconds) {
+        throw new UnsupportedOperationException("Login timeout is not supported.");
+    }
 
     protected ObjectPool<C> getPool() {
         return pool;

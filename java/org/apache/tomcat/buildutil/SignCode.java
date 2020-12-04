@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.tomcat.buildutil;
 
 import org.apache.tomcat.util.buf.StringUtils;
@@ -75,55 +75,145 @@ public class SignCode extends Task {
     private String signingService;
     private boolean debug;
 
+    private static SOAPBody populateEnvelope(SOAPMessage message, String namespace)
+            throws SOAPException {
+        SOAPPart soapPart = message.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration(
+                "soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+        envelope.addNamespaceDeclaration(
+                namespace, "http://api.ws.symantec.com/webtrust/codesigningservice");
+        return envelope.getBody();
+    }
+
+    private static void addCredentials(SOAPElement requestSigningRequest,
+                                       String user, String pwd, String code) throws SOAPException {
+        SOAPElement authToken = requestSigningRequest.addChildElement("authToken", NS);
+        SOAPElement userName = authToken.addChildElement("userName", NS);
+        userName.addTextNode(user);
+        SOAPElement password = authToken.addChildElement("password", NS);
+        password.addTextNode(pwd);
+        SOAPElement partnerCode = authToken.addChildElement("partnerCode", NS);
+        partnerCode.addTextNode(code);
+    }
+
+    /**
+     * Signing service requires unique files names. Since files will be returned
+     * in order, use dummy names that we know are unique but retain the file
+     * extension since the signing service appears to use it to figure out what
+     * to sign and how to sign it.
+     */
+    private static List<String> getFileNames(List<File> filesToSign) {
+        List<String> result = new ArrayList<>(filesToSign.size());
+
+        for (int i = 0; i < filesToSign.size(); i++) {
+            File f = filesToSign.get(i);
+            String fileName = f.getName();
+            int extIndex = fileName.lastIndexOf('.');
+            String newName;
+            if (extIndex < 0) {
+                newName = Integer.toString(i);
+            } else {
+                newName = Integer.toString(i) + fileName.substring(extIndex);
+            }
+            result.add(newName);
+        }
+        return result;
+    }
+
+    /**
+     * Zips the files, base 64 encodes the resulting zip and then returns the
+     * string. It would be far more efficient to stream this directly to the
+     * signing server but the files that need to be signed are relatively small
+     * and this simpler to write.
+     *
+     * @param fileNames Modified names of files
+     * @param files     Files to be signed
+     */
+    private static String getApplicationString(List<String> fileNames, List<File> files)
+            throws IOException {
+        // 16 MB should be more than enough for Tomcat
+        // TODO: Refactoring this entire class so it uses streaming rather than
+        //       buffering the entire set of files in memory would make it more
+        //       widely useful.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024 * 1024);
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            byte[] buf = new byte[32 * 1024];
+            for (int i = 0; i < files.size(); i++) {
+                try (FileInputStream fis = new FileInputStream(files.get(i))) {
+                    ZipEntry zipEntry = new ZipEntry(fileNames.get(i));
+                    zos.putNextEntry(zipEntry);
+                    int numRead;
+                    while ((numRead = fis.read(buf)) >= 0) {
+                        zos.write(buf, 0, numRead);
+                    }
+                }
+            }
+        }
+
+        return Base64.encodeBase64String(baos.toByteArray());
+    }
+
+    /**
+     * Removes base64 encoding, unzips the files and writes the new files over
+     * the top of the old ones.
+     */
+    private static void extractFilesFromApplicationString(String data, List<File> files)
+            throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(Base64.decodeBase64(data));
+        try (ZipInputStream zis = new ZipInputStream(bais)) {
+            byte[] buf = new byte[32 * 1024];
+            for (File file : files) {
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    zis.getNextEntry();
+                    int numRead;
+                    while ((numRead = zis.read(buf)) >= 0) {
+                        fos.write(buf, 0, numRead);
+                    }
+                }
+            }
+        }
+    }
+
     public void addFileset(FileSet fileset) {
         filesets.add(fileset);
     }
-
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     public void setPartnerCode(String partnerCode) {
         this.partnerCode = partnerCode;
     }
 
-
     public void setKeyStore(String keyStore) {
         this.keyStore = keyStore;
     }
-
 
     public void setKeyStorePassword(String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
     }
 
-
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-
 
     public void setApplicationVersion(String applicationVersion) {
         this.applicationVersion = applicationVersion;
     }
 
-
     public void setSigningService(String signingService) {
         this.signingService = signingService;
     }
 
-
     public void setDebug(String debug) {
         this.debug = Boolean.parseBoolean(debug);
     }
-
 
     @Override
     public void execute() throws BuildException {
@@ -155,7 +245,6 @@ public class SignCode extends Task {
             throw new BuildException(e);
         }
     }
-
 
     private String makeSigningRequest(List<File> filesToSign) throws SOAPException, IOException {
         log("Constructing the code signing request");
@@ -225,13 +314,12 @@ public class SignCode extends Task {
         }
 
         if (!signingService.contains("TEST") && !"SIGNED".equals(signingSetStatus) ||
-                signingService.contains("TEST") && !"INITIALIZED".equals(signingSetStatus) ) {
+                signingService.contains("TEST") && !"INITIALIZED".equals(signingSetStatus)) {
             throw new BuildException("Signing failed. Status was: " + signingSetStatus);
         }
 
         return signingSetID;
     }
-
 
     private void downloadSignedFiles(List<File> filesToSign, String id)
             throws SOAPException, IOException {
@@ -289,110 +377,5 @@ public class SignCode extends Task {
         }
 
         extractFilesFromApplicationString(data, filesToSign);
-    }
-
-
-    private static SOAPBody populateEnvelope(SOAPMessage message, String namespace)
-            throws SOAPException {
-        SOAPPart soapPart = message.getSOAPPart();
-        SOAPEnvelope envelope = soapPart.getEnvelope();
-        envelope.addNamespaceDeclaration(
-                "soapenv","http://schemas.xmlsoap.org/soap/envelope/");
-        envelope.addNamespaceDeclaration(
-                namespace,"http://api.ws.symantec.com/webtrust/codesigningservice");
-        return envelope.getBody();
-    }
-
-
-    private static void addCredentials(SOAPElement requestSigningRequest,
-            String user, String pwd, String code) throws SOAPException {
-        SOAPElement authToken = requestSigningRequest.addChildElement("authToken", NS);
-        SOAPElement userName = authToken.addChildElement("userName", NS);
-        userName.addTextNode(user);
-        SOAPElement password = authToken.addChildElement("password", NS);
-        password.addTextNode(pwd);
-        SOAPElement partnerCode = authToken.addChildElement("partnerCode", NS);
-        partnerCode.addTextNode(code);
-    }
-
-
-    /**
-     * Signing service requires unique files names. Since files will be returned
-     * in order, use dummy names that we know are unique but retain the file
-     * extension since the signing service appears to use it to figure out what
-     * to sign and how to sign it.
-     */
-    private static List<String> getFileNames(List<File> filesToSign) {
-        List<String> result = new ArrayList<>(filesToSign.size());
-
-        for (int i = 0; i < filesToSign.size(); i++) {
-            File f = filesToSign.get(i);
-            String fileName = f.getName();
-            int extIndex = fileName.lastIndexOf('.');
-            String newName;
-            if (extIndex < 0) {
-                newName = Integer.toString(i);
-            } else {
-                newName = Integer.toString(i) + fileName.substring(extIndex);
-            }
-            result.add(newName);
-        }
-        return result;
-    }
-
-
-    /**
-     * Zips the files, base 64 encodes the resulting zip and then returns the
-     * string. It would be far more efficient to stream this directly to the
-     * signing server but the files that need to be signed are relatively small
-     * and this simpler to write.
-     *
-     * @param fileNames Modified names of files
-     * @param files     Files to be signed
-     */
-    private static String getApplicationString(List<String> fileNames, List<File> files)
-            throws IOException {
-        // 16 MB should be more than enough for Tomcat
-        // TODO: Refactoring this entire class so it uses streaming rather than
-        //       buffering the entire set of files in memory would make it more
-        //       widely useful.
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024 * 1024);
-        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-            byte[] buf = new byte[32 * 1024];
-            for (int i = 0; i < files.size(); i++) {
-                try (FileInputStream fis = new FileInputStream(files.get(i))) {
-                    ZipEntry zipEntry = new ZipEntry(fileNames.get(i));
-                    zos.putNextEntry(zipEntry);
-                    int numRead;
-                    while ( (numRead = fis.read(buf)) >= 0) {
-                        zos.write(buf, 0, numRead);
-                    }
-                }
-            }
-        }
-
-        return Base64.encodeBase64String(baos.toByteArray());
-    }
-
-
-    /**
-     * Removes base64 encoding, unzips the files and writes the new files over
-     * the top of the old ones.
-     */
-    private static void extractFilesFromApplicationString(String data, List<File> files)
-            throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(Base64.decodeBase64(data));
-        try (ZipInputStream zis = new ZipInputStream(bais)) {
-            byte[] buf = new byte[32 * 1024];
-            for (File file : files) {
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    zis.getNextEntry();
-                    int numRead;
-                    while ((numRead = zis.read(buf)) >= 0) {
-                        fos.write(buf, 0, numRead);
-                    }
-                }
-            }
-        }
     }
 }

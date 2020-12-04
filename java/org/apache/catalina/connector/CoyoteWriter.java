@@ -56,7 +56,7 @@ public class CoyoteWriter extends PrintWriter {
      */
     @Override
     protected Object clone()
-        throws CloneNotSupportedException {
+            throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
 
@@ -106,7 +106,7 @@ public class CoyoteWriter extends PrintWriter {
         // so the stream can be reused. We close ob.
         try {
             ob.close();
-        } catch (IOException ex ) {
+        } catch (IOException ex) {
             // Ignore
         }
         error = false;

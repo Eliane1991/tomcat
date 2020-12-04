@@ -30,7 +30,6 @@ import java.io.IOException;
  * based on the string representation of the remote client's IP address.
  *
  * @author Craig R. McClanahan
- *
  */
 public final class RemoteAddrFilter extends RequestFilter {
 
@@ -48,13 +47,12 @@ public final class RemoteAddrFilter extends RequestFilter {
      * @param request  The servlet request to be processed
      * @param response The servlet response to be created
      * @param chain    The filter chain for this request
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
         process(request.getRemoteAddr(), request, response, chain);
 

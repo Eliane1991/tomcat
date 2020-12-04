@@ -32,7 +32,7 @@ public class TooManyActiveSessionsException extends IllegalStateException {
     /**
      * Creates a new TooManyActiveSessionsException.
      *
-     * @param message A description for the exception.
+     * @param message   A description for the exception.
      * @param maxActive The maximum number of active sessions allowed by the
      *                  session manager.
      */

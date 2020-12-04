@@ -35,19 +35,16 @@ import java.nio.charset.StandardCharsets;
  */
 public class IdentityInputFilter implements InputFilter, ApplicationBufferHandler {
 
+    protected static final String ENCODING_NAME = "identity";
+
+
+    // -------------------------------------------------------------- Constants
+    protected static final ByteChunk ENCODING = new ByteChunk();
     private static final StringManager sm = StringManager.getManager(
             IdentityInputFilter.class.getPackage().getName());
 
 
-    // -------------------------------------------------------------- Constants
-
-
-    protected static final String ENCODING_NAME = "identity";
-    protected static final ByteChunk ENCODING = new ByteChunk();
-
-
     // ----------------------------------------------------- Static Initializer
-
 
     static {
         ENCODING.setBytes(ENCODING_NAME.getBytes(StandardCharsets.ISO_8859_1),
@@ -57,32 +54,23 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
 
     // ----------------------------------------------------- Instance Variables
 
-
+    private final int maxSwallowSize;
     /**
      * Content length.
      */
     protected long contentLength = -1;
-
-
     /**
      * Remaining bytes.
      */
     protected long remaining = 0;
-
-
     /**
      * Next buffer in the pipeline.
      */
     protected InputBuffer buffer;
-
-
     /**
      * ByteBuffer used to read leftover bytes.
      */
     protected ByteBuffer tempRead;
-
-
-    private final int maxSwallowSize;
 
 
     public IdentityInputFilter(int maxSwallowSize) {
@@ -94,7 +82,7 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doRead(ApplicationBufferHandler)}
+     * {@link #doRead(ApplicationBufferHandler)}
      */
     @Deprecated
     @Override
@@ -110,7 +98,7 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
                     // in the body; changing the chunk length to the number
                     // of bytes remaining
                     chunk.setBytes(chunk.getBytes(), chunk.getStart(),
-                                   (int) remaining);
+                            (int) remaining);
                     result = (int) remaining;
                 } else {
                     result = nRead;
@@ -189,7 +177,7 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
 
             int nread = buffer.doRead(this);
             tempRead = null;
-            if (nread > 0 ) {
+            if (nread > 0) {
                 swallowed += nread;
                 remaining = remaining - nread;
                 if (maxSwallowSizeExceeded && swallowed > maxSwallowSize) {
@@ -255,18 +243,15 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
         return contentLength > -1 && remaining <= 0;
     }
 
-
-    @Override
-    public void setByteBuffer(ByteBuffer buffer) {
-        tempRead = buffer;
-    }
-
-
     @Override
     public ByteBuffer getByteBuffer() {
         return tempRead;
     }
 
+    @Override
+    public void setByteBuffer(ByteBuffer buffer) {
+        tempRead = buffer;
+    }
 
     @Override
     public void expand(int size) {

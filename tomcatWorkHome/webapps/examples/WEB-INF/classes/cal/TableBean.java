@@ -35,20 +35,20 @@ public class TableBean {
         this.date = JspCal.getCurrentDate();
     }
 
-    public void setName(String nm) {
-        this.name = nm;
-    }
-
     public String getName() {
         return this.name;
     }
 
-    public void setEmail(String mail) {
-        this.email = mail;
+    public void setName(String nm) {
+        this.name = nm;
     }
 
     public String getEmail() {
         return this.email;
+    }
+
+    public void setEmail(String mail) {
+        this.email = mail;
     }
 
     public String getDate() {

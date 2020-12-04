@@ -34,31 +34,14 @@ import java.io.InputStream;
 public interface FileItemStream extends FileItemHeadersSupport {
 
     /**
-     * This exception is thrown, if an attempt is made to read
-     * data from the {@link InputStream}, which has been returned
-     * by {@link FileItemStream#openStream()}, after
-     * {@link java.util.Iterator#hasNext()} has been invoked on the
-     * iterator, which created the {@link FileItemStream}.
-     */
-    public static class ItemSkippedException extends IOException {
-
-        /**
-         * The exceptions serial version UID, which is being used
-         * when serializing an exception instance.
-         */
-        private static final long serialVersionUID = -7280778431581963740L;
-
-    }
-
-    /**
      * Creates an {@link InputStream}, which allows to read the
      * items contents.
      *
      * @return The input stream, from which the items data may
-     *   be read.
+     * be read.
      * @throws IllegalStateException The method was already invoked on
-     * this item. It is not possible to recreate the data stream.
-     * @throws IOException An I/O error occurred.
+     *                               this item. It is not possible to recreate the data stream.
+     * @throws IOException           An I/O error occurred.
      * @see ItemSkippedException
      */
     InputStream openStream() throws IOException;
@@ -68,7 +51,7 @@ public interface FileItemStream extends FileItemHeadersSupport {
      * not defined.
      *
      * @return The content type passed by the browser or {@code null} if
-     *         not defined.
+     * not defined.
      */
     String getContentType();
 
@@ -95,8 +78,25 @@ public interface FileItemStream extends FileItemHeadersSupport {
      * a simple form field.
      *
      * @return {@code true} if the instance represents a simple form
-     *         field; {@code false} if it represents an uploaded file.
+     * field; {@code false} if it represents an uploaded file.
      */
     boolean isFormField();
+
+    /**
+     * This exception is thrown, if an attempt is made to read
+     * data from the {@link InputStream}, which has been returned
+     * by {@link FileItemStream#openStream()}, after
+     * {@link java.util.Iterator#hasNext()} has been invoked on the
+     * iterator, which created the {@link FileItemStream}.
+     */
+    public static class ItemSkippedException extends IOException {
+
+        /**
+         * The exceptions serial version UID, which is being used
+         * when serializing an exception instance.
+         */
+        private static final long serialVersionUID = -7280778431581963740L;
+
+    }
 
 }

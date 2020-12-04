@@ -54,24 +54,17 @@ public class NamingResourcesSF extends StoreFactoryBase {
     /**
      * Store the specified NamingResources properties.
      *
-     * @param aWriter
-     *            PrintWriter to which we are storing
-     * @param indent
-     *            Number of spaces to indent this element
-     * @param aElement
-     *            Object whose properties are being stored
-     * @param elementDesc
-     *            element descriptor
-     *
-     * @exception Exception
-     *                if an exception occurs while storing
-     *
+     * @param aWriter     PrintWriter to which we are storing
+     * @param indent      Number of spaces to indent this element
+     * @param aElement    Object whose properties are being stored
+     * @param elementDesc element descriptor
+     * @throws Exception if an exception occurs while storing
      * @see org.apache.catalina.storeconfig.StoreFactoryBase#storeChildren(java.io.PrintWriter,
-     *      int, java.lang.Object, StoreDescription)
+     * int, java.lang.Object, StoreDescription)
      */
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aElement,
-            StoreDescription elementDesc) throws Exception {
+                              StoreDescription elementDesc) throws Exception {
 
         if (aElement instanceof NamingResourcesImpl) {
             NamingResourcesImpl resources = (NamingResourcesImpl) aElement;

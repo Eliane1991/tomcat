@@ -25,17 +25,17 @@
 if [ -z "$JAVA_HOME" ] && [ -z "$JRE_HOME" ]; then
   if $darwin; then
     # Bugzilla 54390
-    if [ -x '/usr/libexec/java_home' ] ; then
-      export JAVA_HOME=`/usr/libexec/java_home`
+    if [ -x '/usr/libexec/java_home' ]; then
+      export JAVA_HOME=$(/usr/libexec/java_home)
     # Bugzilla 37284 (reviewed).
     elif [ -d "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home" ]; then
       export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home"
     fi
   else
-    JAVA_PATH=`which java 2>/dev/null`
+    JAVA_PATH=$(which java 2>/dev/null)
     if [ "x$JAVA_PATH" != "x" ]; then
-      JAVA_PATH=`dirname "$JAVA_PATH" 2>/dev/null`
-      JRE_HOME=`dirname "$JAVA_PATH" 2>/dev/null`
+      JAVA_PATH=$(dirname "$JAVA_PATH" 2>/dev/null)
+      JRE_HOME=$(dirname "$JAVA_PATH" 2>/dev/null)
     fi
     if [ "x$JRE_HOME" = "x" ]; then
       # XXX: Should we try other locations?
@@ -59,7 +59,7 @@ if [ -z "$JRE_HOME" ]; then
 fi
 
 # If we're running under jdb, we need a full jdk.
-if [ "$1" = "debug" ] ; then
+if [ "$1" = "debug" ]; then
   if [ "$os400" = "true" ]; then
     if [ ! -x "$JAVA_HOME"/bin/java ] || [ ! -x "$JAVA_HOME"/bin/javac ]; then
       echo "The JAVA_HOME environment variable is not defined correctly"

@@ -36,7 +36,7 @@ public class SizeLimitExceededException
      * @param permitted The maximum permitted request size.
      */
     public SizeLimitExceededException(String message, long actual,
-            long permitted) {
+                                      long permitted) {
         super(message, actual, permitted);
     }
 

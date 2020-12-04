@@ -54,6 +54,77 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
 
     // ------------------------------------------------------------ Constructor
+    /**
+     * The string manager for this package.
+     */
+    private static final StringManager sm =
+            StringManager.getManager(Constants.Package);
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The property change support for this component.
+     */
+    final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    /**
+     * The naming context listener for this web application.
+     */
+    private final NamingContextListener namingContextListener;
+    private final Object servicesLock = new Object();
+    private final Object namingToken = new Object();
+    /**
+     * Global naming resources context.
+     */
+    private javax.naming.Context globalNamingContext = null;
+    /**
+     * Global naming resources.
+     */
+    private NamingResourcesImpl globalNamingResources = null;
+    /**
+     * The port number on which we wait for shutdown commands.
+     */
+    private int port = 8005;
+    /**
+     * The address on which we wait for shutdown commands.
+     */
+    private String address = "localhost";
+    /**
+     * A random number generator that is <strong>only</strong> used if
+     * the shutdown command string is longer than 1024 characters.
+     */
+    private Random random = null;
+    /**
+     * The set of Services associated with this Server.
+     */
+    private Service services[] = new Service[0];
+    /**
+     * The shutdown command string we are looking for.
+     */
+    private String shutdown = "SHUTDOWN";
+    private volatile boolean stopAwait = false;
+
+    private Catalina catalina = null;
+
+    private ClassLoader parentClassLoader = null;
+
+    /**
+     * Thread that currently is inside our await() method.
+     */
+    private volatile Thread awaitThread = null;
+
+    /**
+     * Server socket that is used to wait for the shutdown command.
+     */
+    private volatile ServerSocket awaitSocket = null;
+
+    private File catalinaHome = null;
+
+    private File catalinaBase = null;
+    private ObjectName onameStringCache;
+
+
+    // ------------------------------------------------------------- Properties
+    private ObjectName onameMBeanFactory;
 
 
     /**
@@ -75,101 +146,10 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     }
 
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Global naming resources context.
-     */
-    private javax.naming.Context globalNamingContext = null;
-
-
-    /**
-     * Global naming resources.
-     */
-    private NamingResourcesImpl globalNamingResources = null;
-
-
-    /**
-     * The naming context listener for this web application.
-     */
-    private final NamingContextListener namingContextListener;
-
-
-    /**
-     * The port number on which we wait for shutdown commands.
-     */
-    private int port = 8005;
-
-    /**
-     * The address on which we wait for shutdown commands.
-     */
-    private String address = "localhost";
-
-
-    /**
-     * A random number generator that is <strong>only</strong> used if
-     * the shutdown command string is longer than 1024 characters.
-     */
-    private Random random = null;
-
-
-    /**
-     * The set of Services associated with this Server.
-     */
-    private Service services[] = new Service[0];
-    private final Object servicesLock = new Object();
-
-
-    /**
-     * The shutdown command string we are looking for.
-     */
-    private String shutdown = "SHUTDOWN";
-
-
-    /**
-     * The string manager for this package.
-     */
-    private static final StringManager sm =
-            StringManager.getManager(Constants.Package);
-
-
-    /**
-     * The property change support for this component.
-     */
-    final PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-    private volatile boolean stopAwait = false;
-
-    private Catalina catalina = null;
-
-    private ClassLoader parentClassLoader = null;
-
-    /**
-     * Thread that currently is inside our await() method.
-     */
-    private volatile Thread awaitThread = null;
-
-    /**
-     * Server socket that is used to wait for the shutdown command.
-     */
-    private volatile ServerSocket awaitSocket = null;
-
-    private File catalinaHome = null;
-
-    private File catalinaBase = null;
-
-    private final Object namingToken = new Object();
-
-
-    // ------------------------------------------------------------- Properties
-
     @Override
     public Object getNamingToken() {
         return namingToken;
     }
-
 
     /**
      * Return the global naming resources context.
@@ -178,7 +158,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public javax.naming.Context getGlobalNamingContext() {
         return this.globalNamingContext;
     }
-
 
     /**
      * Set the global naming resources context.
@@ -189,7 +168,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         this.globalNamingContext = globalNamingContext;
     }
 
-
     /**
      * Return the global naming resources.
      */
@@ -197,7 +175,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public NamingResourcesImpl getGlobalNamingResources() {
         return this.globalNamingResources;
     }
-
 
     /**
      * Set the global naming resources.
@@ -218,7 +195,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     }
 
-
     /**
      * Report the current Tomcat Server Release number
      *
@@ -227,7 +203,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public String getServerInfo() {
         return ServerInfo.getServerInfo();
     }
-
 
     /**
      * Return the current server built timestamp
@@ -238,7 +213,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return ServerInfo.getServerBuilt();
     }
 
-
     /**
      * Return the current server's version number.
      *
@@ -248,7 +222,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return ServerInfo.getServerNumber();
     }
 
-
     /**
      * Return the port number we listen to for shutdown commands.
      */
@@ -256,7 +229,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public int getPort() {
         return this.port;
     }
-
 
     /**
      * Set the port number we listen to for shutdown commands.
@@ -268,7 +240,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         this.port = port;
     }
 
-
     /**
      * Return the address on which we listen to for shutdown commands.
      */
@@ -276,7 +247,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public String getAddress() {
         return this.address;
     }
-
 
     /**
      * Set the address on which we listen to for shutdown commands.
@@ -296,7 +266,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return this.shutdown;
     }
 
-
     /**
      * Set the shutdown command we are waiting for.
      *
@@ -307,6 +276,7 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         this.shutdown = shutdown;
     }
 
+    // --------------------------------------------------------- Server Methods
 
     /**
      * Return the outer Catalina startup/shutdown component if present.
@@ -316,7 +286,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return catalina;
     }
 
-
     /**
      * Set the outer Catalina startup/shutdown component if present.
      */
@@ -324,9 +293,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     public void setCatalina(Catalina catalina) {
         this.catalina = catalina;
     }
-
-    // --------------------------------------------------------- Server Methods
-
 
     /**
      * Add a new Service to the set of defined Services.
@@ -407,7 +373,9 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
             }
             return;
         }
-
+        /**
+         * 创建 awaitSocket , awaitThread线程 进入端口消息的监听
+         */
         // Set up a server socket to wait on
         try {
             awaitSocket = new ServerSocket(port, 1,
@@ -514,7 +482,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         }
     }
 
-
     /**
      * @param name Name of the Service to be returned
      * @return the specified Service (if it exists); otherwise return
@@ -535,7 +502,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return null;
     }
 
-
     /**
      * @return the set of Services defined within this Server.
      */
@@ -554,7 +520,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         }
         return onames;
     }
-
 
     /**
      * Remove the specified Service from the set associated from this
@@ -594,7 +559,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     }
 
-
     @Override
     public File getCatalinaBase() {
         if (catalinaBase != null) {
@@ -605,26 +569,23 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return catalinaBase;
     }
 
-
     @Override
     public void setCatalinaBase(File catalinaBase) {
         this.catalinaBase = catalinaBase;
     }
 
 
+    // --------------------------------------------------------- Public Methods
+
     @Override
     public File getCatalinaHome() {
         return catalinaHome;
     }
 
-
     @Override
     public void setCatalinaHome(File catalinaHome) {
         this.catalinaHome = catalinaHome;
     }
-
-
-    // --------------------------------------------------------- Public Methods
 
     /**
      * Add a property change listener to this component.
@@ -637,7 +598,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     }
 
-
     /**
      * Remove a property change listener from this component.
      *
@@ -649,7 +609,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     }
 
-
     /**
      * Return a String representation of this component.
      */
@@ -660,7 +619,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         sb.append(']');
         return sb.toString();
     }
-
 
     /**
      * Write the configuration information for this entire <code>Server</code>
@@ -685,7 +643,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
             log.error(sm.getString("standardServer.storeConfig.error"), t);
         }
     }
-
 
     /**
      * Write the configuration information for <code>Context</code>
@@ -714,7 +671,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         }
     }
 
-
     /**
      * @return <code>true</code> if naming should be used.
      */
@@ -729,7 +685,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         return useNaming;
     }
 
-
     /**
      * Start nested components ({@link Service}s) and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
@@ -739,7 +694,9 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
      */
     @Override
     protected void startInternal() throws LifecycleException {
-
+        /**
+         * 事件广播,主要是给NamingContextListener发送事件
+         */
         fireLifecycleEvent(CONFIGURE_START_EVENT, null);
         setState(LifecycleState.STARTING);
 
@@ -752,7 +709,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
             }
         }
     }
-
 
     /**
      * Stop nested components ({@link Service}s) and implement the requirements
@@ -887,10 +843,6 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
         support.firePropertyChange("parentClassLoader", oldParentClassLoader,
                 this.parentClassLoader);
     }
-
-
-    private ObjectName onameStringCache;
-    private ObjectName onameMBeanFactory;
 
     /**
      * Obtain the MBean domain for this server. The domain is obtained using

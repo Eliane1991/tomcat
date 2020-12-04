@@ -45,7 +45,7 @@ public abstract class AbstractSingleArchiveResourceSet extends AbstractArchiveRe
 
 
     public AbstractSingleArchiveResourceSet(WebResourceRoot root, String webAppMount, String base,
-            String internalPath) throws IllegalArgumentException {
+                                            String internalPath) throws IllegalArgumentException {
         setRoot(root);
         setWebAppMount(webAppMount);
         setBase(base);
@@ -62,7 +62,7 @@ public abstract class AbstractSingleArchiveResourceSet extends AbstractArchiveRe
 
 
     @Override
-    protected HashMap<String,JarEntry> getArchiveEntries(boolean single) {
+    protected HashMap<String, JarEntry> getArchiveEntries(boolean single) {
         synchronized (archiveLock) {
             if (archiveEntries == null && !single) {
                 JarFile jarFile = null;

@@ -69,12 +69,17 @@ public final class StringUtils {
 
     public static void join(Iterable<String> iterable, char separator, StringBuilder sb) {
         join(iterable, separator,
-                new Function<String>() {@Override public String apply(String t) { return t; }}, sb);
+                new Function<String>() {
+                    @Override
+                    public String apply(String t) {
+                        return t;
+                    }
+                }, sb);
     }
 
 
     public static <T> void join(T[] array, char separator, Function<T> function,
-            StringBuilder sb) {
+                                StringBuilder sb) {
         if (array == null) {
             return;
         }
@@ -83,7 +88,7 @@ public final class StringUtils {
 
 
     public static <T> void join(Iterable<T> iterable, char separator, Function<T> function,
-            StringBuilder sb) {
+                                StringBuilder sb) {
         if (iterable == null) {
             return;
         }

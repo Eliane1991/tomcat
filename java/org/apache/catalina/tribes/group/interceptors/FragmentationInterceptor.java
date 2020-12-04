@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- *
  * The fragmentation interceptor splits up large messages into smaller messages and assembles them on the other end.
  * This is very useful when you don't want large messages hogging the sending sockets
  * and smaller messages can make it through.
@@ -41,23 +40,22 @@ import java.util.Set;
  * FragmentationInterceptor.expire=&lt;milliseconds&gt; - how long do we keep the fragments in memory and wait for the rest to arrive <b>default=60,000ms -&gt; 60seconds</b>
  * This setting is useful to avoid OutOfMemoryErrors<br>
  * FragmentationInterceptor.maxSize=&lt;max message size&gt; - message size in bytes <b>default=1024*100 (around a tenth of a MB)</b><br>
+ *
  * @version 1.0
  */
 public class FragmentationInterceptor extends ChannelInterceptorBase implements FragmentationInterceptorMBean {
-    private static final Log log = LogFactory.getLog(FragmentationInterceptor.class);
     protected static final StringManager sm = StringManager.getManager(FragmentationInterceptor.class);
-
+    private static final Log log = LogFactory.getLog(FragmentationInterceptor.class);
     protected final HashMap<FragKey, FragCollection> fragpieces = new HashMap<>();
-    private int maxSize = 1024*100;
-    private long expire = 1000 * 60; //one minute expiration
     protected final boolean deepclone = true;
-
+    private int maxSize = 1024 * 100;
+    private long expire = 1000 * 60; //one minute expiration
 
     @Override
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         int size = msg.getMessage().getLength();
-        boolean frag = (size>maxSize) && okToProcess(msg.getOptions());
-        if ( frag ) {
+        boolean frag = (size > maxSize) && okToProcess(msg.getOptions());
+        if (frag) {
             frag(destination, msg, payload);
         } else {
             msg.getMessage().append(frag);
@@ -67,9 +65,9 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
 
     @Override
     public void messageReceived(ChannelMessage msg) {
-        boolean isFrag = XByteBuffer.toBoolean(msg.getMessage().getBytesDirect(),msg.getMessage().getLength()-1);
+        boolean isFrag = XByteBuffer.toBoolean(msg.getMessage().getBytesDirect(), msg.getMessage().getLength() - 1);
         msg.getMessage().trim(1);
-        if ( isFrag ) {
+        if (isFrag) {
             defrag(msg);
         } else {
             super.messageReceived(msg);
@@ -79,10 +77,10 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
 
     public FragCollection getFragCollection(FragKey key, ChannelMessage msg) {
         FragCollection coll = fragpieces.get(key);
-        if ( coll == null ) {
+        if (coll == null) {
             synchronized (fragpieces) {
                 coll = fragpieces.get(key);
-                if ( coll == null ) {
+                if (coll == null) {
                     coll = new FragCollection(msg);
                     fragpieces.put(key, coll);
                 }
@@ -95,12 +93,12 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
         fragpieces.remove(key);
     }
 
-    public void defrag(ChannelMessage msg ) {
+    public void defrag(ChannelMessage msg) {
         FragKey key = new FragKey(msg.getUniqueId());
-        FragCollection coll = getFragCollection(key,msg);
-        coll.addMessage((ChannelMessage)msg.deepclone());
+        FragCollection coll = getFragCollection(key, msg);
+        coll.addMessage((ChannelMessage) msg.deepclone());
 
-        if ( coll.complete() ) {
+        if (coll.complete()) {
             removeFragCollection(key);
             ChannelMessage complete = coll.assemble();
             super.messageReceived(complete);
@@ -111,15 +109,15 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
     public void frag(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         int size = msg.getMessage().getLength();
 
-        int count = ((size / maxSize )+(size%maxSize==0?0:1));
+        int count = ((size / maxSize) + (size % maxSize == 0 ? 0 : 1));
         ChannelMessage[] messages = new ChannelMessage[count];
         int remaining = size;
-        for ( int i=0; i<count; i++ ) {
-            ChannelMessage tmp = (ChannelMessage)msg.clone();
-            int offset = (i*maxSize);
-            int length = Math.min(remaining,maxSize);
+        for (int i = 0; i < count; i++) {
+            ChannelMessage tmp = (ChannelMessage) msg.clone();
+            int offset = (i * maxSize);
+            int length = Math.min(remaining, maxSize);
             tmp.getMessage().clear();
-            tmp.getMessage().append(msg.getMessage().getBytesDirect(),offset,length);
+            tmp.getMessage().append(msg.getMessage().getBytesDirect(), offset, length);
             //add the msg nr
             //tmp.getMessage().append(XByteBuffer.toBytes(i),0,4);
             tmp.getMessage().append(i);
@@ -149,9 +147,9 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
                 if (key != null && key.expired(getExpire()))
                     removeFragCollection(key);
             }
-        }catch ( Exception x ) {
-            if ( log.isErrorEnabled() ) {
-                log.error(sm.getString("fragmentationInterceptor.heartbeat.failed"),x);
+        } catch (Exception x) {
+            if (log.isErrorEnabled()) {
+                log.error(sm.getString("fragmentationInterceptor.heartbeat.failed"), x);
             }
         }
         super.heartbeat();
@@ -163,13 +161,13 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
     }
 
     @Override
-    public long getExpire() {
-        return expire;
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
     }
 
     @Override
-    public void setMaxSize(int maxSize) {
-        this.maxSize = maxSize;
+    public long getExpire() {
+        return expire;
     }
 
     @Override
@@ -181,9 +179,10 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
         private final long received = System.currentTimeMillis();
         private final ChannelMessage msg;
         private final XByteBuffer[] frags;
+
         public FragCollection(ChannelMessage msg) {
             //get the total messages
-            int count = XByteBuffer.toInt(msg.getMessage().getBytesDirect(),msg.getMessage().getLength()-4);
+            int count = XByteBuffer.toInt(msg.getMessage().getBytesDirect(), msg.getMessage().getLength() - 4);
             frags = new XByteBuffer[count];
             this.msg = msg;
         }
@@ -192,7 +191,7 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
             //remove the total messages
             msg.getMessage().trim(4);
             //get the msg nr
-            int nr = XByteBuffer.toInt(msg.getMessage().getBytesDirect(),msg.getMessage().getLength()-4);
+            int nr = XByteBuffer.toInt(msg.getMessage().getBytesDirect(), msg.getMessage().getLength() - 4);
             //remove the msg nr
             msg.getMessage().trim(4);
             frags[nr] = msg.getMessage();
@@ -201,17 +200,18 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
 
         public boolean complete() {
             boolean result = true;
-            for ( int i=0; (i<frags.length) && (result); i++ ) result = (frags[i] != null);
+            for (int i = 0; (i < frags.length) && (result); i++) result = (frags[i] != null);
             return result;
         }
 
         public ChannelMessage assemble() {
-            if ( !complete() ) throw new IllegalStateException(sm.getString("fragmentationInterceptor.fragments.missing"));
+            if (!complete())
+                throw new IllegalStateException(sm.getString("fragmentationInterceptor.fragments.missing"));
             int buffersize = 0;
             for (XByteBuffer frag : frags) {
                 buffersize += frag.getLength();
             }
-            XByteBuffer buf = new XByteBuffer(buffersize,false);
+            XByteBuffer buf = new XByteBuffer(buffersize, false);
             msg.setMessage(buf);
             for (XByteBuffer frag : frags) {
                 msg.getMessage().append(frag.getBytesDirect(), 0, frag.getLength());
@@ -220,31 +220,33 @@ public class FragmentationInterceptor extends ChannelInterceptorBase implements 
         }
 
         public boolean expired(long expire) {
-            return (System.currentTimeMillis()-received)>expire;
+            return (System.currentTimeMillis() - received) > expire;
         }
     }
 
     public static class FragKey {
         private final byte[] uniqueId;
         private final long received = System.currentTimeMillis();
-        public FragKey(byte[] id ) {
+
+        public FragKey(byte[] id) {
             this.uniqueId = id;
-        }
-        @Override
-        public int hashCode() {
-            return XByteBuffer.toInt(uniqueId,0);
         }
 
         @Override
-        public boolean equals(Object o ) {
-            if ( o instanceof FragKey ) {
-            return Arrays.equals(uniqueId,((FragKey)o).uniqueId);
-        } else return false;
+        public int hashCode() {
+            return XByteBuffer.toInt(uniqueId, 0);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof FragKey) {
+                return Arrays.equals(uniqueId, ((FragKey) o).uniqueId);
+            } else return false;
 
         }
 
         public boolean expired(long expire) {
-            return (System.currentTimeMillis()-received)>expire;
+            return (System.currentTimeMillis() - received) > expire;
         }
 
     }

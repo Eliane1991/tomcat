@@ -60,7 +60,7 @@ public interface UserDatabase {
     /**
      * Finalize access to this user database.
      *
-     * @exception Exception if any exception is thrown during closing
+     * @throws Exception if any exception is thrown during closing
      */
     public void close() throws Exception;
 
@@ -68,7 +68,7 @@ public interface UserDatabase {
     /**
      * Create and return a new {@link Group} defined in this user database.
      *
-     * @param groupname The group name of the new group (must be unique)
+     * @param groupname   The group name of the new group (must be unique)
      * @param description The description of this group
      * @return The new group
      */
@@ -78,7 +78,7 @@ public interface UserDatabase {
     /**
      * Create and return a new {@link Role} defined in this user database.
      *
-     * @param rolename The role name of the new role (must be unique)
+     * @param rolename    The role name of the new role (must be unique)
      * @param description The description of this role
      * @return The new role
      */
@@ -97,28 +97,25 @@ public interface UserDatabase {
 
 
     /**
-     * @return the {@link Group} with the specified group name, if any;
-     *         otherwise return <code>null</code>.
-     *
      * @param groupname Name of the group to return
+     * @return the {@link Group} with the specified group name, if any;
+     * otherwise return <code>null</code>.
      */
     public Group findGroup(String groupname);
 
 
     /**
-     * @return the {@link Role} with the specified role name, if any; otherwise
-     *         return <code>null</code>.
-     *
      * @param rolename Name of the role to return
+     * @return the {@link Role} with the specified role name, if any; otherwise
+     * return <code>null</code>.
      */
     public Role findRole(String rolename);
 
 
     /**
-     * @return the {@link User} with the specified user name, if any; otherwise
-     *         return <code>null</code>.
-     *
      * @param username Name of the user to return
+     * @return the {@link User} with the specified user name, if any; otherwise
+     * return <code>null</code>.
      */
     public User findUser(String username);
 
@@ -126,7 +123,7 @@ public interface UserDatabase {
     /**
      * Initialize access to this user database.
      *
-     * @exception Exception if any exception is thrown during opening
+     * @throws Exception if any exception is thrown during opening
      */
     public void open() throws Exception;
 
@@ -159,7 +156,7 @@ public interface UserDatabase {
      * Save any updated information to the persistent storage location for this
      * user database.
      *
-     * @exception Exception if any exception is thrown during saving
+     * @throws Exception if any exception is thrown during saving
      */
     public void save() throws Exception;
 

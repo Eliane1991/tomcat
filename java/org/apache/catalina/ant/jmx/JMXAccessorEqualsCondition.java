@@ -19,7 +19,6 @@ package org.apache.catalina.ant.jmx;
 import org.apache.tools.ant.BuildException;
 
 /**
- *
  * Definition
  * <pre>
  *   &lt;path id="catalina_ant"&gt;
@@ -33,7 +32,7 @@ import org.apache.tools.ant.BuildException;
  *       classname="org.apache.catalina.ant.jmx.JMXAccessorEqualsCondition"
  *       classpathref="catalina_ant"/&gt;
  * </pre>
- *
+ * <p>
  * usage: Wait for start backup node
  * <pre>
  *     &lt;target name="wait"&gt;

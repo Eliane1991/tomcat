@@ -45,7 +45,7 @@ public final class PasswdUserDatabase implements UserDatabase {
     /**
      * The set of home directories for all defined users, keyed by username.
      */
-    private final Hashtable<String,String> homes = new Hashtable<>();
+    private final Hashtable<String, String> homes = new Hashtable<>();
 
 
     /**

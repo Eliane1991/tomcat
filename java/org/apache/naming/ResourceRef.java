@@ -25,49 +25,39 @@ import javax.naming.StringRefAddr;
  */
 public class ResourceRef extends AbstractRef {
 
-    private static final long serialVersionUID = 1L;
-
-
     /**
      * Default factory for this reference.
      */
     public static final String DEFAULT_FACTORY =
             org.apache.naming.factory.Constants.DEFAULT_RESOURCE_FACTORY;
-
-
     /**
      * Description address type.
      */
     public static final String DESCRIPTION = "description";
-
-
     /**
      * Scope address type.
      */
     public static final String SCOPE = "scope";
-
-
     /**
      * Auth address type.
      */
     public static final String AUTH = "auth";
-
-
     /**
      * Is this resource a singleton
      */
     public static final String SINGLETON = "singleton";
+    private static final long serialVersionUID = 1L;
 
 
     /**
      * Resource Reference.
      *
      * @param resourceClass Resource class
-     * @param description Description of the resource
-     * @param scope Resource scope
-     * @param auth Resource authentication
-     * @param singleton Is this resource a singleton (every lookup should return
-     *                  the same instance rather than a new instance)?
+     * @param description   Description of the resource
+     * @param scope         Resource scope
+     * @param auth          Resource authentication
+     * @param singleton     Is this resource a singleton (every lookup should return
+     *                      the same instance rather than a new instance)?
      */
     public ResourceRef(String resourceClass, String description,
                        String scope, String auth, boolean singleton) {
@@ -78,13 +68,13 @@ public class ResourceRef extends AbstractRef {
     /**
      * Resource Reference.
      *
-     * @param resourceClass Resource class
-     * @param description Description of the resource
-     * @param scope Resource scope
-     * @param auth Resource authentication
-     * @param singleton Is this resource a singleton (every lookup should return
-     *                  the same instance rather than a new instance)?
-     * @param factory The possibly null class name of the object's factory.
+     * @param resourceClass   Resource class
+     * @param description     Description of the resource
+     * @param scope           Resource scope
+     * @param auth            Resource authentication
+     * @param singleton       Is this resource a singleton (every lookup should return
+     *                        the same instance rather than a new instance)?
+     * @param factory         The possibly null class name of the object's factory.
      * @param factoryLocation The possibly null location from which to load the
      *                        factory (e.g. URL)
      */

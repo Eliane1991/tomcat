@@ -34,7 +34,7 @@ public interface HttpSessionIdListener extends EventListener {
     /**
      * Notification that a session ID has been changed.
      *
-     * @param se the notification event
+     * @param se           the notification event
      * @param oldSessionId the old session ID
      */
     public void sessionIdChanged(HttpSessionEvent se, String oldSessionId);

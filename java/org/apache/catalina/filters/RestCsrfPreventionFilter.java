@@ -70,15 +70,9 @@ import java.util.regex.Pattern;
  * </pre>
  */
 public class RestCsrfPreventionFilter extends CsrfPreventionFilterBase {
-    private enum MethodType {
-        NON_MODIFYING_METHOD, MODIFYING_METHOD
-    }
-
     private static final Pattern NON_MODIFYING_METHODS_PATTERN = Pattern
             .compile("GET|HEAD|OPTIONS");
-
     private Set<String> pathsAcceptingParams = new HashSet<>();
-
     private String pathsDelimiter = ",";
 
     @Override
@@ -105,12 +99,12 @@ public class RestCsrfPreventionFilter extends CsrfPreventionFilterBase {
 
             RestCsrfPreventionStrategy strategy;
             switch (mType) {
-            case NON_MODIFYING_METHOD:
-                strategy = new FetchRequest();
-                break;
-            default:
-                strategy = new StateChangingRequest();
-                break;
+                case NON_MODIFYING_METHOD:
+                    strategy = new FetchRequest();
+                    break;
+                default:
+                    strategy = new StateChangingRequest();
+                    break;
             }
 
             if (!strategy.apply((HttpServletRequest) request, (HttpServletResponse) response)) {
@@ -118,6 +112,33 @@ public class RestCsrfPreventionFilter extends CsrfPreventionFilterBase {
             }
         }
         chain.doFilter(request, response);
+    }
+
+    public Set<String> getPathsAcceptingParams() {
+        return pathsAcceptingParams;
+    }
+
+    /**
+     * A comma separated list of URLs that can accept nonces via request
+     * parameter 'X-CSRF-Token'. For use cases when a nonce information cannot
+     * be provided via header, one can provide it via request parameters. If
+     * there is a X-CSRF-Token header, it will be taken with preference over any
+     * parameter with the same name in the request. Request parameters cannot be
+     * used to fetch new nonce, only header.
+     *
+     * @param pathsList Comma separated list of URLs to be configured as paths
+     *                  accepting request parameters with nonce information.
+     */
+    public void setPathsAcceptingParams(String pathsList) {
+        if (pathsList != null) {
+            for (String element : pathsList.split(pathsDelimiter)) {
+                pathsAcceptingParams.add(element.trim());
+            }
+        }
+    }
+
+    private enum MethodType {
+        NON_MODIFYING_METHOD, MODIFYING_METHOD
     }
 
     private abstract static class RestCsrfPreventionStrategy {
@@ -217,29 +238,5 @@ public class RestCsrfPreventionFilter extends CsrfPreventionFilterBase {
             return true;
         }
 
-    }
-
-    /**
-     * A comma separated list of URLs that can accept nonces via request
-     * parameter 'X-CSRF-Token'. For use cases when a nonce information cannot
-     * be provided via header, one can provide it via request parameters. If
-     * there is a X-CSRF-Token header, it will be taken with preference over any
-     * parameter with the same name in the request. Request parameters cannot be
-     * used to fetch new nonce, only header.
-     *
-     * @param pathsList
-     *            Comma separated list of URLs to be configured as paths
-     *            accepting request parameters with nonce information.
-     */
-    public void setPathsAcceptingParams(String pathsList) {
-        if (pathsList != null) {
-            for (String element : pathsList.split(pathsDelimiter)) {
-                    pathsAcceptingParams.add(element.trim());
-            }
-        }
-    }
-
-    public Set<String> getPathsAcceptingParams() {
-        return pathsAcceptingParams;
     }
 }

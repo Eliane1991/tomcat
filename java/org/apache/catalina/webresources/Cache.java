@@ -30,9 +30,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Cache {
 
-    private static final Log log = LogFactory.getLog(Cache.class);
     protected static final StringManager sm = StringManager.getManager(Cache.class);
-
+    private static final Log log = LogFactory.getLog(Cache.class);
     private static final long TARGET_FREE_PERCENT_GET = 5;
     private static final long TARGET_FREE_PERCENT_BACKGROUND = 10;
 
@@ -41,16 +40,13 @@ public class Cache {
 
     private final StandardRoot root;
     private final AtomicLong size = new AtomicLong(0);
-
+    private final ConcurrentMap<String, CachedResource> resourceCache =
+            new ConcurrentHashMap<>();
     private long ttl = 5000;
     private long maxSize = 10 * 1024 * 1024;
-    private int objectMaxSize = (int) maxSize/OBJECT_MAX_SIZE_FACTOR;
-
+    private int objectMaxSize = (int) maxSize / OBJECT_MAX_SIZE_FACTOR;
     private AtomicLong lookupCount = new AtomicLong(0);
     private AtomicLong hitCount = new AtomicLong(0);
-
-    private final ConcurrentMap<String,CachedResource> resourceCache =
-            new ConcurrentHashMap<>();
 
     public Cache(StandardRoot root) {
         this.root = root;
@@ -287,6 +283,11 @@ public class Cache {
         return hitCount.get();
     }
 
+    public int getObjectMaxSize() {
+        // Internally bytes, externally kilobytes
+        return objectMaxSize / 1024;
+    }
+
     public void setObjectMaxSize(int objectMaxSize) {
         if (objectMaxSize * 1024L > Integer.MAX_VALUE) {
             log.warn(sm.getString("cache.objectMaxSizeTooBigBytes", Integer.valueOf(objectMaxSize)));
@@ -294,11 +295,6 @@ public class Cache {
         }
         // Internally bytes, externally kilobytes
         this.objectMaxSize = objectMaxSize * 1024;
-    }
-
-    public int getObjectMaxSize() {
-        // Internally bytes, externally kilobytes
-        return objectMaxSize / 1024;
     }
 
     public int getObjectMaxSizeBytes() {
@@ -312,7 +308,7 @@ public class Cache {
         }
         if (objectMaxSize > limit) {
             log.warn(sm.getString("cache.objectMaxSizeTooBig",
-                    Integer.valueOf(objectMaxSize / 1024), Integer.valueOf((int)limit / 1024)));
+                    Integer.valueOf(objectMaxSize / 1024), Integer.valueOf((int) limit / 1024)));
             objectMaxSize = (int) limit;
         }
     }

@@ -36,33 +36,6 @@ public class ELContextImpl extends ELContext {
             return null;
         }
     };
-
-    private static final class VariableMapperImpl extends VariableMapper {
-
-        private Map<String, ValueExpression> vars;
-
-        @Override
-        public ValueExpression resolveVariable(String variable) {
-            if (vars == null) {
-                return null;
-            }
-            return vars.get(variable);
-        }
-
-        @Override
-        public ValueExpression setVariable(String variable,
-                ValueExpression expression) {
-            if (vars == null) {
-                vars = new HashMap<>();
-            }
-            if (expression == null) {
-                return vars.remove(variable);
-            } else {
-                return vars.put(variable, expression);
-            }
-        }
-    }
-
     private static final ELResolver DefaultResolver;
 
     static {
@@ -82,9 +55,7 @@ public class ELContextImpl extends ELContext {
     }
 
     private final ELResolver resolver;
-
     private FunctionMapper functionMapper = NullFunctionMapper;
-
     private VariableMapper variableMapper;
 
     public ELContextImpl(ExpressionFactory factory) {
@@ -93,32 +64,6 @@ public class ELContextImpl extends ELContext {
 
     public ELContextImpl(ELResolver resolver) {
         this.resolver = resolver;
-    }
-
-    @Override
-    public ELResolver getELResolver() {
-        return this.resolver;
-    }
-
-    @Override
-    public FunctionMapper getFunctionMapper() {
-        return this.functionMapper;
-    }
-
-    @Override
-    public VariableMapper getVariableMapper() {
-        if (this.variableMapper == null) {
-            this.variableMapper = new VariableMapperImpl();
-        }
-        return this.variableMapper;
-    }
-
-    public void setFunctionMapper(FunctionMapper functionMapper) {
-        this.functionMapper = functionMapper;
-    }
-
-    public void setVariableMapper(VariableMapper variableMapper) {
-        this.variableMapper = variableMapper;
     }
 
     public static ELResolver getDefaultResolver(ExpressionFactory factory) {
@@ -134,6 +79,58 @@ public class ELContextImpl extends ELContext {
             return defaultResolver;
         } else {
             return DefaultResolver;
+        }
+    }
+
+    @Override
+    public ELResolver getELResolver() {
+        return this.resolver;
+    }
+
+    @Override
+    public FunctionMapper getFunctionMapper() {
+        return this.functionMapper;
+    }
+
+    public void setFunctionMapper(FunctionMapper functionMapper) {
+        this.functionMapper = functionMapper;
+    }
+
+    @Override
+    public VariableMapper getVariableMapper() {
+        if (this.variableMapper == null) {
+            this.variableMapper = new VariableMapperImpl();
+        }
+        return this.variableMapper;
+    }
+
+    public void setVariableMapper(VariableMapper variableMapper) {
+        this.variableMapper = variableMapper;
+    }
+
+    private static final class VariableMapperImpl extends VariableMapper {
+
+        private Map<String, ValueExpression> vars;
+
+        @Override
+        public ValueExpression resolveVariable(String variable) {
+            if (vars == null) {
+                return null;
+            }
+            return vars.get(variable);
+        }
+
+        @Override
+        public ValueExpression setVariable(String variable,
+                                           ValueExpression expression) {
+            if (vars == null) {
+                vars = new HashMap<>();
+            }
+            if (expression == null) {
+                return vars.remove(variable);
+            } else {
+                return vars.put(variable, expression);
+            }
         }
     }
 }

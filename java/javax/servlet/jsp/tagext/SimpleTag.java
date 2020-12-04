@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package javax.servlet.jsp.tagext;
 
 import javax.servlet.jsp.JspContext;
@@ -82,30 +82,20 @@ public interface SimpleTag extends JspTag {
      * variables (defined by the associated tag file, TagExtraInfo, or TLD)
      * after the invocation of doTag().
      *
-     * @throws javax.servlet.jsp.JspException If an error occurred
-     *     while processing this tag.
+     * @throws javax.servlet.jsp.JspException      If an error occurred
+     *                                             while processing this tag.
      * @throws javax.servlet.jsp.SkipPageException If the page that
-     *     (either directly or indirectly) invoked this tag is to
-     *     cease evaluation.  A Simple Tag Handler generated from a
-     *     tag file must throw this exception if an invoked Classic
-     *     Tag Handler returned SKIP_PAGE or if an invoked Simple
-     *     Tag Handler threw SkipPageException or if an invoked Jsp Fragment
-     *     threw a SkipPageException.
-     * @throws java.io.IOException If there was an error writing to the
-     *     output stream.
+     *                                             (either directly or indirectly) invoked this tag is to
+     *                                             cease evaluation.  A Simple Tag Handler generated from a
+     *                                             tag file must throw this exception if an invoked Classic
+     *                                             Tag Handler returned SKIP_PAGE or if an invoked Simple
+     *                                             Tag Handler threw SkipPageException or if an invoked Jsp Fragment
+     *                                             threw a SkipPageException.
+     * @throws java.io.IOException                 If there was an error writing to the
+     *                                             output stream.
      */
     public void doTag()
-        throws javax.servlet.jsp.JspException, java.io.IOException;
-
-    /**
-     * Sets the parent of this tag, for collaboration purposes.
-     * <p>
-     * The container invokes this method only if this tag invocation is
-     * nested within another tag invocation.
-     *
-     * @param parent the tag that encloses this tag
-     */
-    public void setParent( JspTag parent );
+            throws javax.servlet.jsp.JspException, java.io.IOException;
 
     /**
      * Returns the parent of this tag, for collaboration purposes.
@@ -115,6 +105,16 @@ public interface SimpleTag extends JspTag {
     public JspTag getParent();
 
     /**
+     * Sets the parent of this tag, for collaboration purposes.
+     * <p>
+     * The container invokes this method only if this tag invocation is
+     * nested within another tag invocation.
+     *
+     * @param parent the tag that encloses this tag
+     */
+    public void setParent(JspTag parent);
+
+    /**
      * Called by the container to provide this tag handler with
      * the <code>JspContext</code> for this invocation.
      * An implementation should save this value.
@@ -122,7 +122,7 @@ public interface SimpleTag extends JspTag {
      * @param pc the page context for this invocation
      * @see Tag#setPageContext
      */
-    public void setJspContext( JspContext pc );
+    public void setJspContext(JspContext pc);
 
     /**
      * Provides the body of this tag as a JspFragment object, able to be
@@ -134,7 +134,7 @@ public interface SimpleTag extends JspTag {
      *
      * @param jspBody The fragment encapsulating the body of this tag.
      */
-    public void setJspBody( JspFragment jspBody );
+    public void setJspBody(JspFragment jspBody);
 
 
 }

@@ -54,21 +54,20 @@ public class CopyParentClassLoaderRule extends Rule {
      * Handle the beginning of an XML element.
      *
      * @param attributes The attributes of this element
-     *
-     * @exception Exception if a processing error occurs
+     * @throws Exception if a processing error occurs
      */
     @Override
     public void begin(String namespace, String name, Attributes attributes)
-        throws Exception {
+            throws Exception {
 
         if (digester.getLogger().isDebugEnabled())
             digester.getLogger().debug("Copying parent class loader");
         Container child = (Container) digester.peek(0);
         Object parent = digester.peek(1);
         Method method =
-            parent.getClass().getMethod("getParentClassLoader", new Class[0]);
+                parent.getClass().getMethod("getParentClassLoader", new Class[0]);
         ClassLoader classLoader =
-            (ClassLoader) method.invoke(parent, new Object[0]);
+                (ClassLoader) method.invoke(parent, new Object[0]);
         child.setParentClassLoader(classLoader);
 
     }

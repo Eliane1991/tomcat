@@ -52,7 +52,7 @@ public class WsRemoteEndpointImplServer extends WsRemoteEndpointImplBase {
     private volatile long timeoutExpiry = -1;
 
     public WsRemoteEndpointImplServer(SocketWrapperBase<?> socketWrapper, UpgradeInfo upgradeInfo,
-            WsServerContainer serverContainer) {
+                                      WsServerContainer serverContainer) {
         this.socketWrapper = socketWrapper;
         this.upgradeInfo = upgradeInfo;
         this.wsWriteTimeout = serverContainer.getTimeout();
@@ -67,7 +67,7 @@ public class WsRemoteEndpointImplServer extends WsRemoteEndpointImplBase {
 
     @Override
     protected void doWrite(SendHandler handler, long blockingWriteTimeoutExpiry,
-            ByteBuffer... buffers) {
+                           ByteBuffer... buffers) {
         if (blockingWriteTimeoutExpiry == -1) {
             this.handler = handler;
             this.buffers = buffers;
@@ -207,13 +207,12 @@ public class WsRemoteEndpointImplServer extends WsRemoteEndpointImplBase {
 
 
     /**
-     *
-     * @param t             The throwable associated with any error that
-     *                      occurred
-     * @param useDispatch   Should {@link SendHandler#onResult(SendResult)} be
-     *                      called from a new thread, keeping in mind the
-     *                      requirements of
-     *                      {@link javax.websocket.RemoteEndpoint.Async}
+     * @param t           The throwable associated with any error that
+     *                    occurred
+     * @param useDispatch Should {@link SendHandler#onResult(SendResult)} be
+     *                    called from a new thread, keeping in mind the
+     *                    requirements of
+     *                    {@link javax.websocket.RemoteEndpoint.Async}
      */
     private void clearHandler(Throwable t, boolean useDispatch) {
         // Setting the result marks this (partial) message as

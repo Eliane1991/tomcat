@@ -26,9 +26,11 @@ public final class InstanceManagerBindings {
     public static final void bind(ClassLoader classLoader, InstanceManager instanceManager) {
         bindings.put(classLoader, instanceManager);
     }
+
     public static final void unbind(ClassLoader classLoader) {
         bindings.remove(classLoader);
     }
+
     public static final InstanceManager get(ClassLoader classLoader) {
         return bindings.get(classLoader);
     }

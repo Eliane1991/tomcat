@@ -17,7 +17,6 @@
 package org.apache.tomcat.util.descriptor.web;
 
 
-
 /**
  * Representation of a resource reference for a web application, as
  * represented in a <code>&lt;resource-ref&gt;</code> element in the
@@ -38,6 +37,25 @@ public class ContextResource extends ResourceBase {
      * (<code>Application</code> or <code>Container</code>).
      */
     private String auth = null;
+    /**
+     * The sharing scope of this resource factory (<code>Shareable</code>
+     * or <code>Unshareable</code>).
+     */
+    private String scope = "Shareable";
+    /**
+     * Is this resource known to be a singleton resource. The default value is
+     * true since this is what users expect although the JavaEE spec implies
+     * that the default should be false.
+     */
+    private boolean singleton = true;
+    /**
+     * The name of the zero argument method to be called when the resource is
+     * no longer required to clean-up resources. This method must only speed up
+     * the clean-up of resources that would otherwise happen via garbage
+     * collection.
+     */
+    private String closeMethod = null;
+    private boolean closeMethodConfigured = false;
 
     public String getAuth() {
         return this.auth;
@@ -47,12 +65,6 @@ public class ContextResource extends ResourceBase {
         this.auth = auth;
     }
 
-    /**
-     * The sharing scope of this resource factory (<code>Shareable</code>
-     * or <code>Unshareable</code>).
-     */
-    private String scope = "Shareable";
-
     public String getScope() {
         return this.scope;
     }
@@ -61,14 +73,6 @@ public class ContextResource extends ResourceBase {
         this.scope = scope;
     }
 
-
-    /**
-     * Is this resource known to be a singleton resource. The default value is
-     * true since this is what users expect although the JavaEE spec implies
-     * that the default should be false.
-     */
-    private boolean singleton = true;
-
     public boolean getSingleton() {
         return singleton;
     }
@@ -76,16 +80,6 @@ public class ContextResource extends ResourceBase {
     public void setSingleton(boolean singleton) {
         this.singleton = singleton;
     }
-
-
-    /**
-     * The name of the zero argument method to be called when the resource is
-     * no longer required to clean-up resources. This method must only speed up
-     * the clean-up of resources that would otherwise happen via garbage
-     * collection.
-     */
-    private String closeMethod = null;
-    private boolean closeMethodConfigured = false;
 
     public String getCloseMethod() {
         return closeMethod;

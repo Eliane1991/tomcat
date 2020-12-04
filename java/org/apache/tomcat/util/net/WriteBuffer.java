@@ -78,9 +78,8 @@ public class WriteBuffer {
      *
      * @param prefixes The additional ByteBuffers to add to the start of the
      *                 array
-     *
      * @return an array of ByteBuffers from the current WriteBuffer prefixed by
-     *         the provided ByteBuffers
+     * the provided ByteBuffers
      */
     ByteBuffer[] toArray(ByteBuffer... prefixes) {
         List<ByteBuffer> result = new ArrayList<>();

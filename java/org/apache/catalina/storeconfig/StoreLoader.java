@@ -50,8 +50,8 @@ import java.net.URL;
  *       </Registry>
  * }
  * </pre>
- *
- *
+ * <p>
+ * <p>
  * Convention:
  * <ul>
  * <li>Factories at subpackage <i>org.apache.catalina.core.storeconfig.xxxSF
@@ -82,26 +82,12 @@ public class StoreLoader {
 
     private StoreRegistry registry;
 
-    private URL registryResource ;
-
-    /**
-     * @return Returns the registry.
-     */
-    public StoreRegistry getRegistry() {
-        return registry;
-    }
-
-    /**
-     * @param registry
-     *            The registry to set.
-     */
-    public void setRegistry(StoreRegistry registry) {
-        this.registry = registry;
-    }
+    private URL registryResource;
 
     /**
      * Create and configure the Digester we will be using for setup store
      * registry.
+     *
      * @return the XML digester that will be used to parse the configuration
      */
     protected static Digester createDigester() {
@@ -140,10 +126,47 @@ public class StoreLoader {
     }
 
     /**
+     * @return the catalina.home environment variable.
+     */
+    private static String getCatalinaHome() {
+        return System.getProperty("catalina.home", System
+                .getProperty("user.dir"));
+    }
+
+    /**
+     * @return the catalina.base environment variable.
+     */
+    private static String getCatalinaBase() {
+        return System.getProperty("catalina.base", getCatalinaHome());
+    }
+
+    /**
+     * @return the configuration URL.
+     */
+    private static String getConfigUrl() {
+        return System.getProperty("catalina.storeconfig");
+    }
+
+    /**
+     * @return Returns the registry.
+     */
+    public StoreRegistry getRegistry() {
+        return registry;
+    }
+
+    /**
+     * @param registry The registry to set.
+     */
+    public void setRegistry(StoreRegistry registry) {
+        this.registry = registry;
+    }
+
+    /**
      * Find main configuration file.
+     *
      * @param aFile File name, absolute or relative
-     *  to <code>${catalina.base}/conf</code>, if not specified
-     *  <code>server-registry.xml</code> is used
+     *              to <code>${catalina.base}/conf</code>, if not specified
+     *              <code>server-registry.xml</code> is used
      * @return The file
      */
     protected File serverFile(String aFile) {
@@ -194,7 +217,7 @@ public class StoreLoader {
     public void load() {
 
         InputStream is = null;
-        registryResource = null ;
+        registryResource = null;
         try {
             String configUrl = getConfigUrl();
             if (configUrl != null) {
@@ -228,7 +251,7 @@ public class StoreLoader {
                 if (log.isDebugEnabled())
                     log.debug("Find registry server-registry.xml at classpath resource");
                 registryResource = StoreLoader.class
-                    .getResource("/org/apache/catalina/storeconfig/server-registry.xml");
+                        .getResource("/org/apache/catalina/storeconfig/server-registry.xml");
 
             } catch (Throwable t) {
                 // Ignore
@@ -251,28 +274,6 @@ public class StoreLoader {
         if (is == null) {
             log.error("Failed to load server-registry.xml");
         }
-    }
-
-    /**
-     * @return the catalina.home environment variable.
-     */
-    private static String getCatalinaHome() {
-        return System.getProperty("catalina.home", System
-                .getProperty("user.dir"));
-    }
-
-    /**
-     * @return the catalina.base environment variable.
-     */
-    private static String getCatalinaBase() {
-        return System.getProperty("catalina.base", getCatalinaHome());
-    }
-
-    /**
-     * @return the configuration URL.
-     */
-    private static String getConfigUrl() {
-        return System.getProperty("catalina.storeconfig");
     }
 
     /**

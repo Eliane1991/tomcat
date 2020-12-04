@@ -25,11 +25,11 @@ public class LambdaExpression {
 
     private final List<String> formalParameters;
     private final ValueExpression expression;
-    private final Map<String,Object> nestedArguments = new HashMap<>();
+    private final Map<String, Object> nestedArguments = new HashMap<>();
     private ELContext context = null;
 
     public LambdaExpression(List<String> formalParameters,
-            ValueExpression expression) {
+                            ValueExpression expression) {
         this.formalParameters = formalParameters;
         this.expression = expression;
 
@@ -87,6 +87,6 @@ public class LambdaExpression {
     }
 
     public java.lang.Object invoke(Object... args) {
-        return invoke (context, args);
+        return invoke(context, args);
     }
 }

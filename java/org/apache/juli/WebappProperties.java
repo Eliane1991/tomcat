@@ -30,7 +30,7 @@ public interface WebappProperties {
      * any, associated with the class loader.
      *
      * @return The name to use for the web application or null if none is
-     *         available.
+     * available.
      */
     String getWebappName();
 
@@ -58,8 +58,8 @@ public interface WebappProperties {
      * have permission to do when running under a SecurityManager.
      *
      * @return {@code true} if the web application includes a logging
-     *         configuration at the standard location of
-     *         /WEB-INF/classes/logging.properties.
+     * configuration at the standard location of
+     * /WEB-INF/classes/logging.properties.
      */
     boolean hasLoggingConfig();
 }

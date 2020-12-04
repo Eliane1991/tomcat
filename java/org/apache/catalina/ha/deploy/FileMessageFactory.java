@@ -41,15 +41,13 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version 1.0
  */
 public class FileMessageFactory {
-    /*--Static Variables----------------------------------------*/
-    private static final Log log = LogFactory.getLog(FileMessageFactory.class);
-    private static final StringManager sm = StringManager.getManager(FileMessageFactory.class);
-
     /**
      * The number of bytes that we read from file
      */
     public static final int READ_SIZE = 1024 * 10; //10kb
-
+    /*--Static Variables----------------------------------------*/
+    private static final Log log = LogFactory.getLog(FileMessageFactory.class);
+    private static final StringManager sm = StringManager.getManager(FileMessageFactory.class);
     /**
      * The file that we are reading/writing
      */
@@ -60,49 +58,40 @@ public class FileMessageFactory {
      * reading with this factory
      */
     protected final boolean openForWrite;
-
-    /**
-     * Once the factory is used, it cannot be reused.
-     */
-    protected boolean closed = false;
-
-    /**
-     * When openForWrite=false, the input stream is held by this variable
-     */
-    protected FileInputStream in;
-
-    /**
-     * When openForWrite=true, the output stream is held by this variable
-     */
-    protected FileOutputStream out;
-
-    /**
-     * The number of messages we have written
-     */
-    protected int nrOfMessagesProcessed = 0;
-
-    /**
-     * The total size of the file
-     */
-    protected long size = 0;
-
-    /**
-     * The total number of packets that we split this file into
-     */
-    protected long totalNrOfMessages = 0;
-
-    /**
-     * The number of the last message processed. Message IDs are 1 based.
-     */
-    protected AtomicLong lastMessageProcessed = new AtomicLong(0);
-
     /**
      * Messages received out of order are held in the buffer until required. If
      * everything is worked as expected, messages will spend very little time in
      * the buffer.
      */
     protected final Map<Long, FileMessage> msgBuffer = new ConcurrentHashMap<>();
-
+    /**
+     * Once the factory is used, it cannot be reused.
+     */
+    protected boolean closed = false;
+    /**
+     * When openForWrite=false, the input stream is held by this variable
+     */
+    protected FileInputStream in;
+    /**
+     * When openForWrite=true, the output stream is held by this variable
+     */
+    protected FileOutputStream out;
+    /**
+     * The number of messages we have written
+     */
+    protected int nrOfMessagesProcessed = 0;
+    /**
+     * The total size of the file
+     */
+    protected long size = 0;
+    /**
+     * The total number of packets that we split this file into
+     */
+    protected long totalNrOfMessages = 0;
+    /**
+     * The number of the last message processed. Message IDs are 1 based.
+     */
+    protected AtomicLong lastMessageProcessed = new AtomicLong(0);
     /**
      * The bytes that we hold the data in, not thread safe.
      */
@@ -131,16 +120,14 @@ public class FileMessageFactory {
      * When openForWrite==false, an input stream is opened, the file has to
      * exist.
      *
-     * @param f
-     *            File - the file to be read/written
-     * @param openForWrite
-     *            boolean - true means we are writing to the file, false means
-     *            we are reading from the file
+     * @param f            File - the file to be read/written
+     * @param openForWrite boolean - true means we are writing to the file, false means
+     *                     we are reading from the file
      * @throws FileNotFoundException -
-     *             if the file to be read doesn't exist
-     * @throws IOException -
-     *             if the system fails to open input/output streams to the file
-     *             or if it fails to create the file to be written to.
+     *                               if the file to be read doesn't exist
+     * @throws IOException           -
+     *                               if the system fails to open input/output streams to the file
+     *                               or if it fails to create the file to be written to.
      */
     private FileMessageFactory(File f, boolean openForWrite)
             throws FileNotFoundException, IOException {
@@ -167,21 +154,48 @@ public class FileMessageFactory {
      * the readMessage can be invoked, and when opening for write the
      * writeMessage can be invoked.
      *
-     * @param f
-     *            File - the file to be read or written
-     * @param openForWrite
-     *            boolean - true, means we are writing to the file, false means
-     *            we are reading from it
-     * @throws FileNotFoundException -
-     *             if the file to be read doesn't exist
-     * @throws IOException -
-     *             if it fails to create the file that is to be written
+     * @param f            File - the file to be read or written
+     * @param openForWrite boolean - true, means we are writing to the file, false means
+     *                     we are reading from it
      * @return FileMessageFactory
+     * @throws FileNotFoundException -
+     *                               if the file to be read doesn't exist
+     * @throws IOException           -
+     *                               if it fails to create the file that is to be written
      */
     public static FileMessageFactory getInstance(File f, boolean openForWrite)
             throws FileNotFoundException, IOException {
         return new FileMessageFactory(f, openForWrite);
     }
+
+    /**
+     * Example usage.
+     *
+     * @param args String[], args[0] - read from filename, args[1] write to
+     *             filename
+     * @throws Exception An error occurred
+     */
+    public static void main(String[] args) throws Exception {
+        System.out.println("Usage: FileMessageFactory fileToBeRead fileToBeWritten");
+        System.out.println("Usage: This will make a copy of the file on the local file system");
+        FileMessageFactory read = getInstance(new File(args[0]), false);
+        FileMessageFactory write = getInstance(new File(args[1]), true);
+        FileMessage msg = new FileMessage(null, args[0], args[0]);
+        msg = read.readMessage(msg);
+        if (msg == null) {
+            System.out.println("Empty input file : " + args[0]);
+            return;
+        }
+        System.out.println("Expecting to write " + msg.getTotalNrOfMsgs()
+                + " messages.");
+        int cnt = 0;
+        while (msg != null) {
+            write.writeMessage(msg);
+            cnt++;
+            msg = read.readMessage(msg);
+        }//while
+        System.out.println("Actually wrote " + cnt + " messages.");
+    }///main
 
     /**
      * Reads file data into the file message and sets the size, totalLength,
@@ -192,14 +206,13 @@ public class FileMessageFactory {
      * factory are thread safe. Don't hand off the message to one thread and
      * read the same with another.
      *
-     * @param f
-     *            FileMessage - the message to be populated with file data
-     * @throws IllegalArgumentException -
-     *             if the factory is for writing or is closed
-     * @throws IOException -
-     *             if a file read exception occurs
+     * @param f FileMessage - the message to be populated with file data
      * @return FileMessage - returns the same message passed in as a parameter,
-     *         or null if EOF
+     * or null if EOF
+     * @throws IllegalArgumentException -
+     *                                  if the factory is for writing or is closed
+     * @throws IOException              -
+     *                                  if a file read exception occurs
      */
     public FileMessage readMessage(FileMessage f)
             throws IllegalArgumentException, IOException {
@@ -220,14 +233,13 @@ public class FileMessageFactory {
      * Writes a message to file. If (msg.getMessageNumber() ==
      * msg.getTotalNrOfMsgs()) the output stream will be closed after writing.
      *
-     * @param msg
-     *            FileMessage - message containing data to be written
-     * @throws IllegalArgumentException -
-     *             if the factory is opened for read or closed
-     * @throws IOException -
-     *             if a file write error occurs
+     * @param msg FileMessage - message containing data to be written
      * @return returns true if the file is complete and outputstream is closed,
-     *         false otherwise.
+     * false otherwise.
+     * @throws IllegalArgumentException -
+     *                                  if the factory is opened for read or closed
+     * @throws IOException              -
+     *                                  if a file write error occurs
      */
     public boolean writeMessage(FileMessage msg)
             throws IllegalArgumentException, IOException {
@@ -246,7 +258,7 @@ public class FileMessageFactory {
         }
 
         FileMessage previous =
-            msgBuffer.put(Long.valueOf(msg.getMessageNumber()), msg);
+                msgBuffer.put(Long.valueOf(msg.getMessageNumber()), msg);
         if (previous != null) {
             // Duplicate of message not yet processed
             log.warn(sm.getString("fileMessageFactory.duplicateMessage", msg.getContextName(), msg.getFileName(),
@@ -277,9 +289,9 @@ public class FileMessageFactory {
                 cleanup();
                 return true;
             }
-            synchronized(this) {
+            synchronized (this) {
                 next =
-                    msgBuffer.get(Long.valueOf(lastMessageProcessed.get() + 1));
+                        msgBuffer.get(Long.valueOf(lastMessageProcessed.get() + 1));
                 if (next == null) {
                     isWriting = false;
                 }
@@ -337,36 +349,6 @@ public class FileMessageFactory {
             throw new IllegalArgumentException(sm.getString("fileMessageFactory.closed"));
         }
     }
-
-    /**
-     * Example usage.
-     *
-     * @param args
-     *            String[], args[0] - read from filename, args[1] write to
-     *            filename
-     * @throws Exception An error occurred
-     */
-    public static void main(String[] args) throws Exception {
-        System.out.println("Usage: FileMessageFactory fileToBeRead fileToBeWritten");
-        System.out.println("Usage: This will make a copy of the file on the local file system");
-        FileMessageFactory read = getInstance(new File(args[0]), false);
-        FileMessageFactory write = getInstance(new File(args[1]), true);
-        FileMessage msg = new FileMessage(null, args[0], args[0]);
-        msg = read.readMessage(msg);
-        if (msg == null) {
-            System.out.println("Empty input file : " + args[0]);
-            return;
-        }
-        System.out.println("Expecting to write " + msg.getTotalNrOfMsgs()
-                + " messages.");
-        int cnt = 0;
-        while (msg != null) {
-            write.writeMessage(msg);
-            cnt++;
-            msg = read.readMessage(msg);
-        }//while
-        System.out.println("Actually wrote " + cnt + " messages.");
-    }///main
 
     public File getFile() {
         return file;

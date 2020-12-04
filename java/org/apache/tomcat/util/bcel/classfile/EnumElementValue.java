@@ -19,8 +19,7 @@ package org.apache.tomcat.util.bcel.classfile;
 
 import org.apache.tomcat.util.bcel.Const;
 
-public class EnumElementValue extends ElementValue
-{
+public class EnumElementValue extends ElementValue {
     private final int valueIdx;
 
     EnumElementValue(final int type, final int valueIdx, final ConstantPool cpool) {
@@ -32,8 +31,7 @@ public class EnumElementValue extends ElementValue
     }
 
     @Override
-    public String stringifyValue()
-    {
+    public String stringifyValue() {
         final ConstantUtf8 cu8 = (ConstantUtf8) super.getConstantPool().getConstant(valueIdx,
                 Const.CONSTANT_Utf8);
         return cu8.getBytes();

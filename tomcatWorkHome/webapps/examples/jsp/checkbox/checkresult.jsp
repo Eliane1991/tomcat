@@ -17,49 +17,49 @@
 <html>
 <body bgcolor="white">
 <font size=5 color="red">
-<%! String[] fruits; %>
-<jsp:useBean id="foo" scope="page" class="checkbox.CheckTest" />
+    <%! String[] fruits; %>
+    <jsp:useBean id="foo" scope="page" class="checkbox.CheckTest"/>
 
-<jsp:setProperty name="foo" property="fruit" param="fruit" />
-<hr>
-The checked fruits (got using request) are: <br>
-<%
-    fruits = request.getParameterValues("fruit");
-%>
-<ul>
-<%
-    if (fruits != null) {
-        for (String fruit : fruits) {
-%>
-<li>
-<%
+    <jsp:setProperty name="foo" property="fruit" param="fruit"/>
+    <hr>
+    The checked fruits (got using request) are: <br>
+    <%
+        fruits = request.getParameterValues("fruit");
+    %>
+    <ul>
+        <%
+            if (fruits != null) {
+                for (String fruit : fruits) {
+        %>
+        <li>
+                <%
             out.println (util.HTMLFilter.filter(fruit));
         }
     } else out.println ("none selected");
 %>
-</ul>
-<br>
-<hr>
+    </ul>
+    <br>
+    <hr>
 
-The checked fruits (got using beans) are <br>
+    The checked fruits (got using beans) are <br>
 
-<%
+    <%
         fruits = foo.getFruit();
-%>
-<ul>
-<%
-    if (!fruits[0].equals("1")) {
-        for (String fruit : fruits) {
-%>
-<li>
-<%
+    %>
+    <ul>
+        <%
+            if (!fruits[0].equals("1")) {
+                for (String fruit : fruits) {
+        %>
+        <li>
+                <%
             out.println (util.HTMLFilter.filter(fruit));
         }
     } else {
         out.println ("none selected");
     }
 %>
-</ul>
+    </ul>
 </font>
 </body>
 </html>

@@ -29,8 +29,8 @@ import java.io.IOException;
  * long) entry.  Those interested in generating constant pools
  * programmatically should see <a href="../generic/ConstantPoolGen.html">
  * ConstantPoolGen</a>.
-
- * @see     Constant
+ *
+ * @see Constant
  */
 public class ConstantPool {
 
@@ -70,11 +70,11 @@ public class ConstantPool {
     /**
      * Gets constant from constant pool.
      *
-     * @param  index Index in constant pool
+     * @param index Index in constant pool
      * @return Constant value
-     * @see    Constant
+     * @see Constant
      */
-    public Constant getConstant( final int index ) {
+    public Constant getConstant(final int index) {
         if (index >= constantPool.length || index < 0) {
             throw new ClassFormatException("Invalid constant pool reference: " + index
                     + ". Constant pool size is: " + constantPool.length);
@@ -86,13 +86,13 @@ public class ConstantPool {
      * Gets constant from constant pool and check whether it has the
      * expected type.
      *
-     * @param  index Index in constant pool
-     * @param  tag Tag of expected constant, i.e., its type
+     * @param index Index in constant pool
+     * @param tag   Tag of expected constant, i.e., its type
      * @return Constant value
-     * @see    Constant
-     * @throws  ClassFormatException If the constant is not of the expected type
+     * @throws ClassFormatException If the constant is not of the expected type
+     * @see Constant
      */
-    public Constant getConstant( final int index, final byte tag ) throws ClassFormatException {
+    public Constant getConstant(final int index, final byte tag) throws ClassFormatException {
         Constant c;
         c = getConstant(index);
         if (c == null) {

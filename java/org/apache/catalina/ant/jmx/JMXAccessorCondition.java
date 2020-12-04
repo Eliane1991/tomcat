@@ -74,6 +74,7 @@ import org.apache.tools.ant.BuildException;
  * </ul>
  * <b>NOTE</b>:  For numeric expressions the type must be set and use xml entities as operations.<br>
  * As type we currently support <em>long</em> and <em>double</em>.
+ *
  * @author Peter Rossbach
  * @since 5.5.10
  */
@@ -81,8 +82,8 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
 
     // ----------------------------------------------------- Instance Variables
 
-    private String operation = "==" ;
-    private String type = "long" ;
+    private String operation = "==";
+    private String type = "long";
     private String unlessCondition;
     private String ifCondition;
 
@@ -95,6 +96,7 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
     public String getOperation() {
         return operation;
     }
+
     /**
      * @param operation The operation to set.
      */
@@ -108,6 +110,7 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
     public String getType() {
         return type;
     }
+
     /**
      * @param type The type to set.
      */
@@ -121,23 +124,27 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
     public String getIf() {
         return ifCondition;
     }
+
     /**
      * Only execute if a property of the given name exists in the current project.
+     *
      * @param c property name
      */
     public void setIf(String c) {
         ifCondition = c;
     }
 
-   /**
+    /**
      * @return Returns the unlessCondition.
      */
     public String getUnless() {
         return unlessCondition;
     }
+
     /**
      * Only execute if a property of the given name does not
      * exist in the current project.
+     *
      * @param c property name
      */
     public void setUnless(String c) {
@@ -146,6 +153,7 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
 
     /**
      * test the if condition
+     *
      * @return true if there is no if condition, or the named property exists
      */
     protected boolean testIfCondition() {
@@ -157,8 +165,9 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
 
     /**
      * test the unless condition
+     *
      * @return true if there is no unless condition,
-     *  or there is a named property but it doesn't exist
+     * or there is a named property but it doesn't exist
      */
     protected boolean testUnlessCondition() {
         if (unlessCondition == null || "".equals(unlessCondition)) {
@@ -170,6 +179,7 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
     /**
      * This method evaluates the condition
      * It support for operation "&gt;,&gt;=,&lt;,&lt;=" the types <code>long</code> and <code>double</code>.
+     *
      * @return expression <em>jmxValue</em> <em>operation</em> <em>value</em>
      */
     @Override
@@ -225,5 +235,5 @@ public class JMXAccessorCondition extends JMXAccessorConditionBase {
         }
         return true;
     }
- }
+}
 

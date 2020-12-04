@@ -22,21 +22,17 @@ import java.nio.ByteBuffer;
 
 final class Hpack {
 
-    private static final StringManager sm = StringManager.getManager(Hpack.class);
-
-    private static final byte LOWER_DIFF = 'a' - 'A';
     static final int DEFAULT_TABLE_SIZE = 4096;
+    static final HeaderField[] STATIC_TABLE;
+    static final int STATIC_TABLE_LENGTH;
+    private static final StringManager sm = StringManager.getManager(Hpack.class);
+    private static final byte LOWER_DIFF = 'a' - 'A';
     private static final int MAX_INTEGER_OCTETS = 8; //not sure what a good value for this is, but the spec says we need to provide an upper bound
-
     /**
      * table that contains powers of two,
      * used as both bitmask and to quickly calculate 2^n
      */
     private static final int[] PREFIX_TABLE;
-
-
-    static final HeaderField[] STATIC_TABLE;
-    static final int STATIC_TABLE_LENGTH;
 
     static {
         PREFIX_TABLE = new int[32];
@@ -116,20 +112,7 @@ final class Hpack {
         STATIC_TABLE_LENGTH = STATIC_TABLE.length - 1;
     }
 
-    static class HeaderField {
-        final String name;
-        final String value;
-        final int size;
-
-        HeaderField(String name, String value) {
-            this.name = name;
-            this.value = value;
-            if (value != null) {
-                this.size = 32 + name.length() + value.length();
-            } else {
-                this.size = -1;
-            }
-        }
+    private Hpack() {
     }
 
     /**
@@ -158,7 +141,7 @@ final class Hpack {
         } else {
             int m = 0;
             do {
-                if(count++ > MAX_INTEGER_OCTETS) {
+                if (count++ > MAX_INTEGER_OCTETS) {
                     throw new HpackException(sm.getString("hpack.integerEncodedOverTooManyOctets",
                             Integer.valueOf(MAX_INTEGER_OCTETS)));
                 }
@@ -211,6 +194,20 @@ final class Hpack {
         return c;
     }
 
-    private Hpack() {}
+    static class HeaderField {
+        final String name;
+        final String value;
+        final int size;
+
+        HeaderField(String name, String value) {
+            this.name = name;
+            this.value = value;
+            if (value != null) {
+                this.size = 32 + name.length() + value.length();
+            } else {
+                this.size = -1;
+            }
+        }
+    }
 
 }

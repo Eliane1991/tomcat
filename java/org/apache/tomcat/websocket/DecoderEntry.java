@@ -24,7 +24,7 @@ public class DecoderEntry {
     private final Class<? extends Decoder> decoderClazz;
 
     public DecoderEntry(Class<?> clazz,
-            Class<? extends Decoder> decoderClazz) {
+                        Class<? extends Decoder> decoderClazz) {
         this.clazz = clazz;
         this.decoderClazz = decoderClazz;
     }

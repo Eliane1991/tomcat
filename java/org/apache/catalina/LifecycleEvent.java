@@ -27,33 +27,28 @@ import java.util.EventObject;
 public final class LifecycleEvent extends EventObject {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * The event data associated with this event.
+     */
+    private final Object data;
+    /**
+     * The event type this instance represents.
+     */
+    private final String type;
 
 
     /**
      * Construct a new LifecycleEvent with the specified parameters.
      *
      * @param lifecycle Component on which this event occurred
-     * @param type Event type (required)
-     * @param data Event data (if any)
+     * @param type      Event type (required)
+     * @param data      Event data (if any)
      */
     public LifecycleEvent(Lifecycle lifecycle, String type, Object data) {
         super(lifecycle);
         this.type = type;
         this.data = data;
     }
-
-
-    /**
-     * The event data associated with this event.
-     */
-    private final Object data;
-
-
-    /**
-     * The event type this instance represents.
-     */
-    private final String type;
-
 
     /**
      * @return the event data of this event.

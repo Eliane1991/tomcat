@@ -72,13 +72,28 @@ public class CachedResource implements WebResource {
 
 
     public CachedResource(Cache cache, StandardRoot root, String path, long ttl,
-            int objectMaxSizeBytes, boolean usesClassLoaderResources) {
+                          int objectMaxSizeBytes, boolean usesClassLoaderResources) {
         this.cache = cache;
         this.root = root;
         this.webAppPath = path;
         this.ttl = ttl;
         this.objectMaxSizeBytes = objectMaxSizeBytes;
         this.usesClassLoaderResources = usesClassLoaderResources;
+    }
+
+    /*
+     * Mimics the behaviour of FileURLConnection.getInputStream for a directory.
+     * Deliberately uses default locale.
+     */
+    private static InputStream buildInputStream(String[] files) {
+        Arrays.sort(files, Collator.getInstance(Locale.getDefault()));
+        StringBuilder result = new StringBuilder();
+        for (String file : files) {
+            result.append(file);
+            // Every entry is followed by \n including the last
+            result.append('\n');
+        }
+        return new ByteArrayInputStream(result.toString().getBytes(Charset.defaultCharset()));
     }
 
     protected boolean validateResource(boolean useClassLoaderResources) {
@@ -289,13 +304,13 @@ public class CachedResource implements WebResource {
     }
 
     @Override
-    public void setMimeType(String mimeType) {
-        webResource.setMimeType(mimeType);
+    public String getMimeType() {
+        return webResource.getMimeType();
     }
 
     @Override
-    public String getMimeType() {
-        return webResource.getMimeType();
+    public void setMimeType(String mimeType) {
+        webResource.setMimeType(mimeType);
     }
 
     @Override
@@ -404,7 +419,6 @@ public class CachedResource implements WebResource {
         return usesClassLoaderResources;
     }
 
-
     // Assume that the cache entry will always include the content unless the
     // resource content is larger than objectMaxSizeBytes. This isn't always the
     // case but it makes tracking the current cache size easier.
@@ -420,23 +434,6 @@ public class CachedResource implements WebResource {
         return result;
     }
 
-
-    /*
-     * Mimics the behaviour of FileURLConnection.getInputStream for a directory.
-     * Deliberately uses default locale.
-     */
-    private static InputStream buildInputStream(String[] files) {
-        Arrays.sort(files, Collator.getInstance(Locale.getDefault()));
-        StringBuilder result = new StringBuilder();
-        for (String file : files) {
-            result.append(file);
-            // Every entry is followed by \n including the last
-            result.append('\n');
-        }
-        return new ByteArrayInputStream(result.toString().getBytes(Charset.defaultCharset()));
-    }
-
-
     private static class CachedResourceURLStreamHandler extends URLStreamHandler {
 
         private final URL resourceURL;
@@ -447,7 +444,7 @@ public class CachedResource implements WebResource {
         private URL associatedURL = null;
 
         public CachedResourceURLStreamHandler(URL resourceURL, StandardRoot root, String webAppPath,
-                boolean usesClassLoaderResources) {
+                                              boolean usesClassLoaderResources) {
             this.resourceURL = resourceURL;
             this.root = root;
             this.webAppPath = webAppPath;
@@ -490,7 +487,7 @@ public class CachedResource implements WebResource {
         private final URL resourceURL;
 
         protected CachedResourceURLConnection(URL resourceURL, StandardRoot root, String webAppPath,
-                boolean usesClassLoaderResources) {
+                                              boolean usesClassLoaderResources) {
             super(resourceURL);
             this.root = root;
             this.webAppPath = webAppPath;
@@ -546,7 +543,7 @@ public class CachedResource implements WebResource {
         private final URL resourceURL;
 
         protected CachedResourceJarURLConnection(URL resourceURL, StandardRoot root, String webAppPath,
-                boolean usesClassLoaderResources) throws IOException {
+                                                 boolean usesClassLoaderResources) throws IOException {
             super(resourceURL);
             this.root = root;
             this.webAppPath = webAppPath;

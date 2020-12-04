@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
 
 /**
  * RulesSet for digesting implicit.tld files.
- *
+ * <p>
  * Only version information used and short names are allowed.
  */
 @SuppressWarnings("deprecation")

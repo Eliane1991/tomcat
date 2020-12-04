@@ -64,8 +64,8 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
     protected final String inputEncoding;
 
     public SSIServletExternalResolver(ServletContext context,
-            HttpServletRequest req, HttpServletResponse res,
-            boolean isVirtualWebappRelative, int debug, String inputEncoding) {
+                                      HttpServletRequest req, HttpServletResponse res,
+                                      boolean isVirtualWebappRelative, int debug, String inputEncoding) {
         this.context = context;
         this.req = req;
         this.res = res;
@@ -163,12 +163,11 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             if (nameParts[0].equals("PATH")) {
                 requiredParts = 1;
             }
-        }
-        else if (nameParts[0].equals("AUTH")) {
+        } else if (nameParts[0].equals("AUTH")) {
             if (nameParts[1].equals("TYPE")) {
                 retVal = req.getAuthType();
             }
-        } else if(nameParts[0].equals("CONTENT")) {
+        } else if (nameParts[0].equals("CONTENT")) {
             if (nameParts[1].equals("LENGTH")) {
                 long contentLength = req.getContentLengthLong();
                 if (contentLength >= 0) {
@@ -208,20 +207,16 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                                 rv.append(", ");
                                 rv.append(acceptHeaders.nextElement());
                             }
-                        retVal = rv.toString();
-                    }
+                            retVal = rv.toString();
+                        }
                 }
-            }
-            else if (nameParts[1].equals("CONNECTION")) {
+            } else if (nameParts[1].equals("CONNECTION")) {
                 retVal = req.getHeader("Connection");
-            }
-            else if (nameParts[1].equals("HOST")) {
+            } else if (nameParts[1].equals("HOST")) {
                 retVal = req.getHeader("Host");
-            }
-            else if (nameParts[1].equals("REFERER")) {
+            } else if (nameParts[1].equals("REFERER")) {
                 retVal = req.getHeader("Referer");
-            }
-            else if (nameParts[1].equals("USER"))
+            } else if (nameParts[1].equals("USER"))
                 if (nameParts.length == 3)
                     if (nameParts[2].equals("AGENT")) {
                         requiredParts = 3;
@@ -251,11 +246,11 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                         // possible
                         if (req instanceof Request) {
                             try {
-                                requestCharset = ((Request)req).getCoyoteRequest().getCharset();
+                                requestCharset = ((Request) req).getCoyoteRequest().getCharset();
                             } catch (UnsupportedEncodingException e) {
                                 // Ignore
                             }
-                            Connector connector =  ((Request)req).getConnector();
+                            Connector connector = ((Request) req).getConnector();
                             uriCharset = connector.getURICharset();
                             useBodyEncodingForURI = connector.getUseBodyEncodingForURI();
                         }
@@ -276,7 +271,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                     }
                 }
             }
-        } else if(nameParts[0].equals("REMOTE")) {
+        } else if (nameParts[0].equals("REMOTE")) {
             if (nameParts[1].equals("ADDR")) {
                 retVal = req.getRemoteAddr();
             } else if (nameParts[1].equals("HOST")) {
@@ -284,26 +279,24 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             } else if (nameParts[1].equals("IDENT")) {
                 // Not implemented
             } else if (nameParts[1].equals("PORT")) {
-                retVal = Integer.toString( req.getRemotePort());
+                retVal = Integer.toString(req.getRemotePort());
             } else if (nameParts[1].equals("USER")) {
                 retVal = req.getRemoteUser();
             }
-        } else if(nameParts[0].equals("REQUEST")) {
+        } else if (nameParts[0].equals("REQUEST")) {
             if (nameParts[1].equals("METHOD")) {
                 retVal = req.getMethod();
-            }
-            else if (nameParts[1].equals("URI")) {
+            } else if (nameParts[1].equals("URI")) {
                 // If this is an error page, get the original URI
                 retVal = (String) req.getAttribute(
                         RequestDispatcher.FORWARD_REQUEST_URI);
-                if (retVal == null) retVal=req.getRequestURI();
+                if (retVal == null) retVal = req.getRequestURI();
             }
         } else if (nameParts[0].equals("SCRIPT")) {
             String scriptName = req.getServletPath();
             if (nameParts[1].equals("FILENAME")) {
                 retVal = context.getRealPath(scriptName);
-            }
-            else if (nameParts[1].equals("NAME")) {
+            } else if (nameParts[1].equals("NAME")) {
                 retVal = scriptName;
             }
         } else if (nameParts[0].equals("SERVER")) {
@@ -330,7 +323,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             retVal = req.getRequestedSessionId();
         }
         if (requiredParts != nameParts.length) return null;
-            return retVal;
+        return retVal;
     }
 
     @Override
@@ -360,7 +353,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 
 
     protected String getPathWithoutContext(final String contextPath,
-            final String servletPath) {
+                                           final String servletPath) {
         if (servletPath.startsWith(contextPath)) {
             return servletPath.substring(contextPath.length());
         }
@@ -469,7 +462,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 
 
     protected URLConnection getURLConnection(String originalPath,
-            boolean virtual) throws IOException {
+                                             boolean virtual) throws IOException {
         ServletContextAndPath csAndP = getServletContextAndPath(originalPath,
                 virtual);
         ServletContext context = csAndP.getServletContext();
@@ -536,9 +529,9 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             //Assume platform default encoding unless otherwise specified
             String retVal;
             if (inputEncoding == null) {
-                retVal = new String( bytes );
+                retVal = new String(bytes);
             } else {
-                retVal = new String (bytes,
+                retVal = new String(bytes,
                         B2CConverter.getCharset(inputEncoding));
             }
 

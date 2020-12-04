@@ -33,10 +33,9 @@ public class Escape {
      *     &#x27;.</li>
      * </ul>
      *
-     * @param content   The content to escape
-     *
-     * @return  The escaped content or {@code null} if the content was
-     *          {@code null}
+     * @param content The content to escape
+     * @return The escaped content or {@code null} if the content was
+     * {@code null}
      */
     public static String htmlElementContent(String content) {
         if (content == null) {
@@ -72,10 +71,9 @@ public class Escape {
      * Convert the object to a string via {@link Object#toString()} and HTML
      * escape the resulting string for use in HTML content.
      *
-     * @param obj       The object to convert to String and then escape
-     *
+     * @param obj The object to convert to String and then escape
      * @return The escaped content or <code>&quot;?&quot;</code> if obj is
-     *         {@code null}
+     * {@code null}
      */
     public static String htmlElementContext(Object obj) {
         if (obj == null) {
@@ -93,10 +91,9 @@ public class Escape {
     /**
      * Escape content for use in XML.
      *
-     * @param content   The content to escape
-     *
-     * @return  The escaped content or {@code null} if the content was
-     *          {@code null}
+     * @param content The content to escape
+     * @return The escaped content or {@code null} if the content was
+     * {@code null}
      */
     public static String xml(String content) {
         return xml(null, content);
@@ -106,11 +103,10 @@ public class Escape {
     /**
      * Escape content for use in XML.
      *
-     * @param ifNull    The value to return if content is {@code null}
-     * @param content   The content to escape
-     *
-     * @return  The escaped content or the value of {@code ifNull} if the
-     *          content was {@code null}
+     * @param ifNull  The value to return if content is {@code null}
+     * @param content The content to escape
+     * @return The escaped content or the value of {@code ifNull} if the
+     * content was {@code null}
      */
     public static String xml(String ifNull, String content) {
         return xml(ifNull, false, content);
@@ -120,12 +116,11 @@ public class Escape {
     /**
      * Escape content for use in XML.
      *
-     * @param ifNull        The value to return if content is {@code null}
-     * @param escapeCRLF    Should CR and LF also be escaped?
-     * @param content       The content to escape
-     *
-     * @return  The escaped content or the value of ifNull if the content was
-     *          {@code null}
+     * @param ifNull     The value to return if content is {@code null}
+     * @param escapeCRLF Should CR and LF also be escaped?
+     * @param content    The content to escape
+     * @return The escaped content or the value of ifNull if the content was
+     * {@code null}
      */
     public static String xml(String ifNull, boolean escapeCRLF, String content) {
         if (content == null) {
@@ -155,6 +150,6 @@ public class Escape {
             }
         }
 
-        return (sb.length() > content.length()) ? sb.toString(): content;
+        return (sb.length() > content.length()) ? sb.toString() : content;
     }
 }

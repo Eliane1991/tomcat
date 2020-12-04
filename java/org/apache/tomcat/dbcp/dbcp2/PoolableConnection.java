@@ -44,16 +44,25 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
         }
     }
 
-    /** The pool to which I should return. */
+    /**
+     * The pool to which I should return.
+     */
     private final ObjectPool<PoolableConnection> pool;
 
     private final ObjectNameWrapper jmxObjectName;
-
+    /**
+     * SQL_STATE codes considered to signal fatal conditions. Overrides the defaults in
+     * {@link Utils#DISCONNECTION_SQL_CODES} (plus anything starting with {@link Utils#DISCONNECTION_SQL_CODE_PREFIX}).
+     */
+    private final Collection<String> disconnectionSqlCodes;
+    /**
+     * Whether or not to fast fail validation after fatal connection errors
+     */
+    private final boolean fastFailValidation;
     // Use a prepared statement for validation, retaining the last used SQL to
     // check if the validation query has changed.
     private PreparedStatement validationPreparedStatement;
     private String lastValidationSql;
-
     /**
      * Indicate that unrecoverable SQLException was thrown when using this connection. Such a connection should be
      * considered broken and not pass validation in the future.
@@ -61,31 +70,16 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
     private boolean fatalSqlExceptionThrown = false;
 
     /**
-     * SQL_STATE codes considered to signal fatal conditions. Overrides the defaults in
-     * {@link Utils#DISCONNECTION_SQL_CODES} (plus anything starting with {@link Utils#DISCONNECTION_SQL_CODE_PREFIX}).
-     */
-    private final Collection<String> disconnectionSqlCodes;
-
-    /** Whether or not to fast fail validation after fatal connection errors */
-    private final boolean fastFailValidation;
-
-    /**
-     *
-     * @param conn
-     *            my underlying connection
-     * @param pool
-     *            the pool to which I should return when closed
-     * @param jmxObjectName
-     *            JMX name
-     * @param disconnectSqlCodes
-     *            SQL_STATE codes considered fatal disconnection errors
-     * @param fastFailValidation
-     *            true means fatal disconnection errors cause subsequent validations to fail immediately (no attempt to
-     *            run query or isValid)
+     * @param conn               my underlying connection
+     * @param pool               the pool to which I should return when closed
+     * @param jmxObjectName      JMX name
+     * @param disconnectSqlCodes SQL_STATE codes considered fatal disconnection errors
+     * @param fastFailValidation true means fatal disconnection errors cause subsequent validations to fail immediately (no attempt to
+     *                           run query or isValid)
      */
     public PoolableConnection(final Connection conn, final ObjectPool<PoolableConnection> pool,
-            final ObjectName jmxObjectName, final Collection<String> disconnectSqlCodes,
-            final boolean fastFailValidation) {
+                              final ObjectName jmxObjectName, final Collection<String> disconnectSqlCodes,
+                              final boolean fastFailValidation) {
         super(conn);
         this.pool = pool;
         this.jmxObjectName = ObjectNameWrapper.wrap(jmxObjectName);
@@ -102,16 +96,12 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
     }
 
     /**
-     *
-     * @param conn
-     *            my underlying connection
-     * @param pool
-     *            the pool to which I should return when closed
-     * @param jmxName
-     *            JMX name
+     * @param conn    my underlying connection
+     * @param pool    the pool to which I should return when closed
+     * @param jmxName JMX name
      */
     public PoolableConnection(final Connection conn, final ObjectPool<PoolableConnection> pool,
-            final ObjectName jmxName) {
+                              final ObjectName jmxName) {
         this(conn, pool, jmxName, null, true);
     }
 
@@ -249,12 +239,9 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
      * least one row, this method returns successfully. If not, {@code SQLException} is thrown.</li>
      * </ol>
      *
-     * @param sql
-     *            The validation SQL query.
-     * @param timeoutSeconds
-     *            The validation timeout in seconds.
-     * @throws SQLException
-     *             Thrown when validation fails or an SQLException occurs during validation
+     * @param sql            The validation SQL query.
+     * @param timeoutSeconds The validation timeout in seconds.
+     * @throws SQLException Thrown when validation fails or an SQLException occurs during validation
      */
     public void validate(final String sql, int timeoutSeconds) throws SQLException {
         if (fastFailValidation && fatalSqlExceptionThrown) {
@@ -300,8 +287,7 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
      * Utils.DISCONNECTION_SQL_CODE_PREFIX} is considered a disconnection.
      * </p>
      *
-     * @param e
-     *            SQLException to be examined
+     * @param e SQLException to be examined
      * @return true if the exception signals a disconnection
      */
     private boolean isDisconnectionSqlException(final SQLException e) {
@@ -310,7 +296,7 @@ public class PoolableConnection extends DelegatingConnection<Connection> impleme
         if (sqlState != null) {
             fatalException = disconnectionSqlCodes == null
                     ? sqlState.startsWith(Utils.DISCONNECTION_SQL_CODE_PREFIX)
-                            || Utils.DISCONNECTION_SQL_CODES.contains(sqlState)
+                    || Utils.DISCONNECTION_SQL_CODES.contains(sqlState)
                     : disconnectionSqlCodes.contains(sqlState);
             if (!fatalException) {
                 final SQLException nextException = e.getNextException();

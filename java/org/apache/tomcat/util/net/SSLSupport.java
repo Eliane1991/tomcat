@@ -66,8 +66,7 @@ public interface SSLSupport {
      * The cipher suite being used on this connection.
      *
      * @return The name of the cipher suite as returned by the SSL/TLS
-     *        implementation
-     *
+     * implementation
      * @throws IOException If an error occurs trying to obtain the cipher suite
      */
     public String getCipherSuite() throws IOException;
@@ -76,9 +75,8 @@ public interface SSLSupport {
      * The client certificate chain (if any).
      *
      * @return The certificate chain presented by the client with the peer's
-     *         certificate first, followed by those of any certificate
-     *         authorities
-     *
+     * certificate first, followed by those of any certificate
+     * authorities
      * @throws IOException If an error occurs trying to obtain the certificate
      *                     chain
      */
@@ -86,20 +84,19 @@ public interface SSLSupport {
 
     /**
      * Get the keysize.
-     *
+     * <p>
      * What we're supposed to put here is ill-defined by the
      * Servlet spec (S 4.7 again). There are at least 4 potential
      * values that might go here:
-     *
+     * <p>
      * (a) The size of the encryption key
      * (b) The size of the MAC key
      * (c) The size of the key-exchange key
      * (d) The size of the signature key used by the server
-     *
+     * <p>
      * Unfortunately, all of these values are nonsensical.
      *
      * @return The effective key size for the current cipher suite
-     *
      * @throws IOException If an error occurs trying to obtain the key size
      */
     public Integer getKeySize() throws IOException;
@@ -108,17 +105,15 @@ public interface SSLSupport {
      * The current session Id.
      *
      * @return The current SSL/TLS session ID
-     *
      * @throws IOException If an error occurs trying to obtain the session ID
      */
     public String getSessionId() throws IOException;
 
     /**
      * @return the protocol String indicating how the SSL socket was created
-     *  e.g. TLSv1 or TLSv1.2 etc.
-     *
+     * e.g. TLSv1 or TLSv1.2 etc.
      * @throws IOException If an error occurs trying to obtain the protocol
-     *   information from the socket
+     *                     information from the socket
      */
     public String getProtocol() throws IOException;
 }

@@ -19,7 +19,7 @@
   http://www.servlets.com
 --%>
 
-<%@ page import = "num.NumberGuessBean" %>
+<%@ page import="num.NumberGuessBean" %>
 
 <jsp:useBean id="numguess" class="num.NumberGuessBean" scope="session"/>
 <jsp:setProperty name="numguess" property="*"/>
@@ -29,40 +29,44 @@
 <body bgcolor="white">
 <font size=4>
 
-<% if (numguess.getSuccess()) { %>
+    <% if (numguess.getSuccess()) { %>
 
-  Congratulations!  You got it.
-  And after just <%= numguess.getNumGuesses() %> tries.<p>
+    Congratulations! You got it.
+    And after just <%= numguess.getNumGuesses() %> tries.<p>
 
-  <% numguess.reset(); %>
+        <% numguess.reset(); %>
 
-  Care to <a href="numguess.jsp">try again</a>?
+    Care to <a href="numguess.jsp">try again</a>?
 
-<% } else if (numguess.getNumGuesses() == 0) { %>
+        <% } else if (numguess.getNumGuesses() == 0) { %>
 
-  Welcome to the Number Guess game.<p>
+    Welcome to the Number Guess game.
+    <p>
 
-  I'm thinking of a number between 1 and 100.<p>
+        I'm thinking of a number between 1 and 100.
+    <p>
 
-  <form method=get>
-  What's your guess? <input type=text name=guess>
-  <input type=submit value="Submit">
-  </form>
+    <form method=get>
+        What's your guess? <input type=text name=guess>
+        <input type=submit value="Submit">
+    </form>
 
-<% } else { %>
+    <% } else { %>
 
-  Good guess, but nope.  Try <b><%= numguess.getHint() %></b>.
+    Good guess, but nope. Try <b><%= numguess.getHint() %>
+</b>.
 
-  You have made <%= numguess.getNumGuesses() %> guesses.<p>
+    You have made <%= numguess.getNumGuesses() %> guesses.<p>
 
-  I'm thinking of a number between 1 and 100.<p>
+    I'm thinking of a number between 1 and 100.
+    <p>
 
-  <form method=get>
-  What's your guess? <input type=text name=guess>
-  <input type=submit value="Submit">
-  </form>
+    <form method=get>
+        What's your guess? <input type=text name=guess>
+        <input type=submit value="Submit">
+    </form>
 
-<% } %>
+    <% } %>
 
 </font>
 </body>

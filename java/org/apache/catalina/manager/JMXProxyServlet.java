@@ -55,6 +55,7 @@ public class JMXProxyServlet extends HttpServlet {
 
 
     // --------------------------------------------------------- Public Methods
+
     /**
      * Initialize this servlet.
      */
@@ -69,11 +70,10 @@ public class JMXProxyServlet extends HttpServlet {
     /**
      * Process a GET request for the specified resource.
      *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet-specified error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet-specified error occurs
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -197,7 +197,7 @@ public class JMXProxyServlet extends HttpServlet {
 
 
     private void invokeOperation(PrintWriter writer, String onameStr, String op,
-            String[] valuesStr) {
+                                 String[] valuesStr) {
         try {
             Object retVal = invokeOperationInternal(onameStr, op, valuesStr);
             if (retVal != null) {
@@ -217,10 +217,10 @@ public class JMXProxyServlet extends HttpServlet {
      * Parses parameter values from a parameter string.
      *
      * @param paramString The string containing comma-separated
-     *            operation-invocation parameters, or <code>null</code> if there
-     *            are no parameters.
+     *                    operation-invocation parameters, or <code>null</code> if there
+     *                    are no parameters.
      * @return An array of String parameters (empty array if
-     *         <code>paramString</code> was <code>null</code>).
+     * <code>paramString</code> was <code>null</code>).
      */
     private String[] getInvokeParameters(String paramString) {
         if (paramString == null)
@@ -245,11 +245,11 @@ public class JMXProxyServlet extends HttpServlet {
     /**
      * Invokes an operation on an MBean.
      *
-     * @param onameStr The name of the MBean.
-     * @param operation The name of the operation to invoke.
+     * @param onameStr   The name of the MBean.
+     * @param operation  The name of the operation to invoke.
      * @param parameters An array of Strings containing the parameters to the
-     *            operation. They will be converted to the appropriate types to
-     *            call the requested operation.
+     *                   operation. They will be converted to the appropriate types to
+     *                   call the requested operation.
      * @return The value returned by the requested operation.
      */
     @SuppressWarnings("null") // parameters can't be null if signature.length > 0
@@ -258,7 +258,7 @@ public class JMXProxyServlet extends HttpServlet {
         ObjectName oname = new ObjectName(onameStr);
         int paramCount = null == parameters ? 0 : parameters.length;
         MBeanOperationInfo methodInfo = registry.getMethodInfo(oname, operation, paramCount);
-        if(null == methodInfo) {
+        if (null == methodInfo) {
             // getMethodInfo returns null for both "object not found" and "operation not found"
             MBeanInfo info = null;
             try {

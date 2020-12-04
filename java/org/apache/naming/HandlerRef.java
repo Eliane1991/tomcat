@@ -25,62 +25,44 @@ import javax.naming.StringRefAddr;
  */
 public class HandlerRef extends AbstractRef {
 
-    private static final long serialVersionUID = 1L;
-
-
     /**
      * Default factory for this reference.
      */
     public static final String DEFAULT_FACTORY =
             org.apache.naming.factory.Constants.DEFAULT_HANDLER_FACTORY;
-
-
     /**
      * HandlerName address type.
      */
-    public static final String HANDLER_NAME  = "handlername";
-
-
+    public static final String HANDLER_NAME = "handlername";
     /**
      * Handler Classname address type.
      */
-    public static final String HANDLER_CLASS  = "handlerclass";
-
-
+    public static final String HANDLER_CLASS = "handlerclass";
     /**
      * Handler Classname address type.
      */
-    public static final String HANDLER_LOCALPART  = "handlerlocalpart";
-
-
+    public static final String HANDLER_LOCALPART = "handlerlocalpart";
     /**
      * Handler Classname address type.
      */
-    public static final String HANDLER_NAMESPACE  = "handlernamespace";
-
-
+    public static final String HANDLER_NAMESPACE = "handlernamespace";
     /**
      * Handler Classname address type.
      */
-    public static final String HANDLER_PARAMNAME  = "handlerparamname";
-
-
+    public static final String HANDLER_PARAMNAME = "handlerparamname";
     /**
      * Handler Classname address type.
      */
-    public static final String HANDLER_PARAMVALUE  = "handlerparamvalue";
-
-
+    public static final String HANDLER_PARAMVALUE = "handlerparamvalue";
     /**
      * Handler SoapRole address type.
      */
-    public static final String HANDLER_SOAPROLE  = "handlersoaprole";
-
-
+    public static final String HANDLER_SOAPROLE = "handlersoaprole";
     /**
      * Handler PortName address type.
      */
-    public static final String HANDLER_PORTNAME  = "handlerportname";
+    public static final String HANDLER_PORTNAME = "handlerportname";
+    private static final long serialVersionUID = 1L;
 
 
     public HandlerRef(String refname, String handlerClass) {
@@ -89,7 +71,7 @@ public class HandlerRef extends AbstractRef {
 
 
     public HandlerRef(String refname, String handlerClass,
-                    String factory, String factoryLocation) {
+                      String factory, String factoryLocation) {
         super(refname, factory, factoryLocation);
         StringRefAddr refAddr = null;
         if (refname != null) {

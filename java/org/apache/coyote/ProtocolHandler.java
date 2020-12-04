@@ -22,7 +22,7 @@ import java.util.concurrent.Executor;
 
 /**
  * Abstract the protocol implementation, including threading, etc.
- *
+ * <p>
  * This is the main interface to be implemented by a coyote protocol.
  * Adapter is the main interface to be implemented by a coyote servlet
  * container.
@@ -35,6 +35,7 @@ public interface ProtocolHandler {
 
     /**
      * Return the adapter associated with the protocol handler.
+     *
      * @return the adapter
      */
     public Adapter getAdapter();
@@ -116,7 +117,7 @@ public interface ProtocolHandler {
      * Requires APR/native library
      *
      * @return <code>true</code> if this Protocol Handler requires the
-     *         APR/native library, otherwise <code>false</code>
+     * APR/native library, otherwise <code>false</code>
      */
     public boolean isAprRequired();
 
@@ -125,15 +126,17 @@ public interface ProtocolHandler {
      * Does this ProtocolHandler support sendfile?
      *
      * @return <code>true</code> if this Protocol Handler supports sendfile,
-     *         otherwise <code>false</code>
+     * otherwise <code>false</code>
      */
     public boolean isSendfileSupported();
 
 
     public void addSslHostConfig(SSLHostConfig sslHostConfig);
+
     public SSLHostConfig[] findSslHostConfigs();
 
 
     public void addUpgradeProtocol(UpgradeProtocol upgradeProtocol);
+
     public UpgradeProtocol[] findUpgradeProtocols();
 }

@@ -27,13 +27,13 @@ import java.io.PrintStream;
 
 class CaptureLog {
 
+    private final ByteArrayOutputStream baos;
+    private final PrintStream ps;
+
     protected CaptureLog() {
         baos = new ByteArrayOutputStream();
         ps = new PrintStream(baos);
     }
-
-    private final ByteArrayOutputStream baos;
-    private final PrintStream ps;
 
     protected PrintStream getStream() {
         return ps;

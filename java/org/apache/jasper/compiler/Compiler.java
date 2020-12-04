@@ -81,6 +81,7 @@ public abstract class Compiler {
      * return null. Used in development mode for generating detailed error
      * messages. http://bz.apache.org/bugzilla/show_bug.cgi?id=37062.
      * </p>
+     *
      * @return the page nodes
      */
     public Node.Nodes getPageNodes() {
@@ -92,7 +93,7 @@ public abstract class Compiler {
      * Compile the jsp file into equivalent servlet in .java file
      *
      * @return a smap for the current JSP page, if one is generated, null
-     *         otherwise
+     * otherwise
      * @throws Exception Error generating Java source
      */
     protected String[] generateJava() throws Exception {
@@ -191,7 +192,7 @@ public abstract class Compiler {
 
             // Pass 1 - the directives
             Node.Nodes directives =
-                parserCtl.parseDirectives(ctxt.getJspFile());
+                    parserCtl.parseDirectives(ctxt.getJspFile());
             Validator.validateDirectives(this, directives);
 
             // Pass 2 - the whole translation unit
@@ -311,19 +312,21 @@ public abstract class Compiler {
     /**
      * Servlet compilation. This compiles the generated sources into
      * Servlets.
+     *
      * @param smap The SMAP files for source debugging
      * @throws FileNotFoundException Source files not found
-     * @throws JasperException Compilation error
-     * @throws Exception Some other error
+     * @throws JasperException       Compilation error
+     * @throws Exception             Some other error
      */
     protected abstract void generateClass(String[] smap)
             throws FileNotFoundException, JasperException, Exception;
 
     /**
      * Compile the jsp file from the current engine context.
+     *
      * @throws FileNotFoundException Source files not found
-     * @throws JasperException Compilation error
-     * @throws Exception Some other error
+     * @throws JasperException       Compilation error
+     * @throws Exception             Some other error
      */
     public void compile() throws FileNotFoundException, JasperException,
             Exception {
@@ -334,12 +337,11 @@ public abstract class Compiler {
      * Compile the jsp file from the current engine context. As an side- effect,
      * tag files that are referenced by this page are also compiled.
      *
-     * @param compileClass
-     *            If true, generate both .java and .class file If false,
-     *            generate only .java file
+     * @param compileClass If true, generate both .java and .class file If false,
+     *                     generate only .java file
      * @throws FileNotFoundException Source files not found
-     * @throws JasperException Compilation error
-     * @throws Exception Some other error
+     * @throws JasperException       Compilation error
+     * @throws Exception             Some other error
      */
     public void compile(boolean compileClass) throws FileNotFoundException,
             JasperException, Exception {
@@ -350,14 +352,12 @@ public abstract class Compiler {
      * Compile the jsp file from the current engine context. As an side- effect,
      * tag files that are referenced by this page are also compiled.
      *
-     * @param compileClass
-     *            If true, generate both .java and .class file If false,
-     *            generate only .java file
-     * @param jspcMode
-     *            true if invoked from JspC, false otherwise
+     * @param compileClass If true, generate both .java and .class file If false,
+     *                     generate only .java file
+     * @param jspcMode     true if invoked from JspC, false otherwise
      * @throws FileNotFoundException Source files not found
-     * @throws JasperException Compilation error
-     * @throws Exception Some other error
+     * @throws JasperException       Compilation error
+     * @throws Exception             Some other error
      */
     public void compile(boolean compileClass, boolean jspcMode)
             throws FileNotFoundException, JasperException, Exception {
@@ -418,8 +418,9 @@ public abstract class Compiler {
     /**
      * This is a protected method intended to be overridden by subclasses of
      * Compiler. This is used by the compile method to do all the compilation.
+     *
      * @return <code>true</code> if the source generation and compilation
-     *  should occur
+     * should occur
      */
     public boolean isOutDated() {
         return isOutDated(true);
@@ -431,11 +432,10 @@ public abstract class Compiler {
      * has dependencies, the check is also extended to its dependents, and so
      * on. This method can by overridden by a subclasses of Compiler.
      *
-     * @param checkClass
-     *            If true, check against .class file, if false, check against
-     *            .java file.
+     * @param checkClass If true, check against .class file, if false, check against
+     *                   .java file.
      * @return <code>true</code> if the source generation and compilation
-     *  should occur
+     * should occur
      */
     public boolean isOutDated(boolean checkClass) {
 
@@ -488,7 +488,7 @@ public abstract class Compiler {
             return false;
         }
 
-        Map<String,Long> depends = jsw.getDependants();
+        Map<String, Long> depends = jsw.getDependants();
         if (depends == null) {
             return false;
         }
@@ -517,7 +517,7 @@ public abstract class Compiler {
                     URLConnection iuc = includeUrl.openConnection();
                     if (iuc instanceof JarURLConnection) {
                         includeLastModified =
-                            ((JarURLConnection) iuc).getJarEntry().getTime();
+                                ((JarURLConnection) iuc).getJarEntry().getTime();
                     } else {
                         includeLastModified = iuc.getLastModified();
                     }
@@ -577,7 +577,7 @@ public abstract class Compiler {
         } catch (Exception e) {
             // Remove as much as possible, log possible exceptions
             log.warn(Localizer.getMessage("jsp.warning.compiler.classfile.delete.fail.unknown"),
-                     e);
+                    e);
         }
     }
 
@@ -596,7 +596,7 @@ public abstract class Compiler {
         } catch (Exception e) {
             // Remove as much as possible, log possible exceptions
             log.warn(Localizer.getMessage("jsp.warning.compiler.classfile.delete.fail.unknown"),
-                     e);
+                    e);
         }
     }
 }

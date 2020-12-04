@@ -30,6 +30,14 @@ public class StandardSessionFacade implements HttpSession {
     // ----------------------------------------------------------- Constructors
 
     /**
+     * Wrapped session object.
+     */
+    private final HttpSession session;
+
+
+    // ----------------------------------------------------- Instance Variables
+
+    /**
      * Construct a new session facade.
      *
      * @param session The session instance to wrap
@@ -37,14 +45,6 @@ public class StandardSessionFacade implements HttpSession {
     public StandardSessionFacade(HttpSession session) {
         this.session = session;
     }
-
-
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * Wrapped session object.
-     */
-    private final HttpSession session;
 
 
     // ---------------------------------------------------- HttpSession Methods
@@ -72,22 +72,19 @@ public class StandardSessionFacade implements HttpSession {
         return session.getServletContext();
     }
 
+    @Override
+    public int getMaxInactiveInterval() {
+        return session.getMaxInactiveInterval();
+    }
 
     @Override
     public void setMaxInactiveInterval(int interval) {
         session.setMaxInactiveInterval(interval);
     }
 
-
-    @Override
-    public int getMaxInactiveInterval() {
-        return session.getMaxInactiveInterval();
-    }
-
-
     /**
      * @deprecated As of Version 2.1, this method is deprecated and has no
-     *             replacement.
+     * replacement.
      */
     @Override
     @Deprecated
@@ -104,7 +101,7 @@ public class StandardSessionFacade implements HttpSession {
 
     /**
      * @deprecated As of Version 2.2, this method is replaced by
-     *             {@link #getAttribute}.
+     * {@link #getAttribute}.
      */
     @Override
     @Deprecated
@@ -121,7 +118,7 @@ public class StandardSessionFacade implements HttpSession {
 
     /**
      * @deprecated As of Version 2.2, this method is replaced by
-     *             {@link #getAttributeNames}
+     * {@link #getAttributeNames}
      */
     @Override
     @Deprecated
@@ -138,7 +135,7 @@ public class StandardSessionFacade implements HttpSession {
 
     /**
      * @deprecated As of Version 2.2, this method is replaced by
-     *             {@link #setAttribute}
+     * {@link #setAttribute}
      */
     @Override
     @Deprecated
@@ -155,7 +152,7 @@ public class StandardSessionFacade implements HttpSession {
 
     /**
      * @deprecated As of Version 2.2, this method is replaced by
-     *             {@link #removeAttribute}
+     * {@link #removeAttribute}
      */
     @Override
     @Deprecated

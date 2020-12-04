@@ -93,9 +93,8 @@ public interface Group extends Principal {
      * Is this group specifically assigned the specified {@link Role}?
      *
      * @param role The role to check
-     *
      * @return <code>true</code> if the group is assigned to the specified role
-     *         otherwise <code>false</code>
+     * otherwise <code>false</code>
      */
     public boolean isInRole(Role role);
 

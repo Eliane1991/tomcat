@@ -82,7 +82,7 @@ public class TldResourcePath {
      * returned by {@link #getUrl()} was obtained from.
      *
      * @return the web application path or @null if the the resource is not
-     *         located within a web application
+     * located within a web application
      */
     public String getWebappPath() {
         return webappPath;

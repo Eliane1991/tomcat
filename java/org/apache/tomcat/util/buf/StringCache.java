@@ -33,62 +33,42 @@ import java.util.TreeMap;
 public class StringCache {
 
 
-    private static final Log log = LogFactory.getLog(StringCache.class);
-
-
-    // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * Enabled ?
-     */
-    protected static boolean byteEnabled = ("true".equals(System.getProperty(
-            "tomcat.util.buf.StringCache.byte.enabled", "false")));
-
-
-    protected static boolean charEnabled = ("true".equals(System.getProperty(
-            "tomcat.util.buf.StringCache.char.enabled", "false")));
-
-
-    protected static int trainThreshold = Integer.parseInt(System.getProperty(
-            "tomcat.util.buf.StringCache.trainThreshold", "20000"));
-
-
-    protected static int cacheSize = Integer.parseInt(System.getProperty(
-            "tomcat.util.buf.StringCache.cacheSize", "200"));
-
-
     protected static final int maxStringSize =
             Integer.parseInt(System.getProperty(
                     "tomcat.util.buf.StringCache.maxStringSize", "128"));
 
 
-   /**
+    // ------------------------------------------------------- Static Variables
+    private static final Log log = LogFactory.getLog(StringCache.class);
+    /**
+     * Enabled ?
+     */
+    protected static boolean byteEnabled = ("true".equals(System.getProperty(
+            "tomcat.util.buf.StringCache.byte.enabled", "false")));
+    protected static boolean charEnabled = ("true".equals(System.getProperty(
+            "tomcat.util.buf.StringCache.char.enabled", "false")));
+    protected static int trainThreshold = Integer.parseInt(System.getProperty(
+            "tomcat.util.buf.StringCache.trainThreshold", "20000"));
+    protected static int cacheSize = Integer.parseInt(System.getProperty(
+            "tomcat.util.buf.StringCache.cacheSize", "200"));
+    /**
      * Statistics hash map for byte chunk.
      */
-    protected static final HashMap<ByteEntry,int[]> bcStats =
+    protected static final HashMap<ByteEntry, int[]> bcStats =
             new HashMap<>(cacheSize);
-
-
+    /**
+     * Statistics hash map for char chunk.
+     */
+    protected static final HashMap<CharEntry, int[]> ccStats =
+            new HashMap<>(cacheSize);
     /**
      * toString count for byte chunk.
      */
     protected static int bcCount = 0;
-
-
     /**
      * Cache for byte chunk.
      */
     protected static volatile ByteEntry[] bcCache = null;
-
-
-    /**
-     * Statistics hash map for char chunk.
-     */
-    protected static final HashMap<CharEntry,int[]> ccStats =
-            new HashMap<>(cacheSize);
-
-
     /**
      * toString count for char chunk.
      */
@@ -115,104 +95,6 @@ public class StringCache {
 
     // ------------------------------------------------------------ Properties
 
-
-    /**
-     * @return Returns the cacheSize.
-     */
-    public int getCacheSize() {
-        return cacheSize;
-    }
-
-
-    /**
-     * @param cacheSize The cacheSize to set.
-     */
-    public void setCacheSize(int cacheSize) {
-        StringCache.cacheSize = cacheSize;
-    }
-
-
-    /**
-     * @return Returns the enabled.
-     */
-    public boolean getByteEnabled() {
-        return byteEnabled;
-    }
-
-
-    /**
-     * @param byteEnabled The enabled to set.
-     */
-    public void setByteEnabled(boolean byteEnabled) {
-        StringCache.byteEnabled = byteEnabled;
-    }
-
-
-    /**
-     * @return Returns the enabled.
-     */
-    public boolean getCharEnabled() {
-        return charEnabled;
-    }
-
-
-    /**
-     * @param charEnabled The enabled to set.
-     */
-    public void setCharEnabled(boolean charEnabled) {
-        StringCache.charEnabled = charEnabled;
-    }
-
-
-    /**
-     * @return Returns the trainThreshold.
-     */
-    public int getTrainThreshold() {
-        return trainThreshold;
-    }
-
-
-    /**
-     * @param trainThreshold The trainThreshold to set.
-     */
-    public void setTrainThreshold(int trainThreshold) {
-        StringCache.trainThreshold = trainThreshold;
-    }
-
-
-    /**
-     * @return Returns the accessCount.
-     */
-    public int getAccessCount() {
-        return accessCount;
-    }
-
-
-    /**
-     * @return Returns the hitCount.
-     */
-    public int getHitCount() {
-        return hitCount;
-    }
-
-
-    // -------------------------------------------------- Public Static Methods
-
-
-    public void reset() {
-        hitCount = 0;
-        accessCount = 0;
-        synchronized (bcStats) {
-            bcCache = null;
-            bcCount = 0;
-        }
-        synchronized (ccStats) {
-            ccCache = null;
-            ccCount = 0;
-        }
-    }
-
-
     public static String toString(ByteChunk bc) {
 
         // If the cache is null, then either caching is disabled, or we're
@@ -234,9 +116,9 @@ public class StringCache {
                     if (bcCount > trainThreshold) {
                         long t1 = System.currentTimeMillis();
                         // Sort the entries according to occurrence
-                        TreeMap<Integer,ArrayList<ByteEntry>> tempMap =
+                        TreeMap<Integer, ArrayList<ByteEntry>> tempMap =
                                 new TreeMap<>();
-                        for (Entry<ByteEntry,int[]> item : bcStats.entrySet()) {
+                        for (Entry<ByteEntry, int[]> item : bcStats.entrySet()) {
                             ByteEntry entry = item.getKey();
                             int[] countA = item.getValue();
                             Integer count = Integer.valueOf(countA[0]);
@@ -329,7 +211,6 @@ public class StringCache {
 
     }
 
-
     public static String toString(CharChunk cc) {
 
         // If the cache is null, then either caching is disabled, or we're
@@ -351,9 +232,9 @@ public class StringCache {
                     if (ccCount > trainThreshold) {
                         long t1 = System.currentTimeMillis();
                         // Sort the entries according to occurrence
-                        TreeMap<Integer,ArrayList<CharEntry>> tempMap =
+                        TreeMap<Integer, ArrayList<CharEntry>> tempMap =
                                 new TreeMap<>();
-                        for (Entry<CharEntry,int[]> item : ccStats.entrySet()) {
+                        for (Entry<CharEntry, int[]> item : ccStats.entrySet()) {
                             CharEntry entry = item.getKey();
                             int[] countA = item.getValue();
                             Integer count = Integer.valueOf(countA[0]);
@@ -444,13 +325,10 @@ public class StringCache {
 
     }
 
-
-    // ----------------------------------------------------- Protected Methods
-
-
     /**
      * Compare given byte chunk with byte array.
-     * @param name The name to compare
+     *
+     * @param name      The name to compare
      * @param compareTo The compared to data
      * @return -1, 0 or +1 if inferior, equal, or superior to the String.
      */
@@ -482,10 +360,10 @@ public class StringCache {
         return result;
     }
 
-
     /**
      * Find an entry given its name in the cache and return the associated
      * String.
+     *
      * @param name The name to find
      * @return the corresponding value
      */
@@ -499,18 +377,18 @@ public class StringCache {
         }
     }
 
-
     /**
      * Find an entry given its name in a sorted array of map elements.
      * This will return the index for the closest inferior or equal item in the
      * given array.
-     * @param name The name to find
+     *
+     * @param name  The name to find
      * @param array The array in which to look
-     * @param len The effective length of the array
+     * @param len   The effective length of the array
      * @return the position of the best match
      */
     protected static final int findClosest(ByteChunk name, ByteEntry[] array,
-            int len) {
+                                           int len) {
 
         int a = 0;
         int b = len - 1;
@@ -550,10 +428,10 @@ public class StringCache {
 
     }
 
-
     /**
      * Compare given char chunk with char array.
-     * @param name The name to compare
+     *
+     * @param name      The name to compare
      * @param compareTo The compared to data
      * @return -1, 0 or +1 if inferior, equal, or superior to the String.
      */
@@ -585,10 +463,10 @@ public class StringCache {
         return result;
     }
 
-
     /**
      * Find an entry given its name in the cache and return the associated
      * String.
+     *
      * @param name The name to find
      * @return the corresponding value
      */
@@ -601,18 +479,18 @@ public class StringCache {
         }
     }
 
-
     /**
      * Find an entry given its name in a sorted array of map elements.
      * This will return the index for the closest inferior or equal item in the
      * given array.
-     * @param name The name to find
+     *
+     * @param name  The name to find
      * @param array The array in which to look
-     * @param len The effective length of the array
+     * @param len   The effective length of the array
      * @return the position of the best match
      */
     protected static final int findClosest(CharChunk name, CharEntry[] array,
-            int len) {
+                                           int len) {
 
         int a = 0;
         int b = len - 1;
@@ -622,7 +500,7 @@ public class StringCache {
             return -1;
         }
 
-        if (compare(name, array[0].name) < 0 ) {
+        if (compare(name, array[0].name) < 0) {
             return -1;
         }
         if (b == 0) {
@@ -652,9 +530,97 @@ public class StringCache {
 
     }
 
+    /**
+     * @return Returns the cacheSize.
+     */
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    /**
+     * @param cacheSize The cacheSize to set.
+     */
+    public void setCacheSize(int cacheSize) {
+        StringCache.cacheSize = cacheSize;
+    }
+
+
+    // -------------------------------------------------- Public Static Methods
+
+    /**
+     * @return Returns the enabled.
+     */
+    public boolean getByteEnabled() {
+        return byteEnabled;
+    }
+
+    /**
+     * @param byteEnabled The enabled to set.
+     */
+    public void setByteEnabled(boolean byteEnabled) {
+        StringCache.byteEnabled = byteEnabled;
+    }
+
+    /**
+     * @return Returns the enabled.
+     */
+    public boolean getCharEnabled() {
+        return charEnabled;
+    }
+
+
+    // ----------------------------------------------------- Protected Methods
+
+    /**
+     * @param charEnabled The enabled to set.
+     */
+    public void setCharEnabled(boolean charEnabled) {
+        StringCache.charEnabled = charEnabled;
+    }
+
+    /**
+     * @return Returns the trainThreshold.
+     */
+    public int getTrainThreshold() {
+        return trainThreshold;
+    }
+
+    /**
+     * @param trainThreshold The trainThreshold to set.
+     */
+    public void setTrainThreshold(int trainThreshold) {
+        StringCache.trainThreshold = trainThreshold;
+    }
+
+    /**
+     * @return Returns the accessCount.
+     */
+    public int getAccessCount() {
+        return accessCount;
+    }
+
+    /**
+     * @return Returns the hitCount.
+     */
+    public int getHitCount() {
+        return hitCount;
+    }
+
+    public void reset() {
+        hitCount = 0;
+        accessCount = 0;
+        synchronized (bcStats) {
+            bcCache = null;
+            bcCount = 0;
+        }
+        synchronized (ccStats) {
+            ccCache = null;
+            ccCount = 0;
+        }
+    }
+
 
     // -------------------------------------------------- ByteEntry Inner Class
-
 
     private static class ByteEntry {
 
@@ -666,10 +632,12 @@ public class StringCache {
         public String toString() {
             return value;
         }
+
         @Override
         public int hashCode() {
             return value.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof ByteEntry) {
@@ -693,10 +661,12 @@ public class StringCache {
         public String toString() {
             return value;
         }
+
         @Override
         public int hashCode() {
             return value.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof CharEntry) {

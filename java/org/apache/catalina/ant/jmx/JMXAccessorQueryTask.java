@@ -71,6 +71,7 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
     public boolean isAttributebinding() {
         return attributebinding;
     }
+
     /**
      * @param attributeBinding The attributebinding to set.
      */
@@ -83,7 +84,7 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
 
     @Override
     public String jmxExecute(MBeanServerConnection jmxServerConnection)
-        throws Exception {
+            throws Exception {
 
         if (getName() == null) {
             throw new BuildException("Must specify a 'name'");
@@ -95,21 +96,21 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
 
     /**
      * Call Mbean server for some mbeans with same domain, attributes.
-     *  with <em>attributebinding=true</em> you can save all attributes from all found objects
+     * with <em>attributebinding=true</em> you can save all attributes from all found objects
      *
      * @param jmxServerConnection Connection to the JMX server
-     * @param qry The query
+     * @param qry                 The query
      * @return null (no error message to report other than exception)
      */
     protected String jmxQuery(MBeanServerConnection jmxServerConnection,
-            String qry) {
+                              String qry) {
         String isError = null;
         Set<ObjectName> names = null;
         String resultproperty = getResultproperty();
         try {
             names = jmxServerConnection.queryNames(new ObjectName(qry), null);
             if (resultproperty != null) {
-                setProperty(resultproperty + ".Length",Integer.toString(names.size()));
+                setProperty(resultproperty + ".Length", Integer.toString(names.size()));
             }
         } catch (Exception e) {
             if (isEcho())

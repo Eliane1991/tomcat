@@ -62,14 +62,42 @@ import java.util.concurrent.atomic.AtomicLong;
  * This class is intended to be thread-safe.
  * </p>
  *
- * @see GenericKeyedObjectPool
- *
  * @param <T> Type of element pooled in this pool.
- *
+ * @see GenericKeyedObjectPool
  * @since 2.0
  */
 public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         implements ObjectPool<T>, GenericObjectPoolMXBean, UsageTracking<T> {
+
+    // JMX specific attributes
+    private static final String ONAME_BASE =
+            "org.apache.tomcat.dbcp.pool2:type=GenericObjectPool,name=";
+    private final PooledObjectFactory<T> factory;
+    /*
+     * All of the objects currently associated with this pool in any state. It
+     * excludes objects that have been destroyed. The size of
+     * {@link #allObjects} will always be less than or equal to {@link
+     * #_maxActive}. Map keys are pooled objects, values are the PooledObject
+     * wrappers used internally by the pool.
+     */
+    private final Map<IdentityWrapper<T>, PooledObject<T>> allObjects =
+            new ConcurrentHashMap<>();
+    /*
+     * The combined count of the currently created objects and those in the
+     * process of being created. Under load, it may exceed {@link #_maxActive}
+     * if multiple threads try and create a new object at the same time but
+     * {@link #create()} will ensure that there are never more than
+     * {@link #_maxActive} objects created at any one time.
+     */
+    private final AtomicLong createCount = new AtomicLong(0);
+    private final Object makeObjectCountLock = new Object();
+    private final LinkedBlockingDeque<PooledObject<T>> idleObjects;
+    private volatile String factoryType = null;
+    private volatile int maxIdle = GenericObjectPoolConfig.DEFAULT_MAX_IDLE;
+    private volatile int minIdle = GenericObjectPoolConfig.DEFAULT_MIN_IDLE;
+    private long makeObjectCount = 0;
+    // Additional configuration properties for abandoned object tracking
+    private volatile AbandonedConfig abandonedConfig = null;
 
     /**
      * Creates a new {@code GenericObjectPool} using defaults from
@@ -82,19 +110,20 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         this(factory, new GenericObjectPoolConfig<T>());
     }
 
+
     /**
      * Creates a new {@code GenericObjectPool} using a specific
      * configuration.
      *
-     * @param factory   The object factory to be used to create object instances
-     *                  used by this pool
-     * @param config    The configuration to use for this pool instance. The
-     *                  configuration is used by value. Subsequent changes to
-     *                  the configuration object will not be reflected in the
-     *                  pool.
+     * @param factory The object factory to be used to create object instances
+     *                used by this pool
+     * @param config  The configuration to use for this pool instance. The
+     *                configuration is used by value. Subsequent changes to
+     *                the configuration object will not be reflected in the
+     *                pool.
      */
     public GenericObjectPool(final PooledObjectFactory<T> factory,
-            final GenericObjectPoolConfig<T> config) {
+                             final GenericObjectPoolConfig<T> config) {
 
         super(config, ONAME_BASE, config.getJmxNamePrefix());
 
@@ -113,17 +142,17 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * Creates a new {@code GenericObjectPool} that tracks and destroys
      * objects that are checked out, but never returned to the pool.
      *
-     * @param factory   The object factory to be used to create object instances
-     *                  used by this pool
-     * @param config    The base pool configuration to use for this pool instance.
-     *                  The configuration is used by value. Subsequent changes to
-     *                  the configuration object will not be reflected in the
-     *                  pool.
-     * @param abandonedConfig  Configuration for abandoned object identification
-     *                         and removal.  The configuration is used by value.
+     * @param factory         The object factory to be used to create object instances
+     *                        used by this pool
+     * @param config          The base pool configuration to use for this pool instance.
+     *                        The configuration is used by value. Subsequent changes to
+     *                        the configuration object will not be reflected in the
+     *                        pool.
+     * @param abandonedConfig Configuration for abandoned object identification
+     *                        and removal.  The configuration is used by value.
      */
     public GenericObjectPool(final PooledObjectFactory<T> factory,
-            final GenericObjectPoolConfig<T> config, final AbandonedConfig abandonedConfig) {
+                             final GenericObjectPoolConfig<T> config, final AbandonedConfig abandonedConfig) {
         this(factory, config);
         setAbandonedConfig(abandonedConfig);
     }
@@ -138,8 +167,7 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * loaded system will vary but the default is a good starting point.
      *
      * @return the maximum number of "idle" instances that can be held in the
-     *         pool or a negative value if there is no limit
-     *
+     * pool or a negative value if there is no limit
      * @see #setMaxIdle
      */
     @Override
@@ -156,37 +184,13 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * objects to rise above maxIdle. The best value for maxIdle for heavily
      * loaded system will vary but the default is a good starting point.
      *
-     * @param maxIdle
-     *            The cap on the number of "idle" instances in the pool. Use a
-     *            negative value to indicate an unlimited number of idle
-     *            instances
-     *
+     * @param maxIdle The cap on the number of "idle" instances in the pool. Use a
+     *                negative value to indicate an unlimited number of idle
+     *                instances
      * @see #getMaxIdle
      */
     public void setMaxIdle(final int maxIdle) {
         this.maxIdle = maxIdle;
-    }
-
-    /**
-     * Sets the target for the minimum number of idle objects to maintain in
-     * the pool. This setting only has an effect if it is positive and
-     * {@link #getTimeBetweenEvictionRunsMillis()} is greater than zero. If this
-     * is the case, an attempt is made to ensure that the pool has the required
-     * minimum number of instances during idle object eviction runs.
-     * <p>
-     * If the configured value of minIdle is greater than the configured value
-     * for maxIdle then the value of maxIdle will be used instead.
-     * </p>
-     *
-     * @param minIdle
-     *            The minimum number of objects.
-     *
-     * @see #getMinIdle()
-     * @see #getMaxIdle()
-     * @see #getTimeBetweenEvictionRunsMillis()
-     */
-    public void setMinIdle(final int minIdle) {
-        this.minIdle = minIdle;
     }
 
     /**
@@ -201,7 +205,6 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * </p>
      *
      * @return The minimum number of objects.
-     *
      * @see #setMinIdle(int)
      * @see #setMaxIdle(int)
      * @see #setTimeBetweenEvictionRunsMillis(long)
@@ -216,6 +219,26 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
     }
 
     /**
+     * Sets the target for the minimum number of idle objects to maintain in
+     * the pool. This setting only has an effect if it is positive and
+     * {@link #getTimeBetweenEvictionRunsMillis()} is greater than zero. If this
+     * is the case, an attempt is made to ensure that the pool has the required
+     * minimum number of instances during idle object eviction runs.
+     * <p>
+     * If the configured value of minIdle is greater than the configured value
+     * for maxIdle then the value of maxIdle will be used instead.
+     * </p>
+     *
+     * @param minIdle The minimum number of objects.
+     * @see #getMinIdle()
+     * @see #getMaxIdle()
+     * @see #getTimeBetweenEvictionRunsMillis()
+     */
+    public void setMinIdle(final int minIdle) {
+        this.minIdle = minIdle;
+    }
+
+    /**
      * Gets whether or not abandoned object removal is configured for this pool.
      *
      * @return true if this pool is configured to detect and remove
@@ -227,83 +250,9 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
     }
 
     /**
-     * Gets whether this pool identifies and logs any abandoned objects.
-     *
-     * @return {@code true} if abandoned object removal is configured for this
-     *         pool and removal events are to be logged otherwise {@code false}
-     *
-     * @see AbandonedConfig#getLogAbandoned()
-     */
-    @Override
-    public boolean getLogAbandoned() {
-        final AbandonedConfig ac = this.abandonedConfig;
-        return ac != null && ac.getLogAbandoned();
-    }
-
-    /**
-     * Gets whether a check is made for abandoned objects when an object is borrowed
-     * from this pool.
-     *
-     * @return {@code true} if abandoned object removal is configured to be
-     *         activated by borrowObject otherwise {@code false}
-     *
-     * @see AbandonedConfig#getRemoveAbandonedOnBorrow()
-     */
-    @Override
-    public boolean getRemoveAbandonedOnBorrow() {
-        final AbandonedConfig ac = this.abandonedConfig;
-        return ac != null && ac.getRemoveAbandonedOnBorrow();
-    }
-
-    /**
-     * Gets whether a check is made for abandoned objects when the evictor runs.
-     *
-     * @return {@code true} if abandoned object removal is configured to be
-     *         activated when the evictor runs otherwise {@code false}
-     *
-     * @see AbandonedConfig#getRemoveAbandonedOnMaintenance()
-     */
-    @Override
-    public boolean getRemoveAbandonedOnMaintenance() {
-        final AbandonedConfig ac = this.abandonedConfig;
-        return ac != null && ac.getRemoveAbandonedOnMaintenance();
-    }
-
-    /**
-     * Obtains the timeout before which an object will be considered to be
-     * abandoned by this pool.
-     *
-     * @return The abandoned object timeout in seconds if abandoned object
-     *         removal is configured for this pool; Integer.MAX_VALUE otherwise.
-     *
-     * @see AbandonedConfig#getRemoveAbandonedTimeout()
-     */
-    @Override
-    public int getRemoveAbandonedTimeout() {
-        final AbandonedConfig ac = this.abandonedConfig;
-        return ac != null ? ac.getRemoveAbandonedTimeout() : Integer.MAX_VALUE;
-    }
-
-
-    /**
-     * Sets the base pool configuration.
-     *
-     * @param conf the new configuration to use. This is used by value.
-     *
-     * @see GenericObjectPoolConfig
-     */
-    public void setConfig(final GenericObjectPoolConfig<T> conf) {
-        super.setConfig(conf);
-        setMaxIdle(conf.getMaxIdle());
-        setMinIdle(conf.getMinIdle());
-        setMaxTotal(conf.getMaxTotal());
-    }
-
-    /**
      * Sets the abandoned object removal configuration.
      *
      * @param abandonedConfig the new configuration to use. This is used by value.
-     *
      * @see AbandonedConfig
      */
     public void setAbandonedConfig(final AbandonedConfig abandonedConfig) {
@@ -319,6 +268,73 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
             this.abandonedConfig.setUseUsageTracking(abandonedConfig.getUseUsageTracking());
             this.abandonedConfig.setRequireFullStackTrace(abandonedConfig.getRequireFullStackTrace());
         }
+    }
+
+    /**
+     * Gets whether this pool identifies and logs any abandoned objects.
+     *
+     * @return {@code true} if abandoned object removal is configured for this
+     * pool and removal events are to be logged otherwise {@code false}
+     * @see AbandonedConfig#getLogAbandoned()
+     */
+    @Override
+    public boolean getLogAbandoned() {
+        final AbandonedConfig ac = this.abandonedConfig;
+        return ac != null && ac.getLogAbandoned();
+    }
+
+    /**
+     * Gets whether a check is made for abandoned objects when an object is borrowed
+     * from this pool.
+     *
+     * @return {@code true} if abandoned object removal is configured to be
+     * activated by borrowObject otherwise {@code false}
+     * @see AbandonedConfig#getRemoveAbandonedOnBorrow()
+     */
+    @Override
+    public boolean getRemoveAbandonedOnBorrow() {
+        final AbandonedConfig ac = this.abandonedConfig;
+        return ac != null && ac.getRemoveAbandonedOnBorrow();
+    }
+
+    /**
+     * Gets whether a check is made for abandoned objects when the evictor runs.
+     *
+     * @return {@code true} if abandoned object removal is configured to be
+     * activated when the evictor runs otherwise {@code false}
+     * @see AbandonedConfig#getRemoveAbandonedOnMaintenance()
+     */
+    @Override
+    public boolean getRemoveAbandonedOnMaintenance() {
+        final AbandonedConfig ac = this.abandonedConfig;
+        return ac != null && ac.getRemoveAbandonedOnMaintenance();
+    }
+
+    /**
+     * Obtains the timeout before which an object will be considered to be
+     * abandoned by this pool.
+     *
+     * @return The abandoned object timeout in seconds if abandoned object
+     * removal is configured for this pool; Integer.MAX_VALUE otherwise.
+     * @see AbandonedConfig#getRemoveAbandonedTimeout()
+     */
+    @Override
+    public int getRemoveAbandonedTimeout() {
+        final AbandonedConfig ac = this.abandonedConfig;
+        return ac != null ? ac.getRemoveAbandonedTimeout() : Integer.MAX_VALUE;
+    }
+
+    /**
+     * Sets the base pool configuration.
+     *
+     * @param conf the new configuration to use. This is used by value.
+     * @see GenericObjectPoolConfig
+     */
+    public void setConfig(final GenericObjectPoolConfig<T> conf) {
+        super.setConfig(conf);
+        setMaxIdle(conf.getMaxIdle());
+        setMinIdle(conf.getMinIdle());
+        setMaxTotal(conf.getMaxTotal());
     }
 
     /**
@@ -384,13 +400,10 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      *
      * @param borrowMaxWaitMillis The time to wait in milliseconds for an object
      *                            to become available
-     *
      * @return object instance from the pool
-     *
      * @throws NoSuchElementException if an instance cannot be returned
-     *
-     * @throws Exception if an object instance cannot be returned due to an
-     *                   error
+     * @throws Exception              if an object instance cannot be returned due to an
+     *                                error
      */
     public T borrowObject(final long borrowMaxWaitMillis) throws Exception {
         assertOpen();
@@ -398,7 +411,7 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         final AbandonedConfig ac = this.abandonedConfig;
         if (ac != null && ac.getRemoveAbandonedOnBorrow() &&
                 (getNumIdle() < 2) &&
-                (getNumActive() > getMaxTotal() - 3) ) {
+                (getNumActive() > getMaxTotal() - 3)) {
             removeAbandoned(ac);
         }
 
@@ -699,6 +712,9 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
     }
 
+
+    //--- Usage tracking support -----------------------------------------------
+
     /**
      * {@inheritDoc}
      * <p>
@@ -806,6 +822,9 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
     }
 
+
+    //--- JMX support ----------------------------------------------------------
+
     /**
      * Tries to ensure that {@link #getMinIdle()} idle instances are available
      * in the pool.
@@ -828,7 +847,6 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * </p>
      *
      * @return The new wrapped pooled object
-     *
      * @throws Exception if the object factory's {@code makeObject} fails
      */
     private PooledObject<T> create() throws Exception {
@@ -875,8 +893,8 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
 
             // Do not block more if maxWaitTimeMillis is set.
             if (create == null &&
-                (localMaxWaitTimeMillis > 0 &&
-                 System.currentTimeMillis() - localStartTimeMillis >= localMaxWaitTimeMillis)) {
+                    (localMaxWaitTimeMillis > 0 &&
+                            System.currentTimeMillis() - localStartTimeMillis >= localMaxWaitTimeMillis)) {
                 create = Boolean.FALSE;
             }
         }
@@ -917,7 +935,6 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * Destroys a wrapped pooled object.
      *
      * @param toDestroy The wrapped pooled object to destroy
-     *
      * @throws Exception If the factory fails to destroy the pooled object
      *                   cleanly
      */
@@ -938,6 +955,8 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         ensureIdle(getMinIdle(), true);
     }
 
+    // --- configuration attributes --------------------------------------------
+
     /**
      * Tries to ensure that {@code idleCount} idle instances exist in the pool.
      * <p>
@@ -948,7 +967,7 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * </p>
      *
      * @param idleCount the number of idle instances desired
-     * @param always true means create instances even if the pool has no threads waiting
+     * @param always    true means create instances even if the pool has no threads waiting
      * @throws Exception if the factory's makeObject throws
      */
     private void ensureIdle(final int idleCount, final boolean always) throws Exception {
@@ -999,10 +1018,8 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
      * Calls {@link ObjectPool#addObject()} <code>count</code>
      * number of times.
      *
-     * @param count
-     *            the number of idle objects to add.
-     * @throws Exception
-     *             when {@link ObjectPool#addObject()} fails.
+     * @param count the number of idle objects to add.
+     * @throws Exception when {@link ObjectPool#addObject()} fails.
      * @since 2.8.0
      */
     @Override
@@ -1012,13 +1029,15 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
     }
 
+
+    // --- internal attributes -------------------------------------------------
+
     /**
      * Adds the provided wrapped pooled object to the set of idle objects for
      * this pool. The object must already be part of the pool.  If {@code p}
      * is null, this is a no-op (no exception, but no impact on the pool).
      *
      * @param p The object to make idle
-     *
      * @throws Exception If the factory fails to passivate the object
      */
     private void addIdleObject(final PooledObject<T> p) throws Exception {
@@ -1082,9 +1101,6 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
     }
 
-
-    //--- Usage tracking support -----------------------------------------------
-
     @Override
     public void use(final T pooledObject) {
         final AbandonedConfig ac = this.abandonedConfig;
@@ -1094,18 +1110,13 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
     }
 
-
-    //--- JMX support ----------------------------------------------------------
-
-    private volatile String factoryType = null;
-
     /**
      * Returns an estimate of the number of threads currently blocked waiting for
      * an object from the pool. This is intended for monitoring only, not for
      * synchronization control.
      *
      * @return The estimate of the number of threads currently blocked waiting
-     *         for an object from the pool
+     * for an object from the pool
      */
     @Override
     public int getNumWaiters() {
@@ -1158,43 +1169,6 @@ public class GenericObjectPool<T> extends BaseGenericObjectPool<T>
         }
         return result;
     }
-
-    // --- configuration attributes --------------------------------------------
-
-    private volatile int maxIdle = GenericObjectPoolConfig.DEFAULT_MAX_IDLE;
-    private volatile int minIdle = GenericObjectPoolConfig.DEFAULT_MIN_IDLE;
-    private final PooledObjectFactory<T> factory;
-
-
-    // --- internal attributes -------------------------------------------------
-
-    /*
-     * All of the objects currently associated with this pool in any state. It
-     * excludes objects that have been destroyed. The size of
-     * {@link #allObjects} will always be less than or equal to {@link
-     * #_maxActive}. Map keys are pooled objects, values are the PooledObject
-     * wrappers used internally by the pool.
-     */
-    private final Map<IdentityWrapper<T>, PooledObject<T>> allObjects =
-        new ConcurrentHashMap<>();
-    /*
-     * The combined count of the currently created objects and those in the
-     * process of being created. Under load, it may exceed {@link #_maxActive}
-     * if multiple threads try and create a new object at the same time but
-     * {@link #create()} will ensure that there are never more than
-     * {@link #_maxActive} objects created at any one time.
-     */
-    private final AtomicLong createCount = new AtomicLong(0);
-    private long makeObjectCount = 0;
-    private final Object makeObjectCountLock = new Object();
-    private final LinkedBlockingDeque<PooledObject<T>> idleObjects;
-
-    // JMX specific attributes
-    private static final String ONAME_BASE =
-        "org.apache.tomcat.dbcp.pool2:type=GenericObjectPool,name=";
-
-    // Additional configuration properties for abandoned object tracking
-    private volatile AbandonedConfig abandonedConfig = null;
 
     @Override
     protected void toStringAppendFields(final StringBuilder builder) {

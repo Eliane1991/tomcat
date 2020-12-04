@@ -34,13 +34,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- *
  * @since 2.1
  */
 public abstract class ExpressionFactory {
 
     private static final boolean IS_SECURITY_ENABLED =
-        (System.getSecurityManager() != null);
+            (System.getSecurityManager() != null);
 
     private static final String PROPERTY_NAME = "javax.el.ExpressionFactory";
 
@@ -53,7 +52,7 @@ public abstract class ExpressionFactory {
     static {
         if (IS_SECURITY_ENABLED) {
             PROPERTY_FILE = AccessController.doPrivileged(
-                    new PrivilegedAction<String>(){
+                    new PrivilegedAction<String>() {
                         @Override
                         public String run() {
                             return System.getProperty("java.home") + File.separator +
@@ -78,6 +77,7 @@ public abstract class ExpressionFactory {
      * <li>Platform default implementation -
      *     org.apache.el.ExpressionFactoryImpl</li>
      * </ol>
+     *
      * @return the new ExpressionFactory
      */
     public static ExpressionFactory newInstance() {
@@ -163,7 +163,7 @@ public abstract class ExpressionFactory {
                 result = (ExpressionFactory) clazz.getConstructor().newInstance();
             } else {
                 result =
-                    (ExpressionFactory) constructor.newInstance(properties);
+                        (ExpressionFactory) constructor.newInstance(properties);
             }
 
         } catch (InvocationTargetException e) {
@@ -178,25 +178,113 @@ public abstract class ExpressionFactory {
     }
 
     /**
+     * Discover the name of class that implements ExpressionFactory.
+     *
+     * @param tccl {@code ClassLoader}
+     * @return Class name. There is default, so it is never {@code null}.
+     */
+    private static String discoverClassName(ClassLoader tccl) {
+        String className = null;
+
+        // First services API
+        className = getClassNameServices(tccl);
+        if (className == null) {
+            if (IS_SECURITY_ENABLED) {
+                className = AccessController.doPrivileged(
+                        new PrivilegedAction<String>() {
+                            @Override
+                            public String run() {
+                                return getClassNameJreDir();
+                            }
+                        }
+                );
+            } else {
+                // Second el.properties file
+                className = getClassNameJreDir();
+            }
+        }
+        if (className == null) {
+            if (IS_SECURITY_ENABLED) {
+                className = AccessController.doPrivileged(
+                        new PrivilegedAction<String>() {
+                            @Override
+                            public String run() {
+                                return getClassNameSysProp();
+                            }
+                        }
+                );
+            } else {
+                // Third system property
+                className = getClassNameSysProp();
+            }
+        }
+        if (className == null) {
+            // Fourth - default
+            className = "org.apache.el.ExpressionFactoryImpl";
+        }
+        return className;
+    }
+
+    private static String getClassNameServices(ClassLoader tccl) {
+
+        ExpressionFactory result = null;
+
+        ServiceLoader<ExpressionFactory> serviceLoader = ServiceLoader.load(ExpressionFactory.class, tccl);
+        Iterator<ExpressionFactory> iter = serviceLoader.iterator();
+        while (result == null && iter.hasNext()) {
+            result = iter.next();
+        }
+
+        if (result == null) {
+            return null;
+        }
+
+        return result.getClass().getName();
+    }
+
+    private static String getClassNameJreDir() {
+        File file = new File(PROPERTY_FILE);
+        if (file.canRead()) {
+            try (InputStream is = new FileInputStream(file)) {
+                Properties props = new Properties();
+                props.load(is);
+                String value = props.getProperty(PROPERTY_NAME);
+                if (value != null && value.trim().length() > 0) {
+                    return value.trim();
+                }
+            } catch (FileNotFoundException e) {
+                // Should not happen - ignore it if it does
+            } catch (IOException e) {
+                throw new ELException(Util.message(null, "expressionFactory.readFailed", PROPERTY_FILE), e);
+            }
+        }
+        return null;
+    }
+
+    private static final String getClassNameSysProp() {
+        String value = System.getProperty(PROPERTY_NAME);
+        if (value != null && value.trim().length() > 0) {
+            return value.trim();
+        }
+        return null;
+    }
+
+    /**
      * Create a new value expression.
      *
      * @param context      The EL context for this evaluation
      * @param expression   The String representation of the value expression
      * @param expectedType The expected type of the result of evaluating the
      *                     expression
-     *
      * @return A new value expression formed from the input parameters
-     *
-     * @throws NullPointerException
-     *              If the expected type is <code>null</code>
-     * @throws ELException
-     *              If there are syntax errors in the provided expression
+     * @throws NullPointerException If the expected type is <code>null</code>
+     * @throws ELException          If there are syntax errors in the provided expression
      */
     public abstract ValueExpression createValueExpression(ELContext context,
-            String expression, Class<?> expectedType);
+                                                          String expression, Class<?> expectedType);
 
     public abstract ValueExpression createValueExpression(Object instance,
-            Class<?> expectedType);
+                                                          Class<?> expectedType);
 
     /**
      * Create a new method expression instance.
@@ -207,34 +295,26 @@ public abstract class ExpressionFactory {
      * @param expectedReturnType The expected type of the result of invoking the
      *                           method
      * @param expectedParamTypes The expected types of the input parameters
-     *
      * @return A new method expression formed from the input parameters.
-     *
-     * @throws NullPointerException
-     *              If the expected parameters types are <code>null</code>
-     * @throws ELException
-     *              If there are syntax errors in the provided expression
+     * @throws NullPointerException If the expected parameters types are <code>null</code>
+     * @throws ELException          If there are syntax errors in the provided expression
      */
     public abstract MethodExpression createMethodExpression(ELContext context,
-            String expression, Class<?> expectedReturnType,
-            Class<?>[] expectedParamTypes);
+                                                            String expression, Class<?> expectedReturnType,
+                                                            Class<?>[] expectedParamTypes);
 
     /**
      * Coerce the supplied object to the requested type.
      *
      * @param obj          The object to be coerced
      * @param expectedType The type to which the object should be coerced
-     *
      * @return An instance of the requested type.
-     *
-     * @throws ELException
-     *              If the conversion fails
+     * @throws ELException If the conversion fails
      */
     public abstract Object coerceToType(Object obj, Class<?> expectedType);
 
     /**
      * @return This default implementation returns null
-     *
      * @since EL 3.0
      */
     public ELResolver getStreamELResolver() {
@@ -243,10 +323,9 @@ public abstract class ExpressionFactory {
 
     /**
      * @return This default implementation returns null
-     *
      * @since EL 3.0
      */
-    public Map<String,Method> getInitFunctionMap() {
+    public Map<String, Method> getInitFunctionMap() {
         return null;
     }
 
@@ -312,99 +391,6 @@ public abstract class ExpressionFactory {
         public void setFactoryClass(Class<?> clazz) {
             ref = new WeakReference<Class<?>>(clazz);
         }
-    }
-
-    /**
-     * Discover the name of class that implements ExpressionFactory.
-     *
-     * @param tccl
-     *            {@code ClassLoader}
-     * @return Class name. There is default, so it is never {@code null}.
-     */
-    private static String discoverClassName(ClassLoader tccl) {
-        String className = null;
-
-        // First services API
-        className = getClassNameServices(tccl);
-        if (className == null) {
-            if (IS_SECURITY_ENABLED) {
-                className = AccessController.doPrivileged(
-                        new PrivilegedAction<String>() {
-                            @Override
-                            public String run() {
-                                return getClassNameJreDir();
-                            }
-                        }
-                );
-            } else {
-                // Second el.properties file
-                className = getClassNameJreDir();
-            }
-        }
-        if (className == null) {
-            if (IS_SECURITY_ENABLED) {
-                className = AccessController.doPrivileged(
-                        new PrivilegedAction<String>() {
-                            @Override
-                            public String run() {
-                                return getClassNameSysProp();
-                            }
-                        }
-                );
-            } else {
-                // Third system property
-                className = getClassNameSysProp();
-            }
-        }
-        if (className == null) {
-            // Fourth - default
-            className = "org.apache.el.ExpressionFactoryImpl";
-        }
-        return className;
-    }
-
-    private static String getClassNameServices(ClassLoader tccl) {
-
-        ExpressionFactory result = null;
-
-        ServiceLoader<ExpressionFactory> serviceLoader = ServiceLoader.load(ExpressionFactory.class, tccl);
-        Iterator<ExpressionFactory> iter = serviceLoader.iterator();
-        while (result == null && iter.hasNext()) {
-            result = iter.next();
-        }
-
-        if (result == null) {
-            return null;
-        }
-
-        return result.getClass().getName();
-    }
-
-    private static String getClassNameJreDir() {
-        File file = new File(PROPERTY_FILE);
-        if (file.canRead()) {
-            try (InputStream is = new FileInputStream(file)){
-                Properties props = new Properties();
-                props.load(is);
-                String value = props.getProperty(PROPERTY_NAME);
-                if (value != null && value.trim().length() > 0) {
-                    return value.trim();
-                }
-            } catch (FileNotFoundException e) {
-                // Should not happen - ignore it if it does
-            } catch (IOException e) {
-                throw new ELException(Util.message(null, "expressionFactory.readFailed", PROPERTY_FILE), e);
-            }
-        }
-        return null;
-    }
-
-    private static final String getClassNameSysProp() {
-        String value = System.getProperty(PROPERTY_NAME);
-        if (value != null && value.trim().length() > 0) {
-            return value.trim();
-        }
-        return null;
     }
 
 }

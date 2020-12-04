@@ -34,17 +34,12 @@ public class StandardServerSF extends StoreFactoryBase {
     /**
      * Store the specified Server properties.
      *
-     * @param aWriter
-     *            PrintWriter to which we are storing
-     * @param indent
-     *            Number of spaces to indent this element
-     * @param aServer
-     *            Object to be stored
-     *
-     * @exception Exception
-     *                if an exception occurs while storing
+     * @param aWriter PrintWriter to which we are storing
+     * @param indent  Number of spaces to indent this element
+     * @param aServer Object to be stored
+     * @throws Exception if an exception occurs while storing
      * @see org.apache.catalina.storeconfig.IStoreFactory#store(java.io.PrintWriter,
-     *      int, java.lang.Object)
+     * int, java.lang.Object)
      */
     @Override
     public void store(PrintWriter aWriter, int indent, Object aServer)
@@ -56,15 +51,15 @@ public class StandardServerSF extends StoreFactoryBase {
     /**
      * Store the specified server element children.
      *
-     * @param aWriter Current output writer
-     * @param indent Indentation level
-     * @param aObject Server to store
+     * @param aWriter    Current output writer
+     * @param indent     Indentation level
+     * @param aObject    Server to store
      * @param parentDesc The element description
      * @throws Exception Configuration storing error
      */
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aObject,
-            StoreDescription parentDesc) throws Exception {
+                              StoreDescription parentDesc) throws Exception {
         if (aObject instanceof StandardServer) {
             StandardServer server = (StandardServer) aObject;
             // Store nested <Listener> elements

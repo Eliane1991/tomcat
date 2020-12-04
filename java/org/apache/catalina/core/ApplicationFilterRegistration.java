@@ -34,13 +34,13 @@ public class ApplicationFilterRegistration
      * The string manager for this package.
      */
     private static final StringManager sm =
-      StringManager.getManager(Constants.Package);
+            StringManager.getManager(Constants.Package);
 
     private final FilterDef filterDef;
     private final Context context;
 
     public ApplicationFilterRegistration(FilterDef filterDef,
-            Context context) {
+                                         Context context) {
         this.filterDef = filterDef;
         this.context = context;
 
@@ -137,7 +137,7 @@ public class ApplicationFilterRegistration
     @Override
     public String getClassName() {
         return filterDef.getFilterClass();
-   }
+    }
 
     @Override
     public String getInitParameter(String name) {
@@ -146,7 +146,7 @@ public class ApplicationFilterRegistration
 
     @Override
     public Map<String, String> getInitParameters() {
-        ParameterMap<String,String> result = new ParameterMap<>();
+        ParameterMap<String, String> result = new ParameterMap<>();
         result.putAll(filterDef.getParameterMap());
         result.setLocked(true);
         return result;
@@ -182,7 +182,7 @@ public class ApplicationFilterRegistration
             if (entry.getKey() == null || entry.getValue() == null) {
                 throw new IllegalArgumentException(sm.getString(
                         "applicationFilterRegistration.nullInitParams",
-                                entry.getKey(), entry.getValue()));
+                        entry.getKey(), entry.getValue()));
             }
             if (getInitParameter(entry.getKey()) != null) {
                 conflicts.add(entry.getKey());

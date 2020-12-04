@@ -46,55 +46,42 @@ public class StandardService extends LifecycleMBeanBase implements Service {
 
 
     // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The name of this service.
-     */
-    private String name = null;
-
-
     /**
      * The string manager for this package.
      */
     private static final StringManager sm =
             StringManager.getManager(Constants.Package);
-
-    /**
-     * The <code>Server</code> that owns this Service, if any.
-     */
-    private Server server = null;
-
     /**
      * The property change support for this component.
      */
     protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-
-    /**
-     * The set of Connectors associated with this Service.
-     */
-    protected Connector connectors[] = new Connector[0];
-    private final Object connectorsLock = new Object();
-
     /**
      *
      */
     protected final ArrayList<Executor> executors = new ArrayList<>();
-
-    private Engine engine = null;
-
-    private ClassLoader parentClassLoader = null;
-
     /**
      * Mapper.
      */
     protected final Mapper mapper = new Mapper();
-
-
     /**
      * Mapper listener.
      */
     protected final MapperListener mapperListener = new MapperListener(this);
+    private final Object connectorsLock = new Object();
+    /**
+     * The set of Connectors associated with this Service.
+     */
+    protected Connector connectors[] = new Connector[0];
+    /**
+     * The name of this service.
+     */
+    private String name = null;
+    /**
+     * The <code>Server</code> that owns this Service, if any.
+     */
+    private Server server = null;
+    private Engine engine = null;
+    private ClassLoader parentClassLoader = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -410,11 +397,16 @@ public class StandardService extends LifecycleMBeanBase implements Service {
 
         if (log.isInfoEnabled())
             log.info(sm.getString("standardService.start.name", this.name));
+
+
         setState(LifecycleState.STARTING);
 
         // Start our defined Container first
         if (engine != null) {
             synchronized (engine) {
+                /**
+                 * 先完成engine的启动,engine启动过程中需要完成各种container的初始化
+                 */
                 engine.start();
             }
         }
@@ -424,7 +416,9 @@ public class StandardService extends LifecycleMBeanBase implements Service {
                 executor.start();
             }
         }
-
+        /**
+         * 启动server绑定的mapper监听
+         */
         mapperListener.start();
 
         // Start our defined Connectors second

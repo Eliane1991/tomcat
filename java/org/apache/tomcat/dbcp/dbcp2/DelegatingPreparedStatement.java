@@ -40,10 +40,8 @@ public class DelegatingPreparedStatement extends DelegatingStatement implements 
      * Create a wrapper for the Statement which traces this Statement to the Connection which created it and the code
      * which created it.
      *
-     * @param statement
-     *            the {@link PreparedStatement} to delegate all calls to.
-     * @param connection
-     *            the {@link DelegatingConnection} that created this statement.
+     * @param statement  the {@link PreparedStatement} to delegate all calls to.
+     * @param connection the {@link DelegatingConnection} that created this statement.
      */
     public DelegatingPreparedStatement(final DelegatingConnection<?> connection, final PreparedStatement statement) {
         super(connection, statement);
@@ -604,7 +602,9 @@ public class DelegatingPreparedStatement extends DelegatingStatement implements 
         }
     }
 
-    /** @deprecated Use setAsciiStream(), setCharacterStream() or setNCharacterStream() */
+    /**
+     * @deprecated Use setAsciiStream(), setCharacterStream() or setNCharacterStream()
+     */
     @Deprecated
     @Override
     public void setUnicodeStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {

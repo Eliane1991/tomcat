@@ -45,10 +45,10 @@ public class PojoMessageHandlerWholeText
     private final Class<?> primitiveType;
 
     public PojoMessageHandlerWholeText(Object pojo, Method method,
-            Session session, EndpointConfig config,
-            List<Class<? extends Decoder>> decoderClazzes, Object[] params,
-            int indexPayload, boolean convert, int indexSession,
-            long maxMessageSize) {
+                                       Session session, EndpointConfig config,
+                                       List<Class<? extends Decoder>> decoderClazzes, Object[] params,
+                                       int indexPayload, boolean convert, int indexSession,
+                                       long maxMessageSize) {
         super(pojo, method, session, params, indexPayload, convert,
                 indexSession, maxMessageSize);
 

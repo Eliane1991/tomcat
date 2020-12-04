@@ -23,9 +23,9 @@ public interface IStoreFactory {
 
     void setStoreAppender(StoreAppender storeWriter);
 
-    void setRegistry(StoreRegistry aRegistry);
-
     StoreRegistry getRegistry();
+
+    void setRegistry(StoreRegistry aRegistry);
 
     void store(PrintWriter aWriter, int indent, Object aElement)
             throws Exception;

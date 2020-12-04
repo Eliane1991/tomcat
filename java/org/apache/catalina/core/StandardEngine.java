@@ -43,30 +43,15 @@ public class StandardEngine extends ContainerBase implements Engine {
     private static final Log log = LogFactory.getLog(StandardEngine.class);
 
     // ----------------------------------------------------------- Constructors
-
-
     /**
-     * Create a new StandardEngine component with the default basic Valve.
+     * Default access log to use for request/response pairs where we can't ID
+     * the intended host and context.
      */
-    public StandardEngine() {
-
-        super();
-        pipeline.setBasic(new StandardEngineValve());
-        /* Set the jmvRoute using the system property jvmRoute */
-        try {
-            setJvmRoute(System.getProperty("jvmRoute"));
-        } catch(Exception ex) {
-            log.warn(sm.getString("standardEngine.jvmRouteFail"));
-        }
-        // By default, the engine will hold the reloading thread
-        backgroundProcessorDelay = 10;
-
-    }
+    private final AtomicReference<AccessLog> defaultAccessLog =
+            new AtomicReference<>();
 
 
     // ----------------------------------------------------- Instance Variables
-
-
     /**
      * Host name to use when no server host, or an unknown host,
      * is specified in the request.
@@ -86,11 +71,22 @@ public class StandardEngine extends ContainerBase implements Engine {
     private String jvmRouteId;
 
     /**
-     * Default access log to use for request/response pairs where we can't ID
-     * the intended host and context.
+     * Create a new StandardEngine component with the default basic Valve.
      */
-    private final AtomicReference<AccessLog> defaultAccessLog =
-        new AtomicReference<>();
+    public StandardEngine() {
+
+        super();
+        pipeline.setBasic(new StandardEngineValve());
+        /* Set the jmvRoute using the system property jvmRoute */
+        try {
+            setJvmRoute(System.getProperty("jvmRoute"));
+        } catch (Exception ex) {
+            log.warn(sm.getString("standardEngine.jvmRouteFail"));
+        }
+        // By default, the engine will hold the reloading thread
+        backgroundProcessorDelay = 10;
+
+    }
 
     // ------------------------------------------------------------- Properties
 
@@ -140,10 +136,18 @@ public class StandardEngine extends ContainerBase implements Engine {
             service.getMapper().setDefaultHostName(host);
         }
         support.firePropertyChange("defaultHost", oldDefaultHost,
-                                   this.defaultHost);
+                this.defaultHost);
 
     }
 
+    /**
+     * Retrieve the cluster-wide unique identifier for this Engine.
+     * This value is only useful in a load-balancing scenario.
+     */
+    @Override
+    public String getJvmRoute() {
+        return jvmRouteId;
+    }
 
     /**
      * Set the cluster-wide unique identifier for this Engine.
@@ -155,17 +159,6 @@ public class StandardEngine extends ContainerBase implements Engine {
     public void setJvmRoute(String routeId) {
         jvmRouteId = routeId;
     }
-
-
-    /**
-     * Retrieve the cluster-wide unique identifier for this Engine.
-     * This value is only useful in a load-balancing scenario.
-     */
-    @Override
-    public String getJvmRoute() {
-        return jvmRouteId;
-    }
-
 
     /**
      * Return the <code>Service</code> with which we are associated (if any).
@@ -200,7 +193,7 @@ public class StandardEngine extends ContainerBase implements Engine {
 
         if (!(child instanceof Host))
             throw new IllegalArgumentException
-                (sm.getString("standardEngine.notHost"));
+                    (sm.getString("standardEngine.notHost"));
         super.addChild(child);
 
     }
@@ -216,7 +209,7 @@ public class StandardEngine extends ContainerBase implements Engine {
     public void setParent(Container container) {
 
         throw new IllegalArgumentException
-            (sm.getString("standardEngine.notParent"));
+                (sm.getString("standardEngine.notParent"));
 
     }
 
@@ -234,16 +227,20 @@ public class StandardEngine extends ContainerBase implements Engine {
      * Start this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void startInternal() throws LifecycleException {
 
         // Log our server identification information
-        if(log.isInfoEnabled())
-            log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
-
+        if (log.isInfoEnabled())
+            log.info("Starting Servlet Engine: " + ServerInfo.getServerInfo());
+        /**
+         * 调用 父类 containerBase 的startInternal()方法会触发子容器的初始化
+         * engin 的子容器指的就是standardHost
+         *
+         */
         // Standard container startup
         super.startInternal();
     }
@@ -257,7 +254,7 @@ public class StandardEngine extends ContainerBase implements Engine {
      */
     @Override
     public void logAccess(Request request, Response response, long time,
-            boolean useDefault) {
+                          boolean useDefault) {
 
         boolean logged = false;
 
@@ -386,16 +383,16 @@ public class StandardEngine extends ContainerBase implements Engine {
         }
 
         @Override
+        public boolean getRequestAttributesEnabled() {
+            // NOOP
+            return false;
+        }
+
+        @Override
         public void setRequestAttributesEnabled(
                 boolean requestAttributesEnabled) {
             // NOOP
 
-        }
-
-        @Override
-        public boolean getRequestAttributesEnabled() {
-            // NOOP
-            return false;
         }
     }
 
@@ -409,7 +406,7 @@ public class StandardEngine extends ContainerBase implements Engine {
         private volatile boolean disabled = false;
 
         public AccessLogListener(StandardEngine engine, Host host,
-                Context context) {
+                                 Context context) {
             this.engine = engine;
             this.host = host;
             this.context = context;

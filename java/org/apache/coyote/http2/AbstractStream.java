@@ -35,10 +35,9 @@ abstract class AbstractStream {
 
     private final Integer identifier;
     private final String idAsString;
-
-    private volatile AbstractStream parentStream = null;
     private final Set<AbstractNonZeroStream> childStreams =
-            Collections.newSetFromMap(new ConcurrentHashMap<AbstractNonZeroStream,Boolean>());
+            Collections.newSetFromMap(new ConcurrentHashMap<AbstractNonZeroStream, Boolean>());
+    private volatile AbstractStream parentStream = null;
     private long windowSize = ConnectionSettingsBase.DEFAULT_INITIAL_WINDOW_SIZE;
 
 
@@ -102,22 +101,20 @@ abstract class AbstractStream {
         return childStreams;
     }
 
+    protected synchronized long getWindowSize() {
+        return windowSize;
+    }
 
     protected synchronized void setWindowSize(long windowSize) {
         this.windowSize = windowSize;
     }
 
-
-    protected synchronized long getWindowSize() {
-        return windowSize;
-    }
-
-
     /**
      * Increment window size.
+     *
      * @param increment The amount by which the window size should be increased
      * @throws Http2Exception If the window size is now higher than
-     *  the maximum allowed
+     *                        the maximum allowed
      */
     protected synchronized void incrementWindowSize(int increment) throws Http2Exception {
         // No need for overflow protection here.

@@ -78,7 +78,7 @@ public final class NetMask {
      *
      * @param input the CIDR netmask
      * @throws IllegalArgumentException if the netmask is not correct (invalid
-     *             address specification, malformed CIDR prefix, etc)
+     *                                  address specification, malformed CIDR prefix, etc)
      */
     public NetMask(final String input) {
 

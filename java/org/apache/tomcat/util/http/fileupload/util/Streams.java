@@ -30,6 +30,12 @@ import java.io.OutputStream;
 public final class Streams {
 
     /**
+     * Default buffer size for use in
+     * {@link #copy(InputStream, OutputStream, boolean)}.
+     */
+    public static final int DEFAULT_BUFFER_SIZE = 8192;
+
+    /**
      * Private constructor, to prevent instantiation.
      * This class has only static methods.
      */
@@ -38,28 +44,22 @@ public final class Streams {
     }
 
     /**
-     * Default buffer size for use in
-     * {@link #copy(InputStream, OutputStream, boolean)}.
-     */
-    public static final int DEFAULT_BUFFER_SIZE = 8192;
-
-    /**
      * Copies the contents of the given {@link InputStream}
      * to the given {@link OutputStream}. Shortcut for
      * <pre>
      *   copy(pInputStream, pOutputStream, new byte[8192]);
      * </pre>
      *
-     * @param inputStream The input stream, which is being read.
-     * It is guaranteed, that {@link InputStream#close()} is called
-     * on the stream.
-     * @param outputStream The output stream, to which data should
-     * be written. May be null, in which case the input streams
-     * contents are simply discarded.
+     * @param inputStream       The input stream, which is being read.
+     *                          It is guaranteed, that {@link InputStream#close()} is called
+     *                          on the stream.
+     * @param outputStream      The output stream, to which data should
+     *                          be written. May be null, in which case the input streams
+     *                          contents are simply discarded.
      * @param closeOutputStream True guarantees, that
-     * {@link OutputStream#close()} is called on the stream.
-     * False indicates, that only
-     * {@link OutputStream#flush()} should be called finally.
+     *                          {@link OutputStream#close()} is called on the stream.
+     *                          False indicates, that only
+     *                          {@link OutputStream#flush()} should be called finally.
      * @return Number of bytes, which have been copied.
      * @throws IOException An I/O error occurred.
      */
@@ -72,29 +72,29 @@ public final class Streams {
      * Copies the contents of the given {@link InputStream}
      * to the given {@link OutputStream}.
      *
-     * @param inputStream The input stream, which is being read.
-     *   It is guaranteed, that {@link InputStream#close()} is called
-     *   on the stream.
-     * @param outputStream The output stream, to which data should
-     *   be written. May be null, in which case the input streams
-     *   contents are simply discarded.
+     * @param inputStream       The input stream, which is being read.
+     *                          It is guaranteed, that {@link InputStream#close()} is called
+     *                          on the stream.
+     * @param outputStream      The output stream, to which data should
+     *                          be written. May be null, in which case the input streams
+     *                          contents are simply discarded.
      * @param closeOutputStream True guarantees, that {@link OutputStream#close()}
-     *   is called on the stream. False indicates, that only
-     *   {@link OutputStream#flush()} should be called finally.
-     * @param buffer Temporary buffer, which is to be used for
-     *   copying data.
+     *                          is called on the stream. False indicates, that only
+     *                          {@link OutputStream#flush()} should be called finally.
+     * @param buffer            Temporary buffer, which is to be used for
+     *                          copying data.
      * @return Number of bytes, which have been copied.
      * @throws IOException An I/O error occurred.
      */
     public static long copy(InputStream inputStream,
-            OutputStream outputStream, boolean closeOutputStream,
-            byte[] buffer)
-    throws IOException {
+                            OutputStream outputStream, boolean closeOutputStream,
+                            byte[] buffer)
+            throws IOException {
         OutputStream out = outputStream;
         InputStream in = inputStream;
         try {
             long total = 0;
-            for (;;) {
+            for (; ; ) {
                 int res = in.read(buffer);
                 if (res == -1) {
                     break;
@@ -132,9 +132,9 @@ public final class Streams {
      * is used for converting bytes into characters.
      *
      * @param inputStream The input stream to read.
-     * @see #asString(InputStream, String)
      * @return The streams contents, as a string.
      * @throws IOException An I/O error occurred.
+     * @see #asString(InputStream, String)
      */
     public static String asString(InputStream inputStream) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -148,10 +148,10 @@ public final class Streams {
      * content into a string, using the given character encoding.
      *
      * @param inputStream The input stream to read.
-     * @param encoding The character encoding, typically "UTF-8".
-     * @see #asString(InputStream)
+     * @param encoding    The character encoding, typically "UTF-8".
      * @return The streams contents, as a string.
      * @throws IOException An I/O error occurred.
+     * @see #asString(InputStream)
      */
     public static String asString(final InputStream inputStream, final String encoding)
             throws IOException {
@@ -171,10 +171,10 @@ public final class Streams {
      * @throws InvalidFileNameException The file name was found to be invalid.
      */
     public static String checkFileName(String fileName) {
-        if (fileName != null  &&  fileName.indexOf('\u0000') != -1) {
+        if (fileName != null && fileName.indexOf('\u0000') != -1) {
             // pFileName.replace("\u0000", "\\0")
             final StringBuilder sb = new StringBuilder();
-            for (int i = 0;  i < fileName.length();  i++) {
+            for (int i = 0; i < fileName.length(); i++) {
                 char c = fileName.charAt(i);
                 switch (c) {
                     case 0:

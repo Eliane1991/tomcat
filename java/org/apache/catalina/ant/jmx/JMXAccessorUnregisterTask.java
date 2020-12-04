@@ -55,27 +55,27 @@ public class JMXAccessorUnregisterTask extends JMXAccessorTask {
 
     @Override
     public String jmxExecute(MBeanServerConnection jmxServerConnection)
-        throws Exception {
+            throws Exception {
 
         if (getName() == null) {
             throw new BuildException("Must specify a 'name'");
         }
-        return  jmxUuregister(jmxServerConnection, getName());
-     }
+        return jmxUuregister(jmxServerConnection, getName());
+    }
 
 
     /**
      * Unregister MBean.
      *
      * @param jmxServerConnection Connection to the JMX server
-     * @param name The MBean name
+     * @param name                The MBean name
      * @return null (no error message to report other than exception)
      * @throws Exception An error occurred
      */
-    protected String jmxUuregister(MBeanServerConnection jmxServerConnection,String name) throws Exception {
+    protected String jmxUuregister(MBeanServerConnection jmxServerConnection, String name) throws Exception {
         String error = null;
-        if(isEcho()) {
-            handleOutput("Unregister MBean " + name  );
+        if (isEcho()) {
+            handleOutput("Unregister MBean " + name);
         }
         jmxServerConnection.unregisterMBean(
                 new ObjectName(name));

@@ -65,7 +65,7 @@ public class EchoStreamAnnotation {
     /**
      * Process a received pong. This is a NO-OP.
      *
-     * @param pm    Ignored.
+     * @param pm Ignored.
      */
     @OnMessage
     public void echoPongMessage(PongMessage pm) {

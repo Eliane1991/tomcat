@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package javax.servlet.jsp.tagext;
 
@@ -64,7 +64,7 @@ import javax.servlet.jsp.PageContext;
  * <li> Check the TryCatchFinally interface for additional details related
  * to exception handling and resource management.
  * </ul>
- *
+ * <p>
  * <IMG src="doc-files/TagProtocol.gif"
  *      alt="Lifecycle Details Transition Diagram for Tag">
  *
@@ -87,7 +87,7 @@ import javax.servlet.jsp.PageContext;
  *
  * <p>If EVAL_BODY_INCLUDE is returned, the body is evaluated and
  * "passed through" to the current out.</p>
-*/
+ */
 
 public interface Tag extends JspTag {
 
@@ -135,21 +135,6 @@ public interface Tag extends JspTag {
 
     void setPageContext(PageContext pc);
 
-
-    /**
-     * Set the parent (closest enclosing tag handler) of this tag handler.
-     * Invoked by the JSP page implementation object prior to doStartTag().
-     * <p>
-     * This value is *not* reset by doEndTag() and must be explicitly reset
-     * by a page implementation.
-     *
-     * @param t The parent tag, or null.
-     */
-
-
-    void setParent(Tag t);
-
-
     /**
      * Get the parent (closest enclosing tag handler) for this tag handler.
      *
@@ -178,9 +163,21 @@ public interface Tag extends JspTag {
 
     Tag getParent();
 
+    /**
+     * Set the parent (closest enclosing tag handler) of this tag handler.
+     * Invoked by the JSP page implementation object prior to doStartTag().
+     * <p>
+     * This value is *not* reset by doEndTag() and must be explicitly reset
+     * by a page implementation.
+     *
+     * @param t The parent tag, or null.
+     */
+
+
+    void setParent(Tag t);
+
 
     // Actions for basic start/end processing.
-
 
     /**
      * Process the start tag for this instance.
@@ -215,7 +212,7 @@ public interface Tag extends JspTag {
      * BodyTag.EVAL_BODY_BUFFERED.
      *
      * @return EVAL_BODY_INCLUDE if the tag wants to process body, SKIP_BODY
-     *     if it does not want to process it.
+     * if it does not want to process it.
      * @throws JspException if an error occurred while processing this tag
      * @see BodyTag
      */

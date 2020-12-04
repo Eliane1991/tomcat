@@ -26,7 +26,6 @@ import java.util.Set;
 
 /**
  * General helper to dump MBean contents to the log.
- *
  */
 public class MBeanDumper {
 
@@ -36,12 +35,12 @@ public class MBeanDumper {
 
     /**
      * The following code to dump MBeans has been copied from JMXProxyServlet.
+     *
      * @param mbeanServer the MBean server
-     * @param names a set of object names for which to dump the info
+     * @param names       a set of object names for which to dump the info
      * @return a string representation of the MBeans
      */
-    public static String dumpBeans(MBeanServer mbeanServer, Set<ObjectName> names)
-    {
+    public static String dumpBeans(MBeanServer mbeanServer, Set<ObjectName> names) {
         StringBuilder buf = new StringBuilder();
         for (ObjectName oname : names) {
             buf.append("Name: ");
@@ -49,31 +48,31 @@ public class MBeanDumper {
             buf.append(CRLF);
 
             try {
-                MBeanInfo minfo=mbeanServer.getMBeanInfo(oname);
+                MBeanInfo minfo = mbeanServer.getMBeanInfo(oname);
                 // can't be null - I think
-                String code=minfo.getClassName();
+                String code = minfo.getClassName();
                 if ("org.apache.commons.modeler.BaseModelMBean".equals(code)) {
-                    code=(String)mbeanServer.getAttribute(oname, "modelerType");
+                    code = (String) mbeanServer.getAttribute(oname, "modelerType");
                 }
                 buf.append("modelerType: ");
                 buf.append(code);
                 buf.append(CRLF);
 
-                MBeanAttributeInfo attrs[]=minfo.getAttributes();
-                Object value=null;
+                MBeanAttributeInfo attrs[] = minfo.getAttributes();
+                Object value = null;
 
-                for (int i=0; i< attrs.length; i++) {
-                    if (! attrs[i].isReadable()) continue;
-                    String attName=attrs[i].getName();
+                for (int i = 0; i < attrs.length; i++) {
+                    if (!attrs[i].isReadable()) continue;
+                    String attName = attrs[i].getName();
                     if ("modelerType".equals(attName)) continue;
-                    if (attName.indexOf('=') >=0 ||
-                            attName.indexOf(':') >=0 ||
-                            attName.indexOf(' ') >=0 ) {
+                    if (attName.indexOf('=') >= 0 ||
+                            attName.indexOf(':') >= 0 ||
+                            attName.indexOf(' ') >= 0) {
                         continue;
                     }
 
                     try {
-                        value=mbeanServer.getAttribute(oname, attName);
+                        value = mbeanServer.getAttribute(oname, attName);
                     } catch (JMRuntimeException rme) {
                         Throwable cause = rme.getCause();
                         if (cause instanceof UnsupportedOperationException) {
@@ -97,7 +96,7 @@ public class MBeanDumper {
                                 " " + attName, t);
                         continue;
                     }
-                    if (value==null) continue;
+                    if (value == null) continue;
                     String valueString;
                     try {
                         Class<?> c = value.getClass();
@@ -116,8 +115,7 @@ public class MBeanDumper {
                                 } else {
                                     try {
                                         sb.append(escape(item.toString()));
-                                    }
-                                    catch (Throwable t) {
+                                    } catch (Throwable t) {
                                         ExceptionUtils.handleThrowable(t);
                                         sb.append("NON-STRINGABLE VALUE");
                                     }
@@ -127,16 +125,14 @@ public class MBeanDumper {
                                 }
                             }
                             valueString = sb.toString();
-                        }
-                        else {
+                        } else {
                             valueString = escape(value.toString());
                         }
                         buf.append(attName);
                         buf.append(": ");
                         buf.append(valueString);
                         buf.append(CRLF);
-                    }
-                    catch (Throwable t) {
+                    } catch (Throwable t) {
                         ExceptionUtils.handleThrowable(t);
                     }
                 }
@@ -153,33 +149,33 @@ public class MBeanDumper {
         // The only invalid char is \n
         // We also need to keep the string short and split it with \nSPACE
         // XXX TODO
-        int idx=value.indexOf( "\n" );
-        if( idx < 0 ) return value;
+        int idx = value.indexOf("\n");
+        if (idx < 0) return value;
 
-        int prev=0;
-        StringBuilder sb=new StringBuilder();
-        while( idx >= 0 ) {
+        int prev = 0;
+        StringBuilder sb = new StringBuilder();
+        while (idx >= 0) {
             appendHead(sb, value, prev, idx);
 
-            sb.append( "\\n\n ");
-            prev=idx+1;
-            if( idx==value.length() -1 ) break;
-            idx=value.indexOf('\n', idx+1);
+            sb.append("\\n\n ");
+            prev = idx + 1;
+            if (idx == value.length() - 1) break;
+            idx = value.indexOf('\n', idx + 1);
         }
-        if( prev < value.length() )
-            appendHead( sb, value, prev, value.length());
+        if (prev < value.length())
+            appendHead(sb, value, prev, value.length());
         return sb.toString();
     }
 
-    private static void appendHead( StringBuilder sb, String value, int start, int end) {
+    private static void appendHead(StringBuilder sb, String value, int start, int end) {
         if (end < 1) return;
 
-        int pos=start;
-        while( end-pos > 78 ) {
-            sb.append( value.substring(pos, pos+78));
-            sb.append( "\n ");
-            pos=pos+78;
+        int pos = start;
+        while (end - pos > 78) {
+            sb.append(value.substring(pos, pos + 78));
+            sb.append("\n ");
+            pos = pos + 78;
         }
-        sb.append( value.substring(pos,end));
+        sb.append(value.substring(pos, end));
     }
 }

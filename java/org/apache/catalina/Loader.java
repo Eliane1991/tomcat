@@ -121,7 +121,7 @@ public interface Loader {
      * such that the loaded classes should be reloaded?
      *
      * @return <code>true</code> when the repository has been modified,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     public boolean modified();
 

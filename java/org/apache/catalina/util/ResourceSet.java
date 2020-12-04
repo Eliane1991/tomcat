@@ -33,7 +33,6 @@ import java.util.HashSet;
  * is not locked.
  *
  * @param <T> The type of elements in the Set
- *
  * @author Craig R. McClanahan
  */
 public final class ResourceSet<T> extends HashSet<T> {
@@ -41,6 +40,17 @@ public final class ResourceSet<T> extends HashSet<T> {
     private static final long serialVersionUID = 1L;
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * The string manager for this package.
+     */
+    private static final StringManager sm =
+            StringManager.getManager("org.apache.catalina.util");
+    /**
+     * The current lock state of this parameter map.
+     */
+    private boolean locked = false;
+
+
     /**
      * Construct a new, empty set with the default initial capacity and
      * load factor.
@@ -65,12 +75,15 @@ public final class ResourceSet<T> extends HashSet<T> {
     }
 
 
+    // ------------------------------------------------------------- Properties
+
+
     /**
      * Construct a new, empty set with the specified initial capacity and
      * load factor.
      *
      * @param initialCapacity The initial capacity of this set
-     * @param loadFactor The load factor of this set
+     * @param loadFactor      The load factor of this set
      */
     public ResourceSet(int initialCapacity, float loadFactor) {
 
@@ -90,23 +103,12 @@ public final class ResourceSet<T> extends HashSet<T> {
 
     }
 
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The current lock state of this parameter map.
-     */
-    private boolean locked = false;
-
-
     /**
      * @return the locked state of this parameter map.
      */
     public boolean isLocked() {
         return this.locked;
     }
-
 
     /**
      * Set the locked state of this parameter map.
@@ -118,29 +120,20 @@ public final class ResourceSet<T> extends HashSet<T> {
     }
 
 
-    /**
-     * The string manager for this package.
-     */
-    private static final StringManager sm =
-        StringManager.getManager("org.apache.catalina.util");
-
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Add the specified element to this set if it is not already present.
      * Return <code>true</code> if the element was added.
      *
      * @param o The object to be added
-     *
-     * @exception IllegalStateException if this ResourceSet is locked
+     * @throws IllegalStateException if this ResourceSet is locked
      */
     @Override
     public boolean add(T o) {
         if (locked)
             throw new IllegalStateException
-              (sm.getString("resourceSet.locked"));
+                    (sm.getString("resourceSet.locked"));
         return super.add(o);
     }
 
@@ -148,14 +141,14 @@ public final class ResourceSet<T> extends HashSet<T> {
     /**
      * Remove all of the elements from this set.
      *
-     * @exception IllegalStateException if this ResourceSet is locked
+     * @throws IllegalStateException if this ResourceSet is locked
      */
     @Override
     public void clear() {
 
         if (locked)
             throw new IllegalStateException
-              (sm.getString("resourceSet.locked"));
+                    (sm.getString("resourceSet.locked"));
         super.clear();
 
     }
@@ -166,14 +159,13 @@ public final class ResourceSet<T> extends HashSet<T> {
      * Return <code>true</code> if the element was removed.
      *
      * @param o The object to be removed
-     *
-     * @exception IllegalStateException if this ResourceSet is locked
+     * @throws IllegalStateException if this ResourceSet is locked
      */
     @Override
     public boolean remove(Object o) {
         if (locked)
             throw new IllegalStateException
-              (sm.getString("resourceSet.locked"));
+                    (sm.getString("resourceSet.locked"));
         return super.remove(o);
     }
 

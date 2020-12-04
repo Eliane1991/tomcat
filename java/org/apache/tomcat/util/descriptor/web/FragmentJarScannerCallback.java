@@ -29,20 +29,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
-* Callback handling a web-fragment.xml descriptor.
-*/
+ * Callback handling a web-fragment.xml descriptor.
+ */
 public class FragmentJarScannerCallback implements JarScannerCallback {
 
     private static final String FRAGMENT_LOCATION =
-        "META-INF/web-fragment.xml";
+            "META-INF/web-fragment.xml";
     private final WebXmlParser webXmlParser;
     private final boolean delegate;
     private final boolean parseRequired;
-    private final Map<String,WebXml> fragments = new HashMap<>();
-    private boolean ok  = true;
+    private final Map<String, WebXml> fragments = new HashMap<>();
+    private boolean ok = true;
 
     public FragmentJarScannerCallback(WebXmlParser webXmlParser, boolean delegate,
-            boolean parseRequired) {
+                                      boolean parseRequired) {
         this.webXmlParser = webXmlParser;
         this.delegate = delegate;
         this.parseRequired = parseRequired;
@@ -108,7 +108,7 @@ public class FragmentJarScannerCallback implements JarScannerCallback {
             if (fragmentFile.isFile()) {
                 try (InputStream stream = new FileInputStream(fragmentFile)) {
                     InputSource source =
-                        new InputSource(fragmentFile.toURI().toURL().toString());
+                            new InputSource(fragmentFile.toURI().toURL().toString());
                     source.setByteStream(stream);
                     if (!webXmlParser.parseWebXml(source, fragment, true)) {
                         ok = false;
@@ -155,7 +155,7 @@ public class FragmentJarScannerCallback implements JarScannerCallback {
         return ok;
     }
 
-    public Map<String,WebXml> getFragments() {
+    public Map<String, WebXml> getFragments() {
         return fragments;
     }
 }

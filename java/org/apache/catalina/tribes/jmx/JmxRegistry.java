@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JmxRegistry {
 
-    private static final Log log = LogFactory.getLog(JmxRegistry.class);
     protected static final StringManager sm = StringManager.getManager(JmxRegistry.class);
+    private static final Log log = LogFactory.getLog(JmxRegistry.class);
     private static ConcurrentHashMap<String, JmxRegistry> registryCache = new ConcurrentHashMap<>();
 
     private MBeanServer mbserver = ManagementFactory.getPlatformMBeanServer();
@@ -113,7 +113,7 @@ public class JmxRegistry {
     }
 
     public void unregisterJmx(ObjectName oname) {
-        if (oname ==null) return;
+        if (oname == null) return;
         try {
             mbserver.unregisterMBean(oname);
         } catch (InstanceNotFoundException e) {

@@ -61,7 +61,7 @@ public class UniqueAttributesImpl extends AttributesImpl {
 
     @Override
     public void addAttribute(String uri, String localName, String qName,
-            String type, String value) {
+                             String type, String value) {
         if (qNames.add(qName)) {
             super.addAttribute(uri, localName, qName, type, value);
         } else {
@@ -71,7 +71,7 @@ public class UniqueAttributesImpl extends AttributesImpl {
 
     @Override
     public void setAttribute(int index, String uri, String localName,
-            String qName, String type, String value) {
+                             String qName, String type, String value) {
         qNames.remove(super.getQName(index));
         if (qNames.add(qName)) {
             super.setAttribute(index, uri, localName, qName, type, value);
@@ -115,6 +115,6 @@ public class UniqueAttributesImpl extends AttributesImpl {
 
         // Ordinary tag attributes can't be repeated, even with identical values
         throw new IllegalArgumentException(
-                    Localizer.getMessage("jsp.error.duplicateqname", qName));
+                Localizer.getMessage("jsp.error.duplicateqname", qName));
     }
 }

@@ -53,7 +53,7 @@ import java.util.List;
  * @param <K> The type of Key
  * @param <V> The type of Value
  */
-public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
+public class ReplicatedMap<K, V> extends AbstractReplicatedMap<K, V> {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,60 +63,65 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
     //--------------------------------------------------------------------------
     //              CONSTRUCTORS / DESTRUCTORS
     //--------------------------------------------------------------------------
+
     /**
      * Creates a new map
-     * @param owner The map owner
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messages
-     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
+     *
+     * @param owner           The map owner
+     * @param channel         The channel to use for communication
+     * @param timeout         long - timeout for RPC messages
+     * @param mapContextName  String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
-     * @param loadFactor float - load factor, see HashMap
-     * @param cls Class loaders
+     * @param loadFactor      float - load factor, see HashMap
+     * @param cls             Class loaders
      */
-    public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor, ClassLoader[] cls) {
-        super(owner,channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT, cls, true);
+    public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor, ClassLoader[] cls) {
+        super(owner, channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT, cls, true);
     }
 
     /**
      * Creates a new map
-     * @param owner The map owner
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messages
-     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
+     *
+     * @param owner           The map owner
+     * @param channel         The channel to use for communication
+     * @param timeout         long - timeout for RPC messages
+     * @param mapContextName  String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
-     * @param cls Class loaders
+     * @param cls             Class loaders
      */
     public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity, ClassLoader[] cls) {
-        super(owner,channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT, cls, true);
+        super(owner, channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls, true);
     }
 
     /**
      * Creates a new map
-     * @param owner The map owner
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messages
+     *
+     * @param owner          The map owner
+     * @param channel        The channel to use for communication
+     * @param timeout        long - timeout for RPC messages
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
-     * @param cls Class loaders
+     * @param cls            Class loaders
      */
     public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, ClassLoader[] cls) {
-        super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls, true);
+        super(owner, channel, timeout, mapContextName, AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls, true);
     }
 
     /**
      * Creates a new map
-     * @param owner The map owner
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messages
+     *
+     * @param owner          The map owner
+     * @param channel        The channel to use for communication
+     * @param timeout        long - timeout for RPC messages
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
-     * @param cls Class loaders
-     * @param terminate boolean - Flag for whether to terminate this map that failed to start.
+     * @param cls            Class loaders
+     * @param terminate      boolean - Flag for whether to terminate this map that failed to start.
      */
     public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, ClassLoader[] cls, boolean terminate) {
-        super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY,
+        super(owner, channel, timeout, mapContextName, AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY,
                 AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls, terminate);
     }
 
-//------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 //              METHODS TO OVERRIDE
 //------------------------------------------------------------------------------
     @Override
@@ -131,14 +136,15 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
 
     /**
      * publish info about a map pair (key/value) to other nodes in the cluster
-     * @param key Object
+     *
+     * @param key   Object
      * @param value Object
      * @return Member - the backup node
      * @throws ChannelException Cluster error
      */
     @Override
     protected Member[] publishEntryInfo(Object key, Object value) throws ChannelException {
-        if  (! (key instanceof Serializable && value instanceof Serializable)  ) return new Member[0];
+        if (!(key instanceof Serializable && value instanceof Serializable)) return new Member[0];
         //select a backup node
         Member[] backup = getMapMembers();
 
@@ -147,7 +153,7 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
         try {
             //publish the data out to all nodes
             MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_COPY, false,
-                    (Serializable) key, (Serializable) value, null,channel.getLocalMember(false), backup);
+                    (Serializable) key, (Serializable) value, null, channel.getLocalMember(false), backup);
 
             getChannel().send(backup, msg, getChannelSendOptions());
         } catch (ChannelException e) {
@@ -180,9 +186,10 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
         boolean removed = false;
         Log log = getLog();
         synchronized (mapMembers) {
-            removed = (mapMembers.remove(member) != null );
+            removed = (mapMembers.remove(member) != null);
             if (!removed) {
-                if (log.isDebugEnabled()) log.debug("Member["+member+"] disappeared, but was not present in the map.");
+                if (log.isDebugEnabled())
+                    log.debug("Member[" + member + "] disappeared, but was not present in the map.");
                 return; //the member was not part of our map.
             }
         }
@@ -190,14 +197,14 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
             log.info(sm.getString("replicatedMap.member.disappeared", member));
         long start = System.currentTimeMillis();
         for (Entry<K, MapEntry<K, V>> e : innerMap.entrySet()) {
-            MapEntry<K,V> entry = innerMap.get(e.getKey());
-            if (entry==null) continue;
+            MapEntry<K, V> entry = innerMap.get(e.getKey());
+            if (entry == null) continue;
             if (entry.isPrimary()) {
                 try {
                     Member[] backup = getMapMembers();
                     if (backup.length > 0) {
-                        MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_NOTIFY_MAPMEMBER,false,
-                                (Serializable)entry.getKey(),null,null,channel.getLocalMember(false),backup);
+                        MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_NOTIFY_MAPMEMBER, false,
+                                (Serializable) entry.getKey(), null, null, channel.getLocalMember(false), backup);
                         getChannel().send(backup, msg, getChannelSendOptions());
                     }
                     entry.setBackupNodes(backup);
@@ -209,11 +216,11 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
                 entry.setPrimary(null);
             }
 
-            if ( entry.getPrimary() == null &&
-                        entry.isCopy() &&
-                        entry.getBackupNodes()!=null &&
-                        entry.getBackupNodes().length > 0 &&
-                        entry.getBackupNodes()[0].equals(channel.getLocalMember(false)) ) {
+            if (entry.getPrimary() == null &&
+                    entry.isCopy() &&
+                    entry.getBackupNodes() != null &&
+                    entry.getBackupNodes().length > 0 &&
+                    entry.getBackupNodes()[0].equals(channel.getLocalMember(false))) {
                 try {
                     entry.setPrimary(channel.getLocalMember(false));
                     entry.setBackup(false);
@@ -221,12 +228,12 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
                     entry.setCopy(false);
                     Member[] backup = getMapMembers();
                     if (backup.length > 0) {
-                        MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_NOTIFY_MAPMEMBER,false,
-                                (Serializable)entry.getKey(),null,null,channel.getLocalMember(false),backup);
+                        MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_NOTIFY_MAPMEMBER, false,
+                                (Serializable) entry.getKey(), null, null, channel.getLocalMember(false), backup);
                         getChannel().send(backup, msg, getChannelSendOptions());
                     }
                     entry.setBackupNodes(backup);
-                    if ( mapOwner!=null ) mapOwner.objectMadePrimary(entry.getKey(),entry.getValue());
+                    if (mapOwner != null) mapOwner.objectMadePrimary(entry.getKey(), entry.getValue());
 
                 } catch (ChannelException x) {
                     log.error(sm.getString("replicatedMap.unable.relocate", entry.getKey()), x);
@@ -241,21 +248,21 @@ public class ReplicatedMap<K,V> extends AbstractReplicatedMap<K,V> {
 
     @Override
     public void mapMemberAdded(Member member) {
-        if ( member.equals(getChannel().getLocalMember(false)) ) return;
+        if (member.equals(getChannel().getLocalMember(false))) return;
         boolean memberAdded = false;
         synchronized (mapMembers) {
-            if (!mapMembers.containsKey(member) ) {
+            if (!mapMembers.containsKey(member)) {
                 mapMembers.put(member, Long.valueOf(System.currentTimeMillis()));
                 memberAdded = true;
             }
         }
-        if ( memberAdded ) {
+        if (memberAdded) {
             synchronized (stateMutex) {
                 Member[] backup = getMapMembers();
                 for (Entry<K, MapEntry<K, V>> e : innerMap.entrySet()) {
-                    MapEntry<K,V> entry = innerMap.get(e.getKey());
-                    if ( entry == null ) continue;
-                    if (entry.isPrimary() && !inSet(member,entry.getBackupNodes())) {
+                    MapEntry<K, V> entry = innerMap.get(e.getKey());
+                    if (entry == null) continue;
+                    if (entry.isPrimary() && !inSet(member, entry.getBackupNodes())) {
                         entry.setBackupNodes(backup);
                     }
                 }

@@ -15,29 +15,29 @@
   limitations under the License.
 --%>
 <html>
-<jsp:useBean id="cart" scope="session" class="sessions.DummyCart" />
+<jsp:useBean id="cart" scope="session" class="sessions.DummyCart"/>
 
-<jsp:setProperty name="cart" property="*" />
+<jsp:setProperty name="cart" property="*"/>
 <%
     cart.processRequest();
 %>
 
 
-<FONT size = 5 COLOR="#CC0000">
-<br> You have the following items in your cart:
-<ol>
-<%
-    String[] items = cart.getItems();
-    for (String item : items) {
-%>
-<li> <% out.print(util.HTMLFilter.filter(item)); %>
-<%
+<FONT size=5 COLOR="#CC0000">
+    <br> You have the following items in your cart:
+    <ol>
+        <%
+            String[] items = cart.getItems();
+            for (String item : items) {
+        %>
+        <li> <% out.print(util.HTMLFilter.filter(item)); %>
+                <%
     }
 %>
-</ol>
+    </ol>
 
 </FONT>
 
 <hr>
-<%@ include file ="carts.html" %>
+<%@ include file="carts.html" %>
 </html>

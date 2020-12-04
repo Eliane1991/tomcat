@@ -17,13 +17,11 @@
  */
 package org.apache.tomcat.util.bcel.classfile;
 
-public class ArrayElementValue extends ElementValue
-{
+public class ArrayElementValue extends ElementValue {
     // For array types, this is the array
     private final ElementValue[] elementValues;
 
-    ArrayElementValue(final int type, final ElementValue[] datums, final ConstantPool cpool)
-    {
+    ArrayElementValue(final int type, final ElementValue[] datums, final ConstantPool cpool) {
         super(type, cpool);
         if (type != ARRAY) {
             throw new IllegalArgumentException(
@@ -33,12 +31,10 @@ public class ArrayElementValue extends ElementValue
     }
 
     @Override
-    public String stringifyValue()
-    {
+    public String stringifyValue() {
         final StringBuilder sb = new StringBuilder();
         sb.append('[');
-        for (int i = 0; i < elementValues.length; i++)
-        {
+        for (int i = 0; i < elementValues.length; i++) {
             sb.append(elementValues[i].stringifyValue());
             if ((i + 1) < elementValues.length) {
                 sb.append(',');
@@ -48,8 +44,7 @@ public class ArrayElementValue extends ElementValue
         return sb.toString();
     }
 
-    public ElementValue[] getElementValuesArray()
-    {
+    public ElementValue[] getElementValuesArray() {
         return elementValues;
     }
 }

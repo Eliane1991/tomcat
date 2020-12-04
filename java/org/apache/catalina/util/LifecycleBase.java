@@ -59,7 +59,7 @@ public abstract class LifecycleBase implements Lifecycle {
      * the caller to handle or will it be logged instead?
      *
      * @return {@code true} if the exception will be re-thrown, otherwise
-     *         {@code false}
+     * {@code false}
      */
     public boolean getThrowOnFailure() {
         return throwOnFailure;
@@ -110,8 +110,8 @@ public abstract class LifecycleBase implements Lifecycle {
     /**
      * Allow sub classes to fire {@link Lifecycle} events.
      *
-     * @param type  Event type
-     * @param data  Data associated with event.
+     * @param type Event type
+     * @param data Data associated with event.
      */
     protected void fireLifecycleEvent(String type, Object data) {
         LifecycleEvent event = new LifecycleEvent(this, type, data);
@@ -128,6 +128,12 @@ public abstract class LifecycleBase implements Lifecycle {
         }
 
         try {
+            /**
+             * 所有的LifecycleState的改变都会通知给各个容器组件的listener.
+             * engine -> engineConfig   会触发host 容器的热部署
+             * context -> contextConfig
+             * host -> hostConfig
+             */
             setStateInternal(LifecycleState.INITIALIZING, null, false);
             initInternal();
             setStateInternal(LifecycleState.INITIALIZED, null, false);
@@ -176,6 +182,12 @@ public abstract class LifecycleBase implements Lifecycle {
 
         try {
             setStateInternal(LifecycleState.STARTING_PREP, null, false);
+            /**
+             * start的主要过程,
+             * 是先执行各个容器(engin,context,wrapper)的startInternal()方法(如果有)
+             * 然后在执行父类ContainerBase#startInternal()
+             *
+             */
             startInternal();
             if (state.equals(LifecycleState.FAILED)) {
                 // This is a 'controlled' failure. The component put itself into the
@@ -200,7 +212,7 @@ public abstract class LifecycleBase implements Lifecycle {
      * Sub-classes must ensure that the state is changed to
      * {@link LifecycleState#STARTING} during the execution of this method.
      * Changing state will trigger the {@link Lifecycle#START_EVENT} event.
-     *
+     * <p>
      * If a component fails to start it may either throw a
      * {@link LifecycleException} which will cause it's parent to fail to start
      * or it can place itself in the error state in which case {@link #stop()}
@@ -339,16 +351,6 @@ public abstract class LifecycleBase implements Lifecycle {
         return state;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getStateName() {
-        return getState().toString();
-    }
-
-
     /**
      * Provides a mechanism for sub-classes to update the component state.
      * Calling this method will automatically fire any associated
@@ -362,6 +364,13 @@ public abstract class LifecycleBase implements Lifecycle {
         setStateInternal(state, null, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getStateName() {
+        return getState().toString();
+    }
 
     /**
      * Provides a mechanism for sub-classes to update the component state.
@@ -416,6 +425,9 @@ public abstract class LifecycleBase implements Lifecycle {
         this.state = state;
         String lifecycleEvent = state.getLifecycleEvent();
         if (lifecycleEvent != null) {
+            /**
+             *触发当前容器的监听事件
+             */
             fireLifecycleEvent(lifecycleEvent, data);
         }
     }

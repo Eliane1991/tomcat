@@ -45,30 +45,33 @@
 cygwin=false
 darwin=false
 os400=false
-case "`uname`" in
-CYGWIN*) cygwin=true;;
-Darwin*) darwin=true;;
-OS400*) os400=true;;
+case "$(uname)" in
+CYGWIN*) cygwin=true ;;
+Darwin*) darwin=true ;;
+OS400*) os400=true ;;
 esac
 
 # resolve links - $0 may be a softlink
 PRG="$0"
 
 while [ -h "$PRG" ]; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
+  ls=$(ls -ld "$PRG")
+  link=$(expr "$ls" : '.*-> \(.*\)$')
+  if expr "$link" : '/.*' >/dev/null; then
     PRG="$link"
   else
-    PRG=`dirname "$PRG"`/"$link"
+    PRG=$(dirname "$PRG")/"$link"
   fi
 done
 
 # Get standard environment variables
-PRGDIR=`dirname "$PRG"`
+PRGDIR=$(dirname "$PRG")
 
 # Only set CATALINA_HOME if not already set
-[ -z "$CATALINA_HOME" ] && CATALINA_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
+[ -z "$CATALINA_HOME" ] && CATALINA_HOME=$(
+  cd "$PRGDIR/.." >/dev/null
+  pwd
+)
 
 # Ensure that any user defined CLASSPATH variables are not used on startup,
 # but allow them to be specified in setenv.sh, in rare case when it is needed.
@@ -80,10 +83,10 @@ fi
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin; then
-  [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
-  [ -n "$JRE_HOME" ] && JRE_HOME=`cygpath --unix "$JRE_HOME"`
-  [ -n "$CATALINA_HOME" ] && CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
-  [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+  [ -n "$JAVA_HOME" ] && JAVA_HOME=$(cygpath --unix "$JAVA_HOME")
+  [ -n "$JRE_HOME" ] && JRE_HOME=$(cygpath --unix "$JRE_HOME")
+  [ -n "$CATALINA_HOME" ] && CATALINA_HOME=$(cygpath --unix "$CATALINA_HOME")
+  [ -n "$CLASSPATH" ] && CLASSPATH=$(cygpath --path --unix "$CLASSPATH")
 fi
 
 # For OS400
@@ -116,18 +119,18 @@ else
 fi
 
 # Add on extra jar files to CLASSPATH
-if [ ! -z "$CLASSPATH" ] ; then
+if [ ! -z "$CLASSPATH" ]; then
   CLASSPATH="$CLASSPATH":
 fi
 CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar:"$CATALINA_HOME"/bin/tomcat-juli.jar:"$CATALINA_HOME"/lib/servlet-api.jar:"$CATALINA_HOME"/lib/tomcat-util.jar
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
-  JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
-  JRE_HOME=`cygpath --absolute --windows "$JRE_HOME"`
-  CATALINA_HOME=`cygpath --absolute --windows "$CATALINA_HOME"`
-  CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
-  [ -n "$JAVA_ENDORSED_DIRS" ] && JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
+  JAVA_HOME=$(cygpath --absolute --windows "$JAVA_HOME")
+  JRE_HOME=$(cygpath --absolute --windows "$JRE_HOME")
+  CATALINA_HOME=$(cygpath --absolute --windows "$CATALINA_HOME")
+  CLASSPATH=$(cygpath --path --windows "$CLASSPATH")
+  [ -n "$JAVA_ENDORSED_DIRS" ] && JAVA_ENDORSED_DIRS=$(cygpath --path --windows "$JAVA_ENDORSED_DIRS")
 fi
 
 # Java 9 no longer supports the java.endorsed.dirs
@@ -136,10 +139,10 @@ fi
 # or CATALINA_HOME/endorsed exists.
 ENDORSED_PROP=ignore.endorsed.dirs
 if [ -n "$JAVA_ENDORSED_DIRS" ]; then
-    ENDORSED_PROP=java.endorsed.dirs
+  ENDORSED_PROP=java.endorsed.dirs
 fi
 if [ -d "$CATALINA_HOME/endorsed" ]; then
-    ENDORSED_PROP=java.endorsed.dirs
+  ENDORSED_PROP=java.endorsed.dirs
 fi
 
 JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"

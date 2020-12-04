@@ -32,16 +32,14 @@ public interface HttpSessionListener extends EventListener {
     /**
      * Notification that a session was created.
      *
-     * @param se
-     *            the notification event
+     * @param se the notification event
      */
     public void sessionCreated(HttpSessionEvent se);
 
     /**
      * Notification that a session is about to be invalidated.
      *
-     * @param se
-     *            the notification event
+     * @param se the notification event
      */
     public void sessionDestroyed(HttpSessionEvent se);
 }

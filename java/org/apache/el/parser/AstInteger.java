@@ -28,11 +28,11 @@ import java.math.BigInteger;
  * @author Jacob Hookom [jacob@hookom.net]
  */
 public final class AstInteger extends SimpleNode {
+    private volatile Number number;
+
     public AstInteger(int id) {
         super(id);
     }
-
-    private volatile Number number;
 
     protected Number getInteger() {
         if (this.number == null) {

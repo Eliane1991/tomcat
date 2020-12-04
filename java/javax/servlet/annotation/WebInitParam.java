@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  * {@link javax.servlet.annotation.WebFilter} or
  * {@link javax.servlet.annotation.WebServlet} annotation.<br>
  * <br>
- *
+ * <p>
  * E.g.
  * <code>&amp;#064;WebServlet(name="TestServlet", urlPatterns={"/test"},initParams={&amp;#064;WebInitParam(name="test", value="true")})
  * public class TestServlet extends HttpServlet { ... </code><br>

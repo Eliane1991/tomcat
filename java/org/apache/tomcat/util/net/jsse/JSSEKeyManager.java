@@ -41,9 +41,9 @@ public final class JSSEKeyManager extends X509ExtendedKeyManager {
     /**
      * Constructor.
      *
-     * @param mgr The X509KeyManager used as a delegate
+     * @param mgr            The X509KeyManager used as a delegate
      * @param serverKeyAlias The alias name of the server's keypair and
-     * supporting certificate chain
+     *                       supporting certificate chain
      */
     public JSSEKeyManager(X509KeyManager mgr, String serverKeyAlias) {
         super();
@@ -74,8 +74,8 @@ public final class JSSEKeyManager extends X509ExtendedKeyManager {
      */
     @Override
     public String chooseEngineServerAlias(String keyType, Principal[] issuers,
-            SSLEngine engine) {
-        if (serverKeyAlias!=null) {
+                                          SSLEngine engine) {
+        if (serverKeyAlias != null) {
             return serverKeyAlias;
         }
 
@@ -116,7 +116,7 @@ public final class JSSEKeyManager extends X509ExtendedKeyManager {
 
     @Override
     public String chooseEngineClientAlias(String[] keyType, Principal[] issuers,
-            SSLEngine engine) {
+                                          SSLEngine engine) {
         return delegate.chooseClientAlias(keyType, issuers, null);
     }
 }

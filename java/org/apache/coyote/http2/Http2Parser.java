@@ -29,12 +29,10 @@ import java.nio.charset.StandardCharsets;
 
 class Http2Parser {
 
-    private static final Log log = LogFactory.getLog(Http2Parser.class);
-    private static final StringManager sm = StringManager.getManager(Http2Parser.class);
-
     static final byte[] CLIENT_PREFACE_START =
             "PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n".getBytes(StandardCharsets.ISO_8859_1);
-
+    private static final Log log = LogFactory.getLog(Http2Parser.class);
+    private static final StringManager sm = StringManager.getManager(Http2Parser.class);
     private final String connectionId;
     private final Input input;
     private final Output output;
@@ -59,10 +57,8 @@ class Http2Parser {
      *
      * @param block Should this method block until a frame is available if no
      *              frame is available immediately?
-     *
      * @return <code>true</code> if a frame was read otherwise
-     *         <code>false</code>
-     *
+     * <code>false</code>
      * @throws IOException If an IO error occurs while trying to read a frame
      */
     boolean readFrame(boolean block) throws Http2Exception, IOException {
@@ -90,38 +86,38 @@ class Http2Parser {
         }
 
         switch (frameType) {
-        case DATA:
-            readDataFrame(streamId, flags, payloadSize);
-            break;
-        case HEADERS:
-            readHeadersFrame(streamId, flags, payloadSize);
-            break;
-        case PRIORITY:
-            readPriorityFrame(streamId);
-            break;
-        case RST:
-            readRstFrame(streamId);
-            break;
-        case SETTINGS:
-            readSettingsFrame(flags, payloadSize);
-            break;
-        case PUSH_PROMISE:
-            readPushPromiseFrame(streamId);
-            break;
-        case PING:
-            readPingFrame(flags);
-            break;
-        case GOAWAY:
-            readGoawayFrame(payloadSize);
-            break;
-        case WINDOW_UPDATE:
-            readWindowUpdateFrame(streamId);
-            break;
-        case CONTINUATION:
-            readContinuationFrame(streamId, flags, payloadSize);
-            break;
-        case UNKNOWN:
-            readUnknownFrame(streamId, frameType, flags, payloadSize);
+            case DATA:
+                readDataFrame(streamId, flags, payloadSize);
+                break;
+            case HEADERS:
+                readHeadersFrame(streamId, flags, payloadSize);
+                break;
+            case PRIORITY:
+                readPriorityFrame(streamId);
+                break;
+            case RST:
+                readRstFrame(streamId);
+                break;
+            case SETTINGS:
+                readSettingsFrame(flags, payloadSize);
+                break;
+            case PUSH_PROMISE:
+                readPushPromiseFrame(streamId);
+                break;
+            case PING:
+                readPingFrame(flags);
+                break;
+            case GOAWAY:
+                readGoawayFrame(payloadSize);
+                break;
+            case WINDOW_UPDATE:
+                readWindowUpdateFrame(streamId);
+                break;
+            case CONTINUATION:
+                readContinuationFrame(streamId, flags, payloadSize);
+                break;
+            case UNKNOWN:
+                readUnknownFrame(streamId, frameType, flags, payloadSize);
         }
 
         return true;
@@ -345,7 +341,7 @@ class Http2Parser {
 
     private void readWindowUpdateFrame(int streamId) throws Http2Exception, IOException {
         byte[] payload = new byte[4];
-        input.fill(true,  payload);
+        input.fill(true, payload);
         int windowSizeIncrement = ByteUtil.get31Bits(payload, 0);
 
         if (log.isDebugEnabled()) {
@@ -536,7 +532,7 @@ class Http2Parser {
      * judgement.
      */
     private void validateFrame(FrameType expected, FrameType frameType, int streamId, int flags,
-            int payloadSize) throws Http2Exception {
+                               int payloadSize) throws Http2Exception {
 
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("http2Parser.processFrame", connectionId,
@@ -607,15 +603,13 @@ class Http2Parser {
          * no data is available. If any data is available then the buffer will
          * be filled using blocking I/O.
          *
-         * @param block Should the first read into the provided buffer be a
-         *              blocking read or not.
-         * @param data  Buffer to fill
+         * @param block  Should the first read into the provided buffer be a
+         *               blocking read or not.
+         * @param data   Buffer to fill
          * @param offset Position in buffer to start writing
          * @param length Number of bytes to read
-         *
          * @return <code>true</code> if the buffer was filled otherwise
-         *         <code>false</code>
-         *
+         * <code>false</code>
          * @throws IOException If an I/O occurred while obtaining data with
          *                     which to fill the buffer
          */
@@ -639,14 +633,19 @@ class Http2Parser {
 
         // Data frames
         ByteBuffer startRequestBodyFrame(int streamId, int payloadSize, boolean endOfStream) throws Http2Exception;
+
         void endRequestBodyFrame(int streamId) throws Http2Exception;
+
         void receivedEndOfStream(int streamId) throws ConnectionException;
+
         void swallowedPadding(int streamId, int paddingLength) throws ConnectionException, IOException;
 
         // Header frames
         HeaderEmitter headersStart(int streamId, boolean headersEndStream)
                 throws Http2Exception, IOException;
+
         void headersContinue(int payloadSize, boolean endOfHeaders);
+
         void headersEnd(int streamId) throws Http2Exception;
 
         // Priority frames (also headers)
@@ -658,6 +657,7 @@ class Http2Parser {
 
         // Settings frames
         void setting(Setting setting, long value) throws ConnectionException;
+
         void settingsEnd(boolean ack) throws IOException;
 
         // Ping frames

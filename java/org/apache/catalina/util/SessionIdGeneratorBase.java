@@ -32,13 +32,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class SessionIdGeneratorBase extends LifecycleBase
         implements SessionIdGenerator {
 
-    private final Log log = LogFactory.getLog(SessionIdGeneratorBase.class); // must not be static
-
-
     private static final StringManager sm =
-        StringManager.getManager("org.apache.catalina.util");
-
-
+            StringManager.getManager("org.apache.catalina.util");
+    private final Log log = LogFactory.getLog(SessionIdGeneratorBase.class); // must not be static
     /**
      * Queue of random number generator objects to be used when creating session
      * identifiers. If the queue is empty when a random number generator is
@@ -55,11 +51,15 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
     private String secureRandomProvider = null;
 
 
-    /** Node identifier when in a cluster. Defaults to the empty string. */
+    /**
+     * Node identifier when in a cluster. Defaults to the empty string.
+     */
     private String jvmRoute = "";
 
 
-    /** Number of bytes in a session ID. Defaults to 16. */
+    /**
+     * Number of bytes in a session ID. Defaults to 16.
+     */
     private int sessionIdLength = 16;
 
 
@@ -68,7 +68,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * generate session IDs.
      *
      * @return The fully qualified class name. {@code null} indicates that the
-     *         JRE provided {@link SecureRandom} implementation will be used
+     * JRE provided {@link SecureRandom} implementation will be used
      */
     public String getSecureRandomClass() {
         return secureRandomClass;
@@ -92,7 +92,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * instances which generate new session IDs.
      *
      * @return The name of the algorithm. {@code null} or the empty string means
-     *         that platform default will be used
+     * that platform default will be used
      */
     public String getSecureRandomAlgorithm() {
         return secureRandomAlgorithm;
@@ -121,7 +121,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * instances which generate new session IDs.
      *
      * @return The name of the provider. {@code null} or the empty string means
-     *         that platform default will be used
+     * that platform default will be used
      */
     public String getSecureRandomProvider() {
         return secureRandomProvider;
@@ -138,7 +138,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * implementation. If that fails, the {@link SecureRandom} instances will be
      * created using platform defaults.
      *
-     * @param secureRandomProvider  The name of the provider
+     * @param secureRandomProvider The name of the provider
      */
     public void setSecureRandomProvider(String secureRandomProvider) {
         this.secureRandomProvider = secureRandomProvider;
@@ -159,7 +159,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * Specify the node identifier associated with this node which will be
      * included in the generated session ID.
      *
-     * @param jvmRoute  The node identifier
+     * @param jvmRoute The node identifier
      */
     @Override
     public void setJvmRoute(String jvmRoute) {
@@ -179,7 +179,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
     /**
      * Specify the number of bytes for a session ID
      *
-     * @param sessionIdLength   Number of bytes
+     * @param sessionIdLength Number of bytes
      */
     @Override
     public void setSessionIdLength(int sessionIdLength) {

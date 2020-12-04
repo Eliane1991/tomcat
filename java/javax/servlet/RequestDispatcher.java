@@ -32,7 +32,6 @@ import java.io.IOException;
  * @see ServletContext#getRequestDispatcher(java.lang.String)
  * @see ServletContext#getNamedDispatcher(java.lang.String)
  * @see ServletRequest#getRequestDispatcher(java.lang.String)
- *
  */
 public interface RequestDispatcher {
 
@@ -236,23 +235,13 @@ public interface RequestDispatcher {
      * the {@link ServletRequestWrapper} or {@link ServletResponseWrapper}
      * classes that wrap them.
      *
-     *
-     * @param request
-     *            a {@link ServletRequest} object that represents the request
-     *            the client makes of the servlet
-     *
-     * @param response
-     *            a {@link ServletResponse} object that represents the response
-     *            the servlet returns to the client
-     *
-     * @exception ServletException
-     *                if the target resource throws this exception
-     *
-     * @exception IOException
-     *                if the target resource throws this exception
-     *
-     * @exception IllegalStateException
-     *                if the response was already committed
+     * @param request  a {@link ServletRequest} object that represents the request
+     *                 the client makes of the servlet
+     * @param response a {@link ServletResponse} object that represents the response
+     *                 the servlet returns to the client
+     * @throws ServletException      if the target resource throws this exception
+     * @throws IOException           if the target resource throws this exception
+     * @throws IllegalStateException if the response was already committed
      */
     public void forward(ServletRequest request, ServletResponse response)
             throws ServletException, IOException;
@@ -274,19 +263,12 @@ public interface RequestDispatcher {
      * the {@link ServletRequestWrapper} or {@link ServletResponseWrapper}
      * classes that wrap them.
      *
-     * @param request
-     *            a {@link ServletRequest} object that contains the client's
-     *            request
-     *
-     * @param response
-     *            a {@link ServletResponse} object that contains the servlet's
-     *            response
-     *
-     * @exception ServletException
-     *                if the included resource throws this exception
-     *
-     * @exception IOException
-     *                if the included resource throws this exception
+     * @param request  a {@link ServletRequest} object that contains the client's
+     *                 request
+     * @param response a {@link ServletResponse} object that contains the servlet's
+     *                 response
+     * @throws ServletException if the included resource throws this exception
+     * @throws IOException      if the included resource throws this exception
      */
     public void include(ServletRequest request, ServletResponse response)
             throws ServletException, IOException;

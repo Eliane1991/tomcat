@@ -49,7 +49,6 @@ package org.apache.jasper.xmlparser;
  * </ul>
  *
  * @author Andy Clark
- *
  * @deprecated Will be removed in Tomcat 9.0.x onwards
  */
 @Deprecated
@@ -89,6 +88,7 @@ public class SymbolTable {
 
     /**
      * Constructs a symbol table with a specified number of buckets.
+     *
      * @param tableSize The table size (default is 101)
      */
     public SymbolTable(int tableSize) {
@@ -115,7 +115,8 @@ public class SymbolTable {
 
         // search for identical symbol
         int bucket = hash(buffer, offset, length) % fTableSize;
-        OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
+        OUTER:
+        for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
             if (length == entry.characters.length) {
                 for (int i = 0; i < length; i++) {
                     if (buffer[offset + i] != entry.characters[i]) {

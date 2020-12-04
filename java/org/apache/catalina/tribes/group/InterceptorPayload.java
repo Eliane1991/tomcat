@@ -21,7 +21,7 @@ import org.apache.catalina.tribes.ErrorHandler;
 /**
  * @version 1.0
  */
-public class InterceptorPayload  {
+public class InterceptorPayload {
     private ErrorHandler errorHandler;
 
     public ErrorHandler getErrorHandler() {

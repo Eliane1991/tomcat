@@ -27,17 +27,14 @@ public interface ContextBind {
      * {@link org.apache.catalina.ThreadBindingListener#bind()} will be called
      * after the change has been made.
      *
-     * @param usePrivilegedAction
-     *          Should a {@link java.security.PrivilegedAction} be used when
-     *          obtaining the current thread context class loader and setting
-     *          the new one?
-     * @param originalClassLoader
-     *          The current class loader if known to save this method having to
-     *          look it up
-     *
+     * @param usePrivilegedAction Should a {@link java.security.PrivilegedAction} be used when
+     *                            obtaining the current thread context class loader and setting
+     *                            the new one?
+     * @param originalClassLoader The current class loader if known to save this method having to
+     *                            look it up
      * @return If the class loader has been changed by the method it will return
-     *         the thread context class loader in use when the method was
-     *         called. If no change was made then this method returns null.
+     * the thread context class loader in use when the method was
+     * called. If no change was made then this method returns null.
      */
     ClassLoader bind(boolean usePrivilegedAction, ClassLoader originalClassLoader);
 
@@ -50,11 +47,9 @@ public interface ContextBind {
      * {@link org.apache.catalina.ThreadBindingListener#unbind()} will be called
      * before the change is made.
      *
-     * @param usePrivilegedAction
-     *          Should a {@link java.security.PrivilegedAction} be used when
-     *          setting the current thread context class loader?
-     * @param originalClassLoader
-     *          The class loader to restore as the thread context class loader
+     * @param usePrivilegedAction Should a {@link java.security.PrivilegedAction} be used when
+     *                            setting the current thread context class loader?
+     * @param originalClassLoader The class loader to restore as the thread context class loader
      */
     void unbind(boolean usePrivilegedAction, ClassLoader originalClassLoader);
 }

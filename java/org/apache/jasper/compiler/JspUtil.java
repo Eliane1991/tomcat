@@ -40,14 +40,13 @@ import java.util.Vector;
  */
 public class JspUtil {
 
+    public static final int CHUNKSIZE = 1024;
     private static final String WEB_INF_TAGS = "/WEB-INF/tags/";
     private static final String META_INF_TAGS = "/META-INF/tags/";
-
     // Delimiters for request-time expressions (JSP and XML syntax)
     private static final String OPEN_EXPR = "<%=";
     private static final String CLOSE_EXPR = "%>";
-
-    private static final String javaKeywords[] = { "abstract", "assert",
+    private static final String javaKeywords[] = {"abstract", "assert",
             "boolean", "break", "byte", "case", "catch", "char", "class",
             "const", "continue", "default", "do", "double", "else", "enum",
             "extends", "final", "finally", "float", "for", "goto", "if",
@@ -55,12 +54,11 @@ public class JspUtil {
             "native", "new", "package", "private", "protected", "public",
             "return", "short", "static", "strictfp", "super", "switch",
             "synchronized", "this", "throw", "throws", "transient", "try",
-            "void", "volatile", "while" };
-
-    public static final int CHUNKSIZE = 1024;
+            "void", "volatile", "while"};
 
     /**
      * Takes a potential expression and converts it into XML form.
+     *
      * @param expression The expression to convert
      * @return XML view
      */
@@ -81,18 +79,13 @@ public class JspUtil {
     /**
      * Checks to see if the given scope is valid.
      *
-     * @param scope
-     *            The scope to be checked
-     * @param n
-     *            The Node containing the 'scope' attribute whose value is to be
-     *            checked
-     * @param err
-     *            error dispatcher
-     *
-     * @throws JasperException
-     *             if scope is not null and different from &quot;page&quot;,
-     *             &quot;request&quot;, &quot;session&quot;, and
-     *             &quot;application&quot;
+     * @param scope The scope to be checked
+     * @param n     The Node containing the 'scope' attribute whose value is to be
+     *              checked
+     * @param err   error dispatcher
+     * @throws JasperException if scope is not null and different from &quot;page&quot;,
+     *                         &quot;request&quot;, &quot;session&quot;, and
+     *                         &quot;application&quot;
      */
     public static void checkScope(String scope, Node n, ErrorDispatcher err)
             throws JasperException {
@@ -107,14 +100,15 @@ public class JspUtil {
      * present have valid names. Checks attributes specified as XML-style
      * attributes as well as attributes specified using the jsp:attribute
      * standard action.
-     * @param typeOfTag The tag type
-     * @param n The corresponding node
+     *
+     * @param typeOfTag       The tag type
+     * @param n               The corresponding node
      * @param validAttributes The array with the valid attributes
-     * @param err Dispatcher for errors
+     * @param err             Dispatcher for errors
      * @throws JasperException An error occurred
      */
     public static void checkAttributes(String typeOfTag, Node n,
-            ValidAttribute[] validAttributes, ErrorDispatcher err)
+                                       ValidAttribute[] validAttributes, ErrorDispatcher err)
             throws JasperException {
         Attributes attrs = n.getAttributes();
         Mark start = n.getStart();
@@ -125,7 +119,7 @@ public class JspUtil {
         Vector<String> temp = new Vector<>(tempLength, 1);
         for (int i = 0; i < tempLength; i++) {
             @SuppressWarnings("null")  // If attrs==null, tempLength == 0
-            String qName = attrs.getQName(i);
+                    String qName = attrs.getQName(i);
             if ((!qName.equals("xmlns")) && (!qName.startsWith("xmlns:"))) {
                 temp.addElement(qName);
             }
@@ -189,7 +183,7 @@ public class JspUtil {
         }
 
         // Now check to see if the rest of the attributes are valid too.
-        for(String attribute : temp) {
+        for (String attribute : temp) {
             valid = false;
             for (ValidAttribute validAttribute : validAttributes) {
                 if (attribute.equals(validAttribute.name)) {
@@ -207,6 +201,7 @@ public class JspUtil {
 
     /**
      * Escape the 5 entities defined by XML.
+     *
      * @param s String to escape
      * @return XML escaped string
      * @deprecated This method will be removed in Tomcat 9
@@ -236,28 +231,12 @@ public class JspUtil {
         return sb.toString();
     }
 
-    public static class ValidAttribute {
-
-        private final String name;
-        private final boolean mandatory;
-
-        public ValidAttribute(String name, boolean mandatory) {
-            this.name = name;
-            this.mandatory = mandatory;
-        }
-
-        public ValidAttribute(String name) {
-            this(name, false);
-        }
-    }
-
     /**
      * Convert a String value to 'boolean'. Besides the standard conversions
      * done by Boolean.parseBoolean(s), the value "yes" (ignore case)
      * is also converted to 'true'. If 's' is null, then 'false' is returned.
      *
-     * @param s
-     *            the string to be converted
+     * @param s the string to be converted
      * @return the boolean value associated with the string s
      */
     public static boolean booleanValue(String s) {
@@ -282,7 +261,8 @@ public class JspUtil {
      * name represents a primitive type, in which case it is converted to a
      * <code>Class</code> object by appending ".class" to it (e.g.,
      * "int.class").
-     * @param type The class name, array or primitive type
+     *
+     * @param type   The class name, array or primitive type
      * @param loader The class loader
      * @return the loaded class
      * @throws ClassNotFoundException Loading class failed
@@ -340,18 +320,15 @@ public class JspUtil {
     /**
      * Produces a String representing a call to the EL interpreter.
      *
-     * @param isTagFile <code>true</code> if the file is a tag file
-     *  rather than a JSP
-     * @param expression
-     *            a String containing zero or more "${}" expressions
-     * @param expectedType
-     *            the expected type of the interpreted result
-     * @param fnmapvar
-     *            Variable pointing to a function map.
+     * @param isTagFile    <code>true</code> if the file is a tag file
+     *                     rather than a JSP
+     * @param expression   a String containing zero or more "${}" expressions
+     * @param expectedType the expected type of the interpreted result
+     * @param fnmapvar     Variable pointing to a function map.
      * @return a String representing a call to the EL interpreter.
      */
     public static String interpreterCall(boolean isTagFile, String expression,
-            Class<?> expectedType, String fnmapvar) {
+                                         Class<?> expectedType, String fnmapvar) {
         /*
          * Determine which context object to use.
          */
@@ -433,7 +410,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveBoolean(String s,
-            boolean isNamedAttribute) {
+                                                  boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToBoolean("
                     + s + ")";
@@ -461,7 +438,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveByte(String s,
-            boolean isNamedAttribute) {
+                                               boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToByte("
                     + s + ")";
@@ -519,7 +496,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveDouble(String s,
-            boolean isNamedAttribute) {
+                                                 boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToDouble("
                     + s + ")";
@@ -547,7 +524,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveFloat(String s,
-            boolean isNamedAttribute) {
+                                                boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToFloat("
                     + s + ")";
@@ -602,7 +579,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveShort(String s,
-            boolean isNamedAttribute) {
+                                                boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToShort("
                     + s + ")";
@@ -630,7 +607,7 @@ public class JspUtil {
     }
 
     public static String coerceToPrimitiveLong(String s,
-            boolean isNamedAttribute) {
+                                               boolean isNamedAttribute) {
         if (isNamedAttribute) {
             return "org.apache.jasper.runtime.JspRuntimeLibrary.coerceToLong("
                     + s + ")";
@@ -658,7 +635,7 @@ public class JspUtil {
     }
 
     public static InputStream getInputStream(String fname, Jar jar,
-            JspCompilationContext ctxt) throws IOException {
+                                             JspCompilationContext ctxt) throws IOException {
 
         InputStream in = null;
 
@@ -678,7 +655,7 @@ public class JspUtil {
     }
 
     public static InputSource getInputSource(String fname, Jar jar, JspCompilationContext ctxt)
-        throws IOException {
+            throws IOException {
         InputSource source;
         if (jar != null) {
             String jarEntryName = fname.substring(1, fname.length());
@@ -696,15 +673,14 @@ public class JspUtil {
      * the given tag file path.
      *
      * @param path Tag file path
-     * @param urn The tag identifier
-     * @param err Error dispatcher
-     *
+     * @param urn  The tag identifier
+     * @param err  Error dispatcher
      * @return Fully-qualified class name of the tag handler corresponding to
-     *         the given tag file path
+     * the given tag file path
      * @throws JasperException Failed to generate a class name for the tag
      */
     public static String getTagHandlerClassName(String path, String urn,
-            ErrorDispatcher err) throws JasperException {
+                                                ErrorDispatcher err) throws JasperException {
 
 
         String className = null;
@@ -758,9 +734,7 @@ public class JspUtil {
     /**
      * Converts the given path to a Java package or fully-qualified class name
      *
-     * @param path
-     *            Path to convert
-     *
+     * @param path Path to convert
      * @return Java package corresponding to the given path
      */
     public static final String makeJavaPackage(String path) {
@@ -780,10 +754,8 @@ public class JspUtil {
     /**
      * Splits a string into it's components.
      *
-     * @param path
-     *            String to split
-     * @param pat
-     *            Pattern to split at
+     * @param path String to split
+     * @param pat  Pattern to split at
      * @return the components of the path
      */
     private static final String[] split(String path, String pat) {
@@ -811,9 +783,7 @@ public class JspUtil {
     /**
      * Converts the given identifier to a legal Java identifier
      *
-     * @param identifier
-     *            Identifier to convert
-     *
+     * @param identifier Identifier to convert
      * @return Legal Java identifier corresponding to the given identifier
      */
     public static final String makeJavaIdentifier(String identifier) {
@@ -824,9 +794,7 @@ public class JspUtil {
      * Converts the given identifier to a legal Java identifier
      * to be used for JSP Tag file attribute names.
      *
-     * @param identifier
-     *            Identifier to convert
-     *
+     * @param identifier Identifier to convert
      * @return Legal Java identifier corresponding to the given identifier
      */
     public static final String makeJavaIdentifierForAttribute(String identifier) {
@@ -836,13 +804,11 @@ public class JspUtil {
     /**
      * Converts the given identifier to a legal Java identifier.
      *
-     * @param identifier
-     *            Identifier to convert
-     *
+     * @param identifier Identifier to convert
      * @return Legal Java identifier corresponding to the given identifier
      */
     private static final String makeJavaIdentifier(String identifier,
-            boolean periodToUnderscore) {
+                                                   boolean periodToUnderscore) {
         StringBuilder modifiedIdentifier = new StringBuilder(identifier.length());
         if (!Character.isJavaIdentifierStart(identifier.charAt(0))) {
             modifiedIdentifier.append('_');
@@ -866,6 +832,7 @@ public class JspUtil {
 
     /**
      * Mangle the specified character to create a legal Java class name.
+     *
      * @param ch The character
      * @return the replacement character as a string
      */
@@ -881,6 +848,7 @@ public class JspUtil {
 
     /**
      * Test whether the argument is a Java keyword.
+     *
      * @param key The name
      * @return <code>true</code> if the name is a java identifier
      */
@@ -903,14 +871,14 @@ public class JspUtil {
     }
 
     static InputStreamReader getReader(String fname, String encoding,
-            Jar jar, JspCompilationContext ctxt, ErrorDispatcher err)
+                                       Jar jar, JspCompilationContext ctxt, ErrorDispatcher err)
             throws JasperException, IOException {
 
         return getReader(fname, encoding, jar, ctxt, err, 0);
     }
 
     static InputStreamReader getReader(String fname, String encoding,
-            Jar jar, JspCompilationContext ctxt, ErrorDispatcher err, int skip)
+                                       Jar jar, JspCompilationContext ctxt, ErrorDispatcher err, int skip)
             throws JasperException, IOException {
 
         InputStreamReader reader = null;
@@ -955,6 +923,7 @@ public class JspUtil {
      * Class.getName() return arrays in the form "[[[&lt;et&gt;", where et, the
      * element type can be one of ZBCDFIJS or L&lt;classname&gt;;. It is
      * converted into forms that can be understood by javac.
+     *
      * @param type the type to convert
      * @return the equivalent type in Java sources
      */
@@ -971,15 +940,33 @@ public class JspUtil {
                 dims++;
             } else {
                 switch (type.charAt(i)) {
-                case 'Z': t = "boolean"; break;
-                case 'B': t = "byte"; break;
-                case 'C': t = "char"; break;
-                case 'D': t = "double"; break;
-                case 'F': t = "float"; break;
-                case 'I': t = "int"; break;
-                case 'J': t = "long"; break;
-                case 'S': t = "short"; break;
-                case 'L': t = type.substring(i+1, type.indexOf(';')); break;
+                    case 'Z':
+                        t = "boolean";
+                        break;
+                    case 'B':
+                        t = "byte";
+                        break;
+                    case 'C':
+                        t = "char";
+                        break;
+                    case 'D':
+                        t = "double";
+                        break;
+                    case 'F':
+                        t = "float";
+                        break;
+                    case 'I':
+                        t = "int";
+                        break;
+                    case 'J':
+                        t = "long";
+                        break;
+                    case 'S':
+                        t = "short";
+                        break;
+                    case 'L':
+                        t = type.substring(i + 1, type.indexOf(';'));
+                        break;
                 }
                 break;
             }
@@ -996,5 +983,20 @@ public class JspUtil {
             resultType.append("[]");
         }
         return resultType.toString();
+    }
+
+    public static class ValidAttribute {
+
+        private final String name;
+        private final boolean mandatory;
+
+        public ValidAttribute(String name, boolean mandatory) {
+            this.name = name;
+            this.mandatory = mandatory;
+        }
+
+        public ValidAttribute(String name) {
+            this(name, false);
+        }
     }
 }

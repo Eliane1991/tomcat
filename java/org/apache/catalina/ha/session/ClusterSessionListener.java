@@ -28,12 +28,13 @@ import java.util.Map;
 
 /**
  * Receive replicated SessionMessage form other cluster node.
+ *
  * @author Peter Rossbach
  */
 public class ClusterSessionListener extends ClusterListener {
 
     private static final Log log =
-        LogFactory.getLog(ClusterSessionListener.class);
+            LogFactory.getLog(ClusterSessionListener.class);
     private static final StringManager sm = StringManager.getManager(ClusterSessionListener.class);
 
     //--Constructor---------------------------------------------
@@ -48,8 +49,7 @@ public class ClusterSessionListener extends ClusterListener {
      * Callback from the cluster, when a message is received, The cluster will
      * broadcast it invoking the messageReceived on the receiver.
      *
-     * @param myobj
-     *            ClusterMessage - the message received from the cluster
+     * @param myobj ClusterMessage - the message received from the cluster
      */
     @Override
     public void messageReceived(ClusterMessage myobj) {
@@ -58,7 +58,7 @@ public class ClusterSessionListener extends ClusterListener {
             String ctxname = msg.getContextName();
             //check if the message is a EVT_GET_ALL_SESSIONS,
             //if so, wait until we are fully started up
-            Map<String,ClusterManager> managers = cluster.getManagers() ;
+            Map<String, ClusterManager> managers = cluster.getManagers();
             if (ctxname == null) {
                 for (Map.Entry<String, ClusterManager> entry :
                         managers.entrySet()) {
@@ -84,7 +84,7 @@ public class ClusterSessionListener extends ClusterListener {
                     if (msg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) {
                         SessionMessage replymsg = new SessionMessageImpl(ctxname,
                                 SessionMessage.EVT_ALL_SESSION_NOCONTEXTMANAGER,
-                                null, "NO-CONTEXT-MANAGER","NO-CONTEXT-MANAGER-" + ctxname);
+                                null, "NO-CONTEXT-MANAGER", "NO-CONTEXT-MANAGER-" + ctxname);
                         cluster.send(replymsg, msg.getAddress());
                     }
                 }
@@ -95,11 +95,10 @@ public class ClusterSessionListener extends ClusterListener {
     /**
      * Accept only SessionMessage
      *
-     * @param msg
-     *            ClusterMessage
+     * @param msg ClusterMessage
      * @return boolean - returns true to indicate that messageReceived should be
-     *         invoked. If false is returned, the messageReceived method will
-     *         not be invoked.
+     * invoked. If false is returned, the messageReceived method will
+     * not be invoked.
      */
     @Override
     public boolean accept(ClusterMessage msg) {

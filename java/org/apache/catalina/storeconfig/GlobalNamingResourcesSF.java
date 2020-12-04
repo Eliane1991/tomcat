@@ -55,7 +55,7 @@ public class GlobalNamingResourcesSF extends StoreFactoryBase {
                     resourcesdesc.getStoreFactory().store(aWriter, indent + 2,
                             resources);
                 } else {
-                    if(log.isWarnEnabled())
+                    if (log.isWarnEnabled())
                         log.warn("Can't find NamingResources Store Factory!");
                 }
 

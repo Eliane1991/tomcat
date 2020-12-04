@@ -36,6 +36,10 @@ package javax.servlet.jsp.tagext;
  */
 public class ValidationMessage {
 
+    // Private data
+    private final String id;
+    private final String message;
+
     /**
      * Create a ValidationMessage. The message String should be non-null. The
      * value of id may be null, if the message is not specific to any XML
@@ -43,10 +47,8 @@ public class ValidationMessage {
      * value of id must be the value of a jsp:id attribute for the PageData
      * passed into the validate() method.
      *
-     * @param id
-     *            Either null, or the value of a jsp:id attribute.
-     * @param message
-     *            A localized validation message.
+     * @param id      Either null, or the value of a jsp:id attribute.
+     * @param message A localized validation message.
      */
     public ValidationMessage(String id, String message) {
         this.id = id;
@@ -70,8 +72,4 @@ public class ValidationMessage {
     public String getMessage() {
         return message;
     }
-
-    // Private data
-    private final String id;
-    private final String message;
 }

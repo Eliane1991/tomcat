@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 class WsPerSessionServerEndpointConfig implements ServerEndpointConfig {
 
     private final ServerEndpointConfig perEndpointConfig;
-    private final Map<String,Object> perSessionUserProperties =
+    private final Map<String, Object> perSessionUserProperties =
             new ConcurrentHashMap<>();
 
     WsPerSessionServerEndpointConfig(ServerEndpointConfig perEndpointConfig) {
@@ -52,7 +52,7 @@ class WsPerSessionServerEndpointConfig implements ServerEndpointConfig {
     }
 
     @Override
-    public Map<String,Object> getUserProperties() {
+    public Map<String, Object> getUserProperties() {
         return perSessionUserProperties;
     }
 

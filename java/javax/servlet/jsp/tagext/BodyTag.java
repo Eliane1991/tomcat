@@ -106,7 +106,7 @@ public interface BodyTag extends IterationTag {
      * use of the two different terms, which are much more descriptive.
      *
      * @deprecated As of Java JSP API 1.2, use BodyTag.EVAL_BODY_BUFFERED or
-     *             IterationTag.EVAL_BODY_AGAIN.
+     * IterationTag.EVAL_BODY_AGAIN.
      */
     @SuppressWarnings("dep-ann")
     // TCK signature test fails with annotation
@@ -136,8 +136,7 @@ public interface BodyTag extends IterationTag {
      * until after the invocation of the doEndTag method, at which case it may
      * be reused.
      *
-     * @param b
-     *            the BodyContent
+     * @param b the BodyContent
      * @see #doInitBody
      * @see #doAfterBody
      */
@@ -154,8 +153,7 @@ public interface BodyTag extends IterationTag {
      * NESTED variables (defined by the associated TagExtraInfo or TLD) after
      * the invocation of doInitBody().
      *
-     * @throws JspException
-     *             if an error occurred while processing this tag
+     * @throws JspException if an error occurred while processing this tag
      * @see #doAfterBody
      */
     void doInitBody() throws JspException;

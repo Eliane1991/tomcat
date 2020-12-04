@@ -26,12 +26,11 @@ import java.nio.charset.Charset;
 import java.util.BitSet;
 
 /**
- *
  * This class is very similar to the java.net.URLEncoder class.
- *
+ * <p>
  * Unfortunately, with java.net.URLEncoder there is no way to specify to the
  * java.net.URLEncoder which characters should NOT be encoded.
- *
+ * <p>
  * This code was moved from DefaultServlet.java
  *
  * @author Craig R. McClanahan
@@ -39,11 +38,10 @@ import java.util.BitSet;
  */
 public final class URLEncoder implements Cloneable {
 
-    private static final char[] hexadecimal =
-            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
     public static final URLEncoder DEFAULT = new URLEncoder();
     public static final URLEncoder QUERY = new URLEncoder();
+    private static final char[] hexadecimal =
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     static {
         /*
@@ -146,9 +144,7 @@ public final class URLEncoder implements Cloneable {
      * URL encodes the provided path using UTF-8.
      *
      * @param path The path to encode
-     *
      * @return The encoded path
-     *
      * @deprecated Use {@link #encode(String, String)}
      */
     @Deprecated
@@ -160,11 +156,9 @@ public final class URLEncoder implements Cloneable {
     /**
      * URL encodes the provided path using the given encoding.
      *
-     * @param path      The path to encode
-     * @param encoding  The encoding to use to convert the path to bytes
-     *
+     * @param path     The path to encode
+     * @param encoding The encoding to use to convert the path to bytes
      * @return The encoded path
-     *
      * @deprecated This will be removed in Tomcat 9.0.x
      */
     @Deprecated
@@ -182,9 +176,8 @@ public final class URLEncoder implements Cloneable {
     /**
      * URL encodes the provided path using the given character set.
      *
-     * @param path      The path to encode
-     * @param charset   The character set to use to convert the path to bytes
-     *
+     * @param path    The path to encode
+     * @param charset The character set to use to convert the path to bytes
      * @return The encoded path
      */
     public String encode(String path, Charset charset) {
@@ -197,15 +190,15 @@ public final class URLEncoder implements Cloneable {
         for (int i = 0; i < path.length(); i++) {
             int c = path.charAt(i);
             if (safeCharacters.get(c)) {
-                rewrittenPath.append((char)c);
+                rewrittenPath.append((char) c);
             } else if (encodeSpaceAsPlus && c == ' ') {
                 rewrittenPath.append('+');
             } else {
                 // convert to external encoding before hex conversion
                 try {
-                    writer.write((char)c);
+                    writer.write((char) c);
                     writer.flush();
-                } catch(IOException e) {
+                } catch (IOException e) {
                     buf.reset();
                     continue;
                 }

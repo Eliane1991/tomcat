@@ -45,10 +45,10 @@ public class PojoMessageHandlerWholeBinary
     private final boolean isForInputStream;
 
     public PojoMessageHandlerWholeBinary(Object pojo, Method method,
-            Session session, EndpointConfig config,
-            List<Class<? extends Decoder>> decoderClazzes, Object[] params,
-            int indexPayload, boolean convert, int indexSession,
-            boolean isForInputStream, long maxMessageSize) {
+                                         Session session, EndpointConfig config,
+                                         List<Class<? extends Decoder>> decoderClazzes, Object[] params,
+                                         int indexPayload, boolean convert, int indexSession,
+                                         boolean isForInputStream, long maxMessageSize) {
         super(pojo, method, session, params, indexPayload, convert,
                 indexSession, maxMessageSize);
 

@@ -32,18 +32,15 @@ public class NotificationInfo extends FeatureInfo {
     static final long serialVersionUID = -6319885418912650856L;
 
     // ----------------------------------------------------- Instance Variables
-
-
+    protected final ReadWriteLock notifTypesLock = new ReentrantReadWriteLock();
+    protected String notifTypes[] = new String[0];
     /**
      * The <code>ModelMBeanNotificationInfo</code> object that corresponds
      * to this <code>NotificationInfo</code> instance.
      */
     transient MBeanNotificationInfo info = null;
-    protected String notifTypes[] = new String[0];
-    protected final ReadWriteLock notifTypesLock = new ReentrantReadWriteLock();
 
     // ------------------------------------------------------------- Properties
-
 
     /**
      * Override the <code>description</code> property setter.
@@ -111,6 +108,7 @@ public class NotificationInfo extends FeatureInfo {
     /**
      * Create and return a <code>ModelMBeanNotificationInfo</code> object that
      * corresponds to the attribute described by this instance.
+     *
      * @return the notification info
      */
     public MBeanNotificationInfo createNotificationInfo() {
@@ -121,7 +119,7 @@ public class NotificationInfo extends FeatureInfo {
 
         // Create and return a new information object
         info = new MBeanNotificationInfo
-            (getNotifTypes(), getName(), getDescription());
+                (getNotifTypes(), getName(), getDescription());
         //Descriptor descriptor = info.getDescriptor();
         //addFields(descriptor);
         //info.setDescriptor(descriptor);

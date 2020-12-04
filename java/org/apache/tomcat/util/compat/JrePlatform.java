@@ -21,6 +21,7 @@ import java.security.PrivilegedAction;
 
 public class JrePlatform {
 
+    public static final boolean IS_WINDOWS;
     private static final String OS_NAME_PROPERTY = "os.name";
     private static final String OS_NAME_WINDOWS_PREFIX = "Windows";
 
@@ -44,16 +45,13 @@ public class JrePlatform {
             osName = AccessController.doPrivileged(
                     new PrivilegedAction<String>() {
 
-                    @Override
-                    public String run() {
-                        return System.getProperty(OS_NAME_PROPERTY);
-                    }
-                });
+                        @Override
+                        public String run() {
+                            return System.getProperty(OS_NAME_PROPERTY);
+                        }
+                    });
         }
 
         IS_WINDOWS = osName.startsWith(OS_NAME_WINDOWS_PREFIX);
     }
-
-
-    public static final boolean IS_WINDOWS;
 }

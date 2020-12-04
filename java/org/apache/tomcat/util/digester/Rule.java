@@ -27,25 +27,24 @@ public abstract class Rule {
     // ----------------------------------------------------------- Constructors
 
     /**
-     * <p>Base constructor.
-     * Now the digester will be set when the rule is added.</p>
-     */
-    public Rule() {}
-
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
      * The Digester with which this Rule is associated.
      */
     protected Digester digester = null;
 
 
+    // ----------------------------------------------------- Instance Variables
     /**
      * The namespace URI for which this Rule is relevant, if any.
      */
     protected String namespaceURI = null;
+
+
+    /**
+     * <p>Base constructor.
+     * Now the digester will be set when the rule is added.</p>
+     */
+    public Rule() {
+    }
 
 
     // ------------------------------------------------------------- Properties
@@ -75,7 +74,7 @@ public abstract class Rule {
      * Return the namespace URI for which this Rule is relevant, if any.
      *
      * @return The namespace URI for which this rule is relevant or
-     *         <code>null</code> if none.
+     * <code>null</code> if none.
      */
     public String getNamespaceURI() {
         return namespaceURI;
@@ -86,7 +85,7 @@ public abstract class Rule {
      * Set the namespace URI for which this Rule is relevant, if any.
      *
      * @param namespaceURI Namespace URI for which this Rule is relevant,
-     *  or <code>null</code> to match independent of namespace.
+     *                     or <code>null</code> to match independent of namespace.
      */
     public void setNamespaceURI(String namespaceURI) {
         this.namespaceURI = namespaceURI;
@@ -99,13 +98,12 @@ public abstract class Rule {
      * This method is called when the beginning of a matching XML element
      * is encountered. The default implementation is a NO-OP.
      *
-     * @param namespace the namespace URI of the matching element, or an
-     *                  empty string if the parser is not namespace aware or the
-     *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *             the element name otherwise
+     * @param namespace  the namespace URI of the matching element, or an
+     *                   empty string if the parser is not namespace aware or the
+     *                   element has no namespace
+     * @param name       the local name if the parser is namespace aware, or just
+     *                   the element name otherwise
      * @param attributes The attribute list of this element
-     *
      * @throws Exception if an error occurs while processing the event
      */
     public void begin(String namespace, String name, Attributes attributes) throws Exception {
@@ -121,10 +119,9 @@ public abstract class Rule {
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just the
-     *             element name otherwise
-     * @param text The text of the body of this element
-     *
+     * @param name      the local name if the parser is namespace aware, or just the
+     *                  element name otherwise
+     * @param text      The text of the body of this element
      * @throws Exception if an error occurs while processing the event
      */
     public void body(String namespace, String name, String text) throws Exception {
@@ -139,9 +136,8 @@ public abstract class Rule {
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just the
-     *             element name otherwise
-     *
+     * @param name      the local name if the parser is namespace aware, or just the
+     *                  element name otherwise
      * @throws Exception if an error occurs while processing the event
      */
     public void end(String namespace, String name) throws Exception {

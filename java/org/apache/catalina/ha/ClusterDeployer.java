@@ -31,12 +31,14 @@ public interface ClusterDeployer extends ChannelListener {
 
     /**
      * Start the cluster deployer, the owning container will invoke this
+     *
      * @throws Exception - if failure to start cluster
      */
     public void start() throws Exception;
 
     /**
      * Stops the cluster deployer, the owning container will invoke this
+     *
      * @throws LifecycleException Error stopping cluster deployer
      */
     public void stop() throws LifecycleException;
@@ -52,16 +54,15 @@ public interface ClusterDeployer extends ChannelListener {
      * with the newly created <code>Context</code> as an argument.
      *
      * @param contextName The context name to which this application should
-     *  be installed (must be unique)
-     * @param webapp    A WAR file or unpacked directory structure containing
-     *                  the web application to be installed
-     *
-     * @exception IllegalArgumentException if the specified context name
-     *  is malformed
-     * @exception IllegalStateException if the specified context name
-     *  is already attached to an existing web application
-     * @exception IOException if an input/output error was encountered
-     *  during installation
+     *                    be installed (must be unique)
+     * @param webapp      A WAR file or unpacked directory structure containing
+     *                    the web application to be installed
+     * @throws IllegalArgumentException if the specified context name
+     *                                  is malformed
+     * @throws IllegalStateException    if the specified context name
+     *                                  is already attached to an existing web application
+     * @throws IOException              if an input/output error was encountered
+     *                                  during installation
      */
     public void install(String contextName, File webapp) throws IOException;
 
@@ -74,14 +75,13 @@ public interface ClusterDeployer extends ChannelListener {
      * if they exist in the Host's appBase.
      *
      * @param contextName The context name of the application to be removed
-     * @param undeploy boolean flag to remove web application from server
-     *
-     * @exception IllegalArgumentException if the specified context name
-     *  is malformed
-     * @exception IllegalArgumentException if the specified context name does
-     *  not identify a currently installed web application
-     * @exception IOException if an input/output error occurs during
-     *  removal
+     * @param undeploy    boolean flag to remove web application from server
+     * @throws IllegalArgumentException if the specified context name
+     *                                  is malformed
+     * @throws IllegalArgumentException if the specified context name does
+     *                                  not identify a currently installed web application
+     * @throws IOException              if an input/output error occurs during
+     *                                  removal
      */
     public void remove(String contextName, boolean undeploy) throws IOException;
 
@@ -92,12 +92,14 @@ public interface ClusterDeployer extends ChannelListener {
 
     /**
      * Returns the cluster the cluster deployer is associated with
+     *
      * @return CatalinaCluster
      */
     public CatalinaCluster getCluster();
 
     /**
      * Associates the cluster deployer with a cluster
+     *
      * @param cluster CatalinaCluster
      */
     public void setCluster(CatalinaCluster cluster);

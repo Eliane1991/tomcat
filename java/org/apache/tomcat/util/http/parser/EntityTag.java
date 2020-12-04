@@ -29,10 +29,8 @@ public class EntityTag {
      * @param input        The input to parse
      * @param compareWeak  Use weak comparison e.g. match "etag" with W/"etag"
      * @param resourceETag Resource's ETag
-     *
      * @return {@code true} if ETag matches, {@code false} if ETag doesn't match
-     *         or {@code null} if the input is invalid
-     *
+     * or {@code null} if the input is invalid
      * @throws IOException If an I/O occurs during the parsing
      */
     public static Boolean compareEntityTag(StringReader input, boolean compareWeak, String resourceETag)

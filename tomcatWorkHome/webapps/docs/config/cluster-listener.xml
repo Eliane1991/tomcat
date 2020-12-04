@@ -16,57 +16,57 @@
   limitations under the License.
 -->
 <!DOCTYPE document [
-  <!ENTITY project SYSTEM "project.xml">
-]>
+        <!ENTITY project SYSTEM "project.xml">
+        ]>
 <document url="cluster-listener.html">
 
-  &project;
+    &project;
 
-  <properties>
-    <author email="fhanik@apache.org">Filip Hanik</author>
-    <title>The ClusterListener object</title>
-  </properties>
+    <properties>
+        <author email="fhanik@apache.org">Filip Hanik</author>
+        <title>The ClusterListener object</title>
+    </properties>
 
-<body>
+    <body>
 
-<section name="Table of Contents">
-<toc/>
-</section>
+        <section name="Table of Contents">
+            <toc/>
+        </section>
 
-<section name="Introduction">
-  <p>
-    The <code>org.apache.catalina.ha.ClusterListener</code> base class
-    lets you listen in on messages that are received by the <code>Cluster</code> component.
-  </p>
+        <section name="Introduction">
+            <p>
+                The <code>org.apache.catalina.ha.ClusterListener</code> base class
+                lets you listen in on messages that are received by the <code>Cluster</code> component.
+            </p>
 
-</section>
-<section name="org.apache.catalina.ha.session.ClusterSessionListener">
-  <p>
-   When using the DeltaManager, the messages are received by the Cluster object and are propagated to the
-   to the manager through this listener.
-   </p>
-</section>
+        </section>
+        <section name="org.apache.catalina.ha.session.ClusterSessionListener">
+            <p>
+                When using the DeltaManager, the messages are received by the Cluster object and are propagated to the
+                to the manager through this listener.
+            </p>
+        </section>
 
-<section name="Attributes">
+        <section name="Attributes">
 
-  <subsection name="Common Attributes">
+            <subsection name="Common Attributes">
 
-  <attributes>
+                <attributes>
 
-    <attribute name="className" required="true">
+                    <attribute name="className" required="true">
 
-    </attribute>
-
-
-  </attributes>
+                    </attribute>
 
 
-  </subsection>
+                </attributes>
 
 
-</section>
+            </subsection>
 
 
-</body>
+        </section>
+
+
+    </body>
 
 </document>

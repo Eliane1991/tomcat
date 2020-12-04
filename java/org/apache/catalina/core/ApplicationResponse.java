@@ -40,11 +40,21 @@ class ApplicationResponse extends ServletResponseWrapper {
     // ----------------------------------------------------------- Constructors
 
     /**
+     * Is this wrapped response the subject of an <code>include()</code>
+     * call?
+     */
+    protected boolean included = false;
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
      * Construct a new wrapped response around the specified servlet response.
      *
      * @param response The servlet response being wrapped
      * @param included <code>true</code> if this response is being processed
-     *  by a <code>RequestDispatcher.include()</code> call
+     *                 by a <code>RequestDispatcher.include()</code> call
      */
     public ApplicationResponse(ServletResponse response, boolean included) {
 
@@ -54,24 +64,13 @@ class ApplicationResponse extends ServletResponseWrapper {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Is this wrapped response the subject of an <code>include()</code>
-     * call?
-     */
-    protected boolean included = false;
-
-
     // ------------------------------------------------ ServletResponse Methods
-
 
     /**
      * Disallow <code>reset()</code> calls on a included response.
      *
-     * @exception IllegalStateException if the response has already
-     *  been committed
+     * @throws IllegalStateException if the response has already
+     *                               been committed
      */
     @Override
     public void reset() {

@@ -29,15 +29,15 @@ import java.util.Map.Entry;
  */
 public class WsHandshakeResponse implements HandshakeResponse {
 
-    private final Map<String,List<String>> headers = new CaseInsensitiveKeyMap<>();
+    private final Map<String, List<String>> headers = new CaseInsensitiveKeyMap<>();
 
 
     public WsHandshakeResponse() {
     }
 
 
-    public WsHandshakeResponse(Map<String,List<String>> headers) {
-        for (Entry<String,List<String>> entry : headers.entrySet()) {
+    public WsHandshakeResponse(Map<String, List<String>> headers) {
+        for (Entry<String, List<String>> entry : headers.entrySet()) {
             if (this.headers.containsKey(entry.getKey())) {
                 this.headers.get(entry.getKey()).addAll(entry.getValue());
             } else {
@@ -49,7 +49,7 @@ public class WsHandshakeResponse implements HandshakeResponse {
 
 
     @Override
-    public Map<String,List<String>> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 }

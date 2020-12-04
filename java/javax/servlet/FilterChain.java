@@ -36,15 +36,11 @@ public interface FilterChain {
      * filter is the last filter in the chain, causes the resource at the end of
      * the chain to be invoked.
      *
-     * @param request
-     *            the request to pass along the chain.
-     * @param response
-     *            the response to pass along the chain.
-     *
-     * @throws IOException if an I/O error occurs during the processing of the
-     *                     request
+     * @param request  the request to pass along the chain.
+     * @param response the response to pass along the chain.
+     * @throws IOException      if an I/O error occurs during the processing of the
+     *                          request
      * @throws ServletException if the processing fails for any other reason
-
      * @since 2.3
      */
     public void doFilter(ServletRequest request, ServletResponse response)

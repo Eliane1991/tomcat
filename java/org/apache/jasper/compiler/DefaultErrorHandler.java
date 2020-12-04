@@ -37,7 +37,7 @@ class DefaultErrorHandler implements ErrorHandler {
      */
     @Override
     public void jspError(String fname, int line, int column, String errMsg,
-            Exception ex) throws JasperException {
+                         Exception ex) throws JasperException {
         throw new JasperException(fname + " (" +
                 Localizer.getMessage("jsp.error.location",
                         Integer.toString(line), Integer.toString(column)) +
@@ -107,11 +107,11 @@ class DefaultErrorHandler implements ErrorHandler {
      * Processes the given javac error report and exception.
      *
      * @param errorReport Compilation error report
-     * @param exception Compilation exception
+     * @param exception   Compilation exception
      */
     @Override
     public void javacError(String errorReport, Exception exception)
-    throws JasperException {
+            throws JasperException {
 
         throw new JasperException(
                 Localizer.getMessage("jsp.error.unable.compile"), exception);

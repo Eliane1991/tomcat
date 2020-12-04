@@ -59,7 +59,7 @@ public class CredentialHandlerRuleSet extends RuleSetBase {
      * matching pattern prefix.
      *
      * @param prefix Prefix for matching pattern rules (including the
-     *  trailing slash character)
+     *               trailing slash character)
      */
     public CredentialHandlerRuleSet(String prefix) {
         this.prefix = prefix;
@@ -76,7 +76,7 @@ public class CredentialHandlerRuleSet extends RuleSetBase {
      * by a Digester instance.</p>
      *
      * @param digester Digester instance to which the new Rule instances
-     *  should be added.
+     *                 should be added.
      */
     @Override
     public void addRuleInstances(Digester digester) {

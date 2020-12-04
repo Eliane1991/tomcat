@@ -38,12 +38,10 @@ import java.util.Locale;
 
 public class Util {
 
-    private static final String VALID_SCHEME_CHAR =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
-
     public static final String DEFAULT_ENCODING =
-        "ISO-8859-1";
-
+            "ISO-8859-1";
+    private static final String VALID_SCHEME_CHAR =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
     private static final int HIGHEST_SPECIAL = '>';
 
     private static final char[][] specialCharactersRepresentation =
@@ -60,24 +58,23 @@ public class Util {
     /**
      * Converts the given string description of a scope to the corresponding
      * PageContext constant.
-     *
+     * <p>
      * The validity of the given scope has already been checked by the
      * appropriate TLV.
      *
      * @param scope String description of scope
-     *
      * @return PageContext constant corresponding to given scope description
-     *
+     * <p>
      * taken from org.apache.taglibs.standard.tag.common.core.Util
      */
-    public static int getScope(String scope){
+    public static int getScope(String scope) {
         int ret = PageContext.PAGE_SCOPE;
 
-        if("request".equalsIgnoreCase(scope)){
+        if ("request".equalsIgnoreCase(scope)) {
             ret = PageContext.REQUEST_SCOPE;
-        }else if("session".equalsIgnoreCase(scope)){
+        } else if ("session".equalsIgnoreCase(scope)) {
             ret = PageContext.SESSION_SCOPE;
-        }else if("application".equalsIgnoreCase(scope)){
+        } else if ("application".equalsIgnoreCase(scope)) {
             ret = PageContext.APPLICATION_SCOPE;
         }
 
@@ -88,21 +85,22 @@ public class Util {
      * Returns <code>true</code> if our current URL is absolute,
      * <code>false</code> otherwise.
      * taken from org.apache.taglibs.standard.tag.common.core.ImportSupport
+     *
      * @param url The URL
      * @return <code>true</code> if the URL is absolute
      */
-    public static boolean isAbsoluteUrl(String url){
-        if(url == null){
+    public static boolean isAbsoluteUrl(String url) {
+        if (url == null) {
             return false;
         }
 
         int colonPos = url.indexOf(':');
-        if(colonPos == -1){
+        if (colonPos == -1) {
             return false;
         }
 
-        for(int i=0;i<colonPos;i++){
-            if(VALID_SCHEME_CHAR.indexOf(url.charAt(i)) == -1){
+        for (int i = 0; i < colonPos; i++) {
+            if (VALID_SCHEME_CHAR.indexOf(url.charAt(i)) == -1) {
                 return false;
             }
         }
@@ -114,8 +112,9 @@ public class Util {
      * Get the value associated with a content-type attribute.
      * Syntax defined in RFC 2045, section 5.1.
      * taken from org.apache.taglibs.standard.tag.common.core.Util
+     *
      * @param input The attribute string
-     * @param name The attribute name
+     * @param name  The attribute name
      * @return the attribute value
      */
     public static String getContentTypeAttribute(String input, String name) {
@@ -148,8 +147,9 @@ public class Util {
      * is encoded as a URL "path parameter" beginning with "jsessionid=".
      * We thus remove anything we find between ";jsessionid=" (inclusive)
      * and either EOS or a subsequent ';' (exclusive).
-     *
+     * <p>
      * taken from org.apache.taglibs.standard.tag.common.core.ImportSupport
+     *
      * @param url The URL
      * @return the URL without a user submitted session id parameter
      */
@@ -171,16 +171,17 @@ public class Util {
     /**
      * Performs the following substring replacements
      * (to facilitate output to XML/HTML pages):
-     *
-     *    &amp; -&gt; &amp;amp;
-     *    &lt; -&gt; &amp;lt;
-     *    &gt; -&gt; &amp;gt;
-     *    " -&gt; &amp;#034;
-     *    ' -&gt; &amp;#039;
-     *
+     * <p>
+     * &amp; -&gt; &amp;amp;
+     * &lt; -&gt; &amp;lt;
+     * &gt; -&gt; &amp;gt;
+     * " -&gt; &amp;#034;
+     * ' -&gt; &amp;#039;
+     * <p>
      * See also OutSupport.writeEscapedXml().
-     *
+     * <p>
      * taken from org.apache.taglibs.standard.tag.common.core.Util
+     *
      * @param buffer Data to escape
      * @return escaped data
      */
@@ -209,7 +210,7 @@ public class Util {
                     }
                     // add unescaped portion
                     if (start < i) {
-                        escapedBuffer.append(arrayBuffer,start,i-start);
+                        escapedBuffer.append(arrayBuffer, start, i - start);
                     }
                     start = i + 1;
                     // add escaped xml
@@ -223,7 +224,7 @@ public class Util {
         }
         // add rest of unescaped portion
         if (start < length) {
-            escapedBuffer.append(arrayBuffer,start,length-start);
+            escapedBuffer.append(arrayBuffer, start, length - start);
         }
         return escapedBuffer.toString();
     }
@@ -231,22 +232,23 @@ public class Util {
     /**
      * Utility methods
      * taken from org.apache.taglibs.standard.tag.common.core.UrlSupport
-     * @param url The URL
-     * @param context The context
+     *
+     * @param url         The URL
+     * @param context     The context
      * @param pageContext The page context
      * @return the absolute URL
      * @throws JspException If the URL doesn't start with '/'
      */
     public static String resolveUrl(
             String url, String context, PageContext pageContext)
-    throws JspException {
+            throws JspException {
         // don't touch absolute URLs
         if (isAbsoluteUrl(url))
             return url;
 
         // normalize relative URLs against a context root
         HttpServletRequest request =
-            (HttpServletRequest) pageContext.getRequest();
+                (HttpServletRequest) pageContext.getRequest();
         if (context == null) {
             if (url.startsWith("/"))
                 return (request.getContextPath() + url);
@@ -255,7 +257,7 @@ public class Util {
         } else {
             if (!context.startsWith("/") || !url.startsWith("/")) {
                 throw new JspTagException(
-                "In URL tags, when the \"context\" attribute is specified, values of both \"context\" and \"url\" must start with \"/\".");
+                        "In URL tags, when the \"context\" attribute is specified, values of both \"context\" and \"url\" must start with \"/\".");
             }
             if (context.equals("/")) {
                 // Don't produce string starting with '//', many
@@ -268,10 +270,11 @@ public class Util {
         }
     }
 
-    /** Wraps responses to allow us to retrieve results as Strings.
+    /**
+     * Wraps responses to allow us to retrieve results as Strings.
      * mainly taken from org.apache.taglibs.standard.tag.common.core.importSupport
      */
-    public static class ImportResponseWrapper extends HttpServletResponseWrapper{
+    public static class ImportResponseWrapper extends HttpServletResponseWrapper {
 
         private final StringWriter sw = new StringWriter();
         private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -294,7 +297,6 @@ public class Util {
             }
 
 
-
         };
         private boolean isWriterUsed;
         private boolean isStreamUsed;
@@ -309,7 +311,7 @@ public class Util {
         public PrintWriter getWriter() {
             if (isStreamUsed)
                 throw new IllegalStateException("Unexpected internal error during &lt;import&gt: " +
-                "Target servlet called getWriter(), then getOutputStream()");
+                        "Target servlet called getWriter(), then getOutputStream()");
             isWriterUsed = true;
             return new PrintWriter(sw);
         }
@@ -318,7 +320,7 @@ public class Util {
         public ServletOutputStream getOutputStream() {
             if (isWriterUsed)
                 throw new IllegalStateException("Unexpected internal error during &lt;import&gt: " +
-                "Target servlet called getOutputStream(), then getWriter()");
+                        "Target servlet called getOutputStream(), then getWriter()");
             isStreamUsed = true;
             return sos;
         }
@@ -334,20 +336,20 @@ public class Util {
         }
 
         @Override
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-        @Override
         public int getStatus() {
             return status;
         }
 
-        public String getCharEncoding(){
+        @Override
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public String getCharEncoding() {
             return this.charEncoding;
         }
 
-        public void setCharEncoding(String ce){
+        public void setCharEncoding(String ce) {
             this.charEncoding = ce;
         }
 

@@ -52,39 +52,35 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SingleSignOn extends ValveBase {
 
     private static final StringManager sm = StringManager.getManager(SingleSignOn.class);
+    /**
+     * The cache of SingleSignOnEntry instances for authenticated Principals,
+     * keyed by the cookie value that is used to select them.
+     */
+    protected Map<String, SingleSignOnEntry> cache = new ConcurrentHashMap<>();
 
+    //------------------------------------------------------ Constructor
     /* The engine at the top of the container hierarchy in which this SSO Valve
      * has been placed. It is used to get back to a session object from a
      * SingleSignOnSessionKey and is updated when the Valve starts and stops.
      */
     private Engine engine;
 
-    //------------------------------------------------------ Constructor
-
-    public SingleSignOn() {
-        super(true);
-    }
-
 
     // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The cache of SingleSignOnEntry instances for authenticated Principals,
-     * keyed by the cookie value that is used to select them.
-     */
-    protected Map<String,SingleSignOnEntry> cache = new ConcurrentHashMap<>();
-
     /**
      * Indicates whether this valve should require a downstream Authenticator to
      * reauthenticate each request, or if it itself can bind a UserPrincipal
      * and AuthType object to the request.
      */
     private boolean requireReauthentication = false;
-
     /**
      * Optional SSO cookie domain.
      */
     private String cookieDomain;
+
+    public SingleSignOn() {
+        super(true);
+    }
 
 
     // ------------------------------------------------------------- Properties
@@ -121,14 +117,13 @@ public class SingleSignOn extends ValveBase {
      * to the request based on the presence of a valid SSO entry without
      * rechecking with the <code>Realm</code>.
      *
-     * @return  <code>true</code> if it is required that a downstream
-     *          Authenticator reauthenticate each request before calls to
-     *          <code>HttpServletRequest.setUserPrincipal()</code>
-     *          and <code>HttpServletRequest.setAuthType()</code> are made;
-     *          <code>false</code> if the <code>Valve</code> can itself make
-     *          those calls relying on the presence of a valid SingleSignOn
-     *          entry associated with the request.
-     *
+     * @return <code>true</code> if it is required that a downstream
+     * Authenticator reauthenticate each request before calls to
+     * <code>HttpServletRequest.setUserPrincipal()</code>
+     * and <code>HttpServletRequest.setAuthType()</code> are made;
+     * <code>false</code> if the <code>Valve</code> can itself make
+     * those calls relying on the presence of a valid SingleSignOn
+     * entry associated with the request.
      * @see #setRequireReauthentication
      */
     public boolean getRequireReauthentication() {
@@ -166,14 +161,13 @@ public class SingleSignOn extends ValveBase {
      * The default value of this property is <code>false</code>, in order
      * to maintain backward compatibility with previous versions of Tomcat.
      *
-     * @param required  <code>true</code> if it is required that a downstream
-     *                  Authenticator reauthenticate each request before calls
-     *                  to  <code>HttpServletRequest.setUserPrincipal()</code>
-     *                  and <code>HttpServletRequest.setAuthType()</code> are
-     *                  made; <code>false</code> if the <code>Valve</code> can
-     *                  itself make those calls relying on the presence of a
-     *                  valid SingleSignOn entry associated with the request.
-     *
+     * @param required <code>true</code> if it is required that a downstream
+     *                 Authenticator reauthenticate each request before calls
+     *                 to  <code>HttpServletRequest.setUserPrincipal()</code>
+     *                 and <code>HttpServletRequest.setAuthType()</code> are
+     *                 made; <code>false</code> if the <code>Valve</code> can
+     *                 itself make those calls relying on the presence of a
+     *                 valid SingleSignOn entry associated with the request.
      * @see AuthenticatorBase#reauthenticateFromSSO
      */
     public void setRequireReauthentication(boolean required) {
@@ -186,15 +180,14 @@ public class SingleSignOn extends ValveBase {
     /**
      * Perform single-sign-on support processing for this request.
      *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     @Override
     public void invoke(Request request, Response response)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
 
         request.removeNote(Constants.REQ_SSOID_NOTE);
 
@@ -306,8 +299,8 @@ public class SingleSignOn extends ValveBase {
         // session was logged out, we'll log out of all session associated with
         // the SSO.
         if (((session.getMaxInactiveInterval() > 0)
-            && (session.getIdleTimeInternal() >= session.getMaxInactiveInterval() * 1000))
-            || (!session.getManager().getContext().getState().isAvailable())) {
+                && (session.getIdleTimeInternal() >= session.getMaxInactiveInterval() * 1000))
+                || (!session.getManager().getContext().getState().isAvailable())) {
             if (containerLog.isDebugEnabled()) {
                 containerLog.debug(sm.getString("singleSignOn.debug.sessionTimeout",
                         ssoId, session));
@@ -339,11 +332,10 @@ public class SingleSignOn extends ValveBase {
      * Associate the specified single sign on identifier with the
      * specified Session.
      *
-     * @param ssoId Single sign on identifier
+     * @param ssoId   Single sign on identifier
      * @param session Session to be associated
-     *
      * @return <code>true</code> if the session was associated to the given SSO
-     *         session, otherwise <code>false</code>
+     * session, otherwise <code>false</code>
      */
     protected boolean associate(String ssoId, Session session) {
         SingleSignOnEntry sso = cache.get(ssoId);
@@ -450,14 +442,13 @@ public class SingleSignOn extends ValveBase {
      * {@link Request#setUserPrincipal Request.setUserPrincipal()}
      * </p>
      *
-     * @param ssoId     identifier of SingleSignOn session with which the
-     *                  caller is associated
-     * @param realm     Realm implementation against which the caller is to
-     *                  be authenticated
-     * @param request   the request that needs to be authenticated
-     *
-     * @return  <code>true</code> if reauthentication was successful,
-     *          <code>false</code> otherwise.
+     * @param ssoId   identifier of SingleSignOn session with which the
+     *                caller is associated
+     * @param realm   Realm implementation against which the caller is to
+     *                be authenticated
+     * @param request the request that needs to be authenticated
+     * @return <code>true</code> if reauthentication was successful,
+     * <code>false</code> otherwise.
      */
     protected boolean reauthenticate(String ssoId, Realm realm,
                                      Request request) {
@@ -492,15 +483,15 @@ public class SingleSignOn extends ValveBase {
      * Register the specified Principal as being associated with the specified
      * value for the single sign on identifier.
      *
-     * @param ssoId Single sign on identifier to register
+     * @param ssoId     Single sign on identifier to register
      * @param principal Associated user principal that is identified
-     * @param authType Authentication type used to authenticate this
-     *  user principal
-     * @param username Username used to authenticate this user
-     * @param password Password used to authenticate this user
+     * @param authType  Authentication type used to authenticate this
+     *                  user principal
+     * @param username  Username used to authenticate this user
+     * @param password  Password used to authenticate this user
      */
     protected void register(String ssoId, Principal principal, String authType,
-                  String username, String password) {
+                            String username, String password) {
 
         if (containerLog.isDebugEnabled()) {
             containerLog.debug(sm.getString("singleSignOn.debug.register", ssoId,
@@ -535,12 +526,11 @@ public class SingleSignOn extends ValveBase {
      *                  DIGEST or FORM)
      * @param username  the username (if any) used for the authentication
      * @param password  the password (if any) used for the authentication
-     *
      * @return <code>true</code> if the credentials were updated, otherwise
-     *         <code>false</code>
+     * <code>false</code>
      */
     protected boolean update(String ssoId, Principal principal, String authType,
-                          String username, String password) {
+                             String username, String password) {
 
         SingleSignOnEntry sso = cache.get(ssoId);
         if (sso != null && !sso.getCanReauthenticate()) {
@@ -559,7 +549,7 @@ public class SingleSignOn extends ValveBase {
      * Remove a single Session from a SingleSignOn.  Called when
      * a session is timed out and no longer active.
      *
-     * @param ssoId Single sign on identifier from which to remove the session.
+     * @param ssoId   Single sign on identifier from which to remove the session.
      * @param session the session to be removed.
      */
     protected void removeSession(String ssoId, Session session) {

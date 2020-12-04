@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.tomcat.buildutil.translate;
 
 import java.io.*;
@@ -43,7 +43,7 @@ public class Utils {
         Properties props = new Properties();
 
         try (FileInputStream fis = new FileInputStream(f);
-                Reader r = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
+             Reader r = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
             props.load(r);
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,7 +70,7 @@ public class Utils {
     }
 
 
-    static void processDirectory(File root, File dir, Map<String,Properties> translations) throws IOException {
+    static void processDirectory(File root, File dir, Map<String, Properties> translations) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) {
             throw new IllegalArgumentException("Not a directory [" + dir.getAbsolutePath() + "]");
@@ -85,7 +85,7 @@ public class Utils {
     }
 
 
-    static void processFile(File root, File f, Map<String,Properties> translations) throws IOException {
+    static void processFile(File root, File f, Map<String, Properties> translations) throws IOException {
         String name = f.getName();
 
         // non-l10n files
@@ -129,7 +129,7 @@ public class Utils {
     static void export(String language, Properties translation, File storageDir) {
         File out = new File(storageDir, Constants.L10N_PREFIX + language + Constants.L10N_SUFFIX);
         try (FileOutputStream fos = new FileOutputStream(out);
-                Writer w = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+             Writer w = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             String[] keys = translation.keySet().toArray(new String[0]);
             Arrays.sort(keys);
             for (Object key : keys) {

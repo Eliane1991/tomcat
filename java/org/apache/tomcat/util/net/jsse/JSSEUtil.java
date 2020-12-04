@@ -50,7 +50,7 @@ public class JSSEUtil extends SSLUtilBase {
         SSLContext context;
         try {
             context = new JSSESSLContext(Constants.SSL_PROTO_TLS);
-            context.init(null,  null,  null);
+            context.init(null, null, null);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             // This is fatal for the connector so throw an exception to prevent
             // it from starting
@@ -100,12 +100,12 @@ public class JSSEUtil extends SSLUtilBase {
     }
 
 
-    public JSSEUtil (SSLHostConfigCertificate certificate) {
+    public JSSEUtil(SSLHostConfigCertificate certificate) {
         this(certificate, true);
     }
 
 
-    public JSSEUtil (SSLHostConfigCertificate certificate, boolean warnOnSkip) {
+    public JSSEUtil(SSLHostConfigCertificate certificate, boolean warnOnSkip) {
         super(certificate, warnOnSkip);
     }
 

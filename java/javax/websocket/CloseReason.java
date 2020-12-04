@@ -40,10 +40,6 @@ public class CloseReason {
                 "], reason [" + reasonPhrase + "]";
     }
 
-    public interface CloseCode {
-        int getCode();
-    }
-
     public enum CloseCodes implements CloseReason.CloseCode {
 
         NORMAL_CLOSURE(1000),
@@ -118,5 +114,9 @@ public class CloseReason {
         public int getCode() {
             return code;
         }
+    }
+
+    public interface CloseCode {
+        int getCode();
     }
 }

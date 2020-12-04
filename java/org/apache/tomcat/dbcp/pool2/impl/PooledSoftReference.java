@@ -24,13 +24,14 @@ import java.lang.ref.SoftReference;
  * <p>This class is intended to be thread-safe.</p>
  *
  * @param <T> the type of the underlying object that the wrapped SoftReference
- * refers to.
- *
+ *            refers to.
  * @since 2.0
  */
 public class PooledSoftReference<T> extends DefaultPooledObject<T> {
 
-    /** SoftReference wrapped by this object */
+    /**
+     * SoftReference wrapped by this object
+     */
     private volatile SoftReference<T> reference;
 
     /**

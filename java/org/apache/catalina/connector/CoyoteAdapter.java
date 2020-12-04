@@ -58,25 +58,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CoyoteAdapter implements Adapter {
 
-    private static final Log log = LogFactory.getLog(CoyoteAdapter.class);
+    public static final int ADAPTER_NOTES = 1;
 
     // -------------------------------------------------------------- Constants
-
+    protected static final boolean ALLOW_BACKSLASH =
+            Boolean.parseBoolean(System.getProperty("org.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH", "false"));
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm = StringManager.getManager(CoyoteAdapter.class);
+    private static final Log log = LogFactory.getLog(CoyoteAdapter.class);
     private static final String POWERED_BY = "Servlet/3.1 JSP/2.3 " +
             "(" + ServerInfo.getServerInfo() + " Java/" +
             System.getProperty("java.vm.vendor") + "/" +
             System.getProperty("java.runtime.version") + ")";
-
     private static final EnumSet<SessionTrackingMode> SSL_ONLY =
-        EnumSet.of(SessionTrackingMode.SSL);
+            EnumSet.of(SessionTrackingMode.SSL);
 
-    public static final int ADAPTER_NOTES = 1;
-
-
-    protected static final boolean ALLOW_BACKSLASH =
-        Boolean.parseBoolean(System.getProperty("org.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH", "false"));
-
-
+    // ----------------------------------------------------------- Constructors
     private static final ThreadLocal<String> THREAD_NAME =
             new ThreadLocal<String>() {
 
@@ -85,9 +84,14 @@ public class CoyoteAdapter implements Adapter {
                     return Thread.currentThread().getName();
                 }
 
-    };
+            };
 
-    // ----------------------------------------------------------- Constructors
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The CoyoteConnector with which this processor is associated.
+     */
+    private final Connector connector;
 
 
     /**
@@ -103,26 +107,194 @@ public class CoyoteAdapter implements Adapter {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The CoyoteConnector with which this processor is associated.
-     */
-    private final Connector connector;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static final StringManager sm = StringManager.getManager(CoyoteAdapter.class);
-
-
     // -------------------------------------------------------- Adapter Methods
+
+    /**
+     * This method normalizes "\", "//", "/./" and "/../".
+     *
+     * @param uriMB URI to be normalized
+     * @return <code>false</code> if normalizing this URI would require going
+     * above the root, or if the URI contains a null byte, otherwise
+     * <code>true</code>
+     */
+    public static boolean normalize(MessageBytes uriMB) {
+
+        ByteChunk uriBC = uriMB.getByteChunk();
+        final byte[] b = uriBC.getBytes();
+        final int start = uriBC.getStart();
+        int end = uriBC.getEnd();
+
+        // An empty URL is not acceptable
+        if (start == end) {
+            return false;
+        }
+
+        int pos = 0;
+        int index = 0;
+
+
+        // The URL must start with '/' (or '\' that will be replaced soon)
+        if (b[start] != (byte) '/' && b[start] != (byte) '\\') {
+            return false;
+        }
+
+        // Replace '\' with '/'
+        // Check for null byte
+        for (pos = start; pos < end; pos++) {
+            if (b[pos] == (byte) '\\') {
+                if (ALLOW_BACKSLASH) {
+                    b[pos] = (byte) '/';
+                } else {
+                    return false;
+                }
+            } else if (b[pos] == (byte) 0) {
+                return false;
+            }
+        }
+
+        // Replace "//" with "/"
+        for (pos = start; pos < (end - 1); pos++) {
+            if (b[pos] == (byte) '/') {
+                while ((pos + 1 < end) && (b[pos + 1] == (byte) '/')) {
+                    copyBytes(b, pos, pos + 1, end - pos - 1);
+                    end--;
+                }
+            }
+        }
+
+        // If the URI ends with "/." or "/..", then we append an extra "/"
+        // Note: It is possible to extend the URI by 1 without any side effect
+        // as the next character is a non-significant WS.
+        if (((end - start) >= 2) && (b[end - 1] == (byte) '.')) {
+            if ((b[end - 2] == (byte) '/')
+                    || ((b[end - 2] == (byte) '.')
+                    && (b[end - 3] == (byte) '/'))) {
+                b[end] = (byte) '/';
+                end++;
+            }
+        }
+
+        uriBC.setEnd(end);
+
+        index = 0;
+
+        // Resolve occurrences of "/./" in the normalized path
+        while (true) {
+            index = uriBC.indexOf("/./", 0, 3, index);
+            if (index < 0) {
+                break;
+            }
+            copyBytes(b, start + index, start + index + 2,
+                    end - start - index - 2);
+            end = end - 2;
+            uriBC.setEnd(end);
+        }
+
+        index = 0;
+
+        // Resolve occurrences of "/../" in the normalized path
+        while (true) {
+            index = uriBC.indexOf("/../", 0, 4, index);
+            if (index < 0) {
+                break;
+            }
+            // Prevent from going outside our context
+            if (index == 0) {
+                return false;
+            }
+            int index2 = -1;
+            for (pos = start + index - 1; (pos >= 0) && (index2 < 0); pos--) {
+                if (b[pos] == (byte) '/') {
+                    index2 = pos;
+                }
+            }
+            copyBytes(b, start + index2, start + index + 3,
+                    end - start - index - 3);
+            end = end + index2 - index - 3;
+            uriBC.setEnd(end);
+            index = index2;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Check that the URI is normalized following character decoding. This
+     * method checks for "\", 0, "//", "/./" and "/../".
+     *
+     * @param uriMB URI to be checked (should be chars)
+     * @return <code>false</code> if sequences that are supposed to be
+     * normalized are still present in the URI, otherwise
+     * <code>true</code>
+     */
+    public static boolean checkNormalize(MessageBytes uriMB) {
+
+        CharChunk uriCC = uriMB.getCharChunk();
+        char[] c = uriCC.getChars();
+        int start = uriCC.getStart();
+        int end = uriCC.getEnd();
+
+        int pos = 0;
+
+        // Check for '\' and 0
+        for (pos = start; pos < end; pos++) {
+            if (c[pos] == '\\') {
+                return false;
+            }
+            if (c[pos] == 0) {
+                return false;
+            }
+        }
+
+        // Check for "//"
+        for (pos = start; pos < (end - 1); pos++) {
+            if (c[pos] == '/') {
+                if (c[pos + 1] == '/') {
+                    return false;
+                }
+            }
+        }
+
+        // Check for ending with "/." or "/.."
+        if (((end - start) >= 2) && (c[end - 1] == '.')) {
+            if ((c[end - 2] == '/')
+                    || ((c[end - 2] == '.')
+                    && (c[end - 3] == '/'))) {
+                return false;
+            }
+        }
+
+        // Check for "/./"
+        if (uriCC.indexOf("/./", 0, 3, 0) >= 0) {
+            return false;
+        }
+
+        // Check for "/../"
+        if (uriCC.indexOf("/../", 0, 4, 0) >= 0) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Copy an array of bytes to a different position. Used during
+     * normalization.
+     *
+     * @param b    The bytes that should be copied
+     * @param dest Destination offset
+     * @param src  Source offset
+     * @param len  Length
+     */
+    protected static void copyBytes(byte[] b, int dest, int src, int len) {
+        System.arraycopy(b, src, b, dest, len);
+    }
 
     @Override
     public boolean asyncDispatch(org.apache.coyote.Request req, org.apache.coyote.Response res,
-            SocketEvent status) throws Exception {
+                                 SocketEvent status) throws Exception {
 
         Request request = (Request) req.getNote(ADAPTER_NOTES);
         Response response = (Response) res.getNote(ADAPTER_NOTES);
@@ -144,16 +316,16 @@ public class CoyoteAdapter implements Adapter {
                 response.setSuspended(false);
             }
 
-            if (status==SocketEvent.TIMEOUT) {
+            if (status == SocketEvent.TIMEOUT) {
                 if (!asyncConImpl.timeout()) {
                     asyncConImpl.setErrorState(null, false);
                 }
-            } else if (status==SocketEvent.ERROR) {
+            } else if (status == SocketEvent.ERROR) {
                 // An I/O error occurred on a non-container thread which means
                 // that the socket needs to be closed so set success to false to
                 // trigger a close
                 success = false;
-                Throwable t = (Throwable)req.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+                Throwable t = (Throwable) req.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
                 req.getAttributes().remove(RequestDispatcher.ERROR_EXCEPTION);
                 ClassLoader oldCL = null;
                 try {
@@ -249,7 +421,7 @@ public class CoyoteAdapter implements Adapter {
                     // Connection will be forcibly closed which will prevent
                     // completion happening at the usual point. Need to trigger
                     // call to onComplete() here.
-                    res.action(ActionCode.ASYNC_POST_PROCESS,  null);
+                    res.action(ActionCode.ASYNC_POST_PROCESS, null);
                 }
                 success = false;
             }
@@ -289,7 +461,6 @@ public class CoyoteAdapter implements Adapter {
         }
         return success;
     }
-
 
     @Override
     public void service(org.apache.coyote.Request req, org.apache.coyote.Response res)
@@ -379,7 +550,7 @@ public class CoyoteAdapter implements Adapter {
                 // Connection will be forcibly closed which will prevent
                 // completion happening at the usual point. Need to trigger
                 // call to onComplete() here.
-                res.action(ActionCode.ASYNC_POST_PROCESS,  null);
+                res.action(ActionCode.ASYNC_POST_PROCESS, null);
                 async = false;
             }
 
@@ -421,7 +592,6 @@ public class CoyoteAdapter implements Adapter {
         }
     }
 
-
     private void updateWrapperErrorCount(Request request, Response response) {
         if (response.isError()) {
             Wrapper wrapper = request.getWrapper();
@@ -430,7 +600,6 @@ public class CoyoteAdapter implements Adapter {
             }
         }
     }
-
 
     @Override
     public boolean prepare(org.apache.coyote.Request req, org.apache.coyote.Response res)
@@ -441,10 +610,9 @@ public class CoyoteAdapter implements Adapter {
         return postParseRequest(req, request, res, response);
     }
 
-
     @Override
     public void log(org.apache.coyote.Request req,
-            org.apache.coyote.Response res, long time) {
+                    org.apache.coyote.Response res, long time) {
 
         Request request = (Request) req.getNote(ADAPTER_NOTES);
         Response response = (Response) res.getNote(ADAPTER_NOTES);
@@ -495,13 +663,11 @@ public class CoyoteAdapter implements Adapter {
     }
 
 
-    private static class RecycleRequiredException extends Exception {
-        private static final long serialVersionUID = 1L;
-    }
+    // ------------------------------------------------------ Protected Methods
 
     @Override
     public void checkRecycled(org.apache.coyote.Request req,
-            org.apache.coyote.Response res) {
+                              org.apache.coyote.Response res) {
         Request request = (Request) req.getNote(ADAPTER_NOTES);
         Response response = (Response) res.getNote(ADAPTER_NOTES);
         String messageKey = null;
@@ -532,14 +698,10 @@ public class CoyoteAdapter implements Adapter {
         }
     }
 
-
     @Override
     public String getDomain() {
         return connector.getDomain();
     }
-
-
-    // ------------------------------------------------------ Protected Methods
 
     /**
      * Perform the necessary processing after the HTTP headers have been parsed
@@ -550,17 +712,15 @@ public class CoyoteAdapter implements Adapter {
      * @param request  The catalina request object
      * @param res      The coyote response object
      * @param response The catalina response object
-     *
      * @return <code>true</code> if the request should be passed on to the start
-     *         of the container pipeline, otherwise <code>false</code>
-     *
-     * @throws IOException If there is insufficient space in a buffer while
-     *                     processing headers
+     * of the container pipeline, otherwise <code>false</code>
+     * @throws IOException      If there is insufficient space in a buffer while
+     *                          processing headers
      * @throws ServletException If the supported methods of the target servlet
      *                          cannot be determined
      */
     protected boolean postParseRequest(org.apache.coyote.Request req, Request request,
-            org.apache.coyote.Response res, Response response) throws IOException, ServletException {
+                                       org.apache.coyote.Response res, Response response) throws IOException, ServletException {
 
         // If the processor has set the scheme (AJP does this, HTTP does this if
         // SSL is enabled) use this to set the secure flag as well. If the
@@ -797,8 +957,8 @@ public class CoyoteAdapter implements Adapter {
                 // shouldn't matter
                 redirectPath = redirectPath + ";" +
                         SessionConfig.getSessionUriParamName(
-                            request.getContext()) +
-                    "=" + request.getRequestedSessionId();
+                                request.getContext()) +
+                        "=" + request.getRequestedSessionId();
             }
             if (query != null) {
                 // This is not optimal, but as this is not very common, it
@@ -843,7 +1003,6 @@ public class CoyoteAdapter implements Adapter {
         return true;
     }
 
-
     private void doConnectorAuthenticationAuthorization(org.apache.coyote.Request req, Request request) {
         // Set the remote principal
         String username = req.getRemoteUser().toString();
@@ -880,18 +1039,17 @@ public class CoyoteAdapter implements Adapter {
         }
     }
 
-
     /**
      * Extract the path parameters from the request. This assumes parameters are
      * of the form /path;name=value;name2=value2/ etc. Currently only really
      * interested in the session ID that will be in this form. Other parameters
      * can safely be ignored.
      *
-     * @param req The Coyote request object
+     * @param req     The Coyote request object
      * @param request The Servlet request object
      */
     protected void parsePathParameters(org.apache.coyote.Request req,
-            Request request) {
+                                       Request request) {
 
         // Process in bytes (this is default format so this is normally a NO-OP
         req.decodedURI().toBytes();
@@ -924,27 +1082,27 @@ public class CoyoteAdapter implements Adapter {
             int pathParamStart = semicolon + 1;
             int pathParamEnd = ByteChunk.findBytes(uriBC.getBuffer(),
                     start + pathParamStart, end,
-                    new byte[] {';', '/'});
+                    new byte[]{';', '/'});
 
             String pv = null;
 
             if (pathParamEnd >= 0) {
                 if (charset != null) {
                     pv = new String(uriBC.getBuffer(), start + pathParamStart,
-                                pathParamEnd - pathParamStart, charset);
+                            pathParamEnd - pathParamStart, charset);
                 }
                 // Extract path param from decoded request URI
                 byte[] buf = uriBC.getBuffer();
                 for (int i = 0; i < end - start - pathParamEnd; i++) {
                     buf[start + semicolon + i]
-                        = buf[start + i + pathParamEnd];
+                            = buf[start + i + pathParamEnd];
                 }
                 uriBC.setBytes(buf, start,
                         end - start - pathParamEnd + semicolon);
             } else {
                 if (charset != null) {
                     pv = new String(uriBC.getBuffer(), start + pathParamStart,
-                                (end - start) - pathParamStart, charset);
+                            (end - start) - pathParamStart, charset);
                 }
                 uriBC.setEnd(start + semicolon);
             }
@@ -978,7 +1136,6 @@ public class CoyoteAdapter implements Adapter {
         }
     }
 
-
     /**
      * Look for SSL session ID if required. Only look for SSL Session ID if it
      * is the only tracking method enabled.
@@ -989,7 +1146,7 @@ public class CoyoteAdapter implements Adapter {
         if (request.getRequestedSessionId() == null &&
                 SSL_ONLY.equals(request.getServletContext()
                         .getEffectiveSessionTrackingModes()) &&
-                        request.connector.secure) {
+                request.connector.secure) {
             String sessionId = (String) request.getAttribute(SSLSupport.SESSION_ID_KEY);
             if (sessionId != null) {
                 request.setRequestedSessionId(sessionId);
@@ -997,7 +1154,6 @@ public class CoyoteAdapter implements Adapter {
             }
         }
     }
-
 
     /**
      * Parse session id in Cookie.
@@ -1034,19 +1190,19 @@ public class CoyoteAdapter implements Adapter {
                     // Accept only the first session id cookie
                     convertMB(scookie.getValue());
                     request.setRequestedSessionId
-                        (scookie.getValue().toString());
+                            (scookie.getValue().toString());
                     request.setRequestedSessionCookie(true);
                     request.setRequestedSessionURL(false);
                     if (log.isDebugEnabled()) {
                         log.debug(" Requested cookie session id is " +
-                            request.getRequestedSessionId());
+                                request.getRequestedSessionId());
                     }
                 } else {
                     if (!request.isRequestedSessionIdValid()) {
                         // Replace the session id until one is valid
                         convertMB(scookie.getValue());
                         request.setRequestedSessionId
-                            (scookie.getValue().toString());
+                                (scookie.getValue().toString());
                     }
                 }
             }
@@ -1054,11 +1210,10 @@ public class CoyoteAdapter implements Adapter {
 
     }
 
-
     /**
      * Character conversion of the URI.
      *
-     * @param uri MessageBytes object containing the URI
+     * @param uri     MessageBytes object containing the URI
      * @param request The Servlet request object
      * @throws IOException if a IO exception occurs sending an error to the client
      */
@@ -1089,7 +1244,6 @@ public class CoyoteAdapter implements Adapter {
         }
     }
 
-
     /**
      * Character conversion of the a US-ASCII MessageBytes.
      *
@@ -1119,193 +1273,9 @@ public class CoyoteAdapter implements Adapter {
     }
 
 
-    /**
-     * This method normalizes "\", "//", "/./" and "/../".
-     *
-     * @param uriMB URI to be normalized
-     *
-     * @return <code>false</code> if normalizing this URI would require going
-     *         above the root, or if the URI contains a null byte, otherwise
-     *         <code>true</code>
-     */
-    public static boolean normalize(MessageBytes uriMB) {
-
-        ByteChunk uriBC = uriMB.getByteChunk();
-        final byte[] b = uriBC.getBytes();
-        final int start = uriBC.getStart();
-        int end = uriBC.getEnd();
-
-        // An empty URL is not acceptable
-        if (start == end) {
-            return false;
-        }
-
-        int pos = 0;
-        int index = 0;
-
-
-        // The URL must start with '/' (or '\' that will be replaced soon)
-        if (b[start] != (byte) '/' && b[start] != (byte) '\\') {
-            return false;
-        }
-
-        // Replace '\' with '/'
-        // Check for null byte
-        for (pos = start; pos < end; pos++) {
-            if (b[pos] == (byte) '\\') {
-                if (ALLOW_BACKSLASH) {
-                    b[pos] = (byte) '/';
-                } else {
-                    return false;
-                }
-            } else if (b[pos] == (byte) 0) {
-                return false;
-            }
-        }
-
-        // Replace "//" with "/"
-        for (pos = start; pos < (end - 1); pos++) {
-            if (b[pos] == (byte) '/') {
-                while ((pos + 1 < end) && (b[pos + 1] == (byte) '/')) {
-                    copyBytes(b, pos, pos + 1, end - pos - 1);
-                    end--;
-                }
-            }
-        }
-
-        // If the URI ends with "/." or "/..", then we append an extra "/"
-        // Note: It is possible to extend the URI by 1 without any side effect
-        // as the next character is a non-significant WS.
-        if (((end - start) >= 2) && (b[end - 1] == (byte) '.')) {
-            if ((b[end - 2] == (byte) '/')
-                || ((b[end - 2] == (byte) '.')
-                    && (b[end - 3] == (byte) '/'))) {
-                b[end] = (byte) '/';
-                end++;
-            }
-        }
-
-        uriBC.setEnd(end);
-
-        index = 0;
-
-        // Resolve occurrences of "/./" in the normalized path
-        while (true) {
-            index = uriBC.indexOf("/./", 0, 3, index);
-            if (index < 0) {
-                break;
-            }
-            copyBytes(b, start + index, start + index + 2,
-                      end - start - index - 2);
-            end = end - 2;
-            uriBC.setEnd(end);
-        }
-
-        index = 0;
-
-        // Resolve occurrences of "/../" in the normalized path
-        while (true) {
-            index = uriBC.indexOf("/../", 0, 4, index);
-            if (index < 0) {
-                break;
-            }
-            // Prevent from going outside our context
-            if (index == 0) {
-                return false;
-            }
-            int index2 = -1;
-            for (pos = start + index - 1; (pos >= 0) && (index2 < 0); pos --) {
-                if (b[pos] == (byte) '/') {
-                    index2 = pos;
-                }
-            }
-            copyBytes(b, start + index2, start + index + 3,
-                      end - start - index - 3);
-            end = end + index2 - index - 3;
-            uriBC.setEnd(end);
-            index = index2;
-        }
-
-        return true;
-
-    }
-
-
-    /**
-     * Check that the URI is normalized following character decoding. This
-     * method checks for "\", 0, "//", "/./" and "/../".
-     *
-     * @param uriMB URI to be checked (should be chars)
-     *
-     * @return <code>false</code> if sequences that are supposed to be
-     *         normalized are still present in the URI, otherwise
-     *         <code>true</code>
-     */
-    public static boolean checkNormalize(MessageBytes uriMB) {
-
-        CharChunk uriCC = uriMB.getCharChunk();
-        char[] c = uriCC.getChars();
-        int start = uriCC.getStart();
-        int end = uriCC.getEnd();
-
-        int pos = 0;
-
-        // Check for '\' and 0
-        for (pos = start; pos < end; pos++) {
-            if (c[pos] == '\\') {
-                return false;
-            }
-            if (c[pos] == 0) {
-                return false;
-            }
-        }
-
-        // Check for "//"
-        for (pos = start; pos < (end - 1); pos++) {
-            if (c[pos] == '/') {
-                if (c[pos + 1] == '/') {
-                    return false;
-                }
-            }
-        }
-
-        // Check for ending with "/." or "/.."
-        if (((end - start) >= 2) && (c[end - 1] == '.')) {
-            if ((c[end - 2] == '/')
-                    || ((c[end - 2] == '.')
-                    && (c[end - 3] == '/'))) {
-                return false;
-            }
-        }
-
-        // Check for "/./"
-        if (uriCC.indexOf("/./", 0, 3, 0) >= 0) {
-            return false;
-        }
-
-        // Check for "/../"
-        if (uriCC.indexOf("/../", 0, 4, 0) >= 0) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-
     // ------------------------------------------------------ Protected Methods
 
-
-    /**
-     * Copy an array of bytes to a different position. Used during
-     * normalization.
-     *
-     * @param b The bytes that should be copied
-     * @param dest Destination offset
-     * @param src Source offset
-     * @param len Length
-     */
-    protected static void copyBytes(byte[] b, int dest, int src, int len) {
-        System.arraycopy(b, src, b, dest, len);
+    private static class RecycleRequiredException extends Exception {
+        private static final long serialVersionUID = 1L;
     }
 }

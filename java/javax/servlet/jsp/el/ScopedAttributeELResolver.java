@@ -26,9 +26,8 @@ import java.beans.FeatureDescriptor;
 import java.util.*;
 
 /**
-*
-* @since 2.1
-*/
+ * @since 2.1
+ */
 public class ScopedAttributeELResolver extends ELResolver {
 
     // Indicates if a performance short-cut is available

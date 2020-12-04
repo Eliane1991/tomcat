@@ -44,17 +44,17 @@ import java.nio.charset.StandardCharsets;
 /**
  * This class is used to represent a chunk of bytes, and utilities to manipulate
  * byte[].
- *
+ * <p>
  * The buffer can be modified and used for both input and output.
- *
+ * <p>
  * There are 2 modes: The chunk can be associated with a sink - ByteInputChannel
  * or ByteOutputChannel, which will be used when the buffer is empty (on input)
  * or filled (on output). For output, it can also grow. This operating mode is
  * selected by calling setLimit() or allocate(initial, limit) with limit != -1.
- *
+ * <p>
  * Various search and append method are defined - similar with String and
  * StringBuffer, but operating on bytes.
- *
+ * <p>
  * This is important because it allows processing the http headers directly on
  * the received bytes, without converting to chars and Strings until the strings
  * are needed. In addition, the charset is determined later, from headers or
@@ -67,73 +67,21 @@ import java.nio.charset.StandardCharsets;
  */
 public final class ByteChunk extends AbstractChunk {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Input interface, used when the buffer is empty.
-     *
-     * Same as java.nio.channels.ReadableByteChannel
-     */
-    public static interface ByteInputChannel {
-
-        /**
-         * Read new bytes.
-         *
-         * @return The number of bytes read
-         *
-         * @throws IOException If an I/O error occurs during reading
-         */
-        public int realReadBytes() throws IOException;
-    }
-
-    /**
-     * When we need more space we'll either grow the buffer ( up to the limit )
-     * or send it to a channel.
-     *
-     * Same as java.nio.channel.WritableByteChannel.
-     */
-    public static interface ByteOutputChannel {
-
-        /**
-         * Send the bytes ( usually the internal conversion buffer ). Expect 8k
-         * output if the buffer is full.
-         *
-         * @param buf bytes that will be written
-         * @param off offset in the bytes array
-         * @param len length that will be written
-         * @throws IOException If an I/O occurs while writing the bytes
-         */
-        public void realWriteBytes(byte buf[], int off, int len) throws IOException;
-
-
-        /**
-         * Send the bytes ( usually the internal conversion buffer ). Expect 8k
-         * output if the buffer is full.
-         *
-         * @param from bytes that will be written
-         * @throws IOException If an I/O occurs while writing the bytes
-         */
-        public void realWriteBytes(ByteBuffer from) throws IOException;
-    }
-
-    // --------------------
-
     /**
      * Default encoding used to convert to strings. It should be UTF8, as most
      * standards seem to converge, but the servlet API requires 8859_1, and this
      * object is used mostly for servlets.
      */
     public static final Charset DEFAULT_CHARSET = StandardCharsets.ISO_8859_1;
-
+    private static final long serialVersionUID = 1L;
     private transient Charset charset;
 
+    // --------------------
     // byte[]
     private byte[] buff;
-
     // transient as serialization is primarily for values via, e.g. JMX
     private transient ByteInputChannel in = null;
     private transient ByteOutputChannel out = null;
-
 
     /**
      * Creates a new, uninitialized ByteChunk object.
@@ -141,17 +89,100 @@ public final class ByteChunk extends AbstractChunk {
     public ByteChunk() {
     }
 
-
     public ByteChunk(int initial) {
         allocate(initial, -1);
     }
 
+    /**
+     * Returns the first instance of the given character in the given byte array
+     * between the specified start and end. <br>
+     * NOTE: This only works for characters in the range 0-127.
+     *
+     * @param bytes The array to search
+     * @param start The point to start searching from in the array
+     * @param end   The point to stop searching in the array
+     * @param s     The character to search for
+     * @return The position of the first instance of the character or -1 if the
+     * character is not found.
+     */
+    public static int indexOf(byte bytes[], int start, int end, char s) {
+        int offset = start;
+
+        while (offset < end) {
+            byte b = bytes[offset];
+            if (b == s) {
+                return offset;
+            }
+            offset++;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first instance of the given byte in the byte array between
+     * the specified start and end.
+     *
+     * @param bytes The byte array to search
+     * @param start The point to start searching from in the byte array
+     * @param end   The point to stop searching in the byte array
+     * @param b     The byte to search for
+     * @return The position of the first instance of the byte or -1 if the byte
+     * is not found.
+     */
+    public static int findByte(byte bytes[], int start, int end, byte b) {
+        int offset = start;
+        while (offset < end) {
+            if (bytes[offset] == b) {
+                return offset;
+            }
+            offset++;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first instance of any of the given bytes in the byte array
+     * between the specified start and end.
+     *
+     * @param bytes The byte array to search
+     * @param start The point to start searching from in the byte array
+     * @param end   The point to stop searching in the byte array
+     * @param b     The array of bytes to search for
+     * @return The position of the first instance of the byte or -1 if the byte
+     * is not found.
+     */
+    public static int findBytes(byte bytes[], int start, int end, byte b[]) {
+        int offset = start;
+        while (offset < end) {
+            for (byte value : b) {
+                if (bytes[offset] == value) {
+                    return offset;
+                }
+            }
+            offset++;
+        }
+        return -1;
+    }
+
+    /**
+     * Convert specified String to a byte array. This ONLY WORKS for ascii, UTF
+     * chars will be truncated.
+     *
+     * @param value to convert to byte array
+     * @return the byte array value
+     */
+    public static final byte[] convertToBytes(String value) {
+        byte[] result = new byte[value.length()];
+        for (int i = 0; i < value.length(); i++) {
+            result[i] = (byte) value.charAt(i);
+        }
+        return result;
+    }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.defaultWriteObject();
         oos.writeUTF(getCharset().name());
     }
-
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         ois.defaultReadObject();
@@ -159,20 +190,18 @@ public final class ByteChunk extends AbstractChunk {
     }
 
 
+    // -------------------- Setup --------------------
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-
 
     @Override
     public void recycle() {
         super.recycle();
         charset = null;
     }
-
-
-    // -------------------- Setup --------------------
 
     public void allocate(int initial, int limit) {
         if (buff == null || buff.length < initial) {
@@ -185,11 +214,10 @@ public final class ByteChunk extends AbstractChunk {
         hasHashCode = false;
     }
 
-
     /**
      * Sets the buffer to the specified subarray of bytes.
      *
-     * @param b the ascii bytes
+     * @param b   the ascii bytes
      * @param off the start offset of the bytes
      * @param len the length of the bytes
      */
@@ -201,12 +229,6 @@ public final class ByteChunk extends AbstractChunk {
         hasHashCode = false;
     }
 
-
-    public void setCharset(Charset charset) {
-        this.charset = charset;
-    }
-
-
     public Charset getCharset() {
         if (charset == null) {
             charset = DEFAULT_CHARSET;
@@ -214,6 +236,9 @@ public final class ByteChunk extends AbstractChunk {
         return charset;
     }
 
+    public void setCharset(Charset charset) {
+        this.charset = charset;
+    }
 
     /**
      * @return the buffer.
@@ -221,7 +246,6 @@ public final class ByteChunk extends AbstractChunk {
     public byte[] getBytes() {
         return getBuffer();
     }
-
 
     /**
      * @return the buffer.
@@ -231,6 +255,8 @@ public final class ByteChunk extends AbstractChunk {
     }
 
 
+    // -------------------- Adding data to the buffer --------------------
+
     /**
      * When the buffer is empty, read the data from the input channel.
      *
@@ -239,7 +265,6 @@ public final class ByteChunk extends AbstractChunk {
     public void setByteInputChannel(ByteInputChannel in) {
         this.in = in;
     }
-
 
     /**
      * When the buffer is full, write the data to the output channel. Also used
@@ -252,9 +277,6 @@ public final class ByteChunk extends AbstractChunk {
         this.out = out;
     }
 
-
-    // -------------------- Adding data to the buffer --------------------
-
     public void append(byte b) throws IOException {
         makeSpace(1);
         int limit = getLimitInternal();
@@ -266,11 +288,12 @@ public final class ByteChunk extends AbstractChunk {
         buff[end++] = b;
     }
 
-
     public void append(ByteChunk src) throws IOException {
         append(src.getBytes(), src.getStart(), src.getLength());
     }
 
+
+    // -------------------- Removing data from the buffer --------------------
 
     /**
      * Add data to the buffer.
@@ -324,7 +347,6 @@ public final class ByteChunk extends AbstractChunk {
         System.arraycopy(src, (off + len) - remain, buff, end, remain);
         end += remain;
     }
-
 
     /**
      * Add data to the buffer.
@@ -386,9 +408,6 @@ public final class ByteChunk extends AbstractChunk {
         end += remain;
     }
 
-
-    // -------------------- Removing data from the buffer --------------------
-
     public int substract() throws IOException {
         if (checkEof()) {
             return -1;
@@ -396,14 +415,12 @@ public final class ByteChunk extends AbstractChunk {
         return buff[start++] & 0xFF;
     }
 
-
     public byte substractB() throws IOException {
         if (checkEof()) {
             return -1;
         }
         return buff[start++];
     }
-
 
     public int substract(byte dest[], int off, int len) throws IOException {
         if (checkEof()) {
@@ -418,7 +435,6 @@ public final class ByteChunk extends AbstractChunk {
         return n;
     }
 
-
     /**
      * Transfers bytes from the buffer to the specified ByteBuffer. After the
      * operation the position of the ByteBuffer will be returned to the one
@@ -427,7 +443,7 @@ public final class ByteChunk extends AbstractChunk {
      *
      * @param to the ByteBuffer into which bytes are to be written.
      * @return an integer specifying the actual number of bytes read, or -1 if
-     *         the end of the stream is reached
+     * the end of the stream is reached
      * @throws IOException if an input or output exception has occurred
      */
     public int substract(ByteBuffer to) throws IOException {
@@ -441,7 +457,6 @@ public final class ByteChunk extends AbstractChunk {
         start += n;
         return n;
     }
-
 
     private boolean checkEof() throws IOException {
         if ((end - start) == 0) {
@@ -457,6 +472,8 @@ public final class ByteChunk extends AbstractChunk {
     }
 
 
+    // -------------------- Conversion and getters --------------------
+
     /**
      * Send the buffer to the sink. Called by append() when the limit is
      * reached. You can also call it explicitly to force the data to be written.
@@ -471,7 +488,6 @@ public final class ByteChunk extends AbstractChunk {
         out.realWriteBytes(buff, start, end - start);
         end = start;
     }
-
 
     /**
      * Make space for len bytes. If len is small, allocate a reserve space too.
@@ -524,9 +540,6 @@ public final class ByteChunk extends AbstractChunk {
         start = 0;
     }
 
-
-    // -------------------- Conversion and getters --------------------
-
     @Override
     public String toString() {
         if (null == buff) {
@@ -537,6 +550,8 @@ public final class ByteChunk extends AbstractChunk {
         return StringCache.toString(this);
     }
 
+
+    // -------------------- equals --------------------
 
     public String toStringInternal() {
         if (charset == null) {
@@ -549,13 +564,9 @@ public final class ByteChunk extends AbstractChunk {
         return new String(cb.array(), cb.arrayOffset(), cb.length());
     }
 
-
     public long getLong() {
         return Ascii.parseLong(buff, start, end - start);
     }
-
-
-    // -------------------- equals --------------------
 
     @Override
     public boolean equals(Object obj) {
@@ -565,13 +576,12 @@ public final class ByteChunk extends AbstractChunk {
         return false;
     }
 
-
     /**
      * Compares the message bytes to the specified String object.
      *
      * @param s the String to compare
      * @return <code>true</code> if the comparison succeeded, <code>false</code>
-     *         otherwise
+     * otherwise
      */
     public boolean equals(String s) {
         // XXX ENCODING - this only works if encoding is UTF8-compat
@@ -591,13 +601,12 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     /**
      * Compares the message bytes to the specified String object.
      *
      * @param s the String to compare
      * @return <code>true</code> if the comparison succeeded, <code>false</code>
-     *         otherwise
+     * otherwise
      */
     public boolean equalsIgnoreCase(String s) {
         byte[] b = buff;
@@ -614,11 +623,9 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     public boolean equals(ByteChunk bb) {
         return equals(bb.getBytes(), bb.getStart(), bb.getLength());
     }
-
 
     public boolean equals(byte b2[], int off2, int len2) {
         byte b1[] = buff;
@@ -641,11 +648,9 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     public boolean equals(CharChunk cc) {
         return equals(cc.getChars(), cc.getStart(), cc.getLength());
     }
-
 
     public boolean equals(char c2[], int off2, int len2) {
         // XXX works only for enc compatible with ASCII/UTF !!!
@@ -668,14 +673,12 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     /**
      * Returns true if the buffer starts with the specified string when tested
      * in a case sensitive manner.
      *
-     * @param s the string
+     * @param s   the string
      * @param pos The position
-     *
      * @return <code>true</code> if the start matches
      */
     public boolean startsWith(String s, int pos) {
@@ -693,14 +696,12 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     /**
      * Returns true if the buffer starts with the specified string when tested
      * in a case insensitive manner.
      *
-     * @param s the string
+     * @param s   the string
      * @param pos The position
-     *
      * @return <code>true</code> if the start matches
      */
     public boolean startsWithIgnoreCase(String s, int pos) {
@@ -718,12 +719,10 @@ public final class ByteChunk extends AbstractChunk {
         return true;
     }
 
-
     @Override
     protected int getBufferElement(int index) {
         return buff[index];
     }
-
 
     /**
      * Returns the first instance of the given character in this ByteChunk
@@ -731,10 +730,10 @@ public final class ByteChunk extends AbstractChunk {
      * returned. <br>
      * NOTE: This only works for characters in the range 0-127.
      *
-     * @param c The character
+     * @param c        The character
      * @param starting The start position
      * @return The position of the first instance of the character or -1 if the
-     *         character is not found.
+     * character is not found.
      */
     public int indexOf(char c, int starting) {
         int ret = indexOf(buff, start + starting, end, c);
@@ -743,91 +742,49 @@ public final class ByteChunk extends AbstractChunk {
 
 
     /**
-     * Returns the first instance of the given character in the given byte array
-     * between the specified start and end. <br>
-     * NOTE: This only works for characters in the range 0-127.
-     *
-     * @param bytes The array to search
-     * @param start The point to start searching from in the array
-     * @param end The point to stop searching in the array
-     * @param s The character to search for
-     * @return The position of the first instance of the character or -1 if the
-     *         character is not found.
+     * Input interface, used when the buffer is empty.
+     * <p>
+     * Same as java.nio.channels.ReadableByteChannel
      */
-    public static int indexOf(byte bytes[], int start, int end, char s) {
-        int offset = start;
+    public static interface ByteInputChannel {
 
-        while (offset < end) {
-            byte b = bytes[offset];
-            if (b == s) {
-                return offset;
-            }
-            offset++;
-        }
-        return -1;
+        /**
+         * Read new bytes.
+         *
+         * @return The number of bytes read
+         * @throws IOException If an I/O error occurs during reading
+         */
+        public int realReadBytes() throws IOException;
     }
 
 
     /**
-     * Returns the first instance of the given byte in the byte array between
-     * the specified start and end.
-     *
-     * @param bytes The byte array to search
-     * @param start The point to start searching from in the byte array
-     * @param end The point to stop searching in the byte array
-     * @param b The byte to search for
-     * @return The position of the first instance of the byte or -1 if the byte
-     *         is not found.
+     * When we need more space we'll either grow the buffer ( up to the limit )
+     * or send it to a channel.
+     * <p>
+     * Same as java.nio.channel.WritableByteChannel.
      */
-    public static int findByte(byte bytes[], int start, int end, byte b) {
-        int offset = start;
-        while (offset < end) {
-            if (bytes[offset] == b) {
-                return offset;
-            }
-            offset++;
-        }
-        return -1;
-    }
+    public static interface ByteOutputChannel {
+
+        /**
+         * Send the bytes ( usually the internal conversion buffer ). Expect 8k
+         * output if the buffer is full.
+         *
+         * @param buf bytes that will be written
+         * @param off offset in the bytes array
+         * @param len length that will be written
+         * @throws IOException If an I/O occurs while writing the bytes
+         */
+        public void realWriteBytes(byte buf[], int off, int len) throws IOException;
 
 
-    /**
-     * Returns the first instance of any of the given bytes in the byte array
-     * between the specified start and end.
-     *
-     * @param bytes The byte array to search
-     * @param start The point to start searching from in the byte array
-     * @param end The point to stop searching in the byte array
-     * @param b The array of bytes to search for
-     * @return The position of the first instance of the byte or -1 if the byte
-     *         is not found.
-     */
-    public static int findBytes(byte bytes[], int start, int end, byte b[]) {
-        int offset = start;
-        while (offset < end) {
-            for (byte value : b) {
-                if (bytes[offset] == value) {
-                    return offset;
-                }
-            }
-            offset++;
-        }
-        return -1;
-    }
-
-
-    /**
-     * Convert specified String to a byte array. This ONLY WORKS for ascii, UTF
-     * chars will be truncated.
-     *
-     * @param value to convert to byte array
-     * @return the byte array value
-     */
-    public static final byte[] convertToBytes(String value) {
-        byte[] result = new byte[value.length()];
-        for (int i = 0; i < value.length(); i++) {
-            result[i] = (byte) value.charAt(i);
-        }
-        return result;
+        /**
+         * Send the bytes ( usually the internal conversion buffer ). Expect 8k
+         * output if the buffer is full.
+         *
+         * @param from bytes that will be written
+         * @throws IOException If an I/O occurs while writing the bytes
+         */
+        public void realWriteBytes(ByteBuffer from) throws IOException;
     }
 }

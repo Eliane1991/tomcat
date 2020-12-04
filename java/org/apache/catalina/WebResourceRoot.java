@@ -89,10 +89,9 @@ public interface WebResourceRoot extends Lifecycle {
      * exist, the WebResource returned will be associated with the main
      * WebResourceSet.
      *
-     * @param path  The path for the resource of interest relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  The object that represents the resource at the given path
+     * @param path The path for the resource of interest relative to the root
+     *             of the web application. It must start with '/'.
+     * @return The object that represents the resource at the given path
      */
     WebResource getResource(String path);
 
@@ -104,10 +103,9 @@ public interface WebResourceRoot extends Lifecycle {
      * not normally be accessible (e.g. because it was overridden by another
      * resource)
      *
-     * @param path  The path for the resource of interest relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  The objects that represents the resource at the given path
+     * @param path The path for the resource of interest relative to the root
+     *             of the web application. It must start with '/'.
+     * @return The objects that represents the resource at the given path
      */
     WebResource[] getResources(String path);
 
@@ -118,12 +116,11 @@ public interface WebResourceRoot extends Lifecycle {
      * subsequent calls to this method until the web application is reloaded. No
      * guarantee is made as to what the search order for JAR files may be.
      *
-     * @param path  The path of the class loader resource of interest relative
-     *              to the the root of class loader resources for this web
-     *              application.
-     *
-     * @return  The object that represents the class loader resource at the
-     *          given path
+     * @param path The path of the class loader resource of interest relative
+     *             to the the root of class loader resources for this web
+     *             application.
+     * @return The object that represents the class loader resource at the
+     * given path
      */
     WebResource getClassLoaderResource(String path);
 
@@ -135,13 +132,12 @@ public interface WebResourceRoot extends Lifecycle {
      * not normally be accessible (e.g. because it was overridden by another
      * resource)
      *
-     * @param path  The path for the class loader resource of interest relative
-     *              to the root of the class loader resources for the web
-     *              application. It must start with '/'.
-     *
-     * @return  The objects that represents the class loader resources at the
-     *          given path. There will always be at least one element although
-     *          that element may represent a resource that is not present.
+     * @param path The path for the class loader resource of interest relative
+     *             to the root of the class loader resources for the web
+     *             application. It must start with '/'.
+     * @return The objects that represents the class loader resources at the
+     * given path. There will always be at least one element although
+     * that element may represent a resource that is not present.
      */
     WebResource[] getClassLoaderResources(String path);
 
@@ -149,11 +145,10 @@ public interface WebResourceRoot extends Lifecycle {
      * Obtain the list of the names of all of the files and directories located
      * in the specified directory.
      *
-     * @param path  The path for the resource of interest relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  The list of resources. If path does not refer to a directory
-     *          then a zero length array will be returned.
+     * @param path The path for the resource of interest relative to the root
+     *             of the web application. It must start with '/'.
+     * @return The list of resources. If path does not refer to a directory
+     * then a zero length array will be returned.
      */
     String[] list(String path);
 
@@ -162,33 +157,30 @@ public interface WebResourceRoot extends Lifecycle {
      * directories located in the specified directory. Paths representing
      * directories will end with a '/' character.
      *
-     * @param path  The path for the resource of interest relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  The Set of resources. If path does not refer to a directory
-     *          then null will be returned.
+     * @param path The path for the resource of interest relative to the root
+     *             of the web application. It must start with '/'.
+     * @return The Set of resources. If path does not refer to a directory
+     * then null will be returned.
      */
     Set<String> listWebAppPaths(String path);
 
     /**
      * Obtain the list of all of the WebResources in the specified directory.
      *
-     * @param path  The path for the resource of interest relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  The list of resources. If path does not refer to a directory
-     *          then a zero length array will be returned.
+     * @param path The path for the resource of interest relative to the root
+     *             of the web application. It must start with '/'.
+     * @return The list of resources. If path does not refer to a directory
+     * then a zero length array will be returned.
      */
     WebResource[] listResources(String path);
 
     /**
      * Create a new directory at the given path.
      *
-     * @param path  The path for the new resource to create relative to the root
-     *              of the web application. It must start with '/'.
-     *
-     * @return  <code>true</code> if the directory was created, otherwise
-     *          <code>false</code>
+     * @param path The path for the new resource to create relative to the root
+     *             of the web application. It must start with '/'.
+     * @return <code>true</code> if the directory was created, otherwise
+     * <code>false</code>
      */
     boolean mkdir(String path);
 
@@ -204,8 +196,7 @@ public interface WebResourceRoot extends Lifecycle {
      * @param overwrite If <code>true</code> and the resource already exists it
      *                  will be overwritten. If <code>false</code> and the
      *                  resource already exists the write will fail.
-     *
-     * @return  <code>true</code> if and only if the new Resource is written
+     * @return <code>true</code> if and only if the new Resource is written
      */
     boolean write(String path, InputStream is, boolean overwrite);
 
@@ -213,36 +204,36 @@ public interface WebResourceRoot extends Lifecycle {
      * Creates a new {@link WebResourceSet} for this {@link WebResourceRoot}
      * based on the provided parameters.
      *
-     * @param type          The type of {@link WebResourceSet} to create
-     * @param webAppMount   The path within the web application that the
-     *                          resources should be published at. It must start
-     *                          with '/'.
-     * @param url           The URL of the resource (must locate a JAR, file or
-     *                          directory)
-     * @param internalPath  The path within the resource where the content is to
-     *                          be found. It must start with '/'.
+     * @param type         The type of {@link WebResourceSet} to create
+     * @param webAppMount  The path within the web application that the
+     *                     resources should be published at. It must start
+     *                     with '/'.
+     * @param url          The URL of the resource (must locate a JAR, file or
+     *                     directory)
+     * @param internalPath The path within the resource where the content is to
+     *                     be found. It must start with '/'.
      */
     void createWebResourceSet(ResourceSetType type, String webAppMount, URL url,
-            String internalPath);
+                              String internalPath);
 
     /**
      * Creates a new {@link WebResourceSet} for this {@link WebResourceRoot}
      * based on the provided parameters.
      *
-     * @param type          The type of {@link WebResourceSet} to create
-     * @param webAppMount   The path within the web application that the
-     *                          resources should be published at. It must start
-     *                          with '/'.
-     * @param base          The location of the resources
-     * @param archivePath   The path within the resource to the archive where
-     *                          the content is to be found. If there is no
-     *                          archive then this should be <code>null</code>.
-     * @param internalPath  The path within the archive (or the resource if the
-     *                          archivePath is <code>null</code> where the
-     *                          content is to be found. It must start with '/'.
+     * @param type         The type of {@link WebResourceSet} to create
+     * @param webAppMount  The path within the web application that the
+     *                     resources should be published at. It must start
+     *                     with '/'.
+     * @param base         The location of the resources
+     * @param archivePath  The path within the resource to the archive where
+     *                     the content is to be found. If there is no
+     *                     archive then this should be <code>null</code>.
+     * @param internalPath The path within the archive (or the resource if the
+     *                     archivePath is <code>null</code> where the
+     *                     content is to be found. It must start with '/'.
      */
     void createWebResourceSet(ResourceSetType type, String webAppMount,
-            String base, String archivePath, String internalPath);
+                              String base, String archivePath, String internalPath);
 
 
     /**
@@ -300,26 +291,18 @@ public interface WebResourceRoot extends Lifecycle {
     void setContext(Context context);
 
     /**
-     * Configure if this resources allow the use of symbolic links.
-     *
-     * @param allowLinking  <code>true</code> if symbolic links are allowed.
-     */
-    void setAllowLinking(boolean allowLinking);
-
-    /**
      * Determine if this resources allow the use of symbolic links.
      *
-     * @return  <code>true</code> if symbolic links are allowed
+     * @return <code>true</code> if symbolic links are allowed
      */
     boolean getAllowLinking();
 
     /**
-     * Set whether or not caching is permitted for this web application.
+     * Configure if this resources allow the use of symbolic links.
      *
-     * @param cachingAllowed    <code>true</code> to enable caching, else
-     *                          <code>false</code>
+     * @param allowLinking <code>true</code> if symbolic links are allowed.
      */
-    void setCachingAllowed(boolean cachingAllowed);
+    void setAllowLinking(boolean allowLinking);
 
     /**
      * @return <code>true</code> if caching is permitted for this web application.
@@ -327,49 +310,64 @@ public interface WebResourceRoot extends Lifecycle {
     boolean isCachingAllowed();
 
     /**
-     * Set the Time-To-Live (TTL) for cache entries.
+     * Set whether or not caching is permitted for this web application.
      *
-     * @param ttl   TTL in milliseconds
+     * @param cachingAllowed <code>true</code> to enable caching, else
+     *                       <code>false</code>
      */
-    void setCacheTtl(long ttl);
+    void setCachingAllowed(boolean cachingAllowed);
 
     /**
      * Get the Time-To-Live (TTL) for cache entries.
      *
-     * @return  TTL in milliseconds
+     * @return TTL in milliseconds
      */
     long getCacheTtl();
 
     /**
-     * Set the maximum permitted size for the cache.
+     * Set the Time-To-Live (TTL) for cache entries.
      *
-     * @param cacheMaxSize  Maximum cache size in kilobytes
+     * @param ttl TTL in milliseconds
      */
-    void setCacheMaxSize(long cacheMaxSize);
+    void setCacheTtl(long ttl);
 
     /**
      * Get the maximum permitted size for the cache.
      *
-     * @return  Maximum cache size in kilobytes
+     * @return Maximum cache size in kilobytes
      */
     long getCacheMaxSize();
 
     /**
-     * Set the maximum permitted size for a single object in the cache. Note
-     * that the maximum size in bytes may not exceed {@link Integer#MAX_VALUE}.
+     * Set the maximum permitted size for the cache.
      *
-     * @param cacheObjectMaxSize    Maximum size for a single cached object in
-     *                              kilobytes
+     * @param cacheMaxSize Maximum cache size in kilobytes
      */
-    void setCacheObjectMaxSize(int cacheObjectMaxSize);
+    void setCacheMaxSize(long cacheMaxSize);
 
     /**
      * Get the maximum permitted size for a single object in the cache. Note
      * that the maximum size in bytes may not exceed {@link Integer#MAX_VALUE}.
      *
-     * @return  Maximum size for a single cached object in kilobytes
+     * @return Maximum size for a single cached object in kilobytes
      */
     int getCacheObjectMaxSize();
+
+    /**
+     * Set the maximum permitted size for a single object in the cache. Note
+     * that the maximum size in bytes may not exceed {@link Integer#MAX_VALUE}.
+     *
+     * @param cacheObjectMaxSize Maximum size for a single cached object in
+     *                           kilobytes
+     */
+    void setCacheObjectMaxSize(int cacheObjectMaxSize);
+
+    /**
+     * Has the track locked files feature been enabled?
+     *
+     * @return {@code true} if it has been enabled, otherwise {@code false}
+     */
+    boolean getTrackLockedFiles();
 
     /**
      * Controls whether the track locked files feature is enabled. If enabled,
@@ -393,13 +391,6 @@ public interface WebResourceRoot extends Lifecycle {
     void setTrackLockedFiles(boolean trackLockedFiles);
 
     /**
-     * Has the track locked files feature been enabled?
-     *
-     * @return {@code true} if it has been enabled, otherwise {@code false}
-     */
-    boolean getTrackLockedFiles();
-
-    /**
      * This method will be invoked by the context on a periodic basis and allows
      * the implementation a method that executes periodic tasks, such as purging
      * expired cache entries.
@@ -409,12 +400,14 @@ public interface WebResourceRoot extends Lifecycle {
     /**
      * Add a specified resource to track to be able to later release
      * resources on stop.
+     *
      * @param trackedResource the resource that will be tracked
      */
     void registerTrackedResource(TrackedWebResource trackedResource);
 
     /**
      * Stop tracking specified resource, once it no longer needs to free resources.
+     *
      * @param trackedResource the resource that was tracked
      */
     void deregisterTrackedResource(TrackedWebResource trackedResource);

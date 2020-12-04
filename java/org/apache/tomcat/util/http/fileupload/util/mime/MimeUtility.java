@@ -86,8 +86,7 @@ public final class MimeUtility {
      * string of tokens, some of which may be encoded using
      * base64 encoding.
      *
-     * @param text   The text to decode.
-     *
+     * @param text The text to decode.
      * @return The decoded text string.
      * @throws UnsupportedEncodingException if the detected encoding in the input text is not supported.
      */
@@ -184,11 +183,10 @@ public final class MimeUtility {
     /**
      * Parse a string using the RFC 2047 rules for an "encoded-word"
      * type.  This encoding has the syntax:
-     *
+     * <p>
      * encoded-word = "=?" charset "?" encoding "?" encoded-text "?="
      *
-     * @param word   The possibly encoded word value.
-     *
+     * @param word The possibly encoded word value.
      * @return The decoded word.
      * @throws ParseException
      * @throws UnsupportedEncodingException
@@ -257,7 +255,6 @@ public final class MimeUtility {
      * equivalent.
      *
      * @param charset The MIME standard name.
-     *
      * @return The Java equivalent for this name.
      */
     private static String javaCharset(String charset) {

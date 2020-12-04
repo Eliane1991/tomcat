@@ -46,8 +46,7 @@ public class SkipPageException extends JspException {
     /**
      * Creates a SkipPageException with the provided message.
      *
-     * @param message
-     *            the detail message
+     * @param message the detail message
      */
     public SkipPageException(String message) {
         super(message);
@@ -56,10 +55,8 @@ public class SkipPageException extends JspException {
     /**
      * Creates a SkipPageException with the provided message and root cause.
      *
-     * @param message
-     *            the detail message
-     * @param rootCause
-     *            the originating cause of this exception
+     * @param message   the detail message
+     * @param rootCause the originating cause of this exception
      */
     public SkipPageException(String message, Throwable rootCause) {
         super(message, rootCause);
@@ -68,8 +65,7 @@ public class SkipPageException extends JspException {
     /**
      * Creates a SkipPageException with the provided root cause.
      *
-     * @param rootCause
-     *            the originating cause of this exception
+     * @param rootCause the originating cause of this exception
      */
     public SkipPageException(Throwable rootCause) {
         super(rootCause);

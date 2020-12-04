@@ -29,18 +29,15 @@ public abstract class WsRemoteEndpointBase implements RemoteEndpoint {
         this.base = base;
     }
 
-
-    @Override
-    public final void setBatchingAllowed(boolean batchingAllowed) throws IOException {
-        base.setBatchingAllowed(batchingAllowed);
-    }
-
-
     @Override
     public final boolean getBatchingAllowed() {
         return base.getBatchingAllowed();
     }
 
+    @Override
+    public final void setBatchingAllowed(boolean batchingAllowed) throws IOException {
+        base.setBatchingAllowed(batchingAllowed);
+    }
 
     @Override
     public final void flushBatch() throws IOException {

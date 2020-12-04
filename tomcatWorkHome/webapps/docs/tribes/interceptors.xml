@@ -16,8 +16,8 @@
   limitations under the License.
 -->
 <!DOCTYPE document [
-  <!ENTITY project SYSTEM "project.xml">
-]>
+        <!ENTITY project SYSTEM "project.xml">
+        ]>
 <document url="interceptors.html">
 
     &project;
@@ -26,12 +26,12 @@
         <title>Apache Tribes - Interceptors</title>
     </properties>
 
-<body>
+    <body>
 
 
-<section name="Interceptors">
-    <p>TODO</p>
-</section>
-</body>
+        <section name="Interceptors">
+            <p>TODO</p>
+        </section>
+    </body>
 
 </document>

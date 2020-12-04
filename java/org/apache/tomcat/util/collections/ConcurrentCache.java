@@ -20,13 +20,13 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class ConcurrentCache<K,V> {
+public final class ConcurrentCache<K, V> {
 
     private final int size;
 
-    private final Map<K,V> eden;
+    private final Map<K, V> eden;
 
-    private final Map<K,V> longterm;
+    private final Map<K, V> longterm;
 
     public ConcurrentCache(int size) {
         this.size = size;

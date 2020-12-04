@@ -35,9 +35,18 @@ import java.util.Map;
  */
 public class DigesterFactory {
 
+    /**
+     * Mapping of well-known public IDs used by the Servlet API to the matching
+     * local resource.
+     */
+    public static final Map<String, String> SERVLET_API_PUBLIC_IDS;
+    /**
+     * Mapping of well-known system IDs used by the Servlet API to the matching
+     * local resource.
+     */
+    public static final Map<String, String> SERVLET_API_SYSTEM_IDS;
     private static final StringManager sm =
             StringManager.getManager(Constants.PACKAGE_NAME);
-
     private static final Class<ServletContext> CLASS_SERVLET_CONTEXT;
     private static final Class<?> CLASS_JSP_CONTEXT;
 
@@ -51,19 +60,6 @@ public class DigesterFactory {
         }
         CLASS_JSP_CONTEXT = jspContext;
     }
-
-
-    /**
-     * Mapping of well-known public IDs used by the Servlet API to the matching
-     * local resource.
-     */
-    public static final Map<String,String> SERVLET_API_PUBLIC_IDS;
-
-    /**
-     * Mapping of well-known system IDs used by the Servlet API to the matching
-     * local resource.
-     */
-    public static final Map<String,String> SERVLET_API_SYSTEM_IDS;
 
     static {
         Map<String, String> publicIds = new HashMap<>();
@@ -130,7 +126,7 @@ public class DigesterFactory {
         }
     }
 
-    private static void add(Map<String,String> ids, String id, String location) {
+    private static void add(Map<String, String> ids, String id, String location) {
         if (location != null) {
             ids.put(id, location);
             // BZ 63311
@@ -159,10 +155,11 @@ public class DigesterFactory {
 
     /**
      * Create a <code>Digester</code> parser.
-     * @param xmlValidation turn on/off xml validation
+     *
+     * @param xmlValidation     turn on/off xml validation
      * @param xmlNamespaceAware turn on/off namespace validation
-     * @param rule an instance of <code>RuleSet</code> used for parsing the xml.
-     * @param blockExternal turn on/off the blocking of external resources
+     * @param rule              an instance of <code>RuleSet</code> used for parsing the xml.
+     * @param blockExternal     turn on/off the blocking of external resources
      * @return a new digester
      */
     public static Digester newDigester(boolean xmlValidation,

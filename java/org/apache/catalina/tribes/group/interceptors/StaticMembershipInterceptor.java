@@ -31,18 +31,15 @@ import java.util.Arrays;
 public class StaticMembershipInterceptor extends ChannelInterceptorBase
         implements StaticMembershipInterceptorMBean {
 
-    private static final Log log = LogFactory.getLog(StaticMembershipInterceptor.class);
     protected static final StringManager sm =
             StringManager.getManager(StaticMembershipInterceptor.class);
-
-    protected static final byte[] MEMBER_START = new byte[] {
-        76, 111, 99, 97, 108, 32, 83, 116, 97, 116, 105, 99, 77, 101, 109, 98, 101, 114, 32, 78,
-        111, 116, 105, 102, 105, 99, 97, 116, 105, 111, 110, 32, 68, 97, 116, 97};
-
-    protected static final byte[] MEMBER_STOP = new byte[] {
-        76, 111, 99, 97, 108, 32, 83, 116, 97, 116, 105, 99, 77, 101, 109, 98, 101, 114, 32, 83,
-        104, 117, 116, 100, 111, 119, 110, 32, 68, 97, 116, 97};
-
+    protected static final byte[] MEMBER_START = new byte[]{
+            76, 111, 99, 97, 108, 32, 83, 116, 97, 116, 105, 99, 77, 101, 109, 98, 101, 114, 32, 78,
+            111, 116, 105, 102, 105, 99, 97, 116, 105, 111, 110, 32, 68, 97, 116, 97};
+    protected static final byte[] MEMBER_STOP = new byte[]{
+            76, 111, 99, 97, 108, 32, 83, 116, 97, 116, 105, 99, 77, 101, 109, 98, 101, 114, 32, 83,
+            104, 117, 116, 100, 111, 119, 110, 32, 68, 97, 116, 97};
+    private static final Log log = LogFactory.getLog(StaticMembershipInterceptor.class);
     protected final ArrayList<Member> members = new ArrayList<>();
     protected Member localMember = null;
 
@@ -77,7 +74,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
                 super.memberAdded(member);
             }
         } else if (msg.getMessage().getLength() == MEMBER_STOP.length &&
-                    Arrays.equals(MEMBER_STOP, msg.getMessage().getBytes())) {
+                Arrays.equals(MEMBER_STOP, msg.getMessage().getBytes())) {
             // receive member shutdown
             Member member = getMember(msg.getAddress());
             if (member != null) {
@@ -98,16 +95,17 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
      */
     @Override
     public boolean hasMembers() {
-        return super.hasMembers() || (members.size()>0);
+        return super.hasMembers() || (members.size() > 0);
     }
 
     /**
      * Get all current cluster members
+     *
      * @return all members or empty array
      */
     @Override
     public Member[] getMembers() {
-        if ( members.size() == 0 ) return super.getMembers();
+        if (members.size() == 0) return super.getMembers();
         else {
             synchronized (members) {
                 Member[] others = super.getMembers();
@@ -121,13 +119,12 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
     }
 
     /**
-     *
      * @param mbr Member
      * @return Member
      */
     @Override
     public Member getMember(Member mbr) {
-        if ( members.contains(mbr) ) return members.get(members.indexOf(mbr));
+        if (members.contains(mbr)) return members.get(members.indexOf(mbr));
         else return super.getMember(mbr);
     }
 
@@ -138,7 +135,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
      */
     @Override
     public Member getLocalMember(boolean incAlive) {
-        if (this.localMember != null ) return localMember;
+        if (this.localMember != null) return localMember;
         else return super.getLocalMember(incAlive);
     }
 
@@ -149,8 +146,8 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
      */
     @Override
     public void start(int svc) throws ChannelException {
-        if ( (Channel.SND_RX_SEQ&svc)==Channel.SND_RX_SEQ ) super.start(Channel.SND_RX_SEQ);
-        if ( (Channel.SND_TX_SEQ&svc)==Channel.SND_TX_SEQ ) super.start(Channel.SND_TX_SEQ);
+        if ((Channel.SND_RX_SEQ & svc) == Channel.SND_RX_SEQ) super.start(Channel.SND_RX_SEQ);
+        if ((Channel.SND_TX_SEQ & svc) == Channel.SND_TX_SEQ) super.start(Channel.SND_TX_SEQ);
         final ChannelInterceptorBase base = this;
         for (final Member member : members) {
             Thread t = new Thread() {
@@ -171,7 +168,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
         TcpPingInterceptor pingInterceptor = null;
         ChannelInterceptor prev = getPrevious();
         while (prev != null) {
-            if (prev instanceof TcpFailureDetector ) failureDetector = (TcpFailureDetector) prev;
+            if (prev instanceof TcpFailureDetector) failureDetector = (TcpFailureDetector) prev;
             if (prev instanceof TcpPingInterceptor) pingInterceptor = (TcpPingInterceptor) prev;
             prev = prev.getPrevious();
         }
@@ -200,7 +197,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
         try {
             sendMemberMessage(members, MEMBER_START);
         } catch (ChannelException cx) {
-            log.warn(sm.getString("staticMembershipInterceptor.sendLocalMember.failed"),cx);
+            log.warn(sm.getString("staticMembershipInterceptor.sendLocalMember.failed"), cx);
         }
     }
 
@@ -208,7 +205,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
         try {
             sendMemberMessage(members, MEMBER_STOP);
         } catch (ChannelException cx) {
-            log.warn(sm.getString("staticMembershipInterceptor.sendShutdown.failed"),cx);
+            log.warn(sm.getString("staticMembershipInterceptor.sendShutdown.failed"), cx);
         }
     }
 
@@ -223,7 +220,7 @@ public class StaticMembershipInterceptor extends ChannelInterceptorBase
     }
 
     protected void sendMemberMessage(Member[] members, byte[] message) throws ChannelException {
-        if ( members == null || members.length == 0 ) return;
+        if (members == null || members.length == 0) return;
         ChannelData data = new ChannelData(true);
         data.setAddress(getLocalMember(false));
         data.setTimestamp(System.currentTimeMillis());

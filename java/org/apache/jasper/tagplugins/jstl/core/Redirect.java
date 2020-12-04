@@ -38,7 +38,7 @@ public class Redirect implements TagPlugin {
 
         //get context
         ctxt.generateJavaSource("String " + contextName + " = null;");
-        if(hasContext){
+        if (hasContext) {
             ctxt.generateJavaSource(contextName + " = ");
             ctxt.generateAttribute("context");
             ctxt.generateJavaSource(";");
@@ -59,13 +59,13 @@ public class Redirect implements TagPlugin {
         ctxt.generateBody();
 
         ctxt.generateJavaSource("String " + resultName + " = " +
-        "(String)pageContext.getAttribute(\"url_without_param\");");
+                "(String)pageContext.getAttribute(\"url_without_param\");");
         ctxt.generateJavaSource("pageContext.removeAttribute" +
-        "(\"url_without_param\");");
+                "(\"url_without_param\");");
 
         //get the response object
         ctxt.generateJavaSource("HttpServletResponse " + responseName + " = " +
-        "((HttpServletResponse) pageContext.getResponse());");
+                "((HttpServletResponse) pageContext.getResponse());");
 
         //if the url is relative, encode it
         ctxt.generateJavaSource("if(!org.apache.jasper.tagplugins.jstl.Util.isAbsoluteUrl(" + resultName + ")){");

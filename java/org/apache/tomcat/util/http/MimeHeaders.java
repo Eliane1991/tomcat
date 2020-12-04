@@ -65,23 +65,22 @@ import java.util.Enumeration;
 
 
 /**
- *  Memory-efficient repository for Mime Headers. When the object is recycled, it
- *  will keep the allocated headers[] and all the MimeHeaderField - no GC is generated.
- *
- *  For input headers it is possible to use the MessageByte for Fields - so no GC
- *  will be generated.
- *
- *  The only garbage is generated when using the String for header names/values -
- *  this can't be avoided when the servlet calls header methods, but is easy
- *  to avoid inside tomcat. The goal is to use _only_ MessageByte-based Fields,
- *  and reduce to 0 the memory overhead of tomcat.
- *
- *  TODO:
- *  XXX one-buffer parsing - for http ( other protocols don't need that )
- *  XXX remove unused methods
- *  XXX External enumerations, with 0 GC.
- *  XXX use HeaderName ID
- *
+ * Memory-efficient repository for Mime Headers. When the object is recycled, it
+ * will keep the allocated headers[] and all the MimeHeaderField - no GC is generated.
+ * <p>
+ * For input headers it is possible to use the MessageByte for Fields - so no GC
+ * will be generated.
+ * <p>
+ * The only garbage is generated when using the String for header names/values -
+ * this can't be avoided when the servlet calls header methods, but is easy
+ * to avoid inside tomcat. The goal is to use _only_ MessageByte-based Fields,
+ * and reduce to 0 the memory overhead of tomcat.
+ * <p>
+ * TODO:
+ * XXX one-buffer parsing - for http ( other protocols don't need that )
+ * XXX remove unused methods
+ * XXX External enumerations, with 0 GC.
+ * XXX use HeaderName ID
  *
  * @author dac@eng.sun.com
  * @author James Todd [gonzo@eng.sun.com]
@@ -89,10 +88,11 @@ import java.util.Enumeration;
  * @author kevin seguin
  */
 public class MimeHeaders {
-    /** Initial size - should be == average number of headers per request
-     *  XXX  make it configurable ( fine-tuning of web-apps )
+    /**
+     * Initial size - should be == average number of headers per request
+     * XXX  make it configurable ( fine-tuning of web-apps )
      */
-    public static final int DEFAULT_HEADER_SIZE=8;
+    public static final int DEFAULT_HEADER_SIZE = 8;
 
     private static final StringManager sm =
             StringManager.getManager("org.apache.tomcat.util.http");
@@ -101,7 +101,7 @@ public class MimeHeaders {
      * The header fields.
      */
     private MimeHeaderField[] headers = new
-        MimeHeaderField[DEFAULT_HEADER_SIZE];
+            MimeHeaderField[DEFAULT_HEADER_SIZE];
 
     /**
      * The current number of header fields.
@@ -122,6 +122,7 @@ public class MimeHeaders {
 
     /**
      * Set limit on the number of header fields.
+     *
      * @param limit The new limit
      */
     public void setLimit(int limit) {
@@ -212,11 +213,12 @@ public class MimeHeaders {
 
     /**
      * Find the index of a header with the given name.
-     * @param name The header name
+     *
+     * @param name     The header name
      * @param starting Index on which to start looking
      * @return the header index
      */
-    public int findHeader( String name, int starting ) {
+    public int findHeader(String name, int starting) {
         // We can use a hash - but it's not clear how much
         // benefit you can get - there is an  overhead
         // and the number of headers is small (4-5 ?)
@@ -238,6 +240,7 @@ public class MimeHeaders {
      * Returns an enumeration of strings representing the header field names.
      * Field names may appear multiple times in this enumeration, indicating
      * that multiple fields with that name exist in this header.
+     *
      * @return the enumeration
      */
     public Enumeration<String> names() {
@@ -282,10 +285,11 @@ public class MimeHeaders {
     /**
      * Create a new named header , return the MessageBytes
      * container for the new value
+     *
      * @param name The header name
      * @return the message bytes container for the value
      */
-    public MessageBytes addValue( String name ) {
+    public MessageBytes addValue(String name) {
         MimeHeaderField mh = createHeader();
         mh.getName().setString(name);
         return mh.getValue();
@@ -295,13 +299,14 @@ public class MimeHeaders {
      * Create a new named header using un-translated byte[].
      * The conversion to chars can be delayed until
      * encoding is known.
-     * @param b The header name bytes
+     *
+     * @param b      The header name bytes
      * @param startN Offset
-     * @param len Length
+     * @param len    Length
      * @return the message bytes container for the value
      */
     public MessageBytes addValue(byte b[], int startN, int len) {
-        MimeHeaderField mhf=createHeader();
+        MimeHeaderField mhf = createHeader();
         mhf.getName().setBytes(b, startN, len);
         return mhf.getValue();
     }
@@ -309,14 +314,15 @@ public class MimeHeaders {
     /**
      * Allow "set" operations, which removes all current values
      * for this header.
+     *
      * @param name The header name
      * @return the message bytes container for the value
      */
-    public MessageBytes setValue( String name ) {
-        for ( int i = 0; i < count; i++ ) {
-            if(headers[i].getName().equalsIgnoreCase(name)) {
-                for ( int j=i+1; j < count; j++ ) {
-                    if(headers[j].getName().equalsIgnoreCase(name)) {
+    public MessageBytes setValue(String name) {
+        for (int i = 0; i < count; i++) {
+            if (headers[i].getName().equalsIgnoreCase(name)) {
+                for (int j = i + 1; j < count; j++) {
+                    if (headers[j].getName().equalsIgnoreCase(name)) {
                         removeHeader(j--);
                     }
                 }
@@ -329,10 +335,12 @@ public class MimeHeaders {
     }
 
     //-------------------- Getting headers --------------------
+
     /**
      * Finds and returns a header field with the given name.  If no such
      * field exists, null is returned.  If more than one such field is
      * in the header, an arbitrary one is returned.
+     *
      * @param name The header name
      * @return the value
      */
@@ -349,6 +357,7 @@ public class MimeHeaders {
      * Finds and returns a unique header field with the given name. If no such
      * field exists, null is returned. If the specified header field is not
      * unique then an {@link IllegalArgumentException} is thrown.
+     *
      * @param name The header name
      * @return the value if unique
      * @throws IllegalArgumentException if the header has multiple values
@@ -375,9 +384,11 @@ public class MimeHeaders {
     }
 
     // -------------------- Removing --------------------
+
     /**
      * Removes a header field with the specified name.  Does nothing
      * if such a field could not be found.
+     *
      * @param name the name of the header field to be removed
      */
     public void removeHeader(String name) {
@@ -393,6 +404,7 @@ public class MimeHeaders {
 
     /**
      * reset and swap with last header
+     *
      * @param idx the index of the header to remove.
      */
     public void removeHeader(int idx) {
@@ -406,38 +418,39 @@ public class MimeHeaders {
 
 }
 
-/** Enumerate the distinct header names.
-    Each nextElement() is O(n) ( a comparison is
-    done with all previous elements ).
-
-    This is less frequent than add() -
-    we want to keep add O(1).
-*/
+/**
+ * Enumerate the distinct header names.
+ * Each nextElement() is O(n) ( a comparison is
+ * done with all previous elements ).
+ * <p>
+ * This is less frequent than add() -
+ * we want to keep add O(1).
+ */
 class NamesEnumerator implements Enumeration<String> {
-    private int pos;
     private final int size;
-    private String next;
     private final MimeHeaders headers;
+    private int pos;
+    private String next;
 
     public NamesEnumerator(MimeHeaders headers) {
-        this.headers=headers;
-        pos=0;
+        this.headers = headers;
+        pos = 0;
         size = headers.size();
         findNext();
     }
 
     private void findNext() {
-        next=null;
-        for(; pos< size; pos++ ) {
-            next=headers.getName( pos ).toString();
-            for( int j=0; j<pos ; j++ ) {
-                if( headers.getName( j ).equalsIgnoreCase( next )) {
+        next = null;
+        for (; pos < size; pos++) {
+            next = headers.getName(pos).toString();
+            for (int j = 0; j < pos; j++) {
+                if (headers.getName(j).equalsIgnoreCase(next)) {
                     // duplicate.
-                    next=null;
+                    next = null;
                     break;
                 }
             }
-            if( next!=null ) {
+            if (next != null) {
                 // it's not a duplicate
                 break;
             }
@@ -449,41 +462,42 @@ class NamesEnumerator implements Enumeration<String> {
 
     @Override
     public boolean hasMoreElements() {
-        return next!=null;
+        return next != null;
     }
 
     @Override
     public String nextElement() {
-        String current=next;
+        String current = next;
         findNext();
         return current;
     }
 }
 
-/** Enumerate the values for a (possibly ) multiple
-    value element.
-*/
+/**
+ * Enumerate the values for a (possibly ) multiple
+ * value element.
+ */
 class ValuesEnumerator implements Enumeration<String> {
-    private int pos;
     private final int size;
-    private MessageBytes next;
     private final MimeHeaders headers;
     private final String name;
+    private int pos;
+    private MessageBytes next;
 
     ValuesEnumerator(MimeHeaders headers, String name) {
-        this.name=name;
-        this.headers=headers;
-        pos=0;
+        this.name = name;
+        this.headers = headers;
+        pos = 0;
         size = headers.size();
         findNext();
     }
 
     private void findNext() {
-        next=null;
-        for(; pos< size; pos++ ) {
-            MessageBytes n1=headers.getName( pos );
-            if( n1.equalsIgnoreCase( name )) {
-                next=headers.getValue( pos );
+        next = null;
+        for (; pos < size; pos++) {
+            MessageBytes n1 = headers.getName(pos);
+            if (n1.equalsIgnoreCase(name)) {
+                next = headers.getValue(pos);
                 break;
             }
         }
@@ -492,12 +506,12 @@ class ValuesEnumerator implements Enumeration<String> {
 
     @Override
     public boolean hasMoreElements() {
-        return next!=null;
+        return next != null;
     }
 
     @Override
     public String nextElement() {
-        MessageBytes current=next;
+        MessageBytes current = next;
         findNext();
         return current.toString();
     }

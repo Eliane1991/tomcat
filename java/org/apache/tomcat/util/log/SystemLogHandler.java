@@ -24,7 +24,7 @@ import java.util.Stack;
 /**
  * This helper class may be used to do sophisticated redirection of
  * System.out and System.err on a per Thread basis.
- *
+ * <p>
  * A stack is implemented per Thread so that nested startCapture
  * and stopCapture can be used.
  *
@@ -38,6 +38,23 @@ public class SystemLogHandler extends PrintStream {
 
 
     /**
+     * Thread &lt;-&gt; CaptureLog associations.
+     */
+    private static final ThreadLocal<Stack<CaptureLog>> logs = new ThreadLocal<>();
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * Spare CaptureLog ready for reuse.
+     */
+    private static final Stack<CaptureLog> reuse = new Stack<>();
+    /**
+     * Wrapped PrintStream.
+     */
+    private final PrintStream out;
+
+
+    /**
      * Construct the handler to capture the output of the given steam.
      *
      * @param wrapped The stream to capture
@@ -48,29 +65,7 @@ public class SystemLogHandler extends PrintStream {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Wrapped PrintStream.
-     */
-    private final PrintStream out;
-
-
-    /**
-     * Thread &lt;-&gt; CaptureLog associations.
-     */
-    private static final ThreadLocal<Stack<CaptureLog>> logs = new ThreadLocal<>();
-
-
-    /**
-     * Spare CaptureLog ready for reuse.
-     */
-    private static final Stack<CaptureLog> reuse = new Stack<>();
-
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Start capturing thread's output.
@@ -121,6 +116,7 @@ public class SystemLogHandler extends PrintStream {
 
     /**
      * Find PrintStream to which the output must be written to.
+     *
      * @return the print stream
      */
     protected PrintStream findStream() {
@@ -168,7 +164,7 @@ public class SystemLogHandler extends PrintStream {
 
     @Override
     public void write(byte[] b)
-        throws IOException {
+            throws IOException {
         findStream().write(b);
     }
 

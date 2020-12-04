@@ -36,8 +36,7 @@ public class DataSourceConnectionFactory implements ConnectionFactory {
     /**
      * Constructs an instance for the given DataSource.
      *
-     * @param dataSource
-     *            The DataSource for this factory.
+     * @param dataSource The DataSource for this factory.
      */
     public DataSourceConnectionFactory(final DataSource dataSource) {
         this(dataSource, null, (char[]) null);
@@ -46,12 +45,9 @@ public class DataSourceConnectionFactory implements ConnectionFactory {
     /**
      * Constructs an instance for the given DataSource.
      *
-     * @param dataSource
-     *            The DataSource for this factory.
-     * @param userName
-     *            The user name.
-     * @param userPassword
-     *            The user password.
+     * @param dataSource   The DataSource for this factory.
+     * @param userName     The user name.
+     * @param userPassword The user password.
      * @since 2.4.0
      */
     public DataSourceConnectionFactory(final DataSource dataSource, final String userName, final char[] userPassword) {
@@ -63,12 +59,9 @@ public class DataSourceConnectionFactory implements ConnectionFactory {
     /**
      * Constructs an instance for the given DataSource.
      *
-     * @param dataSource
-     *            The DataSource for this factory.
-     * @param userName
-     *            The user name.
-     * @param password
-     *            The user password.
+     * @param dataSource The DataSource for this factory.
+     * @param userName   The user name.
+     * @param password   The user password.
      */
     public DataSourceConnectionFactory(final DataSource dataSource, final String userName, final String password) {
         this.dataSource = dataSource;

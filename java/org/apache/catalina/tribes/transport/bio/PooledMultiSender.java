@@ -37,7 +37,7 @@ public class PooledMultiSender extends PooledSender {
     public void sendMessage(Member[] destination, ChannelMessage msg) throws ChannelException {
         MultiPointSender sender = null;
         try {
-            sender = (MultiPointSender)getSender();
+            sender = (MultiPointSender) getSender();
             if (sender == null) {
                 ChannelException cx = new ChannelException(sm.getString(
                         "pooledMultiSender.unable.retrieve.sender", Long.toString(getMaxWait())));
@@ -48,15 +48,15 @@ public class PooledMultiSender extends PooledSender {
                 sender.sendMessage(destination, msg);
             }
             sender.keepalive();
-        }finally {
-            if ( sender != null ) returnSender(sender);
+        } finally {
+            if (sender != null) returnSender(sender);
         }
     }
 
     @Override
     public DataSender getNewDataSender() {
         MultipointBioSender sender = new MultipointBioSender();
-        AbstractSender.transferProperties(this,sender);
+        AbstractSender.transferProperties(this, sender);
         return sender;
     }
 }

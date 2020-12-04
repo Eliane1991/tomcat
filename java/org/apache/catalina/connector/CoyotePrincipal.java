@@ -31,21 +31,20 @@ public class CoyotePrincipal implements Principal, Serializable {
 
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * The username of the user represented by this Principal.
+     */
+    protected final String name;
+
+
+    // ------------------------------------------------------------- Properties
+
 
     public CoyotePrincipal(String name) {
 
         this.name = name;
 
     }
-
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The username of the user represented by this Principal.
-     */
-    protected final String name;
 
     @Override
     public String getName() {

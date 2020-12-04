@@ -32,29 +32,28 @@ import java.util.HashMap;
 public class SetAllPropertiesRule extends Rule {
 
 
+    // ----------------------------------------------------- Instance Variables
+    protected final HashMap<String, String> excludes = new HashMap<>();
+
     // ----------------------------------------------------------- Constructors
-    public SetAllPropertiesRule() {}
+    public SetAllPropertiesRule() {
+    }
 
     public SetAllPropertiesRule(String[] exclude) {
         for (String s : exclude) if (s != null) this.excludes.put(s, s);
     }
 
-    // ----------------------------------------------------- Instance Variables
-    protected final HashMap<String,String> excludes = new HashMap<>();
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Handle the beginning of an XML element.
      *
      * @param attributes The attributes of this element
-     *
-     * @exception Exception if a processing error occurs
+     * @throws Exception if a processing error occurs
      */
     @Override
     public void begin(String namespace, String nameX, Attributes attributes)
-        throws Exception {
+            throws Exception {
 
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);
@@ -62,7 +61,7 @@ public class SetAllPropertiesRule extends Rule {
                 name = attributes.getQName(i);
             }
             String value = attributes.getValue(i);
-            if ( !excludes.containsKey(name)) {
+            if (!excludes.containsKey(name)) {
                 if (!digester.isFakeAttribute(digester.peek(), name)
                         && !IntrospectionUtils.setProperty(digester.peek(), name, value)
                         && digester.getRulesValidation()) {

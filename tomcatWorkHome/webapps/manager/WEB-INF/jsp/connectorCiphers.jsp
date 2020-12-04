@@ -23,7 +23,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<% Map<String,List<String>> cipherList = (Map<String,List<String>>) request.getAttribute("cipherList");
+<% Map<String, List<String>> cipherList = (Map<String, List<String>>) request.getAttribute("cipherList");
 %>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
@@ -40,37 +40,39 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
 <table border="1" cellpadding="2" cellspacing="2" width="100%">
     <thead>
-        <tr>
-            <th>Connector / TLS Virtual Host</th>
-            <th>Enabled Ciphers</th>
-        </tr>
+    <tr>
+        <th>Connector / TLS Virtual Host</th>
+        <th>Enabled Ciphers</th>
+    </tr>
     </thead>
     <tbody>
-        <%
+    <%
         for (Map.Entry<String, List<String>> entry : cipherList.entrySet()) {
-        %>
-        <tr>
-            <td><%=entry.getKey()%></td>
-            <td>
+    %>
+    <tr>
+        <td><%=entry.getKey()%>
+        </td>
+        <td>
             <%
-            for (String cipher : entry.getValue()) {
+                for (String cipher : entry.getValue()) {
             %>
-                <p><%=cipher%></p>
+            <p><%=cipher%>
+            </p>
             <%
-            }
+                }
             %>
-            </td>
-        </tr>
-        <%
+        </td>
+    </tr>
+    <%
         }
-        %>
+    %>
     </tbody>
 </table>
 
 <form method="get" action="<%=request.getContextPath()%>/html">
-  <p style="text-align: center;">
-    <input type="submit" value="Return to main page" />
-  </p>
+    <p style="text-align: center;">
+        <input type="submit" value="Return to main page"/>
+    </p>
 </form>
 
 <%--div style="display: none;">

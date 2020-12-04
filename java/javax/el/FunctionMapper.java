@@ -28,7 +28,6 @@ public abstract class FunctionMapper {
      * @param prefix    Function prefix
      * @param localName Function name
      * @param method    Method
-     *
      * @since EL 3.0
      */
     public void mapFunction(String prefix, String localName, Method method) {

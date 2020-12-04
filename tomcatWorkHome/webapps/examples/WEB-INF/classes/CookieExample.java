@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import util.CookieFilter;
 import util.HTMLFilter;
@@ -37,9 +37,8 @@ public class CookieExample extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
-        throws IOException, ServletException
-    {
-        ResourceBundle rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
+            throws IOException, ServletException {
+        ResourceBundle rb = ResourceBundle.getBundle("LocalStrings", request.getLocale());
 
         String cookieName = request.getParameter("cookiename");
         String cookieValue = request.getParameter("cookievalue");
@@ -71,10 +70,10 @@ public class CookieExample extends HttpServlet {
 
         out.println("<a href=\"../cookies.html\">");
         out.println("<img src=\"../images/code.gif\" height=24 " +
-                    "width=24 align=right border=0 alt=\"view code\"></a>");
+                "width=24 align=right border=0 alt=\"view code\"></a>");
         out.println("<a href=\"../index.html\">");
         out.println("<img src=\"../images/return.gif\" height=24 " +
-                    "width=24 align=right border=0 alt=\"return\"></a>");
+                "width=24 align=right border=0 alt=\"return\"></a>");
 
         out.println("<h3>" + title + "</h3>");
 
@@ -102,9 +101,9 @@ public class CookieExample extends HttpServlet {
             out.println("<P>");
             out.println(rb.getString("cookies.set") + "<br>");
             out.print(rb.getString("cookies.name") + "  "
-                      + HTMLFilter.filter(cookieName) + "<br>");
+                    + HTMLFilter.filter(cookieName) + "<br>");
             out.print(rb.getString("cookies.value") + "  "
-                      + HTMLFilter.filter(cookieValue));
+                    + HTMLFilter.filter(cookieValue));
         }
 
         out.println("<P>");
@@ -124,9 +123,8 @@ public class CookieExample extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request,
-                      HttpServletResponse response)
-        throws IOException, ServletException
-    {
+                       HttpServletResponse response)
+            throws IOException, ServletException {
         doGet(request, response);
     }
 

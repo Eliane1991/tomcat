@@ -70,11 +70,11 @@ public final class NonLoginAuthenticator extends AuthenticatorBase {
      * @param request  Request we are processing
      * @param response Response we are creating
      * @return boolean to indicate whether the user is authenticated
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     protected boolean doAuthenticate(Request request, HttpServletResponse response)
-        throws IOException {
+            throws IOException {
 
         // Don't try and use SSO to authenticate since there is no auth
         // configured for this web application

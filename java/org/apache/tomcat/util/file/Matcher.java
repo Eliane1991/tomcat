@@ -33,20 +33,18 @@ public final class Matcher {
      * Tests whether or not a given file name matches any file name pattern in
      * the given set. The match is performed case-sensitively.
      *
-     * @see #match(String, String, boolean)
-     *
      * @param patternSet The pattern set to match against. Must not be
-     *                <code>null</code>.
-     * @param fileName The file name to match, as a String. Must not be
-     *                <code>null</code>. It must be just a file name, without
-     *                a path.
-     *
+     *                   <code>null</code>.
+     * @param fileName   The file name to match, as a String. Must not be
+     *                   <code>null</code>. It must be just a file name, without
+     *                   a path.
      * @return <code>true</code> if any pattern in the set matches against the
-     *         file name, or <code>false</code> otherwise.
+     * file name, or <code>false</code> otherwise.
+     * @see #match(String, String, boolean)
      */
     public static boolean matchName(Set<String> patternSet, String fileName) {
         char[] fileNameArray = fileName.toCharArray();
-        for (String pattern: patternSet) {
+        for (String pattern : patternSet) {
             if (match(pattern, fileNameArray, true)) {
                 return true;
             }
@@ -61,19 +59,17 @@ public final class Matcher {
      * '*' means zero or more characters<br>
      * '?' means one and only one character
      *
-     * @param pattern The pattern to match against.
-     *                Must not be <code>null</code>.
-     * @param str     The string which must be matched against the
-     *                pattern. Must not be <code>null</code>.
+     * @param pattern       The pattern to match against.
+     *                      Must not be <code>null</code>.
+     * @param str           The string which must be matched against the
+     *                      pattern. Must not be <code>null</code>.
      * @param caseSensitive Whether or not matching should be performed
-     *                        case sensitively.
-     *
-     *
+     *                      case sensitively.
      * @return <code>true</code> if the string matches against the pattern,
-     *         or <code>false</code> otherwise.
+     * or <code>false</code> otherwise.
      */
     public static boolean match(String pattern, String str,
-            boolean caseSensitive) {
+                                boolean caseSensitive) {
 
         return match(pattern, str.toCharArray(), caseSensitive);
     }
@@ -85,19 +81,17 @@ public final class Matcher {
      * '*' means zero or more characters<br>
      * '?' means one and only one character
      *
-     * @param pattern The pattern to match against.
-     *                Must not be <code>null</code>.
-     * @param strArr  The character array which must be matched against the
-     *                pattern. Must not be <code>null</code>.
+     * @param pattern       The pattern to match against.
+     *                      Must not be <code>null</code>.
+     * @param strArr        The character array which must be matched against the
+     *                      pattern. Must not be <code>null</code>.
      * @param caseSensitive Whether or not matching should be performed
-     *                        case sensitively.
-     *
-     *
+     *                      case sensitively.
      * @return <code>true</code> if the string matches against the pattern,
-     *         or <code>false</code> otherwise.
+     * or <code>false</code> otherwise.
      */
     private static boolean match(String pattern, char[] strArr,
-                                boolean caseSensitive) {
+                                 boolean caseSensitive) {
         char[] patArr = pattern.toCharArray();
         int patIdxStart = 0;
         int patIdxEnd = patArr.length - 1;
@@ -199,7 +193,7 @@ public final class Matcher {
                     ch = patArr[patIdxStart + j + 1];
                     if (ch != '?') {
                         if (different(caseSensitive, ch,
-                                      strArr[strIdxStart + i + j])) {
+                                strArr[strIdxStart + i + j])) {
                             continue strLoop;
                         }
                     }
@@ -232,10 +226,10 @@ public final class Matcher {
     }
 
     private static boolean different(
-        boolean caseSensitive, char ch, char other) {
+            boolean caseSensitive, char ch, char other) {
         return caseSensitive
-            ? ch != other
-            : Character.toUpperCase(ch) != Character.toUpperCase(other);
+                ? ch != other
+                : Character.toUpperCase(ch) != Character.toUpperCase(other);
     }
 
 }

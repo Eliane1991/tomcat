@@ -33,10 +33,14 @@ import javax.servlet.jsp.PageContext;
  * @since 2.0
  */
 public class TagAdapter implements Tag {
-    /** The simple tag that's being adapted. */
+    /**
+     * The simple tag that's being adapted.
+     */
     private final SimpleTag simpleTagAdaptee;
 
-    /** The parent, of this tag, converted (if necessary) to be of type Tag. */
+    /**
+     * The parent, of this tag, converted (if necessary) to be of type Tag.
+     */
     private Tag parent;
 
     // Flag indicating whether we have already determined the parent
@@ -46,8 +50,7 @@ public class TagAdapter implements Tag {
      * Creates a new TagAdapter that wraps the given SimpleTag and returns the
      * parent tag when getParent() is called.
      *
-     * @param adaptee
-     *            The SimpleTag being adapted as a Tag.
+     * @param adaptee The SimpleTag being adapted as a Tag.
      */
     public TagAdapter(SimpleTag adaptee) {
         if (adaptee == null) {
@@ -60,30 +63,13 @@ public class TagAdapter implements Tag {
     /**
      * Must not be called.
      *
-     * @param pc
-     *            ignored.
-     * @throws UnsupportedOperationException
-     *             Must not be called
+     * @param pc ignored.
+     * @throws UnsupportedOperationException Must not be called
      */
     @Override
     public void setPageContext(PageContext pc) {
         throw new UnsupportedOperationException(
                 "Illegal to invoke setPageContext() on TagAdapter wrapper");
-    }
-
-    /**
-     * Must not be called. The parent of this tag is always
-     * getAdaptee().getParent().
-     *
-     * @param parentTag
-     *            ignored.
-     * @throws UnsupportedOperationException
-     *             Must not be called.
-     */
-    @Override
-    public void setParent(Tag parentTag) {
-        throw new UnsupportedOperationException(
-                "Illegal to invoke setParent() on TagAdapter wrapper");
     }
 
     /**
@@ -113,6 +99,19 @@ public class TagAdapter implements Tag {
     }
 
     /**
+     * Must not be called. The parent of this tag is always
+     * getAdaptee().getParent().
+     *
+     * @param parentTag ignored.
+     * @throws UnsupportedOperationException Must not be called.
+     */
+    @Override
+    public void setParent(Tag parentTag) {
+        throw new UnsupportedOperationException(
+                "Illegal to invoke setParent() on TagAdapter wrapper");
+    }
+
+    /**
      * Gets the tag that is being adapted to the Tag interface. This should be
      * an instance of SimpleTag in JSP 2.0, but room is left for other kinds of
      * tags in future spec versions.
@@ -127,10 +126,8 @@ public class TagAdapter implements Tag {
      * Must not be called.
      *
      * @return always throws UnsupportedOperationException
-     * @throws UnsupportedOperationException
-     *             Must not be called
-     * @throws JspException
-     *             never thrown
+     * @throws UnsupportedOperationException Must not be called
+     * @throws JspException                  never thrown
      */
     @Override
     public int doStartTag() throws JspException {
@@ -142,10 +139,8 @@ public class TagAdapter implements Tag {
      * Must not be called.
      *
      * @return always throws UnsupportedOperationException
-     * @throws UnsupportedOperationException
-     *             Must not be called
-     * @throws JspException
-     *             never thrown
+     * @throws UnsupportedOperationException Must not be called
+     * @throws JspException                  never thrown
      */
     @Override
     public int doEndTag() throws JspException {
@@ -156,8 +151,7 @@ public class TagAdapter implements Tag {
     /**
      * Must not be called.
      *
-     * @throws UnsupportedOperationException
-     *             Must not be called
+     * @throws UnsupportedOperationException Must not be called
      */
     @Override
     public void release() {

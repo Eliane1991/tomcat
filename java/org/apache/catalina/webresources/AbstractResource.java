@@ -68,7 +68,7 @@ public abstract class AbstractResource implements WebResource {
                     long lastModified = getLastModified();
                     if ((contentLength >= 0) || (lastModified >= 0)) {
                         weakETag = "W/\"" + contentLength + "-" +
-                                   lastModified + "\"";
+                                lastModified + "\"";
                     }
                 }
             }
@@ -77,16 +77,14 @@ public abstract class AbstractResource implements WebResource {
     }
 
     @Override
-    public final void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-
-    @Override
     public final String getMimeType() {
         return mimeType;
     }
 
+    @Override
+    public final void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 
     @Override
     public final InputStream getInputStream() {

@@ -43,6 +43,7 @@ public class ParameterInfo extends FeatureInfo {
     /**
      * Create and return a <code>MBeanParameterInfo</code> object that
      * corresponds to the parameter described by this instance.
+     *
      * @return a parameter info
      */
     public MBeanParameterInfo createParameterInfo() {
@@ -50,8 +51,8 @@ public class ParameterInfo extends FeatureInfo {
         // Return our cached information (if any)
         if (info == null) {
             info = new MBeanParameterInfo
-                (getName(), getType(), getDescription());
+                    (getName(), getType(), getDescription());
         }
-        return (MBeanParameterInfo)info;
+        return (MBeanParameterInfo) info;
     }
 }

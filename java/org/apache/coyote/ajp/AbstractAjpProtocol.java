@@ -42,7 +42,19 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
      * The string manager for this package.
      */
     protected static final StringManager sm = StringManager.getManager(AbstractAjpProtocol.class);
+    protected boolean ajpFlush = true;
+    private boolean tomcatAuthentication = true;
+    private boolean tomcatAuthorization = false;
+    private String secret = null;
+    private boolean secretRequired = true;
 
+    // ------------------------------------------------- AJP specific properties
+    // ------------------------------------------ managed in the ProtocolHandler
+    private Pattern allowedRequestAttributesPattern;
+    /**
+     * AJP packet size.
+     */
+    private int packetSize = Constants.MAX_PACKET_SIZE;
 
     public AbstractAjpProtocol(AbstractEndpoint<S> endpoint) {
         super(endpoint);
@@ -56,16 +68,14 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
         getEndpoint().setHandler(cHandler);
     }
 
-
     @Override
     protected String getProtocolName() {
         return "Ajp";
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Overridden to make getter accessible to other classes in this package.
      */
     @Override
@@ -73,10 +83,9 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
         return super.getEndpoint();
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * AJP does not support protocol negotiation so this always returns null.
      */
     @Override
@@ -84,10 +93,9 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
         return null;
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * AJP does not support protocol upgrade so this always returns null.
      */
     @Override
@@ -95,11 +103,10 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
         return null;
     }
 
-    // ------------------------------------------------- AJP specific properties
-    // ------------------------------------------ managed in the ProtocolHandler
+    public boolean getAjpFlush() {
+        return ajpFlush;
+    }
 
-    protected boolean ajpFlush = true;
-    public boolean getAjpFlush() { return ajpFlush; }
     /**
      * Configure whether to aend an AJP flush packet when flushing. A flush
      * packet is a zero byte AJP13 SEND_BODY_CHUNK packet. mod_jk and
@@ -109,42 +116,46 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
      * extra flush packets. For compatibility and to stay on the safe side,
      * flush packets are enabled by default.
      *
-     * @param ajpFlush  The new flush setting
+     * @param ajpFlush The new flush setting
      */
     public void setAjpFlush(boolean ajpFlush) {
         this.ajpFlush = ajpFlush;
     }
 
-
-    private boolean tomcatAuthentication = true;
     /**
      * Should authentication be done in the native web server layer,
      * or in the Servlet container ?
      *
      * @return {@code true} if authentication should be performed by Tomcat,
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
-    public boolean getTomcatAuthentication() { return tomcatAuthentication; }
+    public boolean getTomcatAuthentication() {
+        return tomcatAuthentication;
+    }
+
     public void setTomcatAuthentication(boolean tomcatAuthentication) {
         this.tomcatAuthentication = tomcatAuthentication;
     }
 
-
-    private boolean tomcatAuthorization = false;
     /**
      * Should authentication be done in the native web server layer and
      * authorization in the Servlet container?
      *
      * @return {@code true} if authorization should be performed by Tomcat,
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
-    public boolean getTomcatAuthorization() { return tomcatAuthorization; }
+    public boolean getTomcatAuthorization() {
+        return tomcatAuthorization;
+    }
+
     public void setTomcatAuthorization(boolean tomcatAuthorization) {
         this.tomcatAuthorization = tomcatAuthorization;
     }
 
+    protected String getSecret() {
+        return secret;
+    }
 
-    private String secret = null;
     /**
      * Set the secret that must be included with every request.
      *
@@ -153,61 +164,55 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
     public void setSecret(String secret) {
         this.secret = secret;
     }
-    protected String getSecret() {
-        return secret;
-    }
-    /**
-     * Set the required secret that must be included with every request.
-     *
-     * @param requiredSecret The required secret
-     *
-     * @deprecated Replaced by {@link #setSecret(String)}.
-     *             Will be removed in Tomcat 11 onwards
-     */
-    @Deprecated
-    public void setRequiredSecret(String requiredSecret) {
-        setSecret(requiredSecret);
-    }
+
     /**
      * @return The current secret
-     *
      * @deprecated Replaced by {@link #getSecret()}.
-     *             Will be removed in Tomcat 11 onwards
+     * Will be removed in Tomcat 11 onwards
      */
     @Deprecated
     protected String getRequiredSecret() {
         return getSecret();
     }
 
-
-    private boolean secretRequired = true;
-    public void setSecretRequired(boolean secretRequired) {
-        this.secretRequired = secretRequired;
+    /**
+     * Set the required secret that must be included with every request.
+     *
+     * @param requiredSecret The required secret
+     * @deprecated Replaced by {@link #setSecret(String)}.
+     * Will be removed in Tomcat 11 onwards
+     */
+    @Deprecated
+    public void setRequiredSecret(String requiredSecret) {
+        setSecret(requiredSecret);
     }
+
     public boolean getSecretRequired() {
         return secretRequired;
     }
 
-
-    private Pattern allowedRequestAttributesPattern;
-    public void setAllowedRequestAttributesPattern(String allowedRequestAttributesPattern) {
-        this.allowedRequestAttributesPattern = Pattern.compile(allowedRequestAttributesPattern);
+    public void setSecretRequired(boolean secretRequired) {
+        this.secretRequired = secretRequired;
     }
+
     public String getAllowedRequestAttributesPattern() {
         return allowedRequestAttributesPattern.pattern();
     }
+
+    public void setAllowedRequestAttributesPattern(String allowedRequestAttributesPattern) {
+        this.allowedRequestAttributesPattern = Pattern.compile(allowedRequestAttributesPattern);
+    }
+
     protected Pattern getAllowedRequestAttributesPatternInternal() {
         return allowedRequestAttributesPattern;
     }
 
+    public int getPacketSize() {
+        return packetSize;
+    }
 
-    /**
-     * AJP packet size.
-     */
-    private int packetSize = Constants.MAX_PACKET_SIZE;
-    public int getPacketSize() { return packetSize; }
     public void setPacketSize(int packetSize) {
-        if(packetSize < Constants.MAX_PACKET_SIZE) {
+        if (packetSize < Constants.MAX_PACKET_SIZE) {
             this.packetSize = Constants.MAX_PACKET_SIZE;
         } else {
             this.packetSize = packetSize;
@@ -260,7 +265,7 @@ public abstract class AbstractAjpProtocol<S> extends AbstractProtocol<S> {
 
     @Override
     protected Processor createUpgradeProcessor(SocketWrapperBase<?> socket,
-            UpgradeToken upgradeToken) {
+                                               UpgradeToken upgradeToken) {
         throw new IllegalStateException(sm.getString("ajpprotocol.noUpgradeHandler",
                 upgradeToken.getHttpUpgradeHandler().getClass().getName()));
     }

@@ -28,10 +28,8 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 
 
-
 /**
  * <p>Object factory for resource links for shared data sources.</p>
- *
  */
 public class DataSourceLinkFactory extends ResourceLinkFactory {
 
@@ -47,16 +45,16 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
      * @param obj The reference object describing the DataSource
      */
     @Override
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?,?> environment)
-        throws NamingException {
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
+            throws NamingException {
         Object result = super.getObjectInstance(obj, name, nameCtx, environment);
         // Can we process this request?
-        if (result!=null) {
+        if (result != null) {
             Reference ref = (Reference) obj;
             RefAddr userAttr = ref.get("username");
             RefAddr passAttr = ref.get("password");
-            if (userAttr.getContent()!=null && passAttr.getContent()!=null) {
-                result = wrapDataSource(result,userAttr.getContent().toString(), passAttr.getContent().toString());
+            if (userAttr.getContent() != null && passAttr.getContent() != null) {
+                result = wrapDataSource(result, userAttr.getContent().toString(), passAttr.getContent().toString());
             }
         }
         return result;
@@ -65,10 +63,10 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
     protected Object wrapDataSource(Object datasource, String username, String password) throws NamingException {
         try {
             DataSourceHandler handler =
-                    new DataSourceHandler((DataSource)datasource, username, password);
+                    new DataSourceHandler((DataSource) datasource, username, password);
             return Proxy.newProxyInstance(datasource.getClass().getClassLoader(),
                     datasource.getClass().getInterfaces(), handler);
-        }catch (Exception x) {
+        } catch (Exception x) {
             if (x instanceof InvocationTargetException) {
                 Throwable cause = x.getCause();
                 if (cause instanceof ThreadDeath) {
@@ -81,7 +79,7 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
                     x = (Exception) cause;
                 }
             }
-            if (x instanceof NamingException) throw (NamingException)x;
+            if (x instanceof NamingException) throw (NamingException) x;
             else {
                 NamingException nx = new NamingException(x.getMessage());
                 nx.initCause(x);
@@ -100,6 +98,7 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
         private final String username;
         private final String password;
         private final Method getConnection;
+
         public DataSourceHandler(DataSource ds, String username, String password) throws Exception {
             this.ds = ds;
             this.username = username;
@@ -110,15 +109,15 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            if ("getConnection".equals(method.getName()) && (args==null || args.length==0)) {
-                args = new String[] {username,password};
+            if ("getConnection".equals(method.getName()) && (args == null || args.length == 0)) {
+                args = new String[]{username, password};
                 method = getConnection;
             } else if ("unwrap".equals(method.getName())) {
-                return unwrap((Class<?>)args[0]);
+                return unwrap((Class<?>) args[0]);
             }
             try {
-                return method.invoke(ds,args);
-            }catch (Throwable t) {
+                return method.invoke(ds, args);
+            } catch (Throwable t) {
                 if (t instanceof InvocationTargetException
                         && t.getCause() != null) {
                     throw t.getCause();
@@ -137,8 +136,6 @@ public class DataSourceLinkFactory extends ResourceLinkFactory {
         }
 
     }
-
-
 
 
 }

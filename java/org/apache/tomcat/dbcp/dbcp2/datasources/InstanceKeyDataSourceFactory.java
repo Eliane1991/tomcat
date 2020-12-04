@@ -66,12 +66,11 @@ abstract class InstanceKeyDataSourceFactory implements ObjectFactory {
     /**
      * Closes all pools associated with this class.
      *
-     * @throws Exception
-     *             a {@link ListException} containing all exceptions thrown by {@link InstanceKeyDataSource#close()}
+     * @throws Exception a {@link ListException} containing all exceptions thrown by {@link InstanceKeyDataSource#close()}
      * @see InstanceKeyDataSource#close()
      * @see ListException
      * @since 2.4.0 throws a {@link ListException} instead of, in 2.3.0 and before, the first exception thrown by
-     *        {@link InstanceKeyDataSource#close()}.
+     * {@link InstanceKeyDataSource#close()}.
      */
     public static void closeAll() throws Exception {
         // Get iterator to loop over all instances of this data source.
@@ -96,11 +95,35 @@ abstract class InstanceKeyDataSourceFactory implements ObjectFactory {
     }
 
     /**
+     * Deserializes the provided byte array to create an object.
+     *
+     * @param data Data to deserialize to create the configuration parameter.
+     * @return The Object created by deserializing the data.
+     * @throws ClassNotFoundException If a class cannot be found during the deserialization of a configuration parameter.
+     * @throws IOException            If an I/O error occurs during the deserialization of a configuration parameter.
+     */
+    protected static final Object deserialize(final byte[] data) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = null;
+        try {
+            in = new ObjectInputStream(new ByteArrayInputStream(data));
+            return in.readObject();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (final IOException ex) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    /**
      * Implements ObjectFactory to create an instance of SharedPoolDataSource or PerUserPoolDataSource
      */
     @Override
     public Object getObjectInstance(final Object refObj, final Name name, final Context context,
-            final Hashtable<?, ?> env) throws IOException, ClassNotFoundException {
+                                    final Hashtable<?, ?> env) throws IOException, ClassNotFoundException {
         // The spec says to return null if we can't create an instance
         // of the reference
         Object obj = null;
@@ -276,9 +299,7 @@ abstract class InstanceKeyDataSourceFactory implements ObjectFactory {
     }
 
     /**
-     * @param className
-     *            The class name to test.
-     *
+     * @param className The class name to test.
      * @return true if and only if className is the value returned from getClass().getName().toString()
      */
     protected abstract boolean isCorrectClass(String className);
@@ -286,44 +307,10 @@ abstract class InstanceKeyDataSourceFactory implements ObjectFactory {
     /**
      * Creates an instance of the subclass and sets any properties contained in the Reference.
      *
-     * @param ref
-     *            The properties to be set on the created DataSource
-     *
+     * @param ref The properties to be set on the created DataSource
      * @return A configured DataSource of the appropriate type.
-     *
-     * @throws ClassNotFoundException
-     *            If a class cannot be found during the deserialization of a configuration parameter.
-     * @throws IOException
-     *            If an I/O error occurs during the deserialization of a configuration parameter.
+     * @throws ClassNotFoundException If a class cannot be found during the deserialization of a configuration parameter.
+     * @throws IOException            If an I/O error occurs during the deserialization of a configuration parameter.
      */
     protected abstract InstanceKeyDataSource getNewInstance(Reference ref) throws IOException, ClassNotFoundException;
-
-    /**
-     * Deserializes the provided byte array to create an object.
-     *
-     * @param data
-     *            Data to deserialize to create the configuration parameter.
-     *
-     * @return The Object created by deserializing the data.
-     *
-     * @throws ClassNotFoundException
-     *            If a class cannot be found during the deserialization of a configuration parameter.
-     * @throws IOException
-     *            If an I/O error occurs during the deserialization of a configuration parameter.
-     */
-    protected static final Object deserialize(final byte[] data) throws IOException, ClassNotFoundException {
-        ObjectInputStream in = null;
-        try {
-            in = new ObjectInputStream(new ByteArrayInputStream(data));
-            return in.readObject();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (final IOException ex) {
-                    // ignore
-                }
-            }
-        }
-    }
 }

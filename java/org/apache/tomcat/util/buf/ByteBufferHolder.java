@@ -29,8 +29,8 @@ public class ByteBufferHolder {
     private final AtomicBoolean flipped;
 
     public ByteBufferHolder(ByteBuffer buf, boolean flipped) {
-       this.buf = buf;
-       this.flipped = new AtomicBoolean(flipped);
+        this.buf = buf;
+        this.flipped = new AtomicBoolean(flipped);
     }
 
 

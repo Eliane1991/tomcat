@@ -28,14 +28,16 @@ public class AjpNioProtocol extends AbstractAjpProtocol<NioChannel> {
 
     private static final Log log = LogFactory.getLog(AjpNioProtocol.class);
 
-    @Override
-    protected Log getLog() { return log; }
+    public AjpNioProtocol() {
+        super(new NioEndpoint());
+    }
 
 
     // ------------------------------------------------------------ Constructor
 
-    public AjpNioProtocol() {
-        super(new NioEndpoint());
+    @Override
+    protected Log getLog() {
+        return log;
     }
 
 

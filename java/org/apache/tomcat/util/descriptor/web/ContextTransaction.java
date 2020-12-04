@@ -51,7 +51,8 @@ public class ContextTransaction implements Serializable {
 
     /**
      * Set a configured property.
-     * @param name The property name
+     *
+     * @param name  The property name
      * @param value The property value
      */
     public void setProperty(String name, Object value) {
@@ -60,6 +61,7 @@ public class ContextTransaction implements Serializable {
 
     /**
      * Remove a configured property.
+     *
      * @param name The property name
      */
     public void removeProperty(String name) {
@@ -68,6 +70,7 @@ public class ContextTransaction implements Serializable {
 
     /**
      * List properties.
+     *
      * @return the property names iterator
      */
     public Iterator<String> listProperties() {

@@ -42,39 +42,61 @@ public class NamingContext implements Context {
      * Name parser for this context.
      */
     protected static final NameParser nameParser = new NameParserImpl();
-
-
-    private static final Log log = LogFactory.getLog(NamingContext.class);
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm = StringManager.getManager(NamingContext.class);
 
 
     // ----------------------------------------------------------- Constructors
+    private static final Log log = LogFactory.getLog(NamingContext.class);
+    /**
+     * Environment.
+     */
+    protected final Hashtable<String, Object> env;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * Bindings in this Context.
+     */
+    protected final HashMap<String, NamingEntry> bindings;
+    /**
+     * Name of the associated Catalina Context.
+     */
+    protected final String name;
+    /**
+     * Determines if an attempt to write to a read-only context results in an
+     * exception or if the request is ignored.
+     */
+    private boolean exceptionOnFailedWrite = true;
 
 
     /**
      * Builds a naming context.
      *
-     * @param env The environment to use to construct the naming context
+     * @param env  The environment to use to construct the naming context
      * @param name The name of the associated Catalina Context
      */
-    public NamingContext(Hashtable<String,Object> env, String name) {
-        this(env, name, new HashMap<String,NamingEntry>());
+    public NamingContext(Hashtable<String, Object> env, String name) {
+        this(env, name, new HashMap<String, NamingEntry>());
     }
 
 
     /**
      * Builds a naming context.
      *
-     * @param env The environment to use to construct the naming context
-     * @param name The name of the associated Catalina Context
+     * @param env      The environment to use to construct the naming context
+     * @param name     The name of the associated Catalina Context
      * @param bindings The initial bindings for the naming context
      */
-    public NamingContext(Hashtable<String,Object> env, String name,
-            HashMap<String,NamingEntry> bindings) {
+    public NamingContext(Hashtable<String, Object> env, String name,
+                         HashMap<String, NamingEntry> bindings) {
 
         this.env = new Hashtable<>();
         this.name = name;
         // Populating the environment hashtable
-        if (env != null ) {
+        if (env != null) {
             Enumeration<String> envEntries = env.keys();
             while (envEntries.hasMoreElements()) {
                 String entryName = envEntries.nextElement();
@@ -84,42 +106,10 @@ public class NamingContext implements Context {
         this.bindings = bindings;
     }
 
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Environment.
-     */
-    protected final Hashtable<String,Object> env;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static final StringManager sm = StringManager.getManager(NamingContext.class);
-
-
-    /**
-     * Bindings in this Context.
-     */
-    protected final HashMap<String,NamingEntry> bindings;
-
-
-    /**
-     * Name of the associated Catalina Context.
-     */
-    protected final String name;
-
-
-    /**
-     * Determines if an attempt to write to a read-only context results in an
-     * exception or if the request is ignored.
-     */
-    private boolean exceptionOnFailedWrite = true;
     public boolean getExceptionOnFailedWrite() {
         return exceptionOnFailedWrite;
     }
+
     public void setExceptionOnFailedWrite(boolean exceptionOnFailedWrite) {
         this.exceptionOnFailedWrite = exceptionOnFailedWrite;
     }
@@ -135,11 +125,11 @@ public class NamingContext implements Context {
      *
      * @param name the name of the object to look up
      * @return the object bound to name
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public Object lookup(Name name)
-        throws NamingException {
+            throws NamingException {
         return lookup(name, true);
     }
 
@@ -149,11 +139,11 @@ public class NamingContext implements Context {
      *
      * @param name the name of the object to look up
      * @return the object bound to name
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public Object lookup(String name)
-        throws NamingException {
+            throws NamingException {
         return lookup(new CompositeName(name), true);
     }
 
@@ -164,15 +154,15 @@ public class NamingContext implements Context {
      * must already exist.
      *
      * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
-     * @exception NameAlreadyBoundException if name is already bound
-     * @exception javax.naming.directory.InvalidAttributesException if object
-     * did not supply all mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @param obj  the object to bind; possibly null
+     * @throws NameAlreadyBoundException                         if name is already bound
+     * @throws javax.naming.directory.InvalidAttributesException if object
+     *                                                           did not supply all mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public void bind(Name name, Object obj)
-        throws NamingException {
+            throws NamingException {
         bind(name, obj, false);
     }
 
@@ -181,15 +171,15 @@ public class NamingContext implements Context {
      * Binds a name to an object.
      *
      * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
-     * @exception NameAlreadyBoundException if name is already bound
-     * @exception javax.naming.directory.InvalidAttributesException if object
-     * did not supply all mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @param obj  the object to bind; possibly null
+     * @throws NameAlreadyBoundException                         if name is already bound
+     * @throws javax.naming.directory.InvalidAttributesException if object
+     *                                                           did not supply all mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public void bind(String name, Object obj)
-        throws NamingException {
+            throws NamingException {
         bind(new CompositeName(name), obj);
     }
 
@@ -204,14 +194,14 @@ public class NamingContext implements Context {
      * existing attributes associated with the name remain unchanged.
      *
      * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
-     * @exception javax.naming.directory.InvalidAttributesException if object
-     * did not supply all mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @param obj  the object to bind; possibly null
+     * @throws javax.naming.directory.InvalidAttributesException if object
+     *                                                           did not supply all mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public void rebind(Name name, Object obj)
-        throws NamingException {
+            throws NamingException {
         bind(name, obj, true);
     }
 
@@ -220,14 +210,14 @@ public class NamingContext implements Context {
      * Binds a name to an object, overwriting any existing binding.
      *
      * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
-     * @exception javax.naming.directory.InvalidAttributesException if object
-     * did not supply all mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @param obj  the object to bind; possibly null
+     * @throws javax.naming.directory.InvalidAttributesException if object
+     *                                                           did not supply all mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public void rebind(String name, Object obj)
-        throws NamingException {
+            throws NamingException {
         rebind(new CompositeName(name), obj);
     }
 
@@ -242,9 +232,9 @@ public class NamingContext implements Context {
      * NameNotFoundException if any of the intermediate contexts do not exist.
      *
      * @param name the name to bind; may not be empty
-     * @exception NameNotFoundException if an intermediate context does not
-     * exist
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameNotFoundException if an intermediate context does not
+     *                               exist
+     * @throws NamingException       if a naming exception is encountered
      */
     @Override
     public void unbind(Name name) throws NamingException {
@@ -257,13 +247,13 @@ public class NamingContext implements Context {
             name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
-                (sm.getString("namingContext.invalidName"));
+                    (sm.getString("namingContext.invalidName"));
 
         NamingEntry entry = bindings.get(name.get(0));
 
         if (entry == null) {
             throw new NameNotFoundException
-                (sm.getString("namingContext.nameNotBound", name, name.get(0)));
+                    (sm.getString("namingContext.nameNotBound", name, name.get(0)));
         }
 
         if (name.size() > 1) {
@@ -271,7 +261,7 @@ public class NamingContext implements Context {
                 ((Context) entry.value).unbind(name.getSuffix(1));
             } else {
                 throw new NamingException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
         } else {
             bindings.remove(name.get(0));
@@ -284,13 +274,13 @@ public class NamingContext implements Context {
      * Unbinds the named object.
      *
      * @param name the name to bind; may not be empty
-     * @exception NameNotFoundException if an intermediate context does not
-     * exist
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameNotFoundException if an intermediate context does not
+     *                               exist
+     * @throws NamingException       if a naming exception is encountered
      */
     @Override
     public void unbind(String name)
-        throws NamingException {
+            throws NamingException {
         unbind(new CompositeName(name));
     }
 
@@ -303,12 +293,12 @@ public class NamingContext implements Context {
      *
      * @param oldName the name of the existing binding; may not be empty
      * @param newName the name of the new binding; may not be empty
-     * @exception NameAlreadyBoundException if newName is already bound
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameAlreadyBoundException if newName is already bound
+     * @throws NamingException           if a naming exception is encountered
      */
     @Override
     public void rename(Name oldName, Name newName)
-        throws NamingException {
+            throws NamingException {
         Object value = lookup(oldName);
         bind(newName, value);
         unbind(oldName);
@@ -321,12 +311,12 @@ public class NamingContext implements Context {
      *
      * @param oldName the name of the existing binding; may not be empty
      * @param newName the name of the new binding; may not be empty
-     * @exception NameAlreadyBoundException if newName is already bound
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameAlreadyBoundException if newName is already bound
+     * @throws NamingException           if a naming exception is encountered
      */
     @Override
     public void rename(String oldName, String newName)
-        throws NamingException {
+            throws NamingException {
         rename(new CompositeName(oldName), new CompositeName(newName));
     }
 
@@ -342,11 +332,11 @@ public class NamingContext implements Context {
      * @param name the name of the context to list
      * @return an enumeration of the names and class names of the bindings in
      * this context. Each element of the enumeration is of type NameClassPair.
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NamingEnumeration<NameClassPair> list(Name name)
-        throws NamingException {
+            throws NamingException {
         // Removing empty parts
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
@@ -358,12 +348,12 @@ public class NamingContext implements Context {
 
         if (entry == null) {
             throw new NameNotFoundException
-                (sm.getString("namingContext.nameNotBound", name, name.get(0)));
+                    (sm.getString("namingContext.nameNotBound", name, name.get(0)));
         }
 
         if (entry.type != NamingEntry.CONTEXT) {
             throw new NamingException
-                (sm.getString("namingContext.contextExpected"));
+                    (sm.getString("namingContext.contextExpected"));
         }
         return ((Context) entry.value).list(name.getSuffix(1));
     }
@@ -376,11 +366,11 @@ public class NamingContext implements Context {
      * @param name the name of the context to list
      * @return an enumeration of the names and class names of the bindings in
      * this context. Each element of the enumeration is of type NameClassPair.
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NamingEnumeration<NameClassPair> list(String name)
-        throws NamingException {
+            throws NamingException {
         return list(new CompositeName(name));
     }
 
@@ -396,11 +386,11 @@ public class NamingContext implements Context {
      * @param name the name of the context to list
      * @return an enumeration of the bindings in this context.
      * Each element of the enumeration is of type Binding.
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NamingEnumeration<Binding> listBindings(Name name)
-        throws NamingException {
+            throws NamingException {
         // Removing empty parts
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
@@ -412,12 +402,12 @@ public class NamingContext implements Context {
 
         if (entry == null) {
             throw new NameNotFoundException
-                (sm.getString("namingContext.nameNotBound", name, name.get(0)));
+                    (sm.getString("namingContext.nameNotBound", name, name.get(0)));
         }
 
         if (entry.type != NamingEntry.CONTEXT) {
             throw new NamingException
-                (sm.getString("namingContext.contextExpected"));
+                    (sm.getString("namingContext.contextExpected"));
         }
         return ((Context) entry.value).listBindings(name.getSuffix(1));
     }
@@ -430,11 +420,11 @@ public class NamingContext implements Context {
      * @param name the name of the context to list
      * @return an enumeration of the bindings in this context.
      * Each element of the enumeration is of type Binding.
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NamingEnumeration<Binding> listBindings(String name)
-        throws NamingException {
+            throws NamingException {
         return listBindings(new CompositeName(name));
     }
 
@@ -447,7 +437,7 @@ public class NamingContext implements Context {
      * This method is idempotent. It succeeds even if the terminal atomic
      * name is not bound in the target context, but throws
      * NameNotFoundException if any of the intermediate contexts do not exist.
-     *
+     * <p>
      * In a federated naming system, a context from one naming system may be
      * bound to a name in another. One can subsequently look up and perform
      * operations on the foreign context using a composite name. However, an
@@ -459,10 +449,10 @@ public class NamingContext implements Context {
      * the foreign context's "native" naming system.
      *
      * @param name the name of the context to be destroyed; may not be empty
-     * @exception NameNotFoundException if an intermediate context does not
-     * exist
-     * @exception NotContextException if the name is bound but does not name
-     * a context, or does not name a context of the appropriate type
+     * @throws NameNotFoundException if an intermediate context does not
+     *                               exist
+     * @throws NotContextException   if the name is bound but does not name
+     *                               a context, or does not name a context of the appropriate type
      */
     @Override
     public void destroySubcontext(Name name) throws NamingException {
@@ -475,13 +465,13 @@ public class NamingContext implements Context {
             name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
-                (sm.getString("namingContext.invalidName"));
+                    (sm.getString("namingContext.invalidName"));
 
         NamingEntry entry = bindings.get(name.get(0));
 
         if (entry == null) {
             throw new NameNotFoundException
-                (sm.getString("namingContext.nameNotBound", name, name.get(0)));
+                    (sm.getString("namingContext.nameNotBound", name, name.get(0)));
         }
 
         if (name.size() > 1) {
@@ -489,7 +479,7 @@ public class NamingContext implements Context {
                 ((Context) entry.value).destroySubcontext(name.getSuffix(1));
             } else {
                 throw new NamingException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
         } else {
             if (entry.type == NamingEntry.CONTEXT) {
@@ -497,7 +487,7 @@ public class NamingContext implements Context {
                 bindings.remove(name.get(0));
             } else {
                 throw new NotContextException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
         }
 
@@ -508,14 +498,14 @@ public class NamingContext implements Context {
      * Destroys the named context and removes it from the namespace.
      *
      * @param name the name of the context to be destroyed; may not be empty
-     * @exception NameNotFoundException if an intermediate context does not
-     * exist
-     * @exception NotContextException if the name is bound but does not name
-     * a context, or does not name a context of the appropriate type
+     * @throws NameNotFoundException if an intermediate context does not
+     *                               exist
+     * @throws NotContextException   if the name is bound but does not name
+     *                               a context, or does not name a context of the appropriate type
      */
     @Override
     public void destroySubcontext(String name)
-        throws NamingException {
+            throws NamingException {
         destroySubcontext(new CompositeName(name));
     }
 
@@ -528,10 +518,10 @@ public class NamingContext implements Context {
      *
      * @param name the name of the context to create; may not be empty
      * @return the newly created context
-     * @exception NameAlreadyBoundException if name is already bound
-     * @exception javax.naming.directory.InvalidAttributesException if creation
-     * of the sub-context requires specification of mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameAlreadyBoundException                         if name is already bound
+     * @throws javax.naming.directory.InvalidAttributesException if creation
+     *                                                           of the sub-context requires specification of mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public Context createSubcontext(Name name) throws NamingException {
@@ -553,14 +543,14 @@ public class NamingContext implements Context {
      *
      * @param name the name of the context to create; may not be empty
      * @return the newly created context
-     * @exception NameAlreadyBoundException if name is already bound
-     * @exception javax.naming.directory.InvalidAttributesException if creation
-     * of the sub-context requires specification of mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameAlreadyBoundException                         if name is already bound
+     * @throws javax.naming.directory.InvalidAttributesException if creation
+     *                                                           of the sub-context requires specification of mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     @Override
     public Context createSubcontext(String name)
-        throws NamingException {
+            throws NamingException {
         return createSubcontext(new CompositeName(name));
     }
 
@@ -573,11 +563,11 @@ public class NamingContext implements Context {
      * @param name the name of the object to look up
      * @return the object bound to name, not following the terminal link
      * (if any).
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public Object lookupLink(Name name)
-        throws NamingException {
+            throws NamingException {
         return lookup(name, false);
     }
 
@@ -589,11 +579,11 @@ public class NamingContext implements Context {
      * @param name the name of the object to look up
      * @return the object bound to name, not following the terminal link
      * (if any).
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public Object lookupLink(String name)
-        throws NamingException {
+            throws NamingException {
         return lookup(new CompositeName(name), false);
     }
 
@@ -610,11 +600,11 @@ public class NamingContext implements Context {
      * @param name the name of the context from which to get the parser
      * @return a name parser that can parse compound names into their atomic
      * components
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NameParser getNameParser(Name name)
-        throws NamingException {
+            throws NamingException {
 
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
@@ -627,7 +617,7 @@ public class NamingContext implements Context {
                 return ((Context) obj).getNameParser(name.getSuffix(1));
             } else {
                 throw new NotContextException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
         }
 
@@ -642,11 +632,11 @@ public class NamingContext implements Context {
      * @param name the name of the context from which to get the parser
      * @return a name parser that can parse compound names into their atomic
      * components
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public NameParser getNameParser(String name)
-        throws NamingException {
+            throws NamingException {
         return getNameParser(new CompositeName(name));
     }
 
@@ -661,10 +651,10 @@ public class NamingContext implements Context {
      * to this context, the result is the name of the same object, but
      * relative to the ancestor context. None of the names may be null.
      *
-     * @param name a name relative to this context
+     * @param name   a name relative to this context
      * @param prefix the name of this context relative to one of its ancestors
      * @return the composition of prefix and name
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public Name composeName(Name name, Name prefix) throws NamingException {
@@ -676,7 +666,7 @@ public class NamingContext implements Context {
     /**
      * Composes the name of this context with a name relative to this context.
      *
-     * @param name a name relative to this context
+     * @param name   a name relative to this context
      * @param prefix the name of this context relative to one of its ancestors
      * @return the composition of prefix and name
      */
@@ -691,8 +681,8 @@ public class NamingContext implements Context {
      * the property already exists, its value is overwritten.
      *
      * @param propName the name of the environment property to add; may not
-     * be null
-     * @param propVal the value of the property to add; may not be null
+     *                 be null
+     * @param propVal  the value of the property to add; may not be null
      */
     @Override
     public Object addToEnvironment(String propName, Object propVal) {
@@ -704,10 +694,10 @@ public class NamingContext implements Context {
      * Removes an environment property from the environment of this context.
      *
      * @param propName the name of the environment property to remove;
-     * may not be null
+     *                 may not be null
      */
     @Override
-    public Object removeFromEnvironment(String propName){
+    public Object removeFromEnvironment(String propName) {
         return env.remove(propName);
     }
 
@@ -722,7 +712,7 @@ public class NamingContext implements Context {
      * @return the environment of this context; never null
      */
     @Override
-    public Hashtable<?,?> getEnvironment() {
+    public Hashtable<?, ?> getEnvironment() {
         return env;
     }
 
@@ -735,7 +725,7 @@ public class NamingContext implements Context {
      * been closed has no effect. Invoking any other method on a closed
      * context is not allowed, and results in undefined behaviour.
      *
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     @Override
     public void close() throws NamingException {
@@ -759,15 +749,15 @@ public class NamingContext implements Context {
      * OperationNotSupportedException is thrown.
      *
      * @return this context's name in its own namespace; never null
-     * @exception OperationNotSupportedException if the naming system does
-     * not have the notion of a full name
-     * @exception NamingException if a naming exception is encountered
+     * @throws OperationNotSupportedException if the naming system does
+     *                                        not have the notion of a full name
+     * @throws NamingException                if a naming exception is encountered
      */
     @Override
     public String getNameInNamespace()
-        throws NamingException {
-        throw  new OperationNotSupportedException
-            (sm.getString("namingContext.noAbsoluteName"));
+            throws NamingException {
+        throw new OperationNotSupportedException
+                (sm.getString("namingContext.noAbsoluteName"));
         //FIXME ?
     }
 
@@ -778,13 +768,13 @@ public class NamingContext implements Context {
     /**
      * Retrieves the named object.
      *
-     * @param name the name of the object to look up
+     * @param name         the name of the object to look up
      * @param resolveLinks If true, the links will be resolved
      * @return the object bound to name
-     * @exception NamingException if a naming exception is encountered
+     * @throws NamingException if a naming exception is encountered
      */
     protected Object lookup(Name name, boolean resolveLinks)
-        throws NamingException {
+            throws NamingException {
 
         // Removing empty parts
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
@@ -798,7 +788,7 @@ public class NamingContext implements Context {
 
         if (entry == null) {
             throw new NameNotFoundException
-                (sm.getString("namingContext.nameNotBound", name, name.get(0)));
+                    (sm.getString("namingContext.nameNotBound", name, name.get(0)));
         }
 
         if (name.size() > 1) {
@@ -806,7 +796,7 @@ public class NamingContext implements Context {
             // number of subcontexts.
             if (entry.type != NamingEntry.CONTEXT) {
                 throw new NamingException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
             return ((Context) entry.value).lookup(name.getSuffix(1));
         } else {
@@ -821,10 +811,10 @@ public class NamingContext implements Context {
             } else if (entry.type == NamingEntry.REFERENCE) {
                 try {
                     Object obj = NamingManager.getObjectInstance
-                        (entry.value, name, this, env);
-                    if(entry.value instanceof ResourceRef) {
+                            (entry.value, name, this, env);
+                    if (entry.value instanceof ResourceRef) {
                         boolean singleton = Boolean.parseBoolean(
-                                    (String) ((ResourceRef) entry.value).get(
+                                (String) ((ResourceRef) entry.value).get(
                                         "singleton").getContent());
                         if (singleton) {
                             entry.type = NamingEntry.ENTRY;
@@ -854,16 +844,16 @@ public class NamingContext implements Context {
      * context (that named by all but terminal atomic component of the name)
      * must already exist.
      *
-     * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
+     * @param name   the name to bind; may not be empty
+     * @param obj    the object to bind; possibly null
      * @param rebind if true, then perform a rebind (ie, overwrite)
-     * @exception NameAlreadyBoundException if name is already bound
-     * @exception javax.naming.directory.InvalidAttributesException if object
-     * did not supply all mandatory attributes
-     * @exception NamingException if a naming exception is encountered
+     * @throws NameAlreadyBoundException                         if name is already bound
+     * @throws javax.naming.directory.InvalidAttributesException if object
+     *                                                           did not supply all mandatory attributes
+     * @throws NamingException                                   if a naming exception is encountered
      */
     protected void bind(Name name, Object obj, boolean rebind)
-        throws NamingException {
+            throws NamingException {
 
         if (!checkWritable()) {
             return;
@@ -873,7 +863,7 @@ public class NamingContext implements Context {
             name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
-                (sm.getString("namingContext.invalidName"));
+                    (sm.getString("namingContext.invalidName"));
 
         NamingEntry entry = bindings.get(name.get(0));
 
@@ -890,33 +880,33 @@ public class NamingContext implements Context {
                 }
             } else {
                 throw new NamingException
-                    (sm.getString("namingContext.contextExpected"));
+                        (sm.getString("namingContext.contextExpected"));
             }
         } else {
             if ((!rebind) && (entry != null)) {
                 throw new NameAlreadyBoundException
-                    (sm.getString("namingContext.alreadyBound", name.get(0)));
+                        (sm.getString("namingContext.alreadyBound", name.get(0)));
             } else {
                 // Getting the type of the object and wrapping it within a new
                 // NamingEntry
                 Object toBind =
-                    NamingManager.getStateToBind(obj, name, this, env);
+                        NamingManager.getStateToBind(obj, name, this, env);
                 if (toBind instanceof Context) {
                     entry = new NamingEntry(name.get(0), toBind,
-                                            NamingEntry.CONTEXT);
+                            NamingEntry.CONTEXT);
                 } else if (toBind instanceof LinkRef) {
                     entry = new NamingEntry(name.get(0), toBind,
-                                            NamingEntry.LINK_REF);
+                            NamingEntry.LINK_REF);
                 } else if (toBind instanceof Reference) {
                     entry = new NamingEntry(name.get(0), toBind,
-                                            NamingEntry.REFERENCE);
+                            NamingEntry.REFERENCE);
                 } else if (toBind instanceof Referenceable) {
                     toBind = ((Referenceable) toBind).getReference();
                     entry = new NamingEntry(name.get(0), toBind,
-                                            NamingEntry.REFERENCE);
+                            NamingEntry.REFERENCE);
                 } else {
                     entry = new NamingEntry(name.get(0), toBind,
-                                            NamingEntry.ENTRY);
+                            NamingEntry.ENTRY);
                 }
                 bindings.put(name.get(0), entry);
             }
@@ -935,9 +925,10 @@ public class NamingContext implements Context {
 
     /**
      * Throws a naming exception is Context is not writable.
+     *
      * @return <code>true</code> if the Context is writable
      * @throws NamingException if the Context is not writable and
-     *  <code>exceptionOnFailedWrite</code> is <code>true</code>
+     *                         <code>exceptionOnFailedWrite</code> is <code>true</code>
      */
     protected boolean checkWritable() throws NamingException {
         if (isWritable()) {

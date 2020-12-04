@@ -48,10 +48,6 @@ public enum SameSiteCookies {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
     public static SameSiteCookies fromString(String value) {
         for (SameSiteCookies sameSiteCookies : SameSiteCookies.values()) {
             if (sameSiteCookies.getValue().equalsIgnoreCase(value)) {
@@ -60,5 +56,9 @@ public enum SameSiteCookies {
         }
 
         throw new IllegalStateException(sm.getString("cookies.invalidSameSiteCookies", value));
+    }
+
+    public String getValue() {
+        return value;
     }
 }

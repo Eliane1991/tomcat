@@ -37,12 +37,6 @@ public final class AstValue extends SimpleNode {
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
 
-    protected static class Target {
-        protected Object base;
-
-        protected Object property;
-    }
-
     public AstValue(int id) {
         super(id);
     }
@@ -136,9 +130,9 @@ public final class AstValue extends SimpleNode {
         while (base != null && i < propCount) {
             suffix = this.children[i].getValue(ctx);
             if (i + 1 < propCount &&
-                    (this.children[i+1] instanceof AstMethodParameters)) {
+                    (this.children[i + 1] instanceof AstMethodParameters)) {
                 AstMethodParameters mps =
-                    (AstMethodParameters) this.children[i+1];
+                        (AstMethodParameters) this.children[i + 1];
                 if (base instanceof Optional && "orElseGet".equals(suffix) &&
                         mps.jjtGetNumChildren() == 1) {
                     Node paramFoOptional = mps.jjtGetChild(0);
@@ -152,7 +146,7 @@ public final class AstValue extends SimpleNode {
                 Object[] paramValues = mps.getParameters(ctx);
                 base = resolver.invoke(ctx, base, suffix,
                         getTypesFromValues(paramValues), paramValues);
-                i+=2;
+                i += 2;
             } else {
                 // This is a property
                 if (suffix == null) {
@@ -176,7 +170,7 @@ public final class AstValue extends SimpleNode {
         Target t = getTarget(ctx);
         ctx.setPropertyResolved(false);
         boolean result =
-            ctx.getELResolver().isReadOnly(ctx, t.base, t.property);
+                ctx.getELResolver().isReadOnly(ctx, t.base, t.property);
         if (!ctx.isPropertyResolved()) {
             throw new PropertyNotFoundException(MessageFactory.get(
                     "error.resolver.unhandled", t.base, t.property));
@@ -204,7 +198,7 @@ public final class AstValue extends SimpleNode {
     @Override
     // Interface el.parser.Node uses raw types (and is auto-generated)
     public MethodInfo getMethodInfo(EvaluationContext ctx,
-            @SuppressWarnings("rawtypes") Class[] paramTypes)
+                                    @SuppressWarnings("rawtypes") Class[] paramTypes)
             throws ELException {
         Target t = getTarget(ctx);
         Method m = ReflectionUtil.getMethod(
@@ -216,8 +210,8 @@ public final class AstValue extends SimpleNode {
     @Override
     // Interface el.parser.Node uses a raw type (and is auto-generated)
     public Object invoke(EvaluationContext ctx,
-            @SuppressWarnings("rawtypes") Class[] paramTypes,
-            Object[] paramValues) throws ELException {
+                         @SuppressWarnings("rawtypes") Class[] paramTypes,
+                         Object[] paramValues) throws ELException {
 
         Target t = getTarget(ctx);
         Method m = null;
@@ -300,7 +294,7 @@ public final class AstValue extends SimpleNode {
             Class<?> varArgType = m.getParameterTypes()[paramCount - 1].getComponentType();
             Object[] varArgs =
                     (Object[]) Array.newInstance(varArgType, src.length - (paramCount - 1));
-            for (int i = 0; i < src.length - (paramCount - 1); i ++) {
+            for (int i = 0; i < src.length - (paramCount - 1); i++) {
                 varArgs[i] = ELSupport.coerceToType(ctx, src[paramCount - 1 + i], varArgType);
             }
             dest[paramCount - 1] = varArgs;
@@ -328,7 +322,6 @@ public final class AstValue extends SimpleNode {
         return result;
     }
 
-
     /**
      * @since EL 2.2
      */
@@ -344,7 +337,6 @@ public final class AstValue extends SimpleNode {
         return new ValueReference(t.base, t.property);
     }
 
-
     /**
      * @since EL 2.2
      */
@@ -359,5 +351,11 @@ public final class AstValue extends SimpleNode {
             }
         }
         return false;
+    }
+
+    protected static class Target {
+        protected Object base;
+
+        protected Object property;
     }
 }

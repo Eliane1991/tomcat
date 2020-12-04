@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
  * auto-detect the character set. This may be exploited by an attacker to
  * perform an XSS attack. Internet Explorer has this behaviour by default. Other
  * browsers have an option to enable it.<br>
- *
+ * <p>
  * This filter prevents the attack by explicitly setting a character set. Unless
  * the provided character set is explicitly overridden by the user - in which
  * case they deserve everything they get - the browser will adhere to an
@@ -42,12 +42,10 @@ import java.nio.charset.Charset;
  */
 public class AddDefaultCharsetFilter extends FilterBase {
 
+    private static final String DEFAULT_ENCODING = "ISO-8859-1";
     // Log must be non-static as loggers are created per class-loader and this
     // Filter may be used in multiple class loaders
     private final Log log = LogFactory.getLog(AddDefaultCharsetFilter.class); // must not be static
-
-    private static final String DEFAULT_ENCODING = "ISO-8859-1";
-
     private String encoding;
 
     public void setEncoding(String encoding) {
@@ -75,12 +73,12 @@ public class AddDefaultCharsetFilter extends FilterBase {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
         // Wrap the response
         if (response instanceof HttpServletResponse) {
             ResponseWrapper wrapped =
-                new ResponseWrapper((HttpServletResponse)response, encoding);
+                    new ResponseWrapper((HttpServletResponse) response, encoding);
             chain.doFilter(request, wrapped);
         } else {
             chain.doFilter(request, response);

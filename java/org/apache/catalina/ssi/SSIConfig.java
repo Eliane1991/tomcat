@@ -18,6 +18,7 @@ package org.apache.catalina.ssi;
 
 
 import java.io.PrintWriter;
+
 /**
  * Implements the Server-side #exec command
  *
@@ -32,7 +33,7 @@ public final class SSIConfig implements SSICommand {
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer) {
+                        String[] paramNames, String[] paramValues, PrintWriter writer) {
         for (int i = 0; i < paramNames.length; i++) {
             String paramName = paramNames[i];
             String paramValue = paramValues[i];

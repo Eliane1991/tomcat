@@ -17,14 +17,12 @@
  */
 package org.apache.tomcat.util.bcel.classfile;
 
-public class AnnotationElementValue extends ElementValue
-{
+public class AnnotationElementValue extends ElementValue {
     // For annotation element values, this is the annotation
     private final AnnotationEntry annotationEntry;
 
     AnnotationElementValue(final int type, final AnnotationEntry annotationEntry,
-            final ConstantPool cpool)
-    {
+                           final ConstantPool cpool) {
         super(type, cpool);
         if (type != ANNOTATION) {
             throw new IllegalArgumentException(
@@ -34,13 +32,11 @@ public class AnnotationElementValue extends ElementValue
     }
 
     @Override
-    public String stringifyValue()
-    {
+    public String stringifyValue() {
         return annotationEntry.toString();
     }
 
-    public AnnotationEntry getAnnotationEntry()
-    {
+    public AnnotationEntry getAnnotationEntry() {
         return annotationEntry;
     }
 }

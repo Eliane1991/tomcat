@@ -30,13 +30,12 @@ import java.nio.charset.CodingErrorAction;
 public final class C2BConverter {
 
     private final CharsetEncoder encoder;
-    private ByteBuffer bb = null;
-    private CharBuffer cb = null;
-
     /**
      * Leftover buffer used for multi-characters characters.
      */
     private final CharBuffer leftovers;
+    private ByteBuffer bb = null;
+    private CharBuffer cb = null;
 
     public C2BConverter(Charset charset) {
         encoder = charset.newEncoder();

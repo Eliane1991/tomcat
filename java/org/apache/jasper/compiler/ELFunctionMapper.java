@@ -47,7 +47,7 @@ public class ELFunctionMapper {
      * @throws JasperException EL error
      */
     public static void map(Node.Nodes page)
-                throws JasperException {
+            throws JasperException {
 
         ELFunctionMapper map = new ELFunctionMapper();
         map.ds = new StringBuilder();
@@ -167,6 +167,7 @@ public class ELFunctionMapper {
             class Fvisitor extends ELNode.Visitor {
                 private final List<ELNode.Function> funcs = new ArrayList<>();
                 private final Set<String> keySet = new HashSet<>();
+
                 @Override
                 public void visit(ELNode.Function n) throws JasperException {
                     String key = n.getPrefix() + ":" + n.getName();
@@ -241,7 +242,7 @@ public class ELFunctionMapper {
 
                             // Count the number of array dimension
                             int aCount = 0;
-                            for (int jj = iArray; jj < params[k].length(); jj++ ) {
+                            for (int jj = iArray; jj < params[k].length(); jj++) {
                                 if (params[k].charAt(jj) == '[') {
                                     aCount++;
                                 }
@@ -264,10 +265,11 @@ public class ELFunctionMapper {
         /**
          * Find the name of the function mapper for an EL.  Reuse a
          * previously generated one if possible.
+         *
          * @param functions A List of ELNode.Function instances that
          *                  represents the functions in an EL
          * @return A previous generated function mapper name that can be used
-         *         by this EL; null if none found.
+         * by this EL; null if none found.
          */
         private String matchMap(List<ELNode.Function> functions) {
 
@@ -300,7 +302,7 @@ public class ELFunctionMapper {
          * when generating Java source code.
          *
          * @param className Binary class name
-         * @return          Canonical equivalent
+         * @return Canonical equivalent
          */
         private String getCanonicalName(String className) throws JasperException {
             Class<?> clazz;

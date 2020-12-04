@@ -47,7 +47,7 @@ import java.util.Hashtable;
  * @author Remy Maucherat
  */
 public class javaURLContextFactory
-    implements ObjectFactory, InitialContextFactory {
+        implements ObjectFactory, InitialContextFactory {
 
 
     // ----------------------------------------------------------- Constructors
@@ -80,11 +80,11 @@ public class javaURLContextFactory
     @SuppressWarnings("unchecked")
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
-                                    Hashtable<?,?> environment)
-        throws NamingException {
+                                    Hashtable<?, ?> environment)
+            throws NamingException {
         if ((ContextBindings.isThreadBound()) ||
-            (ContextBindings.isClassLoaderBound())) {
-            return new SelectorContext((Hashtable<String,Object>)environment);
+                (ContextBindings.isClassLoaderBound())) {
+            return new SelectorContext((Hashtable<String, Object>) environment);
         }
         return null;
     }
@@ -95,21 +95,21 @@ public class javaURLContextFactory
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Context getInitialContext(Hashtable<?,?> environment)
-        throws NamingException {
+    public Context getInitialContext(Hashtable<?, ?> environment)
+            throws NamingException {
         if (ContextBindings.isThreadBound() ||
-            (ContextBindings.isClassLoaderBound())) {
+                (ContextBindings.isClassLoaderBound())) {
             // Redirect the request to the bound initial context
             return new SelectorContext(
-                    (Hashtable<String,Object>)environment, true);
+                    (Hashtable<String, Object>) environment, true);
         }
 
         // If the thread is not bound, return a shared writable context
         if (initialContext == null) {
-            synchronized(javaURLContextFactory.class) {
+            synchronized (javaURLContextFactory.class) {
                 if (initialContext == null) {
                     initialContext = new NamingContext(
-                            (Hashtable<String,Object>)environment, MAIN);
+                            (Hashtable<String, Object>) environment, MAIN);
                 }
             }
         }

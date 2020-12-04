@@ -38,13 +38,13 @@ public class LocalResolver implements EntityResolver2 {
             StringManager.getManager(Constants.PACKAGE_NAME);
 
     private static final String[] JAVA_EE_NAMESPACES = {
-        XmlIdentifiers.JAVAEE_1_4_NS,
-        XmlIdentifiers.JAVAEE_5_NS,
-        XmlIdentifiers.JAVAEE_7_NS};
+            XmlIdentifiers.JAVAEE_1_4_NS,
+            XmlIdentifiers.JAVAEE_5_NS,
+            XmlIdentifiers.JAVAEE_7_NS};
 
 
-    private final Map<String,String> publicIds;
-    private final Map<String,String> systemIds;
+    private final Map<String, String> publicIds;
+    private final Map<String, String> systemIds;
     private final boolean blockExternal;
 
     /**
@@ -52,15 +52,15 @@ public class LocalResolver implements EntityResolver2 {
      * resources. Each map contains a mapping from a well-known identifier to a
      * URL for a local resource path.
      *
-     * @param publicIds mapping of well-known public identifiers to local
-     *                  resources
-     * @param systemIds mapping of well-known system identifiers to local
-     *                  resources
+     * @param publicIds     mapping of well-known public identifiers to local
+     *                      resources
+     * @param systemIds     mapping of well-known system identifiers to local
+     *                      resources
      * @param blockExternal are external resources blocked that are not
      *                      well-known
      */
-    public LocalResolver(Map<String,String> publicIds,
-            Map<String,String> systemIds, boolean blockExternal) {
+    public LocalResolver(Map<String, String> publicIds,
+                         Map<String, String> systemIds, boolean blockExternal) {
         this.publicIds = publicIds;
         this.systemIds = systemIds;
         this.blockExternal = blockExternal;
@@ -76,7 +76,7 @@ public class LocalResolver implements EntityResolver2 {
 
     @Override
     public InputSource resolveEntity(String name, String publicId,
-            String base, String systemId) throws SAXException, IOException {
+                                     String base, String systemId) throws SAXException, IOException {
 
         // First try resolving using the publicId
         String resolved = publicIds.get(publicId);

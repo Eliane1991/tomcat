@@ -19,6 +19,7 @@ package org.apache.catalina.ssi;
 
 import java.io.PrintWriter;
 import java.text.ParseException;
+
 /**
  * SSI command that handles all conditional directives.
  *
@@ -31,7 +32,7 @@ public class SSIConditional implements SSICommand {
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer)
+                        String[] paramNames, String[] paramValues, PrintWriter writer)
             throws SSIStopProcessingException {
         // Assume anything using conditionals was modified by it
         long lastModified = System.currentTimeMillis();
@@ -111,7 +112,7 @@ public class SSIConditional implements SSICommand {
      * necessary evaluation steps.
      */
     private boolean evaluateArguments(String[] names, String[] values,
-            SSIMediator ssiMediator) throws SSIStopProcessingException {
+                                      SSIMediator ssiMediator) throws SSIStopProcessingException {
         String expr = getExpression(names, values);
         if (expr == null) {
             throw new SSIStopProcessingException();

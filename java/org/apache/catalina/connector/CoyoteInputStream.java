@@ -192,7 +192,7 @@ public class CoyoteInputStream extends ServletInputStream {
      *
      * @param b the ByteBuffer into which bytes are to be written.
      * @return an integer specifying the actual number of bytes read, or -1 if
-     *         the end of the stream is reached
+     * the end of the stream is reached
      * @throws IOException if an input or output exception has occurred
      */
     public int read(final ByteBuffer b) throws IOException {

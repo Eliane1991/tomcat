@@ -48,18 +48,14 @@ public class XMLWriter {
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Buffer.
-     */
-    protected StringBuilder buffer = new StringBuilder();
-
-
     /**
      * Writer.
      */
     protected final Writer writer;
+    /**
+     * Buffer.
+     */
+    protected StringBuilder buffer = new StringBuilder();
 
 
     // ----------------------------------------------------------- Constructors
@@ -104,8 +100,8 @@ public class XMLWriter {
      * Write property to the XML.
      *
      * @param namespace Namespace
-     * @param name Property name
-     * @param value Property value
+     * @param name      Property name
+     * @param value     Property value
      */
     public void writeProperty(String namespace, String name, String value) {
         writeElement(namespace, name, OPENING);
@@ -117,9 +113,9 @@ public class XMLWriter {
     /**
      * Write an element.
      *
-     * @param name Element name
+     * @param name      Element name
      * @param namespace Namespace abbreviation
-     * @param type Element type
+     * @param type      Element type
      */
     public void writeElement(String namespace, String name, int type) {
         writeElement(namespace, null, name, type);
@@ -129,50 +125,50 @@ public class XMLWriter {
     /**
      * Write an element.
      *
-     * @param namespace Namespace abbreviation
+     * @param namespace     Namespace abbreviation
      * @param namespaceInfo Namespace info
-     * @param name Element name
-     * @param type Element type
+     * @param name          Element name
+     * @param type          Element type
      */
     public void writeElement(String namespace, String namespaceInfo,
                              String name, int type) {
         if ((namespace != null) && (namespace.length() > 0)) {
             switch (type) {
-            case OPENING:
-                if (namespaceInfo != null) {
-                    buffer.append("<" + namespace + ":" + name + " xmlns:"
-                                  + namespace + "=\""
-                                  + namespaceInfo + "\">");
-                } else {
-                    buffer.append("<" + namespace + ":" + name + ">");
-                }
-                break;
-            case CLOSING:
-                buffer.append("</" + namespace + ":" + name + ">\n");
-                break;
-            case NO_CONTENT:
-            default:
-                if (namespaceInfo != null) {
-                    buffer.append("<" + namespace + ":" + name + " xmlns:"
-                                  + namespace + "=\""
-                                  + namespaceInfo + "\"/>");
-                } else {
-                    buffer.append("<" + namespace + ":" + name + "/>");
-                }
-                break;
+                case OPENING:
+                    if (namespaceInfo != null) {
+                        buffer.append("<" + namespace + ":" + name + " xmlns:"
+                                + namespace + "=\""
+                                + namespaceInfo + "\">");
+                    } else {
+                        buffer.append("<" + namespace + ":" + name + ">");
+                    }
+                    break;
+                case CLOSING:
+                    buffer.append("</" + namespace + ":" + name + ">\n");
+                    break;
+                case NO_CONTENT:
+                default:
+                    if (namespaceInfo != null) {
+                        buffer.append("<" + namespace + ":" + name + " xmlns:"
+                                + namespace + "=\""
+                                + namespaceInfo + "\"/>");
+                    } else {
+                        buffer.append("<" + namespace + ":" + name + "/>");
+                    }
+                    break;
             }
         } else {
             switch (type) {
-            case OPENING:
-                buffer.append("<" + name + ">");
-                break;
-            case CLOSING:
-                buffer.append("</" + name + ">\n");
-                break;
-            case NO_CONTENT:
-            default:
-                buffer.append("<" + name + "/>");
-                break;
+                case OPENING:
+                    buffer.append("<" + name + ">");
+                    break;
+                case CLOSING:
+                    buffer.append("</" + name + ">\n");
+                    break;
+                case NO_CONTENT:
+                default:
+                    buffer.append("<" + name + "/>");
+                    break;
             }
         }
     }
@@ -208,10 +204,11 @@ public class XMLWriter {
 
     /**
      * Send data and reinitializes buffer, if a writer has been specified.
+     *
      * @throws IOException Error writing XML data
      */
     public void sendData()
-        throws IOException {
+            throws IOException {
         if (writer != null) {
             writer.write(buffer.toString());
             buffer = new StringBuilder();

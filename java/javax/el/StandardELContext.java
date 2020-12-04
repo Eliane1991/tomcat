@@ -30,7 +30,7 @@ public class StandardELContext extends ELContext {
     private final FunctionMapper functionMapper;
     private final CompositeELResolver standardResolver;
     private final CompositeELResolver customResolvers;
-    private final Map<String,Object> localBeans = new HashMap<>();
+    private final Map<String, Object> localBeans = new HashMap<>();
 
 
     public StandardELContext(ExpressionFactory factory) {
@@ -76,7 +76,7 @@ public class StandardELContext extends ELContext {
     // Can't use Class<?> because API needs to match specification
     @Override
     public void putContext(@SuppressWarnings("rawtypes") Class key,
-            Object contextObject) {
+                           Object contextObject) {
         if (wrappedContext == null) {
             super.putContext(key, contextObject);
         } else {
@@ -113,7 +113,7 @@ public class StandardELContext extends ELContext {
     }
 
 
-    Map<String,Object> getLocalBeans() {
+    Map<String, Object> getLocalBeans() {
         return localBeans;
     }
 
@@ -132,7 +132,7 @@ public class StandardELContext extends ELContext {
 
         @Override
         public ValueExpression setVariable(String variable,
-                ValueExpression expression) {
+                                           ValueExpression expression) {
             if (vars == null)
                 vars = new HashMap<>();
             if (expression == null) {
@@ -146,9 +146,9 @@ public class StandardELContext extends ELContext {
 
     private static class StandardBeanNameResolver extends BeanNameResolver {
 
-        private final Map<String,Object> beans;
+        private final Map<String, Object> beans;
 
-        public StandardBeanNameResolver(Map<String,Object> beans) {
+        public StandardBeanNameResolver(Map<String, Object> beans) {
             this.beans = beans;
         }
 
@@ -182,9 +182,9 @@ public class StandardELContext extends ELContext {
 
     private static class StandardFunctionMapper extends FunctionMapper {
 
-        private final Map<String,Method> methods = new HashMap<>();
+        private final Map<String, Method> methods = new HashMap<>();
 
-        public StandardFunctionMapper(Map<String,Method> initFunctionMap) {
+        public StandardFunctionMapper(Map<String, Method> initFunctionMap) {
             if (initFunctionMap != null) {
                 methods.putAll(initFunctionMap);
             }
@@ -198,7 +198,7 @@ public class StandardELContext extends ELContext {
 
         @Override
         public void mapFunction(String prefix, String localName,
-                Method method) {
+                                Method method) {
             String key = prefix + ':' + localName;
             if (method == null) {
                 methods.remove(key);

@@ -23,9 +23,8 @@ import javax.el.LambdaExpression;
 
 public class Optional {
 
-    private final Object obj;
-
     static final Optional EMPTY = new Optional(null);
+    private final Object obj;
 
     Optional(Object obj) {
         this.obj = obj;

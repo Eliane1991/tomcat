@@ -66,7 +66,7 @@ public class ApplicationPart implements Part {
         if (fileItem instanceof DiskFileItem) {
             LinkedHashSet<String> headerNames = new LinkedHashSet<>();
             Iterator<String> iter =
-                ((DiskFileItem) fileItem).getHeaders().getHeaderNames();
+                    ((DiskFileItem) fileItem).getHeaders().getHeaderNames();
             while (iter.hasNext()) {
                 headerNames.add(iter.next());
             }
@@ -80,7 +80,7 @@ public class ApplicationPart implements Part {
         if (fileItem instanceof DiskFileItem) {
             LinkedHashSet<String> headers = new LinkedHashSet<>();
             Iterator<String> iter =
-                ((DiskFileItem) fileItem).getHeaders().getHeaders(name);
+                    ((DiskFileItem) fileItem).getHeaders().getHeaders(name);
             while (iter.hasNext()) {
                 headers.add(iter.next());
             }
@@ -134,7 +134,7 @@ public class ApplicationPart implements Part {
                 ParameterParser paramParser = new ParameterParser();
                 paramParser.setLowerCaseNames(true);
                 // Parameter parser can handle null input
-                Map<String,String> params = paramParser.parse(cd, ';');
+                Map<String, String> params = paramParser.parse(cd, ';');
                 if (params.containsKey("filename")) {
                     fileName = params.get("filename");
                     // The parser will remove surrounding '"' but will not

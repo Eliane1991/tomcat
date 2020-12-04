@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * This class defines internal representation for an EL Expression
- *
+ * <p>
  * It currently only defines functions.  It can be expanded to define
  * all the components of an EL expression, if need to.
  *
@@ -48,7 +48,7 @@ abstract class ELNode {
 
         Root(ELNode.Nodes expr, char type) {
             this.expr = expr;
-        this.type = type;
+            this.type = type;
         }
 
         @Override
@@ -146,36 +146,36 @@ abstract class ELNode {
             return originalText;
         }
 
-        public void setUri(String uri) {
-            this.uri = uri;
-        }
-
         public String getUri() {
             return uri;
         }
 
-        public void setFunctionInfo(FunctionInfo f) {
-            this.functionInfo = f;
+        public void setUri(String uri) {
+            this.uri = uri;
         }
 
         public FunctionInfo getFunctionInfo() {
             return functionInfo;
         }
 
-        public void setMethodName(String methodName) {
-            this.methodName = methodName;
+        public void setFunctionInfo(FunctionInfo f) {
+            this.functionInfo = f;
         }
 
         public String getMethodName() {
             return methodName;
         }
 
-        public void setParameters(String[] parameters) {
-            this.parameters = parameters;
+        public void setMethodName(String methodName) {
+            this.methodName = methodName;
         }
 
         public String[] getParameters() {
             return parameters;
+        }
+
+        public void setParameters(String[] parameters) {
+            this.parameters = parameters;
         }
     }
 
@@ -184,11 +184,11 @@ abstract class ELNode {
      */
     public static class Nodes {
 
+        private final List<ELNode> list;
         /* Name used for creating a map for the functions in this
            EL expression, for communication to Generator.
          */
         private String mapName = null;    // The function map associated this EL
-        private final List<ELNode> list;
 
         public Nodes() {
             list = new ArrayList<>();
@@ -202,7 +202,6 @@ abstract class ELNode {
          * Visit the nodes in the list with the supplied visitor.
          *
          * @param v The visitor used
-         *
          * @throws JasperException if an error occurs while visiting a node
          */
         public void visit(Visitor v) throws JasperException {
@@ -231,12 +230,12 @@ abstract class ELNode {
             return false;
         }
 
-        public void setMapName(String name) {
-            this.mapName = name;
-        }
-
         public String getMapName() {
             return mapName;
+        }
+
+        public void setMapName(String name) {
+            this.mapName = name;
         }
 
     }

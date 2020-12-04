@@ -25,10 +25,11 @@ package org.apache.tomcat.dbcp.pool2;
  * </p>
  *
  * @param <T> Type of element pooled in this pool.
- *
  * @since 2.0
  */
 public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool<T> {
+
+    private volatile boolean closed = false;
 
     @Override
     public abstract T borrowObject() throws Exception;
@@ -63,7 +64,7 @@ public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool
      * Not supported in this base implementation.
      *
      * @throws UnsupportedOperationException if the pool does not implement this
-     *          method
+     *                                       method
      */
     @Override
     public void clear() throws Exception, UnsupportedOperationException {
@@ -75,7 +76,7 @@ public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool
      * this behavior.
      *
      * @throws UnsupportedOperationException if the pool does not implement this
-     *          method
+     *                                       method
      */
     @Override
     public void addObject() throws Exception, UnsupportedOperationException {
@@ -86,10 +87,8 @@ public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool
      * Calls {@link ObjectPool#addObject()} <code>count</code>
      * number of times.
      *
-     * @param count
-     *            the number of idle objects to add.
-     * @throws Exception
-     *             when {@link ObjectPool#addObject()} fails.
+     * @param count the number of idle objects to add.
+     * @throws Exception when {@link ObjectPool#addObject()} fails.
      * @since 2.8.0
      */
     @Override
@@ -125,7 +124,6 @@ public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool
      * closed.
      *
      * @throws IllegalStateException when this pool has been closed.
-     *
      * @see #isClosed()
      */
     protected final void assertOpen() throws IllegalStateException {
@@ -133,8 +131,6 @@ public abstract class BaseObjectPool<T> extends BaseObject implements ObjectPool
             throw new IllegalStateException("Pool not open");
         }
     }
-
-    private volatile boolean closed = false;
 
     @Override
     protected void toStringAppendFields(final StringBuilder builder) {

@@ -20,6 +20,7 @@ package org.apache.catalina.ssi;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+
 /**
  * Implements the Server-side #fsize command
  *
@@ -38,7 +39,7 @@ public final class SSIFsize implements SSICommand {
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer) {
+                        String[] paramNames, String[] paramValues, PrintWriter writer) {
         long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         for (int i = 0; i < paramNames.length; i++) {
@@ -111,7 +112,7 @@ public final class SSIFsize implements SSICommand {
                 retString += "k";
             } else if (size < 99 * ONE_MEGABYTE) {
                 DecimalFormat decimalFormat = new DecimalFormat("0.0M");
-                retString = decimalFormat.format(size / (double)ONE_MEGABYTE);
+                retString = decimalFormat.format(size / (double) ONE_MEGABYTE);
             } else {
                 retString = Long.toString((size + (529 * ONE_KILOBYTE))
                         / ONE_MEGABYTE);

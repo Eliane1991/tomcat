@@ -43,15 +43,12 @@ import java.util.Set;
  */
 public class SSLHostConfig implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Log log = LogFactory.getLog(SSLHostConfig.class);
-    private static final StringManager sm = StringManager.getManager(SSLHostConfig.class);
-
-    private static final String DEFAULT_CIPHERS = "HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!kRSA";
-
     protected static final String DEFAULT_SSL_HOST_NAME = "_default_";
     protected static final Set<String> SSL_PROTO_ALL_SET = new HashSet<>();
+    private static final long serialVersionUID = 1L;
+    private static final Log log = LogFactory.getLog(SSLHostConfig.class);
+    private static final StringManager sm = StringManager.getManager(SSLHostConfig.class);
+    private static final String DEFAULT_CIPHERS = "HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!kRSA";
 
     static {
         /* Default used if protocols are not configured, also used if
@@ -126,26 +123,39 @@ public class SSLHostConfig implements Serializable {
         setProtocols(Constants.SSL_PROTO_ALL);
     }
 
+    public static String adjustRelativePath(String path) throws FileNotFoundException {
+        // Empty or null path can't point to anything useful. The assumption is
+        // that the value is deliberately empty / null so leave it that way.
+        if (path == null || path.length() == 0) {
+            return path;
+        }
+        String newPath = path;
+        File f = new File(newPath);
+        if (!f.isAbsolute()) {
+            newPath = System.getProperty(Constants.CATALINA_BASE_PROP) + File.separator + newPath;
+            f = new File(newPath);
+        }
+        if (!f.exists()) {
+            throw new FileNotFoundException(sm.getString("sslHostConfig.fileNotFound", newPath));
+        }
+        return newPath;
+    }
 
     public Long getOpenSslConfContext() {
         return openSslConfContext;
     }
 
-
     public void setOpenSslConfContext(Long openSslConfContext) {
         this.openSslConfContext = openSslConfContext;
     }
-
 
     public Long getOpenSslContext() {
         return openSslContext;
     }
 
-
     public void setOpenSslContext(Long openSslContext) {
         this.openSslContext = openSslContext;
     }
-
 
     // Expose in String form for JMX
     public String getConfigType() {
@@ -153,12 +163,15 @@ public class SSLHostConfig implements Serializable {
     }
 
 
+    // ----------------------------------------------------- Internal properties
+
     /**
      * Set property which belongs to the specified configuration type.
-     * @param name the property name
+     *
+     * @param name       the property name
      * @param configType the configuration type
      * @return true if the property belongs to the current configuration,
-     *   and false otherwise
+     * and false otherwise
      */
     boolean setProperty(String name, Type configType) {
         if (this.configType == null) {
@@ -173,50 +186,40 @@ public class SSLHostConfig implements Serializable {
         return true;
     }
 
-
-    // ----------------------------------------------------- Internal properties
-
     /**
-     * @see SSLUtil#getEnabledProtocols()
-     *
      * @return The protocols enabled for this TLS virtual host
+     * @see SSLUtil#getEnabledProtocols()
      */
     public String[] getEnabledProtocols() {
         return enabledProtocols;
     }
 
-
     public void setEnabledProtocols(String[] enabledProtocols) {
         this.enabledProtocols = enabledProtocols;
     }
 
-
     /**
-     * @see SSLUtil#getEnabledCiphers()
-     *
      * @return The ciphers enabled for this TLS virtual host
+     * @see SSLUtil#getEnabledCiphers()
      */
     public String[] getEnabledCiphers() {
         return enabledCiphers;
     }
 
-
     public void setEnabledCiphers(String[] enabledCiphers) {
         this.enabledCiphers = enabledCiphers;
     }
-
 
     public ObjectName getObjectName() {
         return oname;
     }
 
 
+    // ------------------------------------------- Nested configuration elements
+
     public void setObjectName(ObjectName oname) {
         this.oname = oname;
     }
-
-
-    // ------------------------------------------- Nested configuration elements
 
     private void registerDefaultCertificate() {
         if (defaultCertificate == null) {
@@ -226,7 +229,6 @@ public class SSLHostConfig implements Serializable {
             this.defaultCertificate = defaultCertificate;
         }
     }
-
 
     public void addCertificate(SSLHostConfigCertificate certificate) {
         // Need to make sure that if there is more than one certificate, none of
@@ -238,7 +240,7 @@ public class SSLHostConfig implements Serializable {
 
         if (certificates.size() == 1 &&
                 certificates.iterator().next().getType() == SSLHostConfigCertificate.Type.UNDEFINED ||
-                        certificate.getType() == SSLHostConfigCertificate.Type.UNDEFINED) {
+                certificate.getType() == SSLHostConfigCertificate.Type.UNDEFINED) {
             // Invalid config
             throw new IllegalArgumentException(sm.getString("sslHostConfig.certificate.notype"));
         }
@@ -246,11 +248,9 @@ public class SSLHostConfig implements Serializable {
         certificates.add(certificate);
     }
 
-
     public OpenSSLConf getOpenSslConf() {
         return openSslConf;
     }
-
 
     public void setOpenSslConf(OpenSSLConf conf) {
         if (conf == null) {
@@ -262,17 +262,8 @@ public class SSLHostConfig implements Serializable {
         openSslConf = conf;
     }
 
-
     public Set<SSLHostConfigCertificate> getCertificates() {
         return getCertificates(false);
-    }
-
-
-    public Set<SSLHostConfigCertificate> getCertificates(boolean createDefaultIfEmpty) {
-        if (certificates.size() == 0 && createDefaultIfEmpty) {
-            registerDefaultCertificate();
-        }
-        return certificates;
     }
 
 
@@ -281,6 +272,13 @@ public class SSLHostConfig implements Serializable {
     // TODO: This certificate setter can be removed once it is no longer
     // necessary to support the old configuration attributes (Tomcat 10?).
 
+    public Set<SSLHostConfigCertificate> getCertificates(boolean createDefaultIfEmpty) {
+        if (certificates.size() == 0 && createDefaultIfEmpty) {
+            registerDefaultCertificate();
+        }
+        return certificates;
+    }
+
     public String getCertificateKeyPassword() {
         if (defaultCertificate == null) {
             return null;
@@ -288,21 +286,23 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeyPassword();
         }
     }
+
     public void setCertificateKeyPassword(String certificateKeyPassword) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeyPassword(certificateKeyPassword);
     }
 
+    public String getCertificateRevocationListFile() {
+        return certificateRevocationListFile;
+    }
 
     public void setCertificateRevocationListFile(String certificateRevocationListFile) {
         this.certificateRevocationListFile = certificateRevocationListFile;
     }
 
-
-    public String getCertificateRevocationListFile() {
-        return certificateRevocationListFile;
+    public CertificateVerification getCertificateVerification() {
+        return certificateVerification;
     }
-
 
     public void setCertificateVerification(String certificateVerification) {
         try {
@@ -316,37 +316,41 @@ public class SSLHostConfig implements Serializable {
         }
     }
 
-
-    public CertificateVerification getCertificateVerification() {
-        return certificateVerification;
+    public String getCertificateVerificationAsString() {
+        return certificateVerification.toString();
     }
-
 
     public void setCertificateVerificationAsString(String certificateVerification) {
         setCertificateVerification(certificateVerification);
     }
 
-
-    public String getCertificateVerificationAsString() {
-        return certificateVerification.toString();
+    public int getCertificateVerificationDepth() {
+        return certificateVerificationDepth;
     }
-
 
     public void setCertificateVerificationDepth(int certificateVerificationDepth) {
         this.certificateVerificationDepth = certificateVerificationDepth;
         certificateVerificationDepthConfigured = true;
     }
 
-
-    public int getCertificateVerificationDepth() {
-        return certificateVerificationDepth;
-    }
-
-
     public boolean isCertificateVerificationDepthConfigured() {
         return certificateVerificationDepthConfigured;
     }
 
+    /**
+     * @return An OpenSSL cipher string for the current configuration.
+     */
+    public String getCiphers() {
+        if (ciphers == null) {
+            if (!JreCompat.isJre8Available() && Type.JSSE.equals(configType)) {
+                ciphers = DEFAULT_CIPHERS + ":!DHE";
+            } else {
+                ciphers = DEFAULT_CIPHERS;
+            }
+
+        }
+        return ciphers;
+    }
 
     /**
      * Set the new cipher configuration. Note: Regardless of the format used to
@@ -384,30 +388,12 @@ public class SSLHostConfig implements Serializable {
         this.jsseCipherNames = null;
     }
 
-
-    /**
-     * @return An OpenSSL cipher string for the current configuration.
-     */
-    public String getCiphers() {
-        if (ciphers == null) {
-            if (!JreCompat.isJre8Available() && Type.JSSE.equals(configType)) {
-                ciphers = DEFAULT_CIPHERS + ":!DHE";
-            } else {
-                ciphers = DEFAULT_CIPHERS;
-            }
-
-        }
-        return ciphers;
-    }
-
-
     public LinkedHashSet<Cipher> getCipherList() {
         if (cipherList == null) {
             cipherList = OpenSSLCipherConfigurationParser.parse(getCiphers());
         }
         return cipherList;
     }
-
 
     /**
      * Obtain the list of JSSE cipher names for the current configuration.
@@ -423,26 +409,25 @@ public class SSLHostConfig implements Serializable {
         return jsseCipherNames;
     }
 
+    public String getHonorCipherOrder() {
+        return honorCipherOrder;
+    }
 
     public void setHonorCipherOrder(String honorCipherOrder) {
         this.honorCipherOrder = honorCipherOrder;
     }
 
-
-    public String getHonorCipherOrder() {
-        return honorCipherOrder;
+    public String getHostName() {
+        return hostName;
     }
-
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
-
-    public String getHostName() {
-        return hostName;
+    public Set<String> getProtocols() {
+        return protocols;
     }
-
 
     public void setProtocols(String input) {
         protocols.clear();
@@ -459,7 +444,7 @@ public class SSLHostConfig implements Serializable {
 
         // Split using a positive lookahead to keep the separator in
         // the capture so we can check which case it is.
-        for (String value: input.split("(?=[-+,])")) {
+        for (String value : input.split("(?=[-+,])")) {
             String trimmed = value.trim();
             // Ignore token which only consists of prefix character
             if (trimmed.length() > 1) {
@@ -485,7 +470,7 @@ public class SSLHostConfig implements Serializable {
                     }
                     if (!protocols.isEmpty()) {
                         log.warn(sm.getString("sslHostConfig.prefix_missing",
-                                 trimmed, getHostName()));
+                                trimmed, getHostName()));
                     }
                     if (trimmed.equalsIgnoreCase(Constants.SSL_PROTO_ALL)) {
                         protocols.addAll(SSL_PROTO_ALL_SET);
@@ -498,31 +483,17 @@ public class SSLHostConfig implements Serializable {
         }
     }
 
-
-    public Set<String> getProtocols() {
-        return protocols;
-    }
-
-
     boolean isExplicitlyRequestedProtocol(String protocol) {
         return explicitlyRequestedProtocols.contains(protocol);
     }
-
-
-    public void setSessionCacheSize(int sessionCacheSize) {
-        this.sessionCacheSize = sessionCacheSize;
-    }
-
 
     public int getSessionCacheSize() {
         return sessionCacheSize;
     }
 
-
-    public void setSessionTimeout(int sessionTimeout) {
-        this.sessionTimeout = sessionTimeout;
+    public void setSessionCacheSize(int sessionCacheSize) {
+        this.sessionCacheSize = sessionCacheSize;
     }
-
 
     public int getSessionTimeout() {
         return sessionTimeout;
@@ -534,6 +505,10 @@ public class SSLHostConfig implements Serializable {
     // TODO: These certificate setters can be removed once it is no longer
     // necessary to support the old configuration attributes (Tomcat 10?).
 
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
     public String getCertificateKeyAlias() {
         if (defaultCertificate == null) {
             return null;
@@ -541,11 +516,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeyAlias();
         }
     }
+
     public void setCertificateKeyAlias(String certificateKeyAlias) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeyAlias(certificateKeyAlias);
     }
-
 
     public String getCertificateKeystoreFile() {
         if (defaultCertificate == null) {
@@ -554,11 +529,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeystoreFile();
         }
     }
+
     public void setCertificateKeystoreFile(String certificateKeystoreFile) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeystoreFile(certificateKeystoreFile);
     }
-
 
     public String getCertificateKeystorePassword() {
         if (defaultCertificate == null) {
@@ -567,11 +542,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeystorePassword();
         }
     }
+
     public void setCertificateKeystorePassword(String certificateKeystorePassword) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeystorePassword(certificateKeystorePassword);
     }
-
 
     public String getCertificateKeystoreProvider() {
         if (defaultCertificate == null) {
@@ -580,11 +555,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeystoreProvider();
         }
     }
+
     public void setCertificateKeystoreProvider(String certificateKeystoreProvider) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeystoreProvider(certificateKeystoreProvider);
     }
-
 
     public String getCertificateKeystoreType() {
         if (defaultCertificate == null) {
@@ -593,94 +568,74 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeystoreType();
         }
     }
+
     public void setCertificateKeystoreType(String certificateKeystoreType) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeystoreType(certificateKeystoreType);
     }
 
+    public String getKeyManagerAlgorithm() {
+        return keyManagerAlgorithm;
+    }
 
     public void setKeyManagerAlgorithm(String keyManagerAlgorithm) {
         setProperty("keyManagerAlgorithm", Type.JSSE);
         this.keyManagerAlgorithm = keyManagerAlgorithm;
     }
 
-
-    public String getKeyManagerAlgorithm() {
-        return keyManagerAlgorithm;
+    public boolean getRevocationEnabled() {
+        return revocationEnabled;
     }
-
 
     public void setRevocationEnabled(boolean revocationEnabled) {
         setProperty("revocationEnabled", Type.JSSE);
         this.revocationEnabled = revocationEnabled;
     }
 
-
-    public boolean getRevocationEnabled() {
-        return revocationEnabled;
+    public String getSslProtocol() {
+        return sslProtocol;
     }
-
 
     public void setSslProtocol(String sslProtocol) {
         setProperty("sslProtocol", Type.JSSE);
         this.sslProtocol = sslProtocol;
     }
 
-
-    public String getSslProtocol() {
-        return sslProtocol;
+    public String getTrustManagerClassName() {
+        return trustManagerClassName;
     }
-
 
     public void setTrustManagerClassName(String trustManagerClassName) {
         setProperty("trustManagerClassName", Type.JSSE);
         this.trustManagerClassName = trustManagerClassName;
     }
 
-
-    public String getTrustManagerClassName() {
-        return trustManagerClassName;
+    public String getTruststoreAlgorithm() {
+        return truststoreAlgorithm;
     }
-
 
     public void setTruststoreAlgorithm(String truststoreAlgorithm) {
         setProperty("truststoreAlgorithm", Type.JSSE);
         this.truststoreAlgorithm = truststoreAlgorithm;
     }
 
-
-    public String getTruststoreAlgorithm() {
-        return truststoreAlgorithm;
+    public String getTruststoreFile() {
+        return truststoreFile;
     }
-
 
     public void setTruststoreFile(String truststoreFile) {
         setProperty("truststoreFile", Type.JSSE);
         this.truststoreFile = truststoreFile;
     }
 
-
-    public String getTruststoreFile() {
-        return truststoreFile;
+    public String getTruststorePassword() {
+        return truststorePassword;
     }
-
 
     public void setTruststorePassword(String truststorePassword) {
         setProperty("truststorePassword", Type.JSSE);
         this.truststorePassword = truststorePassword;
     }
-
-
-    public String getTruststorePassword() {
-        return truststorePassword;
-    }
-
-
-    public void setTruststoreProvider(String truststoreProvider) {
-        setProperty("truststoreProvider", Type.JSSE);
-        this.truststoreProvider = truststoreProvider;
-    }
-
 
     public String getTruststoreProvider() {
         if (truststoreProvider == null) {
@@ -694,12 +649,10 @@ public class SSLHostConfig implements Serializable {
         }
     }
 
-
-    public void setTruststoreType(String truststoreType) {
-        setProperty("truststoreType", Type.JSSE);
-        this.truststoreType = truststoreType;
+    public void setTruststoreProvider(String truststoreProvider) {
+        setProperty("truststoreProvider", Type.JSSE);
+        this.truststoreProvider = truststoreProvider;
     }
-
 
     public String getTruststoreType() {
         if (truststoreType == null) {
@@ -718,16 +671,25 @@ public class SSLHostConfig implements Serializable {
         }
     }
 
+    public void setTruststoreType(String truststoreType) {
+        setProperty("truststoreType", Type.JSSE);
+        this.truststoreType = truststoreType;
+    }
 
     public void setTrustStore(KeyStore truststore) {
         this.truststore = truststore;
     }
 
 
+    // ------------------------------- OpenSSL specific configuration properties
+
+    // TODO: These certificate setters can be removed once it is no longer
+    // necessary to support the old configuration attributes (Tomcat 10?).
+
     public KeyStore getTruststore() throws IOException {
         KeyStore result = truststore;
         if (result == null) {
-            if (truststoreFile != null){
+            if (truststoreFile != null) {
                 try {
                     result = SSLUtilBase.getStore(getTruststoreType(), getTruststoreProvider(),
                             getTruststoreFile(), getTruststorePassword());
@@ -750,12 +712,6 @@ public class SSLHostConfig implements Serializable {
         return result;
     }
 
-
-    // ------------------------------- OpenSSL specific configuration properties
-
-    // TODO: These certificate setters can be removed once it is no longer
-    // necessary to support the old configuration attributes (Tomcat 10?).
-
     public String getCertificateChainFile() {
         if (defaultCertificate == null) {
             return null;
@@ -763,11 +719,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateChainFile();
         }
     }
+
     public void setCertificateChainFile(String certificateChainFile) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateChainFile(certificateChainFile);
     }
-
 
     public String getCertificateFile() {
         if (defaultCertificate == null) {
@@ -776,11 +732,11 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateFile();
         }
     }
+
     public void setCertificateFile(String certificateFile) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateFile(certificateFile);
     }
-
 
     public String getCertificateKeyFile() {
         if (defaultCertificate == null) {
@@ -789,22 +745,24 @@ public class SSLHostConfig implements Serializable {
             return defaultCertificate.getCertificateKeyFile();
         }
     }
+
     public void setCertificateKeyFile(String certificateKeyFile) {
         registerDefaultCertificate();
         defaultCertificate.setCertificateKeyFile(certificateKeyFile);
     }
 
+    public String getCertificateRevocationListPath() {
+        return certificateRevocationListPath;
+    }
 
     public void setCertificateRevocationListPath(String certificateRevocationListPath) {
         setProperty("certificateRevocationListPath", Type.OPENSSL);
         this.certificateRevocationListPath = certificateRevocationListPath;
     }
 
-
-    public String getCertificateRevocationListPath() {
-        return certificateRevocationListPath;
+    public String getCaCertificateFile() {
+        return caCertificateFile;
     }
-
 
     public void setCaCertificateFile(String caCertificateFile) {
         if (setProperty("caCertificateFile", Type.OPENSSL)) {
@@ -816,11 +774,9 @@ public class SSLHostConfig implements Serializable {
         this.caCertificateFile = caCertificateFile;
     }
 
-
-    public String getCaCertificateFile() {
-        return caCertificateFile;
+    public String getCaCertificatePath() {
+        return caCertificatePath;
     }
-
 
     public void setCaCertificatePath(String caCertificatePath) {
         if (setProperty("caCertificatePath", Type.OPENSSL)) {
@@ -832,39 +788,23 @@ public class SSLHostConfig implements Serializable {
         this.caCertificatePath = caCertificatePath;
     }
 
-
-    public String getCaCertificatePath() {
-        return caCertificatePath;
+    public boolean getDisableCompression() {
+        return disableCompression;
     }
-
 
     public void setDisableCompression(boolean disableCompression) {
         setProperty("disableCompression", Type.OPENSSL);
         this.disableCompression = disableCompression;
     }
 
-
-    public boolean getDisableCompression() {
-        return disableCompression;
+    public boolean getDisableSessionTickets() {
+        return disableSessionTickets;
     }
-
 
     public void setDisableSessionTickets(boolean disableSessionTickets) {
         setProperty("disableSessionTickets", Type.OPENSSL);
         this.disableSessionTickets = disableSessionTickets;
     }
-
-
-    public boolean getDisableSessionTickets() {
-        return disableSessionTickets;
-    }
-
-
-    public void setInsecureRenegotiation(boolean insecureRenegotiation) {
-        setProperty("insecureRenegotiation", Type.OPENSSL);
-        this.insecureRenegotiation = insecureRenegotiation;
-    }
-
 
     public boolean getInsecureRenegotiation() {
         return insecureRenegotiation;
@@ -873,22 +813,9 @@ public class SSLHostConfig implements Serializable {
 
     // --------------------------------------------------------- Support methods
 
-    public static String adjustRelativePath(String path) throws FileNotFoundException {
-        // Empty or null path can't point to anything useful. The assumption is
-        // that the value is deliberately empty / null so leave it that way.
-        if (path == null || path.length() == 0) {
-            return path;
-        }
-        String newPath = path;
-        File f = new File(newPath);
-        if ( !f.isAbsolute()) {
-            newPath = System.getProperty(Constants.CATALINA_BASE_PROP) + File.separator + newPath;
-            f = new File(newPath);
-        }
-        if (!f.exists()) {
-            throw new FileNotFoundException(sm.getString("sslHostConfig.fileNotFound", newPath));
-        }
-        return newPath;
+    public void setInsecureRenegotiation(boolean insecureRenegotiation) {
+        setProperty("insecureRenegotiation", Type.OPENSSL);
+        this.insecureRenegotiation = insecureRenegotiation;
     }
 
 

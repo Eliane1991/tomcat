@@ -34,14 +34,11 @@ public interface InputBuffer {
      * have chunk.getBytes()==null before call, and the result after the call).
      *
      * @param chunk The buffer to read data into.
-     *
      * @return The number of bytes that have been added to the buffer or -1 for
-     *         end of stream
-     *
+     * end of stream
      * @throws IOException If an I/O error occurs reading from the input stream
-     *
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doRead(ApplicationBufferHandler)}
+     * {@link #doRead(ApplicationBufferHandler)}
      */
     @Deprecated
     public int doRead(ByteChunk chunk) throws IOException;
@@ -54,10 +51,8 @@ public interface InputBuffer {
      *
      * @param handler ApplicationBufferHandler that provides the buffer to read
      *                data into.
-     *
      * @return The number of bytes that have been added to the buffer or -1 for
-     *         end of stream
-     *
+     * end of stream
      * @throws IOException If an I/O error occurs reading from the input stream
      */
     public int doRead(ApplicationBufferHandler handler) throws IOException;

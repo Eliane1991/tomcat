@@ -23,8 +23,9 @@ package org.apache.catalina.tribes;
  * This means that the message was received on the remote node but the processing of the message failed.
  * This message will be embedded in a ChannelException.FaultyMember
  * </p>
- * @see ChannelException
+ *
  * @version 1.0
+ * @see ChannelException
  */
 public class RemoteProcessException extends RuntimeException {
     private static final long serialVersionUID = 1L;

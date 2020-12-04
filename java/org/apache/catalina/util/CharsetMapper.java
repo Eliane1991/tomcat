@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Properties;
 
 
-
 /**
  * Utility class that attempts to map from a Locale to the corresponding
  * character set to be used for interpreting input text (or generating
@@ -46,10 +45,15 @@ public class CharsetMapper {
      * Default properties resource name.
      */
     public static final String DEFAULT_RESOURCE =
-      "/org/apache/catalina/util/CharsetMapperDefault.properties";
+            "/org/apache/catalina/util/CharsetMapperDefault.properties";
 
 
     // ---------------------------------------------------------- Constructors
+    /**
+     * The mapping properties that have been initialized from the specified or
+     * default properties resource.
+     */
+    private Properties map = new Properties();
 
 
     /**
@@ -60,13 +64,15 @@ public class CharsetMapper {
     }
 
 
+    // ---------------------------------------------------- Instance Variables
+
+
     /**
      * Construct a new CharsetMapper using the specified properties resource.
      *
      * @param name Name of a properties resource to be loaded
-     *
-     * @exception IllegalArgumentException if the specified properties
-     *  resource could not be loaded for any reason.
+     * @throws IllegalArgumentException if the specified properties
+     *                                  resource could not be loaded for any reason.
      */
     public CharsetMapper(String name) {
         try (InputStream stream = this.getClass().getResourceAsStream(name)) {
@@ -78,18 +84,7 @@ public class CharsetMapper {
     }
 
 
-    // ---------------------------------------------------- Instance Variables
-
-
-    /**
-     * The mapping properties that have been initialized from the specified or
-     * default properties resource.
-     */
-    private Properties map = new Properties();
-
-
     // ------------------------------------------------------- Public Methods
-
 
     /**
      * Calculate the name of a character set to be assumed, given the specified
@@ -120,7 +115,7 @@ public class CharsetMapper {
      * webapp's desired mapping from locale to charset.  This method
      * gets called when processing the web.xml file for a context
      *
-     * @param locale The locale for a character set
+     * @param locale  The locale for a character set
      * @param charset The charset to be associated with the locale
      */
     public void addCharsetMappingFromDeploymentDescriptor(String locale, String charset) {

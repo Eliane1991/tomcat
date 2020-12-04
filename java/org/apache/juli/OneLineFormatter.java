@@ -41,28 +41,24 @@ public class OneLineFormatter extends Formatter {
 
     private static final String UNKNOWN_THREAD_NAME = "Unknown thread with ID ";
     private static final Object threadMxBeanLock = new Object();
-    private static volatile ThreadMXBean threadMxBean = null;
     private static final int THREAD_NAME_CACHE_SIZE = 10000;
+    /* Timestamp format */
+    private static final String DEFAULT_TIME_FORMAT = "dd-MMM-yyyy HH:mm:ss.SSS";
+    /**
+     * The size of our global date format cache
+     */
+    private static final int globalCacheSize = 30;
+    /**
+     * The size of our thread local date format cache
+     */
+    private static final int localCacheSize = 5;
+    private static volatile ThreadMXBean threadMxBean = null;
     private static ThreadLocal<ThreadNameCache> threadNameCache = new ThreadLocal<ThreadNameCache>() {
         @Override
         protected ThreadNameCache initialValue() {
             return new ThreadNameCache(THREAD_NAME_CACHE_SIZE);
         }
     };
-
-    /* Timestamp format */
-    private static final String DEFAULT_TIME_FORMAT = "dd-MMM-yyyy HH:mm:ss.SSS";
-
-    /**
-     * The size of our global date format cache
-     */
-    private static final int globalCacheSize = 30;
-
-    /**
-     * The size of our thread local date format cache
-     */
-    private static final int localCacheSize = 5;
-
     /**
      * Thread local date format cache.
      */
@@ -80,6 +76,59 @@ public class OneLineFormatter extends Formatter {
         setTimeFormat(timeFormat);
     }
 
+    /**
+     * LogRecord has threadID but no thread name.
+     * LogRecord uses an int for thread ID but thread IDs are longs.
+     * If the real thread ID > (Integer.MAXVALUE / 2) LogRecord uses it's own
+     * ID in an effort to avoid clashes due to overflow.
+     * <p>
+     * Words fail me to describe what I think of the design decision to use an
+     * int in LogRecord for a long value and the resulting mess that follows.
+     */
+    private static String getThreadName(int logRecordThreadId) {
+        Map<Integer, String> cache = threadNameCache.get();
+        String result = null;
+
+        if (logRecordThreadId > (Integer.MAX_VALUE / 2)) {
+            result = cache.get(Integer.valueOf(logRecordThreadId));
+        }
+
+        if (result != null) {
+            return result;
+        }
+
+        if (logRecordThreadId > Integer.MAX_VALUE / 2) {
+            result = UNKNOWN_THREAD_NAME + logRecordThreadId;
+        } else {
+            // Double checked locking OK as threadMxBean is volatile
+            if (threadMxBean == null) {
+                synchronized (threadMxBeanLock) {
+                    if (threadMxBean == null) {
+                        threadMxBean = ManagementFactory.getThreadMXBean();
+                    }
+                }
+            }
+            ThreadInfo threadInfo =
+                    threadMxBean.getThreadInfo(logRecordThreadId);
+            if (threadInfo == null) {
+                return Long.toString(logRecordThreadId);
+            }
+            result = threadInfo.getThreadName();
+        }
+
+        cache.put(Integer.valueOf(logRecordThreadId), result);
+
+        return result;
+    }
+
+    /**
+     * Obtain the format currently being used for time stamps in log messages.
+     *
+     * @return The current format in {@link java.text.SimpleDateFormat} syntax
+     */
+    public String getTimeFormat() {
+        return localDateCache.get().getTimeFormat();
+    }
 
     /**
      * Specify the time format to use for time stamps in log messages.
@@ -91,7 +140,7 @@ public class OneLineFormatter extends Formatter {
         final String cachedTimeFormat;
 
         if (timeFormat.endsWith(".SSS")) {
-            cachedTimeFormat = timeFormat.substring(0,  timeFormat.length() - 4);
+            cachedTimeFormat = timeFormat.substring(0, timeFormat.length() - 4);
             millisHandling = MillisHandling.APPEND;
         } else if (timeFormat.contains("SSS")) {
             millisHandling = MillisHandling.REPLACE_SSS;
@@ -116,17 +165,6 @@ public class OneLineFormatter extends Formatter {
             }
         };
     }
-
-
-    /**
-     * Obtain the format currently being used for time stamps in log messages.
-     *
-     * @return The current format in {@link java.text.SimpleDateFormat} syntax
-     */
-    public String getTimeFormat() {
-        return localDateCache.get().getTimeFormat();
-    }
-
 
     @Override
     public String format(LogRecord record) {
@@ -219,53 +257,15 @@ public class OneLineFormatter extends Formatter {
     }
 
 
-    /**
-     * LogRecord has threadID but no thread name.
-     * LogRecord uses an int for thread ID but thread IDs are longs.
-     * If the real thread ID > (Integer.MAXVALUE / 2) LogRecord uses it's own
-     * ID in an effort to avoid clashes due to overflow.
-     * <p>
-     * Words fail me to describe what I think of the design decision to use an
-     * int in LogRecord for a long value and the resulting mess that follows.
-     */
-    private static String getThreadName(int logRecordThreadId) {
-        Map<Integer,String> cache = threadNameCache.get();
-        String result = null;
-
-        if (logRecordThreadId > (Integer.MAX_VALUE / 2)) {
-            result = cache.get(Integer.valueOf(logRecordThreadId));
-        }
-
-        if (result != null) {
-            return result;
-        }
-
-        if (logRecordThreadId > Integer.MAX_VALUE / 2) {
-            result = UNKNOWN_THREAD_NAME + logRecordThreadId;
-        } else {
-            // Double checked locking OK as threadMxBean is volatile
-            if (threadMxBean == null) {
-                synchronized (threadMxBeanLock) {
-                    if (threadMxBean == null) {
-                        threadMxBean = ManagementFactory.getThreadMXBean();
-                    }
-                }
-            }
-            ThreadInfo threadInfo =
-                    threadMxBean.getThreadInfo(logRecordThreadId);
-            if (threadInfo == null) {
-                return Long.toString(logRecordThreadId);
-            }
-            result = threadInfo.getThreadName();
-        }
-
-        cache.put(Integer.valueOf(logRecordThreadId), result);
-
-        return result;
+    private static enum MillisHandling {
+        NONE,
+        APPEND,
+        REPLACE_S,
+        REPLACE_SS,
+        REPLACE_SSS,
     }
 
-
-    private static class ThreadNameCache extends LinkedHashMap<Integer,String> {
+    private static class ThreadNameCache extends LinkedHashMap<Integer, String> {
 
         private static final long serialVersionUID = 1L;
 
@@ -280,7 +280,6 @@ public class OneLineFormatter extends Formatter {
             return (size() > cacheSize);
         }
     }
-
 
     /*
      * Minimal implementation to indent the printing of stack traces. This
@@ -297,14 +296,5 @@ public class OneLineFormatter extends Formatter {
             super.print('\t');
             super.println(x);
         }
-    }
-
-
-    private static enum MillisHandling {
-        NONE,
-        APPEND,
-        REPLACE_S,
-        REPLACE_SS,
-        REPLACE_SSS,
     }
 }

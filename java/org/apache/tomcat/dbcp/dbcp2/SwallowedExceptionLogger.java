@@ -32,8 +32,7 @@ public class SwallowedExceptionLogger implements SwallowedExceptionListener {
     /**
      * Create a SwallowedExceptionLogger with the given logger. By default, expired connection logging is turned on.
      *
-     * @param log
-     *            logger
+     * @param log logger
      */
     public SwallowedExceptionLogger(final Log log) {
         this(log, true);
@@ -42,10 +41,8 @@ public class SwallowedExceptionLogger implements SwallowedExceptionListener {
     /**
      * Create a SwallowedExceptionLogger with the given logger and expired connection logging property.
      *
-     * @param log
-     *            logger
-     * @param logExpiredConnections
-     *            false suppresses logging of expired connection events
+     * @param log                   logger
+     * @param logExpiredConnections false suppresses logging of expired connection events
      */
     public SwallowedExceptionLogger(final Log log, final boolean logExpiredConnections) {
         this.log = log;

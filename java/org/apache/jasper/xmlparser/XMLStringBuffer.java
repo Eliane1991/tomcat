@@ -43,12 +43,11 @@ package org.apache.jasper.xmlparser;
  *
  * @author Andy Clark, IBM
  * @author Eric Ye, IBM
- *
  * @deprecated Will be removed in Tomcat 9.0.x onwards
  */
 @Deprecated
 public class XMLStringBuffer
-    extends XMLString {
+        extends XMLString {
 
     //
     // Constants
@@ -72,6 +71,7 @@ public class XMLStringBuffer
 
     /**
      * Build a string buffer with the specified size.
+     *
      * @param size The backing array size
      */
     public XMLStringBuffer(int size) {
@@ -98,12 +98,12 @@ public class XMLStringBuffer
      */
     public void append(char c) {
         if (this.length + 1 > this.ch.length) {
-                    int newLength = this.ch.length*2;
-                    if (newLength < this.ch.length + DEFAULT_SIZE)
-                        newLength = this.ch.length + DEFAULT_SIZE;
-                    char[] newch = new char[newLength];
-                    System.arraycopy(this.ch, 0, newch, 0, this.length);
-                    this.ch = newch;
+            int newLength = this.ch.length * 2;
+            if (newLength < this.ch.length + DEFAULT_SIZE)
+                newLength = this.ch.length + DEFAULT_SIZE;
+            char[] newch = new char[newLength];
+            System.arraycopy(this.ch, 0, newch, 0, this.length);
+            this.ch = newch;
         }
         this.ch[this.length] = c;
         this.length++;
@@ -117,7 +117,7 @@ public class XMLStringBuffer
     public void append(String s) {
         int length = s.length();
         if (this.length + length > this.ch.length) {
-            int newLength = this.ch.length*2;
+            int newLength = this.ch.length * 2;
             if (newLength < this.length + length + DEFAULT_SIZE)
                 newLength = this.ch.length + length + DEFAULT_SIZE;
             char[] newch = new char[newLength];
@@ -131,7 +131,7 @@ public class XMLStringBuffer
     /**
      * Append characters.
      *
-     * @param ch The character array
+     * @param ch     The character array
      * @param offset The offset
      * @param length The length
      */

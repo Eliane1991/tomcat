@@ -48,12 +48,10 @@ public class UnavailableException extends ServletException {
     private final int seconds; // unavailability estimate
 
     /**
-     * @param servlet
-     *            the <code>Servlet</code> instance that is unavailable
-     * @param msg
-     *            a <code>String</code> specifying the descriptive message
+     * @param servlet the <code>Servlet</code> instance that is unavailable
+     * @param msg     a <code>String</code> specifying the descriptive message
      * @deprecated As of Java Servlet API 2.2, use
-     *             {@link #UnavailableException(String)} instead.
+     * {@link #UnavailableException(String)} instead.
      */
     @SuppressWarnings("dep-ann")
     // Spec API does not use @Deprecated
@@ -65,17 +63,14 @@ public class UnavailableException extends ServletException {
     }
 
     /**
-     * @param seconds
-     *            an integer specifying the number of seconds the servlet
-     *            expects to be unavailable; if zero or negative, indicates that
-     *            the servlet can't make an estimate
-     * @param servlet
-     *            the <code>Servlet</code> that is unavailable
-     * @param msg
-     *            a <code>String</code> specifying the descriptive message,
-     *            which can be written to a log file or displayed for the user.
+     * @param seconds an integer specifying the number of seconds the servlet
+     *                expects to be unavailable; if zero or negative, indicates that
+     *                the servlet can't make an estimate
+     * @param servlet the <code>Servlet</code> that is unavailable
+     * @param msg     a <code>String</code> specifying the descriptive message,
+     *                which can be written to a log file or displayed for the user.
      * @deprecated As of Java Servlet API 2.2, use
-     *             {@link #UnavailableException(String, int)} instead.
+     * {@link #UnavailableException(String, int)} instead.
      */
     @SuppressWarnings("dep-ann")
     // Spec API does not use @Deprecated
@@ -93,8 +88,7 @@ public class UnavailableException extends ServletException {
      * Constructs a new exception with a descriptive message indicating that the
      * servlet is permanently unavailable.
      *
-     * @param msg
-     *            a <code>String</code> specifying the descriptive message
+     * @param msg a <code>String</code> specifying the descriptive message
      */
     public UnavailableException(String msg) {
         super(msg);
@@ -114,13 +108,11 @@ public class UnavailableException extends ServletException {
      * be indicated with a negative or zero value for the <code>seconds</code>
      * argument.
      *
-     * @param msg
-     *            a <code>String</code> specifying the descriptive message,
-     *            which can be written to a log file or displayed for the user.
-     * @param seconds
-     *            an integer specifying the number of seconds the servlet
-     *            expects to be unavailable; if zero or negative, indicates that
-     *            the servlet can't make an estimate
+     * @param msg     a <code>String</code> specifying the descriptive message,
+     *                which can be written to a log file or displayed for the user.
+     * @param seconds an integer specifying the number of seconds the servlet
+     *                expects to be unavailable; if zero or negative, indicates that
+     *                the servlet can't make an estimate
      */
     public UnavailableException(String msg, int seconds) {
         super(msg);
@@ -139,8 +131,8 @@ public class UnavailableException extends ServletException {
      * the system administrator must take some corrective action.
      *
      * @return <code>true</code> if the servlet is permanently unavailable;
-     *         <code>false</code> if the servlet is available or temporarily
-     *         unavailable
+     * <code>false</code> if the servlet is available or temporarily
+     * unavailable
      */
     public boolean isPermanent() {
         return permanent;
@@ -150,7 +142,7 @@ public class UnavailableException extends ServletException {
      * Returns the servlet that is reporting its unavailability.
      *
      * @return the <code>Servlet</code> object that is throwing the
-     *         <code>UnavailableException</code>
+     * <code>UnavailableException</code>
      * @deprecated As of Java Servlet API 2.2, with no replacement.
      */
     @SuppressWarnings("dep-ann")
@@ -169,8 +161,8 @@ public class UnavailableException extends ServletException {
      * exception was first reported.
      *
      * @return an integer specifying the number of seconds the servlet will be
-     *         temporarily unavailable, or a negative number if the servlet is
-     *         permanently unavailable or cannot make an estimate
+     * temporarily unavailable, or a negative number if the servlet is
+     * permanently unavailable or cannot make an estimate
      */
     public int getUnavailableSeconds() {
         return permanent ? -1 : seconds;

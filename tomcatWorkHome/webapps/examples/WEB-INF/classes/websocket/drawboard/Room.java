@@ -32,63 +32,11 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * A Room represents a drawboard where a number of
  * users participate.<br><br>
- *
+ * <p>
  * Note: Instance methods should only be invoked by calling
  * {@link #invokeAndWait(Runnable)} to ensure access is correctly synchronized.
  */
 public final class Room {
-
-    /**
-     * Specifies the type of a room message that is sent to a client.<br>
-     * Note: Currently we are sending simple string messages - for production
-     * apps, a JSON lib should be used for object-level messages.<br><br>
-     *
-     * The number (single char) will be prefixed to the string when sending
-     * the message.
-     */
-    public enum MessageType {
-        /**
-         * '0': Error: contains error message.
-         */
-        ERROR('0'),
-        /**
-         * '1': DrawMessage: contains serialized DrawMessage(s) prefixed
-         *      with the current Player's {@link Player#lastReceivedMessageId}
-         *      and ",".<br>
-         *      Multiple draw messages are concatenated with "|" as separator.
-         */
-        DRAW_MESSAGE('1'),
-        /**
-         * '2': ImageMessage: Contains number of current players in this room.
-         *      After this message a Binary Websocket message will follow,
-         *      containing the current Room image as PNG.<br>
-         *      This is the first message that a Room sends to a new Player.
-         */
-        IMAGE_MESSAGE('2'),
-        /**
-         * '3': PlayerChanged: contains "+" or "-" which indicate a player
-         *      was added or removed to this Room.
-         */
-        PLAYER_CHANGED('3');
-
-        private final char flag;
-
-        private MessageType(char flag) {
-            this.flag = flag;
-        }
-
-    }
-
-
-    /**
-     * The lock used to synchronize access to this Room.
-     */
-    private final ReentrantLock roomLock = new ReentrantLock();
-
-    /**
-     * Indicates if this room has already been shutdown.
-     */
-    private volatile boolean closed = false;
 
     /**
      * If <code>true</code>, outgoing DrawMessages will be buffered until the
@@ -96,24 +44,21 @@ public final class Room {
      * immediately.
      */
     private static final boolean BUFFER_DRAW_MESSAGES = true;
-
+    private static final int TIMER_DELAY = 30;
+    /**
+     * The maximum number of players that can join this room.
+     */
+    private static final int MAX_PLAYER_COUNT = 100;
+    /**
+     * The lock used to synchronize access to this Room.
+     */
+    private final ReentrantLock roomLock = new ReentrantLock();
     /**
      * A timer which sends buffered drawmessages to the client at once
      * at a regular interval, to avoid sending a lot of very small
      * messages which would cause TCP overhead and high CPU usage.
      */
     private final Timer drawmessageBroadcastTimer = new Timer();
-
-    private static final int TIMER_DELAY = 30;
-
-    /**
-     * The current active broadcast timer task. If null, then no Broadcast task is scheduled.
-     * The Task will be scheduled if the first player enters the Room, and
-     * cancelled if the last player exits the Room, to avoid unnecessary timer executions.
-     */
-    private TimerTask activeBroadcastTimerTask;
-
-
     /**
      * The current image of the room drawboard. DrawMessages that are
      * received from Players will be drawn onto this image.
@@ -121,18 +66,26 @@ public final class Room {
     private final BufferedImage roomImage =
             new BufferedImage(900, 600, BufferedImage.TYPE_INT_RGB);
     private final Graphics2D roomGraphics = roomImage.createGraphics();
-
-
-    /**
-     * The maximum number of players that can join this room.
-     */
-    private static final int MAX_PLAYER_COUNT = 100;
-
     /**
      * List of all currently joined players.
      */
     private final List<Player> players = new ArrayList<>();
-
+    /**
+     * Indicates if this room has already been shutdown.
+     */
+    private volatile boolean closed = false;
+    /**
+     * The current active broadcast timer task. If null, then no Broadcast task is scheduled.
+     * The Task will be scheduled if the first player enters the Room, and
+     * cancelled if the last player exits the Room, to avoid unnecessary timer executions.
+     */
+    private TimerTask activeBroadcastTimerTask;
+    /**
+     * A list of cached {@link Runnable}s to prevent recursive invocation of Runnables
+     * by one thread. This variable is only used by one thread at a time and then
+     * set to <code>null</code>.
+     */
+    private List<Runnable> cachedRunnables = null;
 
 
     public Room() {
@@ -163,7 +116,6 @@ public final class Room {
      * Creates a Player from the given Client and adds it to this room.
      *
      * @param client the client
-     *
      * @return The newly created player
      */
     public Player createAndAddPlayer(Client client) {
@@ -208,8 +160,8 @@ public final class Room {
     }
 
     /**
-     * @see Player#removeFromRoom()
      * @param p
+     * @see Player#removeFromRoom()
      */
     private void internalRemovePlayer(Player p) {
         boolean removed = players.remove(p);
@@ -232,13 +184,13 @@ public final class Room {
     }
 
     /**
-     * @see Player#handleDrawMessage(DrawMessage, long)
      * @param p
      * @param msg
      * @param msgId
+     * @see Player#handleDrawMessage(DrawMessage, long)
      */
     private void internalHandleDrawMessage(Player p, DrawMessage msg,
-            long msgId) {
+                                           long msgId) {
         p.setLastReceivedMessageId(msgId);
 
         // Draw the RoomMessage onto our Room Image.
@@ -255,6 +207,7 @@ public final class Room {
      * {@link #broadcastDrawMessage(DrawMessage)}
      * as this method will buffer them and prefix them with the correct
      * last received Message ID.
+     *
      * @param type
      * @param content
      */
@@ -270,6 +223,7 @@ public final class Room {
      * and the {@link #drawmessageBroadcastTimer} will broadcast them
      * at a regular interval, prefixing them with the player's current
      * {@link Player#lastReceivedMessageId}.
+     *
      * @param msg
      */
     private void broadcastDrawMessage(DrawMessage msg) {
@@ -322,13 +276,6 @@ public final class Room {
     }
 
     /**
-     * A list of cached {@link Runnable}s to prevent recursive invocation of Runnables
-     * by one thread. This variable is only used by one thread at a time and then
-     * set to <code>null</code>.
-     */
-    private List<Runnable> cachedRunnables = null;
-
-    /**
      * Submits the given Runnable to the Room Executor and waits until it
      * has been executed. Currently, this simply means that the Runnable
      * will be run directly inside of a synchronized() block.<br>
@@ -339,7 +286,7 @@ public final class Room {
      *
      * @param task The task to be executed
      */
-    public void invokeAndWait(Runnable task)  {
+    public void invokeAndWait(Runnable task) {
 
         // Check if the current thread already holds a lock on this room.
         // If yes, then we must not directly execute the Runnable but instead
@@ -395,42 +342,79 @@ public final class Room {
         });
     }
 
+    /**
+     * Specifies the type of a room message that is sent to a client.<br>
+     * Note: Currently we are sending simple string messages - for production
+     * apps, a JSON lib should be used for object-level messages.<br><br>
+     * <p>
+     * The number (single char) will be prefixed to the string when sending
+     * the message.
+     */
+    public enum MessageType {
+        /**
+         * '0': Error: contains error message.
+         */
+        ERROR('0'),
+        /**
+         * '1': DrawMessage: contains serialized DrawMessage(s) prefixed
+         * with the current Player's {@link Player#lastReceivedMessageId}
+         * and ",".<br>
+         * Multiple draw messages are concatenated with "|" as separator.
+         */
+        DRAW_MESSAGE('1'),
+        /**
+         * '2': ImageMessage: Contains number of current players in this room.
+         * After this message a Binary Websocket message will follow,
+         * containing the current Room image as PNG.<br>
+         * This is the first message that a Room sends to a new Player.
+         */
+        IMAGE_MESSAGE('2'),
+        /**
+         * '3': PlayerChanged: contains "+" or "-" which indicate a player
+         * was added or removed to this Room.
+         */
+        PLAYER_CHANGED('3');
+
+        private final char flag;
+
+        private MessageType(char flag) {
+            this.flag = flag;
+        }
+
+    }
 
     /**
      * A Player participates in a Room. It is the interface between the
      * {@link Room} and the {@link Client}.<br><br>
-     *
+     * <p>
      * Note: This means a player object is actually a join between Room and
      * Client.
      */
     public static final class Player {
 
+        private final Client client;
+        /**
+         * Buffered DrawMessages that will be sent by a Timer.
+         */
+        private final List<DrawMessage> bufferedDrawMessages =
+                new ArrayList<>();
         /**
          * The room to which this player belongs.
          */
         private Room room;
-
         /**
          * The room buffers the last draw message ID that was received from
          * this player.
          */
         private long lastReceivedMessageId = 0;
 
-        private final Client client;
-
-        /**
-         * Buffered DrawMessages that will be sent by a Timer.
-         */
-        private final List<DrawMessage> bufferedDrawMessages =
-                new ArrayList<>();
-
-        private List<DrawMessage> getBufferedDrawMessages() {
-            return bufferedDrawMessages;
-        }
-
         private Player(Room room, Client client) {
             this.room = room;
             this.client = client;
+        }
+
+        private List<DrawMessage> getBufferedDrawMessages() {
+            return bufferedDrawMessages;
         }
 
         public Room getRoom() {
@@ -456,6 +440,7 @@ public final class Room {
         private long getLastReceivedMessageId() {
             return lastReceivedMessageId;
         }
+
         private void setLastReceivedMessageId(long value) {
             lastReceivedMessageId = value;
         }
@@ -475,6 +460,7 @@ public final class Room {
 
         /**
          * Sends the given room message.
+         *
          * @param type
          * @param content
          */

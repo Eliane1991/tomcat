@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package compressionFilters;
 
 import javax.servlet.*;
@@ -72,65 +72,65 @@ public class CompressionFilter implements Filter {
 
         if (filterConfig != null) {
             String value = filterConfig.getInitParameter("debug");
-            if (value!=null) {
+            if (value != null) {
                 debug = Integer.parseInt(value);
-        }
+            }
 
             String str = filterConfig.getInitParameter("compressionThreshold");
-        if (str != null) {
-            compressionThreshold = Integer.parseInt(str);
-            if (compressionThreshold != 0 && compressionThreshold < MIN_THRESHOLD) {
-                if (debug > 0) {
-                    System.out.println("compressionThreshold should be either 0 - no compression or >= " + MIN_THRESHOLD);
-                    System.out.println("compressionThreshold set to " + MIN_THRESHOLD);
+            if (str != null) {
+                compressionThreshold = Integer.parseInt(str);
+                if (compressionThreshold != 0 && compressionThreshold < MIN_THRESHOLD) {
+                    if (debug > 0) {
+                        System.out.println("compressionThreshold should be either 0 - no compression or >= " + MIN_THRESHOLD);
+                        System.out.println("compressionThreshold set to " + MIN_THRESHOLD);
+                    }
+                    compressionThreshold = MIN_THRESHOLD;
                 }
-                compressionThreshold = MIN_THRESHOLD;
             }
-        }
 
             str = filterConfig.getInitParameter("compressionBuffer");
-        if (str != null) {
-            compressionBuffer = Integer.parseInt(str);
-            if (compressionBuffer < MIN_BUFFER) {
-                if (debug > 0) {
-                    System.out.println("compressionBuffer should be >= " + MIN_BUFFER);
-                    System.out.println("compressionBuffer set to " + MIN_BUFFER);
+            if (str != null) {
+                compressionBuffer = Integer.parseInt(str);
+                if (compressionBuffer < MIN_BUFFER) {
+                    if (debug > 0) {
+                        System.out.println("compressionBuffer should be >= " + MIN_BUFFER);
+                        System.out.println("compressionBuffer set to " + MIN_BUFFER);
+                    }
+                    compressionBuffer = MIN_BUFFER;
                 }
-                compressionBuffer = MIN_BUFFER;
             }
-        }
 
             str = filterConfig.getInitParameter("compressionMimeTypes");
-        if (str != null) {
-            List<String> values = new ArrayList<>();
-            StringTokenizer st = new StringTokenizer(str, ",");
+            if (str != null) {
+                List<String> values = new ArrayList<>();
+                StringTokenizer st = new StringTokenizer(str, ",");
 
-            while (st.hasMoreTokens()) {
-                String token = st.nextToken().trim();
-                if (token.length() > 0) {
-                    values.add(token);
+                while (st.hasMoreTokens()) {
+                    String token = st.nextToken().trim();
+                    if (token.length() > 0) {
+                        values.add(token);
+                    }
+                }
+
+                if (values.size() > 0) {
+                    compressionMimeTypes = values.toArray(
+                            new String[0]);
+                } else {
+                    compressionMimeTypes = null;
+                }
+
+                if (debug > 0) {
+                    System.out.println("compressionMimeTypes set to " +
+                            Arrays.toString(compressionMimeTypes));
                 }
             }
-
-            if (values.size() > 0) {
-                compressionMimeTypes = values.toArray(
-                        new String[0]);
-            } else {
-                compressionMimeTypes = null;
-            }
-
-            if (debug > 0) {
-                System.out.println("compressionMimeTypes set to " +
-                        Arrays.toString(compressionMimeTypes));
-            }
         }
-    }
 
     }
 
     /**
-    * Take this filter out of service.
-    */
+     * Take this filter out of service.
+     */
     @Override
     public void destroy() {
     }
@@ -152,7 +152,7 @@ public class CompressionFilter implements Filter {
      * (<code>chain.doFilter()</code>), <br>
      **/
     @Override
-    public void doFilter (ServletRequest request, ServletResponse response, FilterChain chain )
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         if (debug > 0) {
@@ -170,11 +170,11 @@ public class CompressionFilter implements Filter {
         boolean supportCompression = false;
         if (request instanceof HttpServletRequest) {
             if (debug > 1) {
-                System.out.println("requestURI = " + ((HttpServletRequest)request).getRequestURI());
+                System.out.println("requestURI = " + ((HttpServletRequest) request).getRequestURI());
             }
 
             // Are we allowed to compress ?
-            String s = ((HttpServletRequest)request).getParameter("gzip");
+            String s = ((HttpServletRequest) request).getParameter("gzip");
             if ("false".equals(s)) {
                 if (debug > 0) {
                     System.out.println("got parameter gzip=false --> don't compress, just chain filter");
@@ -184,7 +184,7 @@ public class CompressionFilter implements Filter {
             }
 
             Enumeration<String> e =
-                ((HttpServletRequest)request).getHeaders("Accept-Encoding");
+                    ((HttpServletRequest) request).getHeaders("Accept-Encoding");
             while (e.hasMoreElements()) {
                 String name = e.nextElement();
                 if (name.indexOf("gzip") != -1) {
@@ -203,7 +203,7 @@ public class CompressionFilter implements Filter {
         if (supportCompression) {
             if (response instanceof HttpServletResponse) {
                 CompressionServletResponseWrapper wrappedResponse =
-                    new CompressionServletResponseWrapper((HttpServletResponse)response);
+                        new CompressionServletResponseWrapper((HttpServletResponse) response);
                 wrappedResponse.setDebugLevel(debug);
                 wrappedResponse.setCompressionThreshold(compressionThreshold);
                 wrappedResponse.setCompressionBuffer(compressionBuffer);

@@ -44,7 +44,7 @@ public class CredentialHandlerSF extends StoreFactoryBase {
                             elementDesc.getTag(), aElement));
                 getStoreAppender().printIndent(aWriter, indent + 2);
                 getStoreAppender().printOpenTag(aWriter, indent + 2, aElement,
-                            elementDesc);
+                        elementDesc);
                 storeChildren(aWriter, indent + 2, aElement, elementDesc);
                 getStoreAppender().printIndent(aWriter, indent + 2);
                 getStoreAppender().printCloseTag(aWriter, elementDesc);
@@ -61,19 +61,14 @@ public class CredentialHandlerSF extends StoreFactoryBase {
     /**
      * Store the specified CredentialHandler properties and child (CredentialHandler)
      *
-     * @param aWriter
-     *            PrintWriter to which we are storing
-     * @param indent
-     *            Number of spaces to indent this element
-     * @param aCredentialHandler
-     *            CredentialHandler whose properties are being stored
-     *
-     * @exception Exception
-     *                if an exception occurs while storing
+     * @param aWriter            PrintWriter to which we are storing
+     * @param indent             Number of spaces to indent this element
+     * @param aCredentialHandler CredentialHandler whose properties are being stored
+     * @throws Exception if an exception occurs while storing
      */
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aCredentialHandler,
-            StoreDescription parentDesc) throws Exception {
+                              StoreDescription parentDesc) throws Exception {
         if (aCredentialHandler instanceof NestedCredentialHandler) {
             NestedCredentialHandler nestedCredentialHandler = (NestedCredentialHandler) aCredentialHandler;
 

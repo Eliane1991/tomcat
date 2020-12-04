@@ -21,14 +21,13 @@ import javax.servlet.annotation.ServletSecurity;
 import java.util.*;
 
 /**
- *
  * @since Servlet 3.0
  * TODO SERVLET3 - Add comments
  */
 public class ServletSecurityElement extends HttpConstraintElement {
 
-    private final Map<String,HttpMethodConstraintElement> methodConstraints =
-        new HashMap<>();
+    private final Map<String, HttpMethodConstraintElement> methodConstraints =
+            new HashMap<>();
 
     /**
      * Use default HttpConstraint.
@@ -39,18 +38,20 @@ public class ServletSecurityElement extends HttpConstraintElement {
 
     /**
      * Use specified HttpConstraintElement.
+     *
      * @param httpConstraintElement The constraint
      */
     public ServletSecurityElement(HttpConstraintElement httpConstraintElement) {
-        this (httpConstraintElement, null);
+        this(httpConstraintElement, null);
     }
 
     /**
      * Use specific constraints for specified methods and default
      * HttpConstraintElement for all other methods.
+     *
      * @param httpMethodConstraints Method constraints
      * @throws IllegalArgumentException if a method name is specified more than
-     * once
+     *                                  once
      */
     public ServletSecurityElement(
             Collection<HttpMethodConstraintElement> httpMethodConstraints) {
@@ -62,12 +63,13 @@ public class ServletSecurityElement extends HttpConstraintElement {
     /**
      * Use specified HttpConstraintElement as default and specific constraints
      * for specified methods.
+     *
      * @param httpConstraintElement Default constraint
      * @param httpMethodConstraints Method constraints
      * @throws IllegalArgumentException if a method name is specified more than
      */
     public ServletSecurityElement(HttpConstraintElement httpConstraintElement,
-            Collection<HttpMethodConstraintElement> httpMethodConstraints) {
+                                  Collection<HttpMethodConstraintElement> httpMethodConstraints) {
         super(httpConstraintElement.getEmptyRoleSemantic(),
                 httpConstraintElement.getTransportGuarantee(),
                 httpConstraintElement.getRolesAllowed());
@@ -76,6 +78,7 @@ public class ServletSecurityElement extends HttpConstraintElement {
 
     /**
      * Create from an annotation.
+     *
      * @param annotation Annotation to use as the basis for the new instance
      * @throws IllegalArgumentException if a method name is specified more than
      */

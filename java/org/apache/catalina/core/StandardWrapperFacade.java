@@ -30,14 +30,28 @@ import java.util.Enumeration;
  * @author Remy Maucherat
  */
 public final class StandardWrapperFacade
-    implements ServletConfig {
+        implements ServletConfig {
 
 
     // ----------------------------------------------------------- Constructors
 
 
     /**
+     * Wrapped config.
+     */
+    private final ServletConfig config;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * Wrapped context (facade).
+     */
+    private ServletContext context = null;
+
+
+    /**
      * Create a new facade around a StandardWrapper.
+     *
      * @param config the associated wrapper
      */
     public StandardWrapperFacade(StandardWrapper config) {
@@ -48,23 +62,7 @@ public final class StandardWrapperFacade
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Wrapped config.
-     */
-    private final ServletConfig config;
-
-
-    /**
-     * Wrapped context (facade).
-     */
-    private ServletContext context = null;
-
-
     // -------------------------------------------------- ServletConfig Methods
-
 
     @Override
     public String getServletName() {

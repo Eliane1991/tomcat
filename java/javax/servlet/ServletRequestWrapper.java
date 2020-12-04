@@ -29,13 +29,13 @@ import java.util.ResourceBundle;
  * class implements the Wrapper or Decorator pattern. Methods default to calling
  * through to the wrapped request object.
  *
- * @since Servlet 2.3
  * @see javax.servlet.ServletRequest
+ * @since Servlet 2.3
  */
 public class ServletRequestWrapper implements ServletRequest {
     private static final String LSTRING_FILE = "javax.servlet.LocalStrings";
     private static final ResourceBundle lStrings =
-        ResourceBundle.getBundle(LSTRING_FILE);
+            ResourceBundle.getBundle(LSTRING_FILE);
 
     private ServletRequest request;
 
@@ -43,7 +43,6 @@ public class ServletRequestWrapper implements ServletRequest {
      * Creates a ServletRequest adaptor wrapping the given request object.
      *
      * @param request The request to wrap
-     *
      * @throws IllegalArgumentException if the request is null
      */
     public ServletRequestWrapper(ServletRequest request) {
@@ -55,6 +54,7 @@ public class ServletRequestWrapper implements ServletRequest {
 
     /**
      * Get the wrapped request.
+     *
      * @return the wrapped request object
      */
     public ServletRequest getRequest() {
@@ -63,8 +63,8 @@ public class ServletRequestWrapper implements ServletRequest {
 
     /**
      * Sets the request object being wrapped.
-     * @param request The new wrapped request.
      *
+     * @param request The new wrapped request.
      * @throws IllegalArgumentException if the request is null.
      */
     public void setRequest(ServletRequest request) {
@@ -375,8 +375,8 @@ public class ServletRequestWrapper implements ServletRequest {
      * wrapped request object.
      *
      * @throws IllegalStateException If asynchronous processing is not supported
-     *         for this request or if the request is already in asynchronous
-     *         mode
+     *                               for this request or if the request is already in asynchronous
+     *                               mode
      * @since Servlet 3.0
      */
     @Override
@@ -388,18 +388,18 @@ public class ServletRequestWrapper implements ServletRequest {
      * The default behavior of this method is to return startAsync(Runnable) on
      * the wrapped request object.
      *
-     * @param servletRequest    The ServletRequest with which to initialise the
-     *                          asynchronous context
-     * @param servletResponse   The ServletResponse with which to initialise the
-     *                          asynchronous context
+     * @param servletRequest  The ServletRequest with which to initialise the
+     *                        asynchronous context
+     * @param servletResponse The ServletResponse with which to initialise the
+     *                        asynchronous context
      * @throws IllegalStateException If asynchronous processing is not supported
-     *         for this request or if the request is already in asynchronous
-     *         mode
+     *                               for this request or if the request is already in asynchronous
+     *                               mode
      * @since Servlet 3.0
      */
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest,
-            ServletResponse servletResponse) throws IllegalStateException {
+                                   ServletResponse servletResponse) throws IllegalStateException {
         return request.startAsync(servletRequest, servletResponse);
     }
 
@@ -438,10 +438,11 @@ public class ServletRequestWrapper implements ServletRequest {
 
     /**
      * TODO SERVLET3 - Add comments
+     *
      * @param wrapped The request to compare to the wrapped request
      * @return <code>true</code> if the request wrapped by this wrapper (or
-     *         series of wrappers) is the same as the supplied request,
-     *         otherwise <code>false</code>
+     * series of wrappers) is the same as the supplied request,
+     * otherwise <code>false</code>
      * @since Servlet 3.0
      */
     public boolean isWrapperFor(ServletRequest wrapped) {
@@ -456,11 +457,12 @@ public class ServletRequestWrapper implements ServletRequest {
 
     /**
      * TODO SERVLET3 - Add comments
+     *
      * @param wrappedType The class to compare to the class of the wrapped
      *                    request
      * @return <code>true</code> if the request wrapped by this wrapper (or
-     *         series of wrappers) is the same type as the supplied type,
-     *         otherwise <code>false</code>
+     * series of wrappers) is the same type as the supplied type,
+     * otherwise <code>false</code>
      * @since Servlet 3.0
      */
     public boolean isWrapperFor(Class<?> wrappedType) {

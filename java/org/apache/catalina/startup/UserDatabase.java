@@ -52,9 +52,8 @@ public interface UserDatabase {
 
 
     /**
-     * @return an absolute pathname to the home directory for the specified user.
-     *
      * @param user User for which a home directory should be retrieved
+     * @return an absolute pathname to the home directory for the specified user.
      */
     public String getHome(String user);
 

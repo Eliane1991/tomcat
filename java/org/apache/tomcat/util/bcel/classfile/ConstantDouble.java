@@ -26,7 +26,7 @@ import java.io.IOException;
  * This class is derived from the abstract  {@link Constant}
  * and represents a reference to a Double object.
  *
- * @see     Constant
+ * @see Constant
  */
 public final class ConstantDouble extends Constant {
 

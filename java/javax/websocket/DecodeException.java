@@ -31,7 +31,7 @@ public class DecodeException extends Exception {
     }
 
     public DecodeException(String encodedString, String message,
-            Throwable cause) {
+                           Throwable cause) {
         super(message, cause);
         this.encodedString = encodedString;
     }

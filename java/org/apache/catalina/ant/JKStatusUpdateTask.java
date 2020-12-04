@@ -75,8 +75,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param internalid
-     *            The internalid to set.
+     * @param internalid The internalid to set.
      */
     public void setInternalid(int internalid) {
         this.internalid = internalid;
@@ -90,8 +89,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param lbForceSession
-     *            The lbForceSession to set.
+     * @param lbForceSession The lbForceSession to set.
      */
     public void setLbForceSession(Boolean lbForceSession) {
         this.lbForceSession = lbForceSession;
@@ -105,8 +103,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param lbRecovertime
-     *            The lbRecovertime to set.
+     * @param lbRecovertime The lbRecovertime to set.
      */
     public void setLbRecovertime(Integer lbRecovertime) {
         this.lbRecovertime = lbRecovertime;
@@ -120,8 +117,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param lbRetries
-     *            The lbRetries to set.
+     * @param lbRetries The lbRetries to set.
      */
     public void setLbRetries(Integer lbRetries) {
         this.lbRetries = lbRetries;
@@ -135,8 +131,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param lbStickySession
-     *            The lbStickySession to set.
+     * @param lbStickySession The lbStickySession to set.
      */
     public void setLbStickySession(Boolean lbStickySession) {
         this.lbStickySession = lbStickySession;
@@ -150,8 +145,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param worker
-     *            The worker to set.
+     * @param worker The worker to set.
      */
     public void setWorker(String worker) {
         this.worker = worker;
@@ -165,8 +159,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerType
-     *            The workerType to set.
+     * @param workerType The workerType to set.
      */
     public void setWorkerType(String workerType) {
         this.workerType = workerType;
@@ -180,8 +173,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerLb
-     *            The workerLb to set.
+     * @param workerLb The workerLb to set.
      */
     public void setWorkerLb(String workerLb) {
         this.workerLb = workerLb;
@@ -195,8 +187,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerClusterDomain
-     *            The workerClusterDomain to set.
+     * @param workerClusterDomain The workerClusterDomain to set.
      */
     public void setWorkerClusterDomain(String workerClusterDomain) {
         this.workerClusterDomain = workerClusterDomain;
@@ -210,8 +201,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerDisabled
-     *            The workerDisabled to set.
+     * @param workerDisabled The workerDisabled to set.
      */
     public void setWorkerDisabled(Boolean workerDisabled) {
         this.workerDisabled = workerDisabled;
@@ -239,8 +229,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerLoadFactor
-     *            The workerLoadFactor to set.
+     * @param workerLoadFactor The workerLoadFactor to set.
      */
     public void setWorkerLoadFactor(Integer workerLoadFactor) {
         this.workerLoadFactor = workerLoadFactor;
@@ -254,8 +243,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
-     * @param workerRedirect
-     *            The workerRedirect to set.
+     * @param workerRedirect The workerRedirect to set.
      */
     public void setWorkerRedirect(String workerRedirect) {
         this.workerRedirect = workerRedirect;
@@ -264,8 +252,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     /**
      * Execute the requested operation.
      *
-     * @exception BuildException
-     *                if an error occurs
+     * @throws BuildException if an error occurs
      */
     @Override
     public void execute() throws BuildException {
@@ -388,7 +375,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
                 throw new BuildException(
                         "Must specify at a node worker 'workerStopped' attribute");
             }
-            if (workerLoadFactor == null ) {
+            if (workerLoadFactor == null) {
                 throw new BuildException(
                         "Must specify at a node worker 'workerLoadFactor' attribute");
             }

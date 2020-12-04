@@ -25,8 +25,8 @@ import java.lang.reflect.Method;
  */
 public class FunctionMapperFactory extends FunctionMapper {
 
-    protected FunctionMapperImpl memento = null;
     protected final FunctionMapper target;
+    protected FunctionMapperImpl memento = null;
 
     public FunctionMapperFactory(FunctionMapper mapper) {
         if (mapper == null) {

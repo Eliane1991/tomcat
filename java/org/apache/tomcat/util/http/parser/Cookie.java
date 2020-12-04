@@ -101,7 +101,7 @@ public class Cookie {
 
 
     public static void parseCookie(byte[] bytes, int offset, int len,
-            ServerCookies serverCookies) {
+                                   ServerCookies serverCookies) {
 
         // ByteBuffer is used throughout this parser as it allows the byte[]
         // and position information to be easily passed between parsing methods
@@ -245,7 +245,7 @@ public class Cookie {
 
 
     private static void parseCookieRfc2109(ByteBuffer bb, ServerCookies serverCookies,
-            int version) {
+                                           int version) {
 
         boolean moreToProcess = true;
 
@@ -360,10 +360,10 @@ public class Cookie {
                 sc.getName().setBytes(name.array(), name.position(), name.remaining());
                 sc.getValue().setBytes(value.array(), value.position(), value.remaining());
                 if (domain != null) {
-                    sc.getDomain().setBytes(domain.array(),  domain.position(),  domain.remaining());
+                    sc.getDomain().setBytes(domain.array(), domain.position(), domain.remaining());
                 }
                 if (path != null) {
-                    sc.getPath().setBytes(path.array(),  path.position(),  path.remaining());
+                    sc.getPath().setBytes(path.array(), path.position(), path.remaining());
                 }
             }
         }
@@ -378,7 +378,7 @@ public class Cookie {
 
 
     private static void skipLWS(ByteBuffer bb) {
-        while(bb.hasRemaining()) {
+        while (bb.hasRemaining()) {
             byte b = bb.get();
             if (b != TAB_BYTE && b != SPACE_BYTE) {
                 bb.rewind();
@@ -389,7 +389,7 @@ public class Cookie {
 
 
     private static void skipUntilSemiColon(ByteBuffer bb) {
-        while(bb.hasRemaining()) {
+        while (bb.hasRemaining()) {
             if (bb.get() == SEMICOLON_BYTE) {
                 break;
             }
@@ -398,7 +398,7 @@ public class Cookie {
 
 
     private static void skipUntilSemiColonOrComma(ByteBuffer bb) {
-        while(bb.hasRemaining()) {
+        while (bb.hasRemaining()) {
             byte b = bb.get();
             if (b == SEMICOLON_BYTE || b == COMMA_BYTE) {
                 break;
@@ -588,7 +588,7 @@ public class Cookie {
         UserDataHelper.Mode logMode = invalidCookieLog.getNextMode();
         if (logMode != null) {
             String headerValue = new String(bb.array(), bb.position(), bb.limit() - bb.position(),
-                        StandardCharsets.UTF_8);
+                    StandardCharsets.UTF_8);
             String message = sm.getString("cookie.invalidCookieValue", headerValue);
             switch (logMode) {
                 case INFO_THEN_DEBUG:

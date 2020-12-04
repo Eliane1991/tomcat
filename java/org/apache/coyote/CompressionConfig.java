@@ -43,6 +43,40 @@ public class CompressionConfig {
     private int compressionMinSize = 2048;
     private boolean noCompressionStrongETag = true;
 
+    /**
+     * Checks if any entry in the string array starts with the specified value
+     *
+     * @param sArray the StringArray
+     * @param value  string
+     */
+    private static boolean startsWithStringArray(String sArray[], String value) {
+        if (value == null) {
+            return false;
+        }
+        for (String s : sArray) {
+            if (value.startsWith(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return compression level.
+     *
+     * @return The current compression level in string form (off/on/force)
+     */
+    public String getCompression() {
+        switch (compressionLevel) {
+            case 0:
+                return "off";
+            case 1:
+                return "on";
+            case 2:
+                return "force";
+        }
+        return "off";
+    }
 
     /**
      * Set compression level.
@@ -70,29 +104,9 @@ public class CompressionConfig {
         }
     }
 
-
-    /**
-     * Return compression level.
-     *
-     * @return The current compression level in string form (off/on/force)
-     */
-    public String getCompression() {
-        switch (compressionLevel) {
-        case 0:
-            return "off";
-        case 1:
-            return "on";
-        case 2:
-            return "force";
-        }
-        return "off";
-    }
-
-
     public int getCompressionLevel() {
         return compressionLevel;
     }
-
 
     /**
      * Obtain the String form of the regular expression that defines the user
@@ -108,12 +122,6 @@ public class CompressionConfig {
         }
     }
 
-
-    public Pattern getNoCompressionUserAgentsPattern() {
-        return noCompressionUserAgents;
-    }
-
-
     /**
      * Set no compression user agent pattern. Regular expression as supported
      * by {@link Pattern}. e.g.: <code>gorilla|desesplorer|tigrus</code>.
@@ -127,21 +135,22 @@ public class CompressionConfig {
             this.noCompressionUserAgents = null;
         } else {
             this.noCompressionUserAgents =
-                Pattern.compile(noCompressionUserAgents);
+                    Pattern.compile(noCompressionUserAgents);
         }
     }
 
+    public Pattern getNoCompressionUserAgentsPattern() {
+        return noCompressionUserAgents;
+    }
 
     public String getCompressibleMimeType() {
         return compressibleMimeType;
     }
 
-
     public void setCompressibleMimeType(String valueS) {
         compressibleMimeType = valueS;
         compressibleMimeTypes = null;
     }
-
 
     public String[] getCompressibleMimeTypes() {
         String[] result = compressibleMimeTypes;
@@ -161,11 +170,9 @@ public class CompressionConfig {
         return result;
     }
 
-
     public int getCompressionMinSize() {
         return compressionMinSize;
     }
-
 
     /**
      * Set Minimum size to trigger compression.
@@ -177,35 +184,30 @@ public class CompressionConfig {
         this.compressionMinSize = compressionMinSize;
     }
 
-
     /**
      * Determine if compression is disabled if the resource has a strong ETag.
      *
      * @return {@code true} if compression is disabled, otherwise {@code false}
-     *
      * @deprecated Will be removed in Tomcat 10 where it will be hard-coded to
-     *             {@code true}
+     * {@code true}
      */
     @Deprecated
     public boolean getNoCompressionStrongETag() {
         return noCompressionStrongETag;
     }
 
-
     /**
      * Set whether compression is disabled for resources with a strong ETag.
      *
      * @param noCompressionStrongETag {@code true} if compression is disabled,
      *                                otherwise {@code false}
-     *
      * @deprecated Will be removed in Tomcat 10 where it will be hard-coded to
-     *             {@code true}
+     * {@code true}
      */
     @Deprecated
     public void setNoCompressionStrongETag(boolean noCompressionStrongETag) {
         this.noCompressionStrongETag = noCompressionStrongETag;
     }
-
 
     /**
      * Determines if compression should be enabled for the given response and if
@@ -213,9 +215,8 @@ public class CompressionConfig {
      *
      * @param request  The request that triggered the response
      * @param response The response to consider compressing
-     *
      * @return {@code true} if compression was enabled for the given response,
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
     public boolean useCompression(Request request, Response response) {
         // Check if compression is enabled
@@ -306,7 +307,7 @@ public class CompressionConfig {
             Pattern noCompressionUserAgents = this.noCompressionUserAgents;
             if (noCompressionUserAgents != null) {
                 MessageBytes userAgentValueMB = request.getMimeHeaders().getValue("user-agent");
-                if(userAgentValueMB != null) {
+                if (userAgentValueMB != null) {
                     String userAgentValue = userAgentValueMB.toString();
                     if (noCompressionUserAgents.matcher(userAgentValue).matches()) {
                         return false;
@@ -323,24 +324,5 @@ public class CompressionConfig {
         responseHeaders.setValue("Content-Encoding").setString("gzip");
 
         return true;
-    }
-
-
-    /**
-     * Checks if any entry in the string array starts with the specified value
-     *
-     * @param sArray the StringArray
-     * @param value string
-     */
-    private static boolean startsWithStringArray(String sArray[], String value) {
-        if (value == null) {
-            return false;
-        }
-        for (String s : sArray) {
-            if (value.startsWith(s)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

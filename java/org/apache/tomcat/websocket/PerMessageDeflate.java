@@ -31,18 +31,14 @@ import java.util.zip.Inflater;
 
 public class PerMessageDeflate implements Transformation {
 
+    public static final String NAME = "permessage-deflate";
     private static final StringManager sm = StringManager.getManager(PerMessageDeflate.class);
-
     private static final String SERVER_NO_CONTEXT_TAKEOVER = "server_no_context_takeover";
     private static final String CLIENT_NO_CONTEXT_TAKEOVER = "client_no_context_takeover";
     private static final String SERVER_MAX_WINDOW_BITS = "server_max_window_bits";
     private static final String CLIENT_MAX_WINDOW_BITS = "client_max_window_bits";
-
     private static final int RSV_BITMASK = 0b100;
-    private static final byte[] EOM_BYTES = new byte[] {0, 0, -1, -1};
-
-    public static final String NAME = "permessage-deflate";
-
+    private static final byte[] EOM_BYTES = new byte[]{0, 0, -1, -1};
     private final boolean serverContextTakeover;
     private final int serverMaxWindowBits;
     private final boolean clientContextTakeover;
@@ -59,6 +55,15 @@ public class PerMessageDeflate implements Transformation {
     private volatile boolean firstCompressedFrameWritten = false;
     // Flag to track if a message is completely empty
     private volatile boolean emptyMessage = true;
+
+    private PerMessageDeflate(boolean serverContextTakeover, int serverMaxWindowBits,
+                              boolean clientContextTakeover, int clientMaxWindowBits, boolean isServer) {
+        this.serverContextTakeover = serverContextTakeover;
+        this.serverMaxWindowBits = serverMaxWindowBits;
+        this.clientContextTakeover = clientContextTakeover;
+        this.clientMaxWindowBits = clientMaxWindowBits;
+        this.isServer = isServer;
+    }
 
     static PerMessageDeflate negotiate(List<List<Parameter>> preferences, boolean isServer) {
         // Accept the first preference that the endpoint is able to support
@@ -77,7 +82,7 @@ public class PerMessageDeflate implements Transformation {
                         // Duplicate definition
                         throw new IllegalArgumentException(sm.getString(
                                 "perMessageDeflate.duplicateParameter",
-                                SERVER_NO_CONTEXT_TAKEOVER ));
+                                SERVER_NO_CONTEXT_TAKEOVER));
                     }
                 } else if (CLIENT_NO_CONTEXT_TAKEOVER.equals(param.getName())) {
                     if (clientContextTakeover) {
@@ -86,7 +91,7 @@ public class PerMessageDeflate implements Transformation {
                         // Duplicate definition
                         throw new IllegalArgumentException(sm.getString(
                                 "perMessageDeflate.duplicateParameter",
-                                CLIENT_NO_CONTEXT_TAKEOVER ));
+                                CLIENT_NO_CONTEXT_TAKEOVER));
                     }
                 } else if (SERVER_MAX_WINDOW_BITS.equals(param.getName())) {
                     if (serverMaxWindowBits == -1) {
@@ -112,7 +117,7 @@ public class PerMessageDeflate implements Transformation {
                         // Duplicate definition
                         throw new IllegalArgumentException(sm.getString(
                                 "perMessageDeflate.duplicateParameter",
-                                SERVER_MAX_WINDOW_BITS ));
+                                SERVER_MAX_WINDOW_BITS));
                     }
                 } else if (CLIENT_MAX_WINDOW_BITS.equals(param.getName())) {
                     if (clientMaxWindowBits == -1) {
@@ -146,7 +151,7 @@ public class PerMessageDeflate implements Transformation {
                         // Duplicate definition
                         throw new IllegalArgumentException(sm.getString(
                                 "perMessageDeflate.duplicateParameter",
-                                CLIENT_MAX_WINDOW_BITS ));
+                                CLIENT_MAX_WINDOW_BITS));
                     }
                 } else {
                     // Unknown parameter
@@ -162,17 +167,6 @@ public class PerMessageDeflate implements Transformation {
         // Failed to negotiate agreeable terms
         return null;
     }
-
-
-    private PerMessageDeflate(boolean serverContextTakeover, int serverMaxWindowBits,
-            boolean clientContextTakeover, int clientMaxWindowBits, boolean isServer) {
-        this.serverContextTakeover = serverContextTakeover;
-        this.serverMaxWindowBits = serverMaxWindowBits;
-        this.clientContextTakeover = clientContextTakeover;
-        this.clientMaxWindowBits = clientMaxWindowBits;
-        this.isServer = isServer;
-    }
-
 
     @Override
     public TransformationResult getMoreData(byte opCode, boolean fin, int rsv, ByteBuffer dest)
@@ -208,7 +202,7 @@ public class PerMessageDeflate implements Transformation {
             }
             dest.position(dest.position() + written);
 
-            if (inflater.needsInput() && !usedEomBytes ) {
+            if (inflater.needsInput() && !usedEomBytes) {
                 if (dest.hasRemaining()) {
                     readBuffer.clear();
                     TransformationResult nextResult =

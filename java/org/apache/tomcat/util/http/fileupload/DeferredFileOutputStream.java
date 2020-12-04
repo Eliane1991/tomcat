@@ -34,45 +34,37 @@ import java.io.OutputStream;
  * to store it to file (to avoid memory issues).
  */
 public class DeferredFileOutputStream
-    extends ThresholdingOutputStream
-{
+        extends ThresholdingOutputStream {
     // ----------------------------------------------------------- Data members
 
 
+    /**
+     * The temporary file prefix.
+     */
+    private final String prefix;
+    /**
+     * The temporary file suffix.
+     */
+    private final String suffix;
+    /**
+     * The directory to use for temporary files.
+     */
+    private final File directory;
     /**
      * The output stream to which data will be written prior to the threshold
      * being reached.
      */
     private ByteArrayOutputStream memoryOutputStream;
-
-
     /**
      * The output stream to which data will be written at any given time. This
      * will always be one of <code>memoryOutputStream</code> or
      * <code>diskOutputStream</code>.
      */
     private OutputStream currentOutputStream;
-
-
     /**
      * The file to which output will be directed if the threshold is exceeded.
      */
     private File outputFile;
-
-    /**
-     * The temporary file prefix.
-     */
-    private final String prefix;
-
-    /**
-     * The temporary file suffix.
-     */
-    private final String suffix;
-
-    /**
-     * The directory to use for temporary files.
-     */
-    private final File directory;
 
     // ----------------------------------------------------------- Constructors
 
@@ -85,9 +77,8 @@ public class DeferredFileOutputStream
      * @param threshold  The number of bytes at which to trigger an event.
      * @param outputFile The file to which data is saved beyond the threshold.
      */
-    public DeferredFileOutputStream(final int threshold, final File outputFile)
-    {
-        this(threshold,  outputFile, null, null, null, ByteArrayOutputStream.DEFAULT_SIZE);
+    public DeferredFileOutputStream(final int threshold, final File outputFile) {
+        this(threshold, outputFile, null, null, null, ByteArrayOutputStream.DEFAULT_SIZE);
     }
 
 
@@ -95,11 +86,11 @@ public class DeferredFileOutputStream
      * Constructs an instance of this class which will trigger an event at the
      * specified threshold, and save data either to a file beyond that point.
      *
-     * @param threshold  The number of bytes at which to trigger an event.
-     * @param outputFile The file to which data is saved beyond the threshold.
-     * @param prefix Prefix to use for the temporary file.
-     * @param suffix Suffix to use for the temporary file.
-     * @param directory Temporary file directory.
+     * @param threshold         The number of bytes at which to trigger an event.
+     * @param outputFile        The file to which data is saved beyond the threshold.
+     * @param prefix            Prefix to use for the temporary file.
+     * @param suffix            Suffix to use for the temporary file.
+     * @param directory         Temporary file directory.
      * @param initialBufferSize The initial size of the in memory buffer.
      */
     private DeferredFileOutputStream(final int threshold, final File outputFile, final String prefix,
@@ -123,12 +114,10 @@ public class DeferredFileOutputStream
      * based, depending on the current state with respect to the threshold.
      *
      * @return The underlying output stream.
-     *
      * @throws IOException if an error occurs.
      */
     @Override
-    protected OutputStream getStream() throws IOException
-    {
+    protected OutputStream getStream() throws IOException {
         return currentOutputStream;
     }
 
@@ -142,8 +131,7 @@ public class DeferredFileOutputStream
      * @throws IOException if an error occurs.
      */
     @Override
-    protected void thresholdReached() throws IOException
-    {
+    protected void thresholdReached() throws IOException {
         if (prefix != null) {
             outputFile = File.createTempFile(prefix, suffix, directory);
         }
@@ -151,7 +139,7 @@ public class DeferredFileOutputStream
         final FileOutputStream fos = new FileOutputStream(outputFile);
         try {
             memoryOutputStream.writeTo(fos);
-        } catch (final IOException e){
+        } catch (final IOException e) {
             fos.close();
             throw e;
         }
@@ -168,10 +156,9 @@ public class DeferredFileOutputStream
      * retained in memory.
      *
      * @return {@code true} if the data is available in memory;
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
-    public boolean isInMemory()
-    {
+    public boolean isInMemory() {
         return !isThresholdExceeded();
     }
 
@@ -182,12 +169,10 @@ public class DeferredFileOutputStream
      * disk, this method returns {@code null}.
      *
      * @return The data for this output stream, or {@code null} if no such
-     *         data is available.
+     * data is available.
      */
-    public byte[] getData()
-    {
-        if (memoryOutputStream != null)
-        {
+    public byte[] getData() {
+        if (memoryOutputStream != null) {
             return memoryOutputStream.toByteArray();
         }
         return null;
@@ -206,10 +191,9 @@ public class DeferredFileOutputStream
      * If the threshold was not reached then {@code null} is returned.
      *
      * @return The file for this output stream, or {@code null} if no such
-     *         file exists.
+     * file exists.
      */
-    public File getFile()
-    {
+    public File getFile() {
         return outputFile;
     }
 
@@ -220,8 +204,7 @@ public class DeferredFileOutputStream
      * @throws IOException if an error occurs.
      */
     @Override
-    public void close() throws IOException
-    {
+    public void close() throws IOException {
         super.close();
     }
 }

@@ -123,14 +123,14 @@ public class FunctionMapperImpl extends FunctionMapper implements
             // make sure m isn't null
             getMethod();
             out.writeUTF((this.owner != null) ?
-                     this.owner :
-                     this.m.getDeclaringClass().getName());
+                    this.owner :
+                    this.m.getDeclaringClass().getName());
             out.writeUTF((this.name != null) ?
-                     this.name :
-                     this.m.getName());
+                    this.name :
+                    this.m.getName());
             out.writeObject((this.types != null) ?
-                     this.types :
-                     ReflectionUtil.toTypeNameArray(this.m.getParameterTypes()));
+                    this.types :
+                    ReflectionUtil.toTypeNameArray(this.m.getParameterTypes()));
 
         }
 

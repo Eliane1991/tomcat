@@ -53,10 +53,8 @@ import java.util.Arrays;
  */
 public class MessageDigestCredentialHandler extends DigestCredentialHandlerBase {
 
-    private static final Log log = LogFactory.getLog(MessageDigestCredentialHandler.class);
-
     public static final int DEFAULT_ITERATIONS = 1;
-
+    private static final Log log = LogFactory.getLog(MessageDigestCredentialHandler.class);
     private Charset encoding = StandardCharsets.UTF_8;
     private String algorithm = null;
 

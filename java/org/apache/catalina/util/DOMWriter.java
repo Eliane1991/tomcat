@@ -27,17 +27,21 @@ import java.io.Writer;
  */
 public class DOMWriter {
 
-    /** Default Encoding */
+    /**
+     * Default Encoding
+     */
     private static final String PRINTWRITER_ENCODING = "UTF8";
 
-    /** Print writer.
+    /**
+     * Print writer.
      *
      * @deprecated Will be made private in Tomcat 9.
      */
     @Deprecated
     protected final PrintWriter out;
 
-    /** Canonical output.
+    /**
+     * Canonical output.
      *
      * @deprecated Will be made private in Tomcat 9.
      */
@@ -46,7 +50,7 @@ public class DOMWriter {
 
 
     public DOMWriter(Writer writer) {
-        this (writer, true);
+        this(writer, true);
     }
 
 
@@ -58,9 +62,8 @@ public class DOMWriter {
 
 
     /**
-     * @deprecated Unused. Will be removed in Tomcat 9.
-     *
      * @return Always <code>UTF-8</code>
+     * @deprecated Unused. Will be removed in Tomcat 9.
      */
     @Deprecated
     public static String getWriterEncoding() {
@@ -70,6 +73,7 @@ public class DOMWriter {
 
     /**
      * Prints the specified node, recursively.
+     *
      * @param node The node to output
      */
     public void print(Node node) {
@@ -131,7 +135,7 @@ public class DOMWriter {
 
             // print text
             case Node.TEXT_NODE:
-               out.print(normalize(node.getNodeValue()));
+                out.print(normalize(node.getNodeValue()));
                 break;
 
             // print processing instruction
@@ -146,7 +150,7 @@ public class DOMWriter {
                 }
                 out.print("?>");
                 break;
-            }
+        }
 
         if (type == Node.ELEMENT_NODE) {
             out.print("</");
@@ -172,9 +176,9 @@ public class DOMWriter {
 
     /**
      * Returns a sorted list of attributes.
+     *
      * @param attrs The map to sort
      * @return a sorted attribute array
-     *
      * @deprecated Will be made private in Tomcat 9.
      */
     @Deprecated
@@ -212,9 +216,9 @@ public class DOMWriter {
 
     /**
      * Normalizes the given string.
+     *
      * @param s The string to escape
      * @return the escaped string
-     *
      * @deprecated Will be made private in Tomcat 9.
      */
     @Deprecated
@@ -250,7 +254,7 @@ public class DOMWriter {
                         break;
                     }
                     // else, default append char
-                //$FALL-THROUGH$
+                    //$FALL-THROUGH$
                 default:
                     str.append(ch);
             }

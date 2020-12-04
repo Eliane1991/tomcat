@@ -53,6 +53,18 @@ public class DateFormatCache {
 
     private final Cache cache;
 
+    public DateFormatCache(int size, String format, DateFormatCache parent) {
+        cacheSize = size;
+        this.format = tidyFormat(format);
+        Cache parentCache = null;
+        if (parent != null) {
+            synchronized (parent) {
+                parentCache = parent.cache;
+            }
+        }
+        cache = new Cache(parentCache);
+    }
+
     /**
      * Replace the millisecond formatting character 'S' by
      * some dummy characters in order to make the resulting
@@ -79,18 +91,6 @@ public class DateFormatCache {
         return result.toString();
     }
 
-    public DateFormatCache(int size, String format, DateFormatCache parent) {
-        cacheSize = size;
-        this.format = tidyFormat(format);
-        Cache parentCache = null;
-        if (parent != null) {
-            synchronized(parent) {
-                parentCache = parent.cache;
-            }
-        }
-        cache = new Cache(parentCache);
-    }
-
     public String getFormat(long time) {
         return cache.getFormat(time);
     }
@@ -101,20 +101,18 @@ public class DateFormatCache {
 
     private class Cache {
 
+        /* Helper object to be able to call SimpleDateFormat.format(). */
+        private final Date currentDate = new Date();
         /* Second formatted in most recent invocation */
         private long previousSeconds = Long.MIN_VALUE;
         /* Formatted timestamp generated in most recent invocation */
         private String previousFormat = "";
-
         /* First second contained in cache */
         private long first = Long.MIN_VALUE;
         /* Last second contained in cache */
         private long last = Long.MIN_VALUE;
         /* Index of "first" in the cyclic cache */
         private int offset = 0;
-        /* Helper object to be able to call SimpleDateFormat.format(). */
-        private final Date currentDate = new Date();
-
         private String cache[];
         private SimpleDateFormat formatter;
 
@@ -139,7 +137,7 @@ public class DateFormatCache {
 
             /* Second step: Try to locate in cache */
             previousSeconds = seconds;
-            int index = (offset + (int)(seconds - first)) % cacheSize;
+            int index = (offset + (int) (seconds - first)) % cacheSize;
             if (index < 0) {
                 index += cacheSize;
             }
@@ -150,7 +148,7 @@ public class DateFormatCache {
                     return previousFormat;
                 }
 
-            /* Third step: not found in cache, adjust cache and add item */
+                /* Third step: not found in cache, adjust cache and add item */
             } else if (seconds >= last + cacheSize || seconds <= first - cacheSize) {
                 first = seconds;
                 last = first + cacheSize - 1;
@@ -178,7 +176,7 @@ public class DateFormatCache {
             /* Last step: format new timestamp either using
              * parent cache or locally. */
             if (parent != null) {
-                synchronized(parent) {
+                synchronized (parent) {
                     previousFormat = parent.getFormat(time);
                 }
             } else {

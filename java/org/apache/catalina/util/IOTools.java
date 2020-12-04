@@ -25,10 +25,10 @@ import java.io.*;
  * @author Dan Sandberg
  */
 public class IOTools {
-    protected static final int DEFAULT_BUFFER_SIZE=4*1024; //4k
+    protected static final int DEFAULT_BUFFER_SIZE = 4 * 1024; //4k
 
     private IOTools() {
-      //Ensure non-instantiability
+        //Ensure non-instantiability
     }
 
     /**
@@ -37,13 +37,13 @@ public class IOTools {
      *
      * @param reader the reader to read from.
      * @param writer the writer to write to.
-     * @param buf the char array to use as a buffer
+     * @param buf    the char array to use as a buffer
      * @throws IOException IO error
      */
-    public static void flow( Reader reader, Writer writer, char[] buf )
-        throws IOException {
+    public static void flow(Reader reader, Writer writer, char[] buf)
+            throws IOException {
         int numRead;
-        while ( (numRead = reader.read(buf) ) >= 0) {
+        while ((numRead = reader.read(buf)) >= 0) {
             writer.write(buf, 0, numRead);
         }
     }
@@ -55,12 +55,12 @@ public class IOTools {
      * @param reader the reader to read from.
      * @param writer the writer to write to.
      * @throws IOException IO error
-     * @see #flow( Reader, Writer, char[] )
+     * @see #flow(Reader, Writer, char[])
      */
-    public static void flow( Reader reader, Writer writer )
-        throws IOException {
+    public static void flow(Reader reader, Writer writer)
+            throws IOException {
         char[] buf = new char[DEFAULT_BUFFER_SIZE];
-        flow( reader, writer, buf );
+        flow(reader, writer, buf);
     }
 
 
@@ -71,13 +71,12 @@ public class IOTools {
      *
      * @param is input stream the input stream to read from.
      * @param os output stream the output stream to write to.
-     *
      * @throws IOException If an I/O error occurs during the copy
      */
     public static void flow(InputStream is, OutputStream os) throws IOException {
         byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
         int numRead;
-        while ( (numRead = is.read(buf) ) >= 0) {
+        while ((numRead = is.read(buf)) >= 0) {
             if (os != null) {
                 os.write(buf, 0, numRead);
             }
@@ -88,11 +87,9 @@ public class IOTools {
     /**
      * Read until EOF or the buffer is filled.
      *
-     * @param is    The source to read from
-     * @param buf   The buffer to write to
-     *
+     * @param is  The source to read from
+     * @param buf The buffer to write to
      * @return The number of bytes read
-     *
      * @throws IOException If an I/O error occurs during the read
      */
     public static int readFully(InputStream is, byte[] buf) throws IOException {

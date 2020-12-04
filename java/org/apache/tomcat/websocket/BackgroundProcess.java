@@ -20,7 +20,7 @@ public interface BackgroundProcess {
 
     void backgroundProcess();
 
-    void setProcessPeriod(int period);
-
     int getProcessPeriod();
+
+    void setProcessPeriod(int period);
 }

@@ -52,6 +52,7 @@ public class ByteMessage implements Externalizable {
 
     /**
      * Creates a byte message wit h
+     *
      * @param data byte[] - the message contents
      */
     public ByteMessage(byte[] data) {
@@ -60,6 +61,7 @@ public class ByteMessage implements Externalizable {
 
     /**
      * Returns the message contents of this byte message
+     *
      * @return byte[] - message contents, can be null
      */
     public byte[] getMessage() {
@@ -68,6 +70,7 @@ public class ByteMessage implements Externalizable {
 
     /**
      * Sets the message contents of this byte message
+     *
      * @param message byte[]
      */
     public void setMessage(byte[] message) {
@@ -75,26 +78,26 @@ public class ByteMessage implements Externalizable {
     }
 
     /**
-     * @see java.io.Externalizable#readExternal
      * @param in ObjectInput
      * @throws IOException An IO error occurred
+     * @see java.io.Externalizable#readExternal
      */
     @Override
-    public void readExternal(ObjectInput in ) throws IOException {
+    public void readExternal(ObjectInput in) throws IOException {
         int length = in.readInt();
         message = new byte[length];
         in.readFully(message);
     }
 
     /**
-     * @see java.io.Externalizable#writeExternal
      * @param out ObjectOutput
      * @throws IOException An IO error occurred
+     * @see java.io.Externalizable#writeExternal
      */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(message!=null?message.length:0);
-        if ( message!=null ) out.write(message,0,message.length);
+        out.writeInt(message != null ? message.length : 0);
+        if (message != null) out.write(message, 0, message.length);
     }
 
 }

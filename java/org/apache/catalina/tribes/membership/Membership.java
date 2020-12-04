@@ -35,15 +35,14 @@ import java.util.HashMap;
 public class Membership implements Cloneable {
 
     protected static final Member[] EMPTY_MEMBERS = new Member[0];
-
-    // Non-final to support clone()
-    private Object membersLock = new Object();
-
     /**
      * The local member.
      */
     protected final Member local;
-
+    /**
+     * Comparator for sorting members by alive time.
+     */
+    protected final Comparator<Member> memberComparator;
     /**
      * A map of all the members in the cluster.
      */
@@ -53,43 +52,13 @@ public class Membership implements Cloneable {
      * A list of all the members in the cluster.
      */
     protected volatile Member[] members = EMPTY_MEMBERS; // Guarded by membersLock
-
-    /**
-     * Comparator for sorting members by alive time.
-     */
-    protected final Comparator<Member> memberComparator;
-
-    @Override
-    public Membership clone() {
-        synchronized (membersLock) {
-            Membership clone;
-            try {
-                clone = (Membership) super.clone();
-            } catch (CloneNotSupportedException e) {
-                // Can't happen
-                throw new AssertionError();
-            }
-
-            // Standard clone() method will copy the map object. Replace that
-            // with a new map but with the same contents.
-            @SuppressWarnings("unchecked")
-            final HashMap<Member, MbrEntry> tmpclone = (HashMap<Member, MbrEntry>) map.clone();
-            clone.map = tmpclone;
-
-            // Standard clone() method will copy the array object. Replace that
-            // with a new array but with the same contents.
-            clone.members = members.clone();
-
-            // Standard clone() method will copy the lock object. Replace that
-            // with a new object.
-            clone.membersLock = new Object();
-            return clone;
-        }
-    }
+    // Non-final to support clone()
+    private Object membersLock = new Object();
 
     /**
      * Constructs a new membership
-     * @param local - has to be the name of the local member. Used to filter the local member from the cluster membership
+     *
+     * @param local        - has to be the name of the local member. Used to filter the local member from the cluster membership
      * @param includeLocal - TBA
      */
     public Membership(Member local, boolean includeLocal) {
@@ -112,6 +81,33 @@ public class Membership implements Cloneable {
         }
     }
 
+    @Override
+    public Membership clone() {
+        synchronized (membersLock) {
+            Membership clone;
+            try {
+                clone = (Membership) super.clone();
+            } catch (CloneNotSupportedException e) {
+                // Can't happen
+                throw new AssertionError();
+            }
+
+            // Standard clone() method will copy the map object. Replace that
+            // with a new map but with the same contents.
+            @SuppressWarnings("unchecked") final HashMap<Member, MbrEntry> tmpclone = (HashMap<Member, MbrEntry>) map.clone();
+            clone.map = tmpclone;
+
+            // Standard clone() method will copy the array object. Replace that
+            // with a new array but with the same contents.
+            clone.members = members.clone();
+
+            // Standard clone() method will copy the lock object. Replace that
+            // with a new object.
+            clone.membersLock = new Object();
+            return clone;
+        }
+    }
+
     /**
      * Reset the membership and start over fresh. i.e., delete all the members
      * and wait for them to ping again and join this membership.
@@ -119,7 +115,7 @@ public class Membership implements Cloneable {
     public void reset() {
         synchronized (membersLock) {
             map.clear();
-            members = EMPTY_MEMBERS ;
+            members = EMPTY_MEMBERS;
         }
     }
 
@@ -166,13 +162,12 @@ public class Membership implements Cloneable {
      * Add a member to this component and sort array with memberComparator
      *
      * @param member The member to add
-     *
      * @return The member entry created for this new member.
      */
     public MbrEntry addMember(Member member) {
         MbrEntry entry = new MbrEntry(member);
         synchronized (membersLock) {
-            if (!map.containsKey(member) ) {
+            if (!map.containsKey(member)) {
                 map.put(member, entry);
                 Member results[] = new Member[members.length + 1];
                 System.arraycopy(members, 0, results, 0, members.length);
@@ -215,13 +210,14 @@ public class Membership implements Cloneable {
      * Runs a refresh cycle and returns a list of members that has expired.
      * This also removes the members from the membership, in such a way that
      * getMembers() = getMembers() - expire()
+     *
      * @param maxtime - the max time a member can remain unannounced before it is considered dead.
      * @return the list of expired members
      */
     public Member[] expire(long maxtime) {
         synchronized (membersLock) {
             if (!hasMembers()) {
-               return EMPTY_MEMBERS;
+                return EMPTY_MEMBERS;
             }
 
             ArrayList<Member> list = null;
@@ -243,7 +239,7 @@ public class Membership implements Cloneable {
                 }
                 return result;
             } else {
-                return EMPTY_MEMBERS ;
+                return EMPTY_MEMBERS;
             }
         }
     }
@@ -252,7 +248,7 @@ public class Membership implements Cloneable {
      * Returning that service has members or not.
      *
      * @return <code>true</code> if there are one or more members, otherwise
-     *         <code>false</code>
+     * <code>false</code>
      */
     public boolean hasMembers() {
         return members.length > 0;
@@ -315,14 +311,14 @@ public class Membership implements Cloneable {
         protected long lastHeardFrom;
 
         public MbrEntry(Member mbr) {
-           this.mbr = mbr;
+            this.mbr = mbr;
         }
 
         /**
          * Indicate that this member has been accessed.
          */
-        public void accessed(){
-           lastHeardFrom = System.currentTimeMillis();
+        public void accessed() {
+            lastHeardFrom = System.currentTimeMillis();
         }
 
         /**
@@ -338,9 +334,8 @@ public class Membership implements Cloneable {
          * Check if this member has expired.
          *
          * @param maxtime The time threshold
-         *
          * @return <code>true</code> if the member has expired, otherwise
-         *         <code>false</code>
+         * <code>false</code>
          */
         public boolean hasExpired(long maxtime) {
             long delta = System.currentTimeMillis() - lastHeardFrom;

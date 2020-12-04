@@ -185,8 +185,8 @@ public interface Lifecycle {
      * Get the life cycle listeners associated with this life cycle.
      *
      * @return An array containing the life cycle listeners associated with this
-     *         life cycle. If this component has no listeners registered, a
-     *         zero-length array is returned.
+     * life cycle. If this component has no listeners registered, a
+     * zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners();
 
@@ -208,8 +208,8 @@ public interface Lifecycle {
      *                   initialization.</li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void init() throws LifecycleException;
 
@@ -236,8 +236,8 @@ public interface Lifecycle {
      *                          </li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void start() throws LifecycleException;
 
@@ -263,15 +263,15 @@ public interface Lifecycle {
      *                         transitions to {@link LifecycleState#STOPPED}.
      *                         </li>
      * </ol>
-     *
+     * <p>
      * Note that if transitioning from {@link LifecycleState#FAILED} then the
      * three events above will be fired but the component will transition
      * directly from {@link LifecycleState#FAILED} to
      * {@link LifecycleState#STOPPING}, bypassing
      * {@link LifecycleState#STOPPING_PREP}
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that needs to be reported
      */
     public void stop() throws LifecycleException;
 
@@ -283,8 +283,8 @@ public interface Lifecycle {
      *                      destruction.</li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void destroy() throws LifecycleException;
 

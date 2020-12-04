@@ -46,10 +46,10 @@ import java.util.*;
  * Scans for and loads Tag Library Descriptors contained in a web application.
  */
 public class TldScanner {
-    private final Log log = LogFactory.getLog(TldScanner.class); // must not be static
     private static final String MSG = "org.apache.jasper.servlet.TldScanner";
     private static final String TLD_EXT = ".tld";
     private static final String WEB_INF = "/WEB-INF/";
+    private final Log log = LogFactory.getLog(TldScanner.class); // must not be static
     private final ServletContext context;
     private final TldParser tldParser;
     private final Map<String, TldResourcePath> uriTldResourcePathMap = new HashMap<>();
@@ -112,7 +112,7 @@ public class TldScanner {
      *
      * @return the map of TldResourcePath to parsed XML files
      */
-    public Map<TldResourcePath,TaglibXml> getTldResourcePathTaglibXmlMap() {
+    public Map<TldResourcePath, TaglibXml> getTldResourcePathTaglibXmlMap() {
         return tldResourcePathTaglibXmlMap;
     }
 
@@ -144,7 +144,8 @@ public class TldScanner {
 
     /**
      * Scan for TLDs defined in &lt;jsp-config&gt;.
-     * @throws IOException Error reading resources
+     *
+     * @throws IOException  Error reading resources
      * @throws SAXException XML parsing error
      */
     protected void scanJspConfig() throws IOException, SAXException {
@@ -295,8 +296,8 @@ public class TldScanner {
             URL jarFileUrl = jar.getJarFileURL();
             jar.nextEntry();
             for (String entryName = jar.getEntryName();
-                entryName != null;
-                jar.nextEntry(), entryName = jar.getEntryName()) {
+                 entryName != null;
+                 jar.nextEntry(), entryName = jar.getEntryName()) {
                 if (!(entryName.startsWith("META-INF/") &&
                         entryName.endsWith(TLD_EXT))) {
                     continue;

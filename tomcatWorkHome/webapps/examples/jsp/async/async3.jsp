@@ -14,12 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@page session="false" import="java.text.SimpleDateFormat,java.util.Date"%>
+<%@page session="false" import="java.text.SimpleDateFormat,java.util.Date" %>
 Output from async3.jsp
 Type is <%=request.getDispatcherType()%>
 <%
-  Date date = new Date(System.currentTimeMillis());
-  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    Date date = new Date(System.currentTimeMillis());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 %>
 
 Completed async 3 request at <%=sdf.format(date)%>

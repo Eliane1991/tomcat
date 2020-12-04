@@ -26,6 +26,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+
 /**
  * Servlet to process SSI requests within a webpage. Mapped to a path from
  * within web.xml.
@@ -38,28 +39,42 @@ import java.util.Locale;
 public class SSIServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /** Debug level for this servlet. */
+    /**
+     * Debug level for this servlet.
+     */
     protected int debug = 0;
-    /** Should the output be buffered. */
+    /**
+     * Should the output be buffered.
+     */
     protected boolean buffered = false;
-    /** Expiration time in seconds for the doc. */
+    /**
+     * Expiration time in seconds for the doc.
+     */
     protected Long expires = null;
-    /** virtual path can be webapp-relative */
+    /**
+     * virtual path can be webapp-relative
+     */
     protected boolean isVirtualWebappRelative = false;
-    /** Input encoding. If not specified, uses platform default */
+    /**
+     * Input encoding. If not specified, uses platform default
+     */
     protected String inputEncoding = null;
-    /** Output encoding. If not specified, uses platform default */
+    /**
+     * Output encoding. If not specified, uses platform default
+     */
     protected String outputEncoding = "UTF-8";
-    /** Allow exec (normally blocked for security) */
+    /**
+     * Allow exec (normally blocked for security)
+     */
     protected boolean allowExec = false;
 
 
     //----------------- Public methods.
+
     /**
      * Initialize this servlet.
      *
-     * @exception ServletException
-     *                if an error occurs
+     * @throws ServletException if an error occurs
      */
     @Override
     public void init() throws ServletException {
@@ -68,7 +83,7 @@ public class SSIServlet extends HttpServlet {
             debug = Integer.parseInt(getServletConfig().getInitParameter("debug"));
 
         isVirtualWebappRelative =
-            Boolean.parseBoolean(getServletConfig().getInitParameter("isVirtualWebappRelative"));
+                Boolean.parseBoolean(getServletConfig().getInitParameter("isVirtualWebappRelative"));
 
         if (getServletConfig().getInitParameter("expires") != null)
             expires = Long.valueOf(getServletConfig().getInitParameter("expires"));
@@ -92,14 +107,10 @@ public class SSIServlet extends HttpServlet {
     /**
      * Process and forward the GET request to our <code>requestHandler()</code>*
      *
-     * @param req
-     *            a value of type 'HttpServletRequest'
-     * @param res
-     *            a value of type 'HttpServletResponse'
-     * @exception IOException
-     *                if an error occurs
-     * @exception ServletException
-     *                if an error occurs
+     * @param req a value of type 'HttpServletRequest'
+     * @param res a value of type 'HttpServletResponse'
+     * @throws IOException      if an error occurs
+     * @throws ServletException if an error occurs
      */
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -113,14 +124,10 @@ public class SSIServlet extends HttpServlet {
      * Process and forward the POST request to our
      * <code>requestHandler()</code>.
      *
-     * @param req
-     *            a value of type 'HttpServletRequest'
-     * @param res
-     *            a value of type 'HttpServletResponse'
-     * @exception IOException
-     *                if an error occurs
-     * @exception ServletException
-     *                if an error occurs
+     * @param req a value of type 'HttpServletRequest'
+     * @param res a value of type 'HttpServletResponse'
+     * @throws IOException      if an error occurs
+     * @throws ServletException if an error occurs
      */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -133,19 +140,17 @@ public class SSIServlet extends HttpServlet {
     /**
      * Process our request and locate right SSI command.
      *
-     * @param req
-     *            a value of type 'HttpServletRequest'
-     * @param res
-     *            a value of type 'HttpServletResponse'
+     * @param req a value of type 'HttpServletRequest'
+     * @param res a value of type 'HttpServletResponse'
      * @throws IOException an IO error occurred
      */
     protected void requestHandler(HttpServletRequest req,
-            HttpServletResponse res) throws IOException {
+                                  HttpServletResponse res) throws IOException {
         ServletContext servletContext = getServletContext();
         String path = SSIServletRequestUtil.getRelativePath(req);
         if (debug > 0)
             log("SSIServlet.requestHandler()\n" + "Serving "
-                    + (buffered?"buffered ":"unbuffered ") + "resource '"
+                    + (buffered ? "buffered " : "unbuffered ") + "resource '"
                     + path + "'");
         // Exclude any resource in the /WEB-INF and /META-INF subdirectories
         // (the "toUpperCase()" avoids problems on Windows systems)
@@ -175,10 +180,10 @@ public class SSIServlet extends HttpServlet {
 
 
     protected void processSSI(HttpServletRequest req, HttpServletResponse res,
-            URL resource) throws IOException {
+                              URL resource) throws IOException {
         SSIExternalResolver ssiExternalResolver =
-            new SSIServletExternalResolver(getServletContext(), req, res,
-                    isVirtualWebappRelative, debug, inputEncoding);
+                new SSIServletExternalResolver(getServletContext(), req, res,
+                        isVirtualWebappRelative, debug, inputEncoding);
         SSIProcessor ssiProcessor = new SSIProcessor(ssiExternalResolver,
                 debug, allowExec);
         PrintWriter printWriter = null;

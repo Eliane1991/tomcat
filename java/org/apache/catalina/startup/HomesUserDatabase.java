@@ -32,10 +32,23 @@ import java.util.Hashtable;
  * @author Craig R. McClanahan
  */
 public final class HomesUserDatabase
-    implements UserDatabase {
+        implements UserDatabase {
 
 
     // --------------------------------------------------------- Constructors
+
+
+    /**
+     * The set of home directories for all defined users, keyed by username.
+     */
+    private final Hashtable<String, String> homes = new Hashtable<>();
+
+
+    // --------------------------------------------------- Instance Variables
+    /**
+     * The UserConfig listener with which we are associated.
+     */
+    private UserConfig userConfig = null;
 
 
     /**
@@ -48,23 +61,7 @@ public final class HomesUserDatabase
     }
 
 
-    // --------------------------------------------------- Instance Variables
-
-
-    /**
-     * The set of home directories for all defined users, keyed by username.
-     */
-    private final Hashtable<String,String> homes = new Hashtable<>();
-
-
-    /**
-     * The UserConfig listener with which we are associated.
-     */
-    private UserConfig userConfig = null;
-
-
     // ----------------------------------------------------------- Properties
-
 
     /**
      * Return the UserConfig listener with which we are associated.

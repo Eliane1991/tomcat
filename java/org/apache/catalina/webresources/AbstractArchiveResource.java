@@ -36,7 +36,7 @@ public abstract class AbstractArchiveResource extends AbstractResource {
     private Certificate[] certificates;
 
     protected AbstractArchiveResource(AbstractArchiveResourceSet archiveResourceSet,
-            String webAppPath, String baseUrl, JarEntry jarEntry, String codeBaseUrl) {
+                                      String webAppPath, String baseUrl, JarEntry jarEntry, String codeBaseUrl) {
         super(archiveResourceSet.getRoot(), webAppPath);
         this.archiveResourceSet = archiveResourceSet;
         this.baseUrl = baseUrl;

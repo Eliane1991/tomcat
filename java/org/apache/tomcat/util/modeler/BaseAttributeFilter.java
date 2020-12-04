@@ -38,13 +38,22 @@ public class BaseAttributeFilter implements NotificationFilter {
     private static final long serialVersionUID = 1L;
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * The set of attribute names that are accepted by this filter.  If this
+     * list is empty, all attribute names are accepted.
+     */
+    private HashSet<String> names = new HashSet<>();
+
+
+    // ----------------------------------------------------- Instance Variables
+
 
     /**
      * Construct a new filter that accepts only the specified attribute
      * name.
      *
      * @param name Name of the attribute to be accepted by this filter, or
-     *  <code>null</code> to accept all attribute names
+     *             <code>null</code> to accept all attribute names
      */
     public BaseAttributeFilter(String name) {
 
@@ -55,18 +64,7 @@ public class BaseAttributeFilter implements NotificationFilter {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The set of attribute names that are accepted by this filter.  If this
-     * list is empty, all attribute names are accepted.
-     */
-    private HashSet<String> names = new HashSet<>();
-
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Add a new attribute name to the set of names accepted by this filter.
@@ -99,6 +97,7 @@ public class BaseAttributeFilter implements NotificationFilter {
      * Return the set of names that are accepted by this filter.  If this
      * filter accepts all attribute names, a zero length array will be
      * returned.
+     *
      * @return the array of names
      */
     public String[] getNames() {
@@ -128,7 +127,7 @@ public class BaseAttributeFilter implements NotificationFilter {
         if (!(notification instanceof AttributeChangeNotification))
             return false;
         AttributeChangeNotification acn =
-            (AttributeChangeNotification) notification;
+                (AttributeChangeNotification) notification;
         if (!AttributeChangeNotification.ATTRIBUTE_CHANGE.equals(acn.getType()))
             return false;
         synchronized (names) {

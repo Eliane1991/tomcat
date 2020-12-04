@@ -27,7 +27,7 @@ import java.security.cert.X509Certificate;
  * Implementation of SSLSupport for APR.
  * <p>
  * TODO: Add a mechanism (or figure out how to use what we already have) to
- *       invalidate the session.
+ * invalidate the session.
  */
 public class AprSSLSupport implements SSLSupport {
 
@@ -75,7 +75,7 @@ public class AprSSLSupport implements SSLSupport {
                 certs[0] = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(clientCert));
                 for (int i = 0; i < certLength; i++) {
                     byte[] data = socketWrapper.getSSLInfoB(SSL.SSL_INFO_CLIENT_CERT_CHAIN + i);
-                    certs[i+1] = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(data));
+                    certs[i + 1] = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(data));
                 }
             }
             return certs;
@@ -111,5 +111,5 @@ public class AprSSLSupport implements SSLSupport {
         } catch (Exception e) {
             throw new IOException(e);
         }
-   }
+    }
 }

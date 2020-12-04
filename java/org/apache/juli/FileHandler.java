@@ -144,6 +144,51 @@ public class FileHandler extends Handler {
             });
 
     // ------------------------------------------------------------ Constructor
+    /**
+     * Lock used to control access to the writer.
+     */
+    protected final ReadWriteLock writerLock = new ReentrantReadWriteLock();
+    /**
+     * The as-of date for the currently open log file, or a zero-length
+     * string if there is no open log file.
+     */
+    private volatile String date = "";
+    /**
+     * The directory in which log files are created.
+     */
+    private String directory = null;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The prefix that is added to log file filenames.
+     */
+    private String prefix = null;
+    /**
+     * The suffix that is added to log file filenames.
+     */
+    private String suffix = null;
+    /**
+     * Determines whether the log file is rotatable
+     */
+    private boolean rotatable = true;
+    /**
+     * Maximum number of days to keep the log files
+     */
+    private int maxDays = DEFAULT_MAX_DAYS;
+    /**
+     * The PrintWriter to which we are currently logging, if any.
+     */
+    private volatile PrintWriter writer = null;
+    /**
+     * Log buffer size.
+     */
+    private int bufferSize = -1;
+    /**
+     * Represents a file name pattern of type {prefix}{date}{suffix}.
+     * The date is YYYY-MM-DD
+     */
+    private Pattern pattern;
 
 
     public FileHandler() {
@@ -154,6 +199,7 @@ public class FileHandler extends Handler {
     public FileHandler(String directory, String prefix, String suffix) {
         this(directory, prefix, suffix, DEFAULT_MAX_DAYS);
     }
+
 
     public FileHandler(String directory, String prefix, String suffix, int maxDays) {
         this.directory = directory;
@@ -166,78 +212,12 @@ public class FileHandler extends Handler {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The as-of date for the currently open log file, or a zero-length
-     * string if there is no open log file.
-     */
-    private volatile String date = "";
-
-
-    /**
-     * The directory in which log files are created.
-     */
-    private String directory = null;
-
-
-    /**
-     * The prefix that is added to log file filenames.
-     */
-    private String prefix = null;
-
-
-    /**
-     * The suffix that is added to log file filenames.
-     */
-    private String suffix = null;
-
-
-    /**
-     * Determines whether the log file is rotatable
-     */
-    private boolean rotatable = true;
-
-
-    /**
-     * Maximum number of days to keep the log files
-     */
-    private int maxDays = DEFAULT_MAX_DAYS;
-
-
-    /**
-     * The PrintWriter to which we are currently logging, if any.
-     */
-    private volatile PrintWriter writer = null;
-
-
-    /**
-     * Lock used to control access to the writer.
-     */
-    protected final ReadWriteLock writerLock = new ReentrantReadWriteLock();
-
-
-    /**
-     * Log buffer size.
-     */
-    private int bufferSize = -1;
-
-
-    /**
-     * Represents a file name pattern of type {prefix}{date}{suffix}.
-     * The date is YYYY-MM-DD
-     */
-    private Pattern pattern;
-
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Format and publish a <code>LogRecord</code>.
      *
-     * @param  record  description of the log event
+     * @param record description of the log event
      */
     @Override
     public void publish(LogRecord record) {
@@ -491,7 +471,7 @@ public class FileHandler extends Handler {
             os = bufferSize > 0 ? new BufferedOutputStream(fos, bufferSize) : fos;
             writer = new PrintWriter(
                     (encoding != null) ? new OutputStreamWriter(os, encoding)
-                                       : new OutputStreamWriter(os), false);
+                            : new OutputStreamWriter(os), false);
             writer.write(getFormatter().getHead(this));
         } catch (Exception e) {
             reportError(null, e, ErrorManager.OPEN_FAILURE);

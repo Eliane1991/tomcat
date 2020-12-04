@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 
 /**
  * Move server.xml or context.xml as backup
- *
+ * <p>
  * TODO Get Encoding from Registry
  */
 public class StoreFileMover {
@@ -41,6 +41,27 @@ public class StoreFileMover {
     private File configNew;
 
     private File configSave;
+
+    /**
+     * Calculate file objects for the old and new configuration files.
+     *
+     * @param basename The base path
+     * @param encoding The encoding of the file
+     * @param filename The file name
+     */
+    public StoreFileMover(String basename, String filename, String encoding) {
+        setBasename(basename);
+        setEncoding(encoding);
+        setFilename(filename);
+        init();
+    }
+
+    /**
+     * Calculate file objects for the old and new configuration files.
+     */
+    public StoreFileMover() {
+        init();
+    }
 
     /**
      * @return Returns the configNew.
@@ -71,8 +92,7 @@ public class StoreFileMover {
     }
 
     /**
-     * @param basename
-     *            The basename to set.
+     * @param basename The basename to set.
      */
     public void setBasename(String basename) {
         this.basename = basename;
@@ -104,26 +124,6 @@ public class StoreFileMover {
      */
     public void setEncoding(String string) {
         encoding = string;
-    }
-
-    /**
-     * Calculate file objects for the old and new configuration files.
-     * @param basename The base path
-     * @param encoding The encoding of the file
-     * @param filename The file name
-     */
-    public StoreFileMover(String basename, String filename, String encoding) {
-        setBasename(basename);
-        setEncoding(encoding);
-        setFilename(filename);
-        init();
-    }
-
-    /**
-     * Calculate file objects for the old and new configuration files.
-     */
-    public StoreFileMover() {
-        init();
     }
 
     /**

@@ -94,9 +94,9 @@ public class UriTemplate {
     }
 
 
-    public Map<String,String> match(UriTemplate candidate) {
+    public Map<String, String> match(UriTemplate candidate) {
 
-        Map<String,String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
 
         // Should not happen but for safety
         if (candidate.getSegmentCount() != getSegmentCount()) {

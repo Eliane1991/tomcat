@@ -62,7 +62,7 @@ public class Utf8Decoder extends CharsetDecoder {
             4224, // (01o00000b << 6)+(1o000000b)
             401536, // (011o0000b << 12)+(1o000000b << 6)+(1o000000b)
             29892736 // (0111o000b << 18)+(1o000000b << 12)+(1o000000b <<
-                     // 6)+(1o000000b)
+            // 6)+(1o000000b)
     };
     private static final int lowerEncodingLimit[] = {-1, 0x80, 0x800, 0x10000};
 
@@ -208,7 +208,7 @@ public class Utf8Decoder extends CharsetDecoder {
                     // First byte F0, second byte 90..BF
                     if (jchar == 0x70 &&
                             ((bArr[inIndex + 1] & 0xFF) < 0x90 ||
-                            (bArr[inIndex + 1] & 0xFF) > 0xBF)) {
+                                    (bArr[inIndex + 1] & 0xFF) > 0xBF)) {
                         in.position(inIndex - in.arrayOffset());
                         out.position(outIndex - out.arrayOffset());
                         return CoderResult.malformedForLength(1);

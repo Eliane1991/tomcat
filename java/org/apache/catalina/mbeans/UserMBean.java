@@ -67,11 +67,11 @@ public class UserMBean extends BaseModelMBean {
             try {
                 group = groups.next();
                 ObjectName oname =
-                    MBeanUtils.createObjectName(managed.getDomain(), group);
+                        MBeanUtils.createObjectName(managed.getDomain(), group);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
-                    ("Cannot create object name for group " + group);
+                        ("Cannot create object name for group " + group);
                 iae.initCause(e);
                 throw iae;
             }
@@ -93,11 +93,11 @@ public class UserMBean extends BaseModelMBean {
             try {
                 role = roles.next();
                 ObjectName oname =
-                    MBeanUtils.createObjectName(managed.getDomain(), role);
+                        MBeanUtils.createObjectName(managed.getDomain(), role);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
-                    ("Cannot create object name for role " + role);
+                        ("Cannot create object name for role " + role);
                 iae.initCause(e);
                 throw iae;
             }

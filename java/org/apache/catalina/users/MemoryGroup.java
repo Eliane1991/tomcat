@@ -44,11 +44,24 @@ public class MemoryGroup extends AbstractGroup {
 
 
     /**
+     * The {@link MemoryUserDatabase} that owns this group.
+     */
+    protected final MemoryUserDatabase database;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The set of {@link Role}s associated with this group.
+     */
+    protected final ArrayList<Role> roles = new ArrayList<>();
+
+
+    /**
      * Package-private constructor used by the factory method in
      * {@link MemoryUserDatabase}.
      *
-     * @param database The {@link MemoryUserDatabase} that owns this group
-     * @param groupname Group name of this group
+     * @param database    The {@link MemoryUserDatabase} that owns this group
+     * @param groupname   Group name of this group
      * @param description Description of this group
      */
     MemoryGroup(MemoryUserDatabase database,
@@ -62,23 +75,7 @@ public class MemoryGroup extends AbstractGroup {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The {@link MemoryUserDatabase} that owns this group.
-     */
-    protected final MemoryUserDatabase database;
-
-
-    /**
-     * The set of {@link Role}s associated with this group.
-     */
-    protected final ArrayList<Role> roles = new ArrayList<>();
-
-
     // ------------------------------------------------------------- Properties
-
 
     /**
      * Return the set of {@link Role}s assigned specifically to this group.
@@ -188,8 +185,12 @@ public class MemoryGroup extends AbstractGroup {
         synchronized (roles) {
             if (roles.size() > 0) {
                 sb.append(" roles=\"");
-                StringUtils.join(roles, ',', new Function<Role>(){
-                    @Override public String apply(Role t) { return t.getRolename(); }}, sb);
+                StringUtils.join(roles, ',', new Function<Role>() {
+                    @Override
+                    public String apply(Role t) {
+                        return t.getRolename();
+                    }
+                }, sb);
                 sb.append("\"");
             }
         }

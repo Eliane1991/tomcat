@@ -34,18 +34,18 @@ public class JavacErrorDetail {
 
     private final String javaFileName;
     private final int javaLineNum;
+    private final StringBuilder errMsg;
     private String jspFileName;
     private int jspBeginLineNum;
-    private final StringBuilder errMsg;
     private String jspExtract = null;
 
     /**
      * Constructor.
      *
      * @param javaFileName The name of the Java file in which the
-     * compilation error occurred
-     * @param javaLineNum The compilation error line number
-     * @param errMsg The compilation error message
+     *                     compilation error occurred
+     * @param javaLineNum  The compilation error line number
+     * @param errMsg       The compilation error message
      */
     public JavacErrorDetail(String javaFileName,
                             int javaLineNum,
@@ -57,22 +57,22 @@ public class JavacErrorDetail {
     /**
      * Constructor.
      *
-     * @param javaFileName The name of the Java file in which the
-     * compilation error occurred
-     * @param javaLineNum The compilation error line number
-     * @param jspFileName The name of the JSP file from which the Java source
-     * file was generated
+     * @param javaFileName    The name of the Java file in which the
+     *                        compilation error occurred
+     * @param javaLineNum     The compilation error line number
+     * @param jspFileName     The name of the JSP file from which the Java source
+     *                        file was generated
      * @param jspBeginLineNum The start line number of the JSP element
-     * responsible for the compilation error
-     * @param errMsg The compilation error message
-     * @param ctxt The compilation context
+     *                        responsible for the compilation error
+     * @param errMsg          The compilation error message
+     * @param ctxt            The compilation context
      */
     public JavacErrorDetail(String javaFileName,
-            int javaLineNum,
-            String jspFileName,
-            int jspBeginLineNum,
-            StringBuilder errMsg,
-            JspCompilationContext ctxt) {
+                            int javaLineNum,
+                            String jspFileName,
+                            int jspBeginLineNum,
+                            StringBuilder errMsg,
+                            JspCompilationContext ctxt) {
 
         this.javaFileName = javaFileName;
         this.javaLineNum = javaLineNum;
@@ -109,14 +109,14 @@ public class JavacErrorDetail {
                     // If the line contains the opening of a multi-line scriptlet
                     // block, then the JSP line number we got back is probably
                     // faulty.  Scan forward to match the java line...
-                    if (jspLines[jspBeginLineNum-1].lastIndexOf("<%") >
-                        jspLines[jspBeginLineNum-1].lastIndexOf("%>")) {
-                        String javaLine = javaLines[javaLineNum-1].trim();
+                    if (jspLines[jspBeginLineNum - 1].lastIndexOf("<%") >
+                            jspLines[jspBeginLineNum - 1].lastIndexOf("%>")) {
+                        String javaLine = javaLines[javaLineNum - 1].trim();
 
-                        for (int i=jspBeginLineNum-1; i<jspLines.length; i++) {
+                        for (int i = jspBeginLineNum - 1; i < jspLines.length; i++) {
                             if (jspLines[i].indexOf(javaLine) != -1) {
                                 // Update jsp line number
-                                jspBeginLineNum = i+1;
+                                jspBeginLineNum = i + 1;
                                 break;
                             }
                         }
@@ -124,12 +124,12 @@ public class JavacErrorDetail {
 
                     // copy out a fragment of JSP to display to the user
                     StringBuilder fragment = new StringBuilder(1024);
-                    int startIndex = Math.max(0, jspBeginLineNum-1-3);
+                    int startIndex = Math.max(0, jspBeginLineNum - 1 - 3);
                     int endIndex = Math.min(
-                            jspLines.length-1, jspBeginLineNum-1+3);
+                            jspLines.length - 1, jspBeginLineNum - 1 + 3);
 
-                    for (int i=startIndex;i<=endIndex; ++i) {
-                        fragment.append(i+1);
+                    for (int i = startIndex; i <= endIndex; ++i) {
+                        fragment.append(i + 1);
                         fragment.append(": ");
                         fragment.append(jspLines[i]);
                         fragment.append(System.lineSeparator());
@@ -218,7 +218,7 @@ public class JavacErrorDetail {
         List<String> lines = new ArrayList<>();
         String line;
 
-        while ( (line = reader.readLine()) != null ) {
+        while ((line = reader.readLine()) != null) {
             lines.add(line);
         }
 

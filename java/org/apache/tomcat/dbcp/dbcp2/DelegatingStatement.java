@@ -33,10 +33,14 @@ import java.util.List;
  */
 public class DelegatingStatement extends AbandonedTrace implements Statement {
 
-    /** My delegate. */
+    /**
+     * My delegate.
+     */
     private Statement statement;
 
-    /** The connection that created me. **/
+    /**
+     * The connection that created me.
+     **/
     private DelegatingConnection<?> connection;
 
     private boolean closed = false;
@@ -45,10 +49,8 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
      * Create a wrapper for the Statement which traces this Statement to the Connection which created it and the code
      * which created it.
      *
-     * @param statement
-     *            the {@link Statement} to delegate all calls to.
-     * @param connection
-     *            the {@link DelegatingConnection} that created this statement.
+     * @param statement  the {@link Statement} to delegate all calls to.
+     * @param connection the {@link DelegatingConnection} that created this statement.
      */
     public DelegatingStatement(final DelegatingConnection<?> connection, final Statement statement) {
         super(connection);
@@ -57,9 +59,7 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
     }
 
     /**
-     *
-     * @throws SQLException
-     *             thrown by the delegating statement.
+     * @throws SQLException thrown by the delegating statement.
      * @since 2.4.0 made public, was protected in 2.3.0.
      */
     public void activate() throws SQLException {
@@ -336,6 +336,15 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         return statement;
     }
 
+    /**
+     * Sets my delegate.
+     *
+     * @param statement my delegate.
+     */
+    public void setDelegate(final Statement statement) {
+        this.statement = statement;
+    }
+
     @Override
     public int getFetchDirection() throws SQLException {
         checkOpen();
@@ -348,6 +357,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
     }
 
     @Override
+    public void setFetchDirection(final int direction) throws SQLException {
+        checkOpen();
+        try {
+            statement.setFetchDirection(direction);
+        } catch (final SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
     public int getFetchSize() throws SQLException {
         checkOpen();
         try {
@@ -355,6 +374,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         } catch (final SQLException e) {
             handleException(e);
             return 0;
+        }
+    }
+
+    @Override
+    public void setFetchSize(final int rows) throws SQLException {
+        checkOpen();
+        try {
+            statement.setFetchSize(rows);
+        } catch (final SQLException e) {
+            handleException(e);
         }
     }
 
@@ -382,7 +411,6 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
      * </p>
      *
      * @return The innermost delegate.
-     *
      * @see #getDelegate
      */
     public Statement getInnermostDelegate() {
@@ -408,6 +436,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
     }
 
     @Override
+    public void setMaxFieldSize(final int max) throws SQLException {
+        checkOpen();
+        try {
+            statement.setMaxFieldSize(max);
+        } catch (final SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
     public int getMaxRows() throws SQLException {
         checkOpen();
         try {
@@ -415,6 +453,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         } catch (final SQLException e) {
             handleException(e);
             return 0;
+        }
+    }
+
+    @Override
+    public void setMaxRows(final int max) throws SQLException {
+        checkOpen();
+        try {
+            statement.setMaxRows(max);
+        } catch (final SQLException e) {
+            handleException(e);
         }
     }
 
@@ -448,6 +496,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         } catch (final SQLException e) {
             handleException(e);
             return 0;
+        }
+    }
+
+    @Override
+    public void setQueryTimeout(final int seconds) throws SQLException {
+        checkOpen();
+        try {
+            statement.setQueryTimeout(seconds);
+        } catch (final SQLException e) {
+            handleException(e);
         }
     }
 
@@ -537,6 +595,10 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         return closed;
     }
 
+    protected void setClosedInternal(final boolean closed) {
+        this.closed = closed;
+    }
+
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
         checkOpen();
@@ -560,6 +622,16 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
     }
 
     @Override
+    public void setPoolable(final boolean poolable) throws SQLException {
+        checkOpen();
+        try {
+            statement.setPoolable(poolable);
+        } catch (final SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         if (iface.isAssignableFrom(getClass())) {
             return true;
@@ -571,19 +643,13 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
     }
 
     /**
-     *
-     * @throws SQLException
-     *             thrown by the delegating statement.
+     * @throws SQLException thrown by the delegating statement.
      * @since 2.4.0 made public, was protected in 2.3.0.
      */
     public void passivate() throws SQLException {
         if (statement instanceof DelegatingStatement) {
             ((DelegatingStatement) statement).passivate();
         }
-    }
-
-    protected void setClosedInternal(final boolean closed) {
-        this.closed = closed;
     }
 
     @Override
@@ -596,16 +662,6 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         }
     }
 
-    /**
-     * Sets my delegate.
-     *
-     * @param statement
-     *            my delegate.
-     */
-    public void setDelegate(final Statement statement) {
-        this.statement = statement;
-    }
-
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
         checkOpen();
@@ -616,69 +672,9 @@ public class DelegatingStatement extends AbandonedTrace implements Statement {
         }
     }
 
-    @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        checkOpen();
-        try {
-            statement.setFetchDirection(direction);
-        } catch (final SQLException e) {
-            handleException(e);
-        }
-    }
-
-    @Override
-    public void setFetchSize(final int rows) throws SQLException {
-        checkOpen();
-        try {
-            statement.setFetchSize(rows);
-        } catch (final SQLException e) {
-            handleException(e);
-        }
-    }
-
     private void setLastUsedInParent() {
         if (connection != null) {
             connection.setLastUsed();
-        }
-    }
-
-    @Override
-    public void setMaxFieldSize(final int max) throws SQLException {
-        checkOpen();
-        try {
-            statement.setMaxFieldSize(max);
-        } catch (final SQLException e) {
-            handleException(e);
-        }
-    }
-
-    @Override
-    public void setMaxRows(final int max) throws SQLException {
-        checkOpen();
-        try {
-            statement.setMaxRows(max);
-        } catch (final SQLException e) {
-            handleException(e);
-        }
-    }
-
-    @Override
-    public void setPoolable(final boolean poolable) throws SQLException {
-        checkOpen();
-        try {
-            statement.setPoolable(poolable);
-        } catch (final SQLException e) {
-            handleException(e);
-        }
-    }
-
-    @Override
-    public void setQueryTimeout(final int seconds) throws SQLException {
-        checkOpen();
-        try {
-            statement.setQueryTimeout(seconds);
-        } catch (final SQLException e) {
-            handleException(e);
         }
     }
 

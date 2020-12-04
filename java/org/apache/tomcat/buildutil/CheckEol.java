@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.tomcat.buildutil;
 
@@ -41,7 +41,9 @@ import java.util.List;
  */
 public class CheckEol extends Task {
 
-    /** The files to be checked */
+    /**
+     * The files to be checked
+     */
     private final List<FileSet> filesets = new LinkedList<>();
 
     /**
@@ -49,15 +51,15 @@ public class CheckEol extends Task {
      *
      * @param fs The fileset to be checked.
      */
-    public void addFileset( FileSet fs ) {
-        filesets.add( fs );
+    public void addFileset(FileSet fs) {
+        filesets.add(fs);
     }
 
     /**
      * Perform the check
      *
      * @throws BuildException if an error occurs during execution of
-     *    this task.
+     *                        this task.
      */
     @Override
     public void execute() throws BuildException {
@@ -113,30 +115,9 @@ public class CheckEol extends Task {
         }
     }
 
-    private enum Mode {
-        LF, CRLF
-    }
-
-    private static class CheckFailure {
-        private final File file;
-        private final int line;
-        private final String value;
-
-        public CheckFailure(File file, int line, String value) {
-            this.file = file;
-            this.line = line;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return System.lineSeparator() + file + ": uses " + value + " on line " + line;
-        }
-    }
-
     private void check(File file, List<CheckFailure> errors, Mode mode) throws IOException {
         try (FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream is = new BufferedInputStream(fis)) {
+             BufferedInputStream is = new BufferedInputStream(fis)) {
             int line = 1;
             int prev = -1;
             int ch;
@@ -156,6 +137,27 @@ public class CheckEol extends Task {
                 }
                 prev = ch;
             }
+        }
+    }
+
+    private enum Mode {
+        LF, CRLF
+    }
+
+    private static class CheckFailure {
+        private final File file;
+        private final int line;
+        private final String value;
+
+        public CheckFailure(File file, int line, String value) {
+            this.file = file;
+            this.line = line;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return System.lineSeparator() + file + ": uses " + value + " on line " + line;
         }
     }
 }

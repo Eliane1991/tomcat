@@ -54,53 +54,6 @@ public class ManagedConcurrentWeakHashMap<K, V> extends AbstractMap<K, V> implem
         }
     }
 
-    private static class Key extends WeakReference<Object> {
-        private final int hash;
-        private boolean dead;
-
-        public Key(Object key, ReferenceQueue<Object> queue) {
-            super(key, queue);
-            hash = key.hashCode();
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (dead) {
-                // Post-mortem cleanup looks for this specific Reference
-                // instance
-                return false;
-            }
-            if (!(obj instanceof Reference<?>)) {
-                return false;
-            }
-            Object oA = get();
-            Object oB = ((Reference<?>) obj).get();
-            if (oA == oB) {
-                return true;
-            }
-            if (oA == null || oB == null) {
-                return false;
-            }
-            return oA.equals(oB);
-        }
-
-        public void ackDeath() {
-            this.dead = true;
-        }
-
-        public boolean isDead() {
-            return dead;
-        }
-    }
-
     /**
      * Creates Key instance to be used to store values in the map. It is
      * registered with the ReferenceQueue.
@@ -261,5 +214,52 @@ public class ManagedConcurrentWeakHashMap<K, V> extends AbstractMap<K, V> implem
                 };
             }
         };
+    }
+
+    private static class Key extends WeakReference<Object> {
+        private final int hash;
+        private boolean dead;
+
+        public Key(Object key, ReferenceQueue<Object> queue) {
+            super(key, queue);
+            hash = key.hashCode();
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (dead) {
+                // Post-mortem cleanup looks for this specific Reference
+                // instance
+                return false;
+            }
+            if (!(obj instanceof Reference<?>)) {
+                return false;
+            }
+            Object oA = get();
+            Object oB = ((Reference<?>) obj).get();
+            if (oA == oB) {
+                return true;
+            }
+            if (oA == null || oB == null) {
+                return false;
+            }
+            return oA.equals(oB);
+        }
+
+        public void ackDeath() {
+            this.dead = true;
+        }
+
+        public boolean isDead() {
+            return dead;
+        }
     }
 }

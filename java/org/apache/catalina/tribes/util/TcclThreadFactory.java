@@ -32,7 +32,7 @@ public class TcclThreadFactory implements ThreadFactory {
 
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private static final boolean IS_SECURITY_ENABLED =
-        (System.getSecurityManager() != null);
+            (System.getSecurityManager() != null);
 
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);

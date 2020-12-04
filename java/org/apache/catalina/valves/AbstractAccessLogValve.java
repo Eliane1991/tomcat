@@ -134,6 +134,565 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class AbstractAccessLogValve extends ValveBase implements AccessLog {
 
     private static final Log log = LogFactory.getLog(AbstractAccessLogValve.class);
+    /**
+     * The size of our global date format cache
+     */
+    private static final int globalCacheSize = 300;
+    /**
+     * The size of our thread local date format cache
+     */
+    private static final int localCacheSize = 60;
+    /**
+     * Global date format cache.
+     */
+    private static final DateFormatCache globalDateCache =
+            new DateFormatCache(globalCacheSize, Locale.getDefault(), null);
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * Thread local date format cache.
+     */
+    private static final ThreadLocal<DateFormatCache> localDateCache =
+            new ThreadLocal<DateFormatCache>() {
+                @Override
+                protected DateFormatCache initialValue() {
+                    return new DateFormatCache(localCacheSize, Locale.getDefault(), globalDateCache);
+                }
+            };
+    /**
+     * The system time when we last updated the Date that this valve
+     * uses for log lines.
+     */
+    private static final ThreadLocal<Date> localDate =
+            new ThreadLocal<Date>() {
+                @Override
+                protected Date initialValue() {
+                    return new Date();
+                }
+            };
+    /**
+     * enabled this component
+     */
+    protected boolean enabled = true;
+    /**
+     * The pattern used to format our access log lines.
+     */
+    protected String pattern = null;
+    /**
+     * Are we doing conditional logging. default null.
+     * It is the value of <code>conditionUnless</code> property.
+     */
+    protected String condition = null;
+    /**
+     * Are we doing conditional logging. default null.
+     * It is the value of <code>conditionIf</code> property.
+     */
+    protected String conditionIf = null;
+    /**
+     * Name of locale used to format timestamps in log entries and in
+     * log file name suffix.
+     */
+    protected String localeName = Locale.getDefault().toString();
+    /**
+     * Locale used to format timestamps in log entries and in
+     * log file name suffix.
+     */
+    protected Locale locale = Locale.getDefault();
+    /**
+     * Array of AccessLogElement, they will be used to make log message.
+     */
+    protected AccessLogElement[] logElements = null;
+    /**
+     * Array of elements where the value needs to be cached at the start of the
+     * request.
+     */
+    protected CachedElement[] cachedElements = null;
+    /**
+     * Should this valve use request attributes for IP address, hostname,
+     * protocol and port used for the request.
+     * Default is <code>false</code>.
+     *
+     * @see #setRequestAttributesEnabled(boolean)
+     */
+    protected boolean requestAttributesEnabled = false;
+    /**
+     * Use IPv6 canonical representation format as defined by RFC 5952.
+     */
+    private boolean ipv6Canonical = false;
+    /**
+     * Buffer pool used for log message generation. Pool used to reduce garbage
+     * generation.
+     */
+    private SynchronizedStack<CharArrayWriter> charArrayWriters =
+            new SynchronizedStack<>();
+    /**
+     * Log message buffers are usually recycled and re-used. To prevent
+     * excessive memory usage, if a buffer grows beyond this size it will be
+     * discarded. The default is 256 characters. This should be set to larger
+     * than the typical access log message size.
+     */
+    private int maxLogMessageBufferSize = 256;
+    /**
+     * Does the configured log pattern include a known TLS attribute?
+     */
+    private boolean tlsAttributeRequired = false;
+
+    //------------------------------------------------------ Constructor
+    public AbstractAccessLogValve() {
+        super(true);
+    }
+
+    /**
+     * This method returns a Date object that is accurate to within one second.
+     * If a thread calls this method to get a Date and it's been less than 1
+     * second since a new Date was created, this method simply gives out the
+     * same Date again so that the system doesn't spend time creating Date
+     * objects unnecessarily.
+     *
+     * @param systime The time
+     * @return the date object
+     */
+    private static Date getDate(long systime) {
+        Date date = localDate.get();
+        date.setTime(systime);
+        return date;
+    }
+
+    /**
+     * Find a locale by name.
+     *
+     * @param name     The locale name
+     * @param fallback Fallback locale if the name is not found
+     * @return the locale object
+     */
+    protected static Locale findLocale(String name, Locale fallback) {
+        if (name == null || name.isEmpty()) {
+            return Locale.getDefault();
+        } else {
+            for (Locale l : Locale.getAvailableLocales()) {
+                if (name.equals(l.toString())) {
+                    return l;
+                }
+            }
+        }
+        log.error(sm.getString("accessLogValve.invalidLocale", name));
+        return fallback;
+    }
+
+    public int getMaxLogMessageBufferSize() {
+        return maxLogMessageBufferSize;
+    }
+
+
+    // ------------------------------------------------------------- Properties
+
+    public void setMaxLogMessageBufferSize(int maxLogMessageBufferSize) {
+        this.maxLogMessageBufferSize = maxLogMessageBufferSize;
+    }
+
+    public boolean getIpv6Canonical() {
+        return ipv6Canonical;
+    }
+
+    public void setIpv6Canonical(boolean ipv6Canonical) {
+        this.ipv6Canonical = ipv6Canonical;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean getRequestAttributesEnabled() {
+        return requestAttributesEnabled;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Default is <code>false</code>.
+     */
+    @Override
+    public void setRequestAttributesEnabled(boolean requestAttributesEnabled) {
+        this.requestAttributesEnabled = requestAttributesEnabled;
+    }
+
+    /**
+     * @return the enabled flag.
+     */
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled The enabled to set.
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    /**
+     * @return the format pattern.
+     */
+    public String getPattern() {
+        return this.pattern;
+    }
+
+    /**
+     * Set the format pattern, first translating any recognized alias.
+     *
+     * @param pattern The new pattern
+     */
+    public void setPattern(String pattern) {
+        if (pattern == null) {
+            this.pattern = "";
+        } else if (pattern.equals(Constants.AccessLog.COMMON_ALIAS)) {
+            this.pattern = Constants.AccessLog.COMMON_PATTERN;
+        } else if (pattern.equals(Constants.AccessLog.COMBINED_ALIAS)) {
+            this.pattern = Constants.AccessLog.COMBINED_PATTERN;
+        } else {
+            this.pattern = pattern;
+        }
+        logElements = createLogElements();
+        cachedElements = createCachedElements(logElements);
+    }
+
+    /**
+     * Return whether the attribute name to look for when
+     * performing conditional logging. If null, every
+     * request is logged.
+     *
+     * @return the attribute name
+     */
+    public String getCondition() {
+        return condition;
+    }
+
+    /**
+     * Set the ServletRequest.attribute to look for to perform
+     * conditional logging. Set to null to log everything.
+     *
+     * @param condition Set to null to log everything
+     */
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    /**
+     * Return whether the attribute name to look for when
+     * performing conditional logging. If null, every
+     * request is logged.
+     *
+     * @return the attribute name
+     */
+    public String getConditionUnless() {
+        return getCondition();
+    }
+
+    /**
+     * Set the ServletRequest.attribute to look for to perform
+     * conditional logging. Set to null to log everything.
+     *
+     * @param condition Set to null to log everything
+     */
+    public void setConditionUnless(String condition) {
+        setCondition(condition);
+    }
+
+    /**
+     * Return whether the attribute name to look for when
+     * performing conditional logging. If null, every
+     * request is logged.
+     *
+     * @return the attribute name
+     */
+    public String getConditionIf() {
+        return conditionIf;
+    }
+
+    /**
+     * Set the ServletRequest.attribute to look for to perform
+     * conditional logging. Set to null to log everything.
+     *
+     * @param condition Set to null to log everything
+     */
+    public void setConditionIf(String condition) {
+        this.conditionIf = condition;
+    }
+
+    /**
+     * Return the locale used to format timestamps in log entries and in
+     * log file name suffix.
+     *
+     * @return the locale
+     */
+    public String getLocale() {
+        return localeName;
+    }
+
+    /**
+     * Set the locale used to format timestamps in log entries and in
+     * log file name suffix. Changing the locale is only supported
+     * as long as the AccessLogValve has not logged anything. Changing
+     * the locale later can lead to inconsistent formatting.
+     *
+     * @param localeName The locale to use.
+     */
+    public void setLocale(String localeName) {
+        this.localeName = localeName;
+        locale = findLocale(localeName, locale);
+    }
+
+    /**
+     * Log a message summarizing the specified request and response, according
+     * to the format specified by the <code>pattern</code> property.
+     *
+     * @param request  Request being processed
+     * @param response Response being processed
+     * @throws IOException      if an input/output error has occurred
+     * @throws ServletException if a servlet error has occurred
+     */
+    @Override
+    public void invoke(Request request, Response response) throws IOException,
+            ServletException {
+        if (tlsAttributeRequired) {
+            // The log pattern uses TLS attributes. Ensure these are populated
+            // before the request is processed because with NIO2 it is possible
+            // for the connection to be closed (and the TLS info lost) before
+            // the access log requests the TLS info. Requesting it now causes it
+            // to be cached in the request.
+            request.getAttribute(Globals.CERTIFICATES_ATTR);
+        }
+        if (cachedElements != null) {
+            for (CachedElement element : cachedElements) {
+                element.cache(request);
+            }
+        }
+        getNext().invoke(request, response);
+    }
+
+    // --------------------------------------------------------- Public Methods
+
+    @Override
+    public void log(Request request, Response response, long time) {
+        if (!getState().isAvailable() || !getEnabled() || logElements == null
+                || condition != null
+                && null != request.getRequest().getAttribute(condition)
+                || conditionIf != null
+                && null == request.getRequest().getAttribute(conditionIf)) {
+            return;
+        }
+
+        /**
+         * XXX This is a bit silly, but we want to have start and stop time and
+         * duration consistent. It would be better to keep start and stop
+         * simply in the request and/or response object and remove time
+         * (duration) from the interface.
+         */
+        long start = request.getCoyoteRequest().getStartTime();
+        Date date = getDate(start + time);
+
+        CharArrayWriter result = charArrayWriters.pop();
+        if (result == null) {
+            result = new CharArrayWriter(128);
+        }
+
+        for (AccessLogElement logElement : logElements) {
+            logElement.addElement(result, date, request, response, time);
+        }
+
+        log(result);
+
+        if (result.size() <= maxLogMessageBufferSize) {
+            result.reset();
+            charArrayWriters.push(result);
+        }
+    }
+
+    /**
+     * Log the specified message.
+     *
+     * @param message Message to be logged. This object will be recycled by
+     *                the calling method.
+     */
+    protected abstract void log(CharArrayWriter message);
+
+    // -------------------------------------------------------- Protected Methods
+
+    /**
+     * Start this component and implement the requirements
+     * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
+     *
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
+     */
+    @Override
+    protected synchronized void startInternal() throws LifecycleException {
+
+        setState(LifecycleState.STARTING);
+    }
+
+    // -------------------------------------------------------- Private Methods
+
+    /**
+     * Stop this component and implement the requirements
+     * of {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
+     *
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
+     */
+    @Override
+    protected synchronized void stopInternal() throws LifecycleException {
+
+        setState(LifecycleState.STOPPING);
+    }
+
+    /**
+     * Parse pattern string and create the array of AccessLogElement.
+     *
+     * @return the log elements array
+     */
+    protected AccessLogElement[] createLogElements() {
+        List<AccessLogElement> list = new ArrayList<>();
+        boolean replace = false;
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < pattern.length(); i++) {
+            char ch = pattern.charAt(i);
+            if (replace) {
+                /*
+                 * For code that processes {, the behavior will be ... if I do
+                 * not encounter a closing } - then I ignore the {
+                 */
+                if ('{' == ch) {
+                    StringBuilder name = new StringBuilder();
+                    int j = i + 1;
+                    for (; j < pattern.length() && '}' != pattern.charAt(j); j++) {
+                        name.append(pattern.charAt(j));
+                    }
+                    if (j + 1 < pattern.length()) {
+                        /* the +1 was to account for } which we increment now */
+                        j++;
+                        list.add(createAccessLogElement(name.toString(),
+                                pattern.charAt(j)));
+                        i = j; /* Since we walked more than one character */
+                    } else {
+                        // D'oh - end of string - pretend we never did this
+                        // and do processing the "old way"
+                        list.add(createAccessLogElement(ch));
+                    }
+                } else {
+                    list.add(createAccessLogElement(ch));
+                }
+                replace = false;
+            } else if (ch == '%') {
+                replace = true;
+                list.add(new StringElement(buf.toString()));
+                buf = new StringBuilder();
+            } else {
+                buf.append(ch);
+            }
+        }
+        if (buf.length() > 0) {
+            list.add(new StringElement(buf.toString()));
+        }
+        return list.toArray(new AccessLogElement[0]);
+    }
+
+    private CachedElement[] createCachedElements(AccessLogElement[] elements) {
+        List<CachedElement> list = new ArrayList<>();
+        for (AccessLogElement element : elements) {
+            if (element instanceof CachedElement) {
+                list.add((CachedElement) element);
+            }
+        }
+        return list.toArray(new CachedElement[0]);
+    }
+
+    /**
+     * Create an AccessLogElement implementation which needs an element name.
+     *
+     * @param name    Header name
+     * @param pattern char in the log pattern
+     * @return the log element
+     */
+    protected AccessLogElement createAccessLogElement(String name, char pattern) {
+        switch (pattern) {
+            case 'i':
+                return new HeaderElement(name);
+            case 'c':
+                return new CookieElement(name);
+            case 'o':
+                return new ResponseHeaderElement(name);
+            case 'p':
+                return new PortElement(name);
+            case 'r':
+                if (TLSUtil.isTLSRequestAttribute(name)) {
+                    tlsAttributeRequired = true;
+                }
+                return new RequestAttributeElement(name);
+            case 's':
+                return new SessionAttributeElement(name);
+            case 't':
+                return new DateAndTimeElement(name);
+            default:
+                return new StringElement("???");
+        }
+    }
+
+    /**
+     * Create an AccessLogElement implementation.
+     *
+     * @param pattern char in the log pattern
+     * @return the log element
+     */
+    protected AccessLogElement createAccessLogElement(char pattern) {
+        switch (pattern) {
+            case 'a':
+                return new RemoteAddrElement();
+            case 'A':
+                return new LocalAddrElement(ipv6Canonical);
+            case 'b':
+                return new ByteSentElement(true);
+            case 'B':
+                return new ByteSentElement(false);
+            case 'D':
+                return new ElapsedTimeElement(true);
+            case 'F':
+                return new FirstByteTimeElement();
+            case 'h':
+                return new HostElement();
+            case 'H':
+                return new ProtocolElement();
+            case 'l':
+                return new LogicalUserNameElement();
+            case 'm':
+                return new MethodElement();
+            case 'p':
+                return new PortElement();
+            case 'q':
+                return new QueryElement();
+            case 'r':
+                return new RequestElement();
+            case 's':
+                return new HttpStatusCodeElement();
+            case 'S':
+                return new SessionIdElement();
+            case 't':
+                return new DateAndTimeElement();
+            case 'T':
+                return new ElapsedTimeElement(false);
+            case 'u':
+                return new UserElement();
+            case 'U':
+                return new RequestURIElement();
+            case 'v':
+                return new LocalServerNameElement();
+            case 'I':
+                return new ThreadNameElement();
+            case 'X':
+                return new ConnectionStatusElement();
+            default:
+                return new StringElement("???" + pattern + "???");
+        }
+    }
 
     /**
      * The list of our time format types.
@@ -149,38 +708,27 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
         LOCAL, REMOTE
     }
 
-    //------------------------------------------------------ Constructor
-    public AbstractAccessLogValve() {
-        super(true);
+    /**
+     * AccessLogElement writes the partial message into the buffer.
+     */
+    protected interface AccessLogElement {
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time);
     }
 
-    // ----------------------------------------------------- Instance Variables
-
-
     /**
-     * enabled this component
+     * Marks an AccessLogElement as needing to be have the value cached at the
+     * start of the request rather than just recorded at the end as the source
+     * data for the element may not be available at the end of the request. This
+     * typically occurs for remote network information, such as ports, IP
+     * addresses etc. when the connection is closed unexpectedly. These elements
+     * take advantage of these values being cached elsewhere on first request
+     * and do not cache the value in the element since the elements are
+     * state-less.
      */
-    protected boolean enabled = true;
-
-     /**
-     * Use IPv6 canonical representation format as defined by RFC 5952.
-     */
-    private boolean ipv6Canonical = false;
-
-    /**
-     * The pattern used to format our access log lines.
-     */
-    protected String pattern = null;
-
-    /**
-     * The size of our global date format cache
-     */
-    private static final int globalCacheSize = 300;
-
-    /**
-     * The size of our thread local date format cache
-     */
-    private static final int localCacheSize = 60;
+    protected interface CachedElement {
+        public void cache(Request request);
+    }
 
     /**
      * <p>Cache structure for formatted timestamps based on seconds.</p>
@@ -210,26 +758,71 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
      */
     protected static class DateFormatCache {
 
+        protected final Cache cLFCache;
+        private final Locale cacheDefaultLocale;
+        private final DateFormatCache parent;
+        private final Map<String, Cache> formatCache = new HashMap<>();
+        /* Number of cached entries */
+        private int cacheSize = 0;
+
+        protected DateFormatCache(int size, Locale loc, DateFormatCache parent) {
+            cacheSize = size;
+            cacheDefaultLocale = loc;
+            this.parent = parent;
+            Cache parentCache = null;
+            if (parent != null) {
+                synchronized (parent) {
+                    parentCache = parent.getCache(null, null);
+                }
+            }
+            cLFCache = new Cache(parentCache);
+        }
+
+        private Cache getCache(String format, Locale loc) {
+            Cache cache;
+            if (format == null) {
+                cache = cLFCache;
+            } else {
+                cache = formatCache.get(format);
+                if (cache == null) {
+                    Cache parentCache = null;
+                    if (parent != null) {
+                        synchronized (parent) {
+                            parentCache = parent.getCache(format, loc);
+                        }
+                    }
+                    cache = new Cache(format, loc, parentCache);
+                    formatCache.put(format, cache);
+                }
+            }
+            return cache;
+        }
+
+        public String getFormat(long time) {
+            return cLFCache.getFormatInternal(time);
+        }
+
+        public String getFormat(String format, Locale loc, long time) {
+            return getCache(format, loc).getFormatInternal(time);
+        }
+
         protected class Cache {
 
             /* CLF log format */
             private static final String cLFFormat = "dd/MMM/yyyy:HH:mm:ss Z";
-
+            protected final String cache[];
+            /* Helper object to be able to call SimpleDateFormat.format(). */
+            private final Date currentDate = new Date();
             /* Second used to retrieve CLF format in most recent invocation */
             private long previousSeconds = Long.MIN_VALUE;
             /* Value of CLF format retrieved in most recent invocation */
             private String previousFormat = "";
-
             /* First second contained in cache */
             private long first = Long.MIN_VALUE;
             /* Last second contained in cache */
             private long last = Long.MIN_VALUE;
             /* Index of "first" in the cyclic cache */
             private int offset = 0;
-            /* Helper object to be able to call SimpleDateFormat.format(). */
-            private final Date currentDate = new Date();
-
-            protected final String cache[];
             private SimpleDateFormat formatter;
             private boolean isCLF = false;
 
@@ -274,7 +867,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
                 /* Second step: Try to locate in cache */
                 previousSeconds = seconds;
-                int index = (offset + (int)(seconds - first)) % cacheSize;
+                int index = (offset + (int) (seconds - first)) % cacheSize;
                 if (index < 0) {
                     index += cacheSize;
                 }
@@ -285,7 +878,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
                         return previousFormat;
                     }
 
-                /* Third step: not found in cache, adjust cache and add item */
+                    /* Third step: not found in cache, adjust cache and add item */
                 } else if (seconds >= last + cacheSize || seconds <= first - cacheSize) {
                     first = seconds;
                     last = first + cacheSize - 1;
@@ -313,7 +906,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
                 /* Last step: format new timestamp either using
                  * parent cache or locally. */
                 if (parent != null) {
-                    synchronized(parent) {
+                    synchronized (parent) {
                         previousFormat = parent.getFormatInternal(time);
                     }
                 } else {
@@ -331,485 +924,6 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
                 return previousFormat;
             }
         }
-
-        /* Number of cached entries */
-        private int cacheSize = 0;
-
-        private final Locale cacheDefaultLocale;
-        private final DateFormatCache parent;
-        protected final Cache cLFCache;
-        private final Map<String, Cache> formatCache = new HashMap<>();
-
-        protected DateFormatCache(int size, Locale loc, DateFormatCache parent) {
-            cacheSize = size;
-            cacheDefaultLocale = loc;
-            this.parent = parent;
-            Cache parentCache = null;
-            if (parent != null) {
-                synchronized(parent) {
-                    parentCache = parent.getCache(null, null);
-                }
-            }
-            cLFCache = new Cache(parentCache);
-        }
-
-        private Cache getCache(String format, Locale loc) {
-            Cache cache;
-            if (format == null) {
-                cache = cLFCache;
-            } else {
-                cache = formatCache.get(format);
-                if (cache == null) {
-                    Cache parentCache = null;
-                    if (parent != null) {
-                        synchronized(parent) {
-                            parentCache = parent.getCache(format, loc);
-                        }
-                    }
-                    cache = new Cache(format, loc, parentCache);
-                    formatCache.put(format, cache);
-                }
-            }
-            return cache;
-        }
-
-        public String getFormat(long time) {
-            return cLFCache.getFormatInternal(time);
-        }
-
-        public String getFormat(String format, Locale loc, long time) {
-            return getCache(format, loc).getFormatInternal(time);
-        }
-    }
-
-    /**
-     * Global date format cache.
-     */
-    private static final DateFormatCache globalDateCache =
-            new DateFormatCache(globalCacheSize, Locale.getDefault(), null);
-
-    /**
-     * Thread local date format cache.
-     */
-    private static final ThreadLocal<DateFormatCache> localDateCache =
-            new ThreadLocal<DateFormatCache>() {
-        @Override
-        protected DateFormatCache initialValue() {
-            return new DateFormatCache(localCacheSize, Locale.getDefault(), globalDateCache);
-        }
-    };
-
-
-    /**
-     * The system time when we last updated the Date that this valve
-     * uses for log lines.
-     */
-    private static final ThreadLocal<Date> localDate =
-            new ThreadLocal<Date>() {
-        @Override
-        protected Date initialValue() {
-            return new Date();
-        }
-    };
-
-    /**
-     * Are we doing conditional logging. default null.
-     * It is the value of <code>conditionUnless</code> property.
-     */
-    protected String condition = null;
-
-    /**
-     * Are we doing conditional logging. default null.
-     * It is the value of <code>conditionIf</code> property.
-     */
-    protected String conditionIf = null;
-
-    /**
-     * Name of locale used to format timestamps in log entries and in
-     * log file name suffix.
-     */
-    protected String localeName = Locale.getDefault().toString();
-
-
-    /**
-     * Locale used to format timestamps in log entries and in
-     * log file name suffix.
-     */
-    protected Locale locale = Locale.getDefault();
-
-    /**
-     * Array of AccessLogElement, they will be used to make log message.
-     */
-    protected AccessLogElement[] logElements = null;
-
-    /**
-     * Array of elements where the value needs to be cached at the start of the
-     * request.
-     */
-    protected CachedElement[] cachedElements = null;
-
-    /**
-     * Should this valve use request attributes for IP address, hostname,
-     * protocol and port used for the request.
-     * Default is <code>false</code>.
-     * @see #setRequestAttributesEnabled(boolean)
-     */
-    protected boolean requestAttributesEnabled = false;
-
-    /**
-     * Buffer pool used for log message generation. Pool used to reduce garbage
-     * generation.
-     */
-    private SynchronizedStack<CharArrayWriter> charArrayWriters =
-            new SynchronizedStack<>();
-
-    /**
-     * Log message buffers are usually recycled and re-used. To prevent
-     * excessive memory usage, if a buffer grows beyond this size it will be
-     * discarded. The default is 256 characters. This should be set to larger
-     * than the typical access log message size.
-     */
-    private int maxLogMessageBufferSize = 256;
-
-    /**
-     * Does the configured log pattern include a known TLS attribute?
-     */
-    private boolean tlsAttributeRequired = false;
-
-
-    // ------------------------------------------------------------- Properties
-
-    public int getMaxLogMessageBufferSize() {
-        return maxLogMessageBufferSize;
-    }
-
-
-    public void setMaxLogMessageBufferSize(int maxLogMessageBufferSize) {
-        this.maxLogMessageBufferSize = maxLogMessageBufferSize;
-    }
-
-
-    public boolean getIpv6Canonical() {
-        return ipv6Canonical;
-    }
-
-
-    public void setIpv6Canonical(boolean ipv6Canonical) {
-        this.ipv6Canonical = ipv6Canonical;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     * Default is <code>false</code>.
-     */
-    @Override
-    public void setRequestAttributesEnabled(boolean requestAttributesEnabled) {
-        this.requestAttributesEnabled = requestAttributesEnabled;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean getRequestAttributesEnabled() {
-        return requestAttributesEnabled;
-    }
-
-    /**
-     * @return the enabled flag.
-     */
-    public boolean getEnabled() {
-        return enabled;
-    }
-
-    /**
-     * @param enabled
-     *            The enabled to set.
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * @return the format pattern.
-     */
-    public String getPattern() {
-        return this.pattern;
-    }
-
-
-    /**
-     * Set the format pattern, first translating any recognized alias.
-     *
-     * @param pattern The new pattern
-     */
-    public void setPattern(String pattern) {
-        if (pattern == null) {
-            this.pattern = "";
-        } else if (pattern.equals(Constants.AccessLog.COMMON_ALIAS)) {
-            this.pattern = Constants.AccessLog.COMMON_PATTERN;
-        } else if (pattern.equals(Constants.AccessLog.COMBINED_ALIAS)) {
-            this.pattern = Constants.AccessLog.COMBINED_PATTERN;
-        } else {
-            this.pattern = pattern;
-        }
-        logElements = createLogElements();
-        cachedElements = createCachedElements(logElements);
-    }
-
-    /**
-     * Return whether the attribute name to look for when
-     * performing conditional logging. If null, every
-     * request is logged.
-     * @return the attribute name
-     */
-    public String getCondition() {
-        return condition;
-    }
-
-
-    /**
-     * Set the ServletRequest.attribute to look for to perform
-     * conditional logging. Set to null to log everything.
-     *
-     * @param condition Set to null to log everything
-     */
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-
-    /**
-     * Return whether the attribute name to look for when
-     * performing conditional logging. If null, every
-     * request is logged.
-     * @return the attribute name
-     */
-    public String getConditionUnless() {
-        return getCondition();
-    }
-
-
-    /**
-     * Set the ServletRequest.attribute to look for to perform
-     * conditional logging. Set to null to log everything.
-     *
-     * @param condition Set to null to log everything
-     */
-    public void setConditionUnless(String condition) {
-        setCondition(condition);
-    }
-
-    /**
-     * Return whether the attribute name to look for when
-     * performing conditional logging. If null, every
-     * request is logged.
-     * @return the attribute name
-     */
-    public String getConditionIf() {
-        return conditionIf;
-    }
-
-
-    /**
-     * Set the ServletRequest.attribute to look for to perform
-     * conditional logging. Set to null to log everything.
-     *
-     * @param condition Set to null to log everything
-     */
-    public void setConditionIf(String condition) {
-        this.conditionIf = condition;
-    }
-
-    /**
-     * Return the locale used to format timestamps in log entries and in
-     * log file name suffix.
-     * @return the locale
-     */
-    public String getLocale() {
-        return localeName;
-    }
-
-
-    /**
-     * Set the locale used to format timestamps in log entries and in
-     * log file name suffix. Changing the locale is only supported
-     * as long as the AccessLogValve has not logged anything. Changing
-     * the locale later can lead to inconsistent formatting.
-     *
-     * @param localeName The locale to use.
-     */
-    public void setLocale(String localeName) {
-        this.localeName = localeName;
-        locale = findLocale(localeName, locale);
-    }
-
-    // --------------------------------------------------------- Public Methods
-
-    /**
-     * Log a message summarizing the specified request and response, according
-     * to the format specified by the <code>pattern</code> property.
-     *
-     * @param request Request being processed
-     * @param response Response being processed
-     *
-     * @exception IOException if an input/output error has occurred
-     * @exception ServletException if a servlet error has occurred
-     */
-    @Override
-    public void invoke(Request request, Response response) throws IOException,
-            ServletException {
-        if (tlsAttributeRequired) {
-            // The log pattern uses TLS attributes. Ensure these are populated
-            // before the request is processed because with NIO2 it is possible
-            // for the connection to be closed (and the TLS info lost) before
-            // the access log requests the TLS info. Requesting it now causes it
-            // to be cached in the request.
-            request.getAttribute(Globals.CERTIFICATES_ATTR);
-        }
-        if (cachedElements != null) {
-            for (CachedElement element : cachedElements) {
-                element.cache(request);
-            }
-        }
-        getNext().invoke(request, response);
-    }
-
-
-    @Override
-    public void log(Request request, Response response, long time) {
-        if (!getState().isAvailable() || !getEnabled() || logElements == null
-                || condition != null
-                && null != request.getRequest().getAttribute(condition)
-                || conditionIf != null
-                && null == request.getRequest().getAttribute(conditionIf)) {
-            return;
-        }
-
-        /**
-         * XXX This is a bit silly, but we want to have start and stop time and
-         * duration consistent. It would be better to keep start and stop
-         * simply in the request and/or response object and remove time
-         * (duration) from the interface.
-         */
-        long start = request.getCoyoteRequest().getStartTime();
-        Date date = getDate(start + time);
-
-        CharArrayWriter result = charArrayWriters.pop();
-        if (result == null) {
-            result = new CharArrayWriter(128);
-        }
-
-        for (AccessLogElement logElement : logElements) {
-            logElement.addElement(result, date, request, response, time);
-        }
-
-        log(result);
-
-        if (result.size() <= maxLogMessageBufferSize) {
-            result.reset();
-            charArrayWriters.push(result);
-        }
-    }
-
-    // -------------------------------------------------------- Protected Methods
-
-    /**
-     * Log the specified message.
-     *
-     * @param message Message to be logged. This object will be recycled by
-     *  the calling method.
-     */
-    protected abstract void log(CharArrayWriter message);
-
-    // -------------------------------------------------------- Private Methods
-
-    /**
-     * This method returns a Date object that is accurate to within one second.
-     * If a thread calls this method to get a Date and it's been less than 1
-     * second since a new Date was created, this method simply gives out the
-     * same Date again so that the system doesn't spend time creating Date
-     * objects unnecessarily.
-     * @param systime The time
-     * @return the date object
-     */
-    private static Date getDate(long systime) {
-        Date date = localDate.get();
-        date.setTime(systime);
-        return date;
-    }
-
-
-    /**
-     * Find a locale by name.
-     * @param name The locale name
-     * @param fallback Fallback locale if the name is not found
-     * @return the locale object
-     */
-    protected static Locale findLocale(String name, Locale fallback) {
-        if (name == null || name.isEmpty()) {
-            return Locale.getDefault();
-        } else {
-            for (Locale l: Locale.getAvailableLocales()) {
-                if (name.equals(l.toString())) {
-                    return l;
-                }
-            }
-        }
-        log.error(sm.getString("accessLogValve.invalidLocale", name));
-        return fallback;
-    }
-
-
-    /**
-     * Start this component and implement the requirements
-     * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
-     *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
-     */
-    @Override
-    protected synchronized void startInternal() throws LifecycleException {
-
-        setState(LifecycleState.STARTING);
-    }
-
-
-    /**
-     * Stop this component and implement the requirements
-     * of {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
-     *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
-     */
-    @Override
-    protected synchronized void stopInternal() throws LifecycleException {
-
-        setState(LifecycleState.STOPPING);
-    }
-
-    /**
-     * AccessLogElement writes the partial message into the buffer.
-     */
-    protected interface AccessLogElement {
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time);
-    }
-
-    /**
-     * Marks an AccessLogElement as needing to be have the value cached at the
-     * start of the request rather than just recorded at the end as the source
-     * data for the element may not be available at the end of the request. This
-     * typically occurs for remote network information, such as ports, IP
-     * addresses etc. when the connection is closed unexpectedly. These elements
-     * take advantage of these values being cached elsewhere on first request
-     * and do not cache the value in the element since the elements are
-     * state-less.
-     */
-    protected interface CachedElement {
-        public void cache(Request request);
     }
 
     /**
@@ -818,9 +932,9 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class ThreadNameElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             RequestInfo info = request.getCoyoteRequest().getRequestProcessor();
-            if(info != null) {
+            if (info != null) {
                 buf.append(info.getWorkerThreadName());
             } else {
                 buf.append('-');
@@ -853,76 +967,8 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             buf.append(localAddrValue);
-        }
-    }
-
-    /**
-     * write remote IP address - %a
-     */
-    protected class RemoteAddrElement implements AccessLogElement, CachedElement {
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            String value = null;
-            if (requestAttributesEnabled) {
-                Object addr = request.getAttribute(REMOTE_ADDR_ATTRIBUTE);
-                if (addr == null) {
-                    value = request.getRemoteAddr();
-                } else {
-                    value = addr.toString();
-                }
-            } else {
-                value = request.getRemoteAddr();
-            }
-
-            if (ipv6Canonical) {
-                value = IPv6Utils.canonize(value);
-            }
-            buf.append(value);
-        }
-
-        @Override
-        public void cache(Request request) {
-            if (!requestAttributesEnabled) {
-                request.getRemoteAddr();
-            }
-        }
-    }
-
-    /**
-     * write remote host name - %h
-     */
-    protected class HostElement implements AccessLogElement, CachedElement {
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            String value = null;
-            if (requestAttributesEnabled) {
-                Object host = request.getAttribute(REMOTE_HOST_ATTRIBUTE);
-                if (host != null) {
-                    value = host.toString();
-                }
-            }
-            if (value == null || value.length() == 0) {
-                value = request.getRemoteHost();
-            }
-            if (value == null || value.length() == 0) {
-                value = "-";
-            }
-
-            if (ipv6Canonical) {
-                value = IPv6Utils.canonize(value);
-            }
-            buf.append(value);
-        }
-
-        @Override
-        public void cache(Request request) {
-            if (!requestAttributesEnabled) {
-                request.getRemoteHost();
-            }
         }
     }
 
@@ -932,28 +978,8 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class LogicalUserNameElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             buf.append('-');
-        }
-    }
-
-    /**
-     * write request protocol - %H
-     */
-    protected class ProtocolElement implements AccessLogElement {
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            if (requestAttributesEnabled) {
-                Object proto = request.getAttribute(PROTOCOL_ATTRIBUTE);
-                if (proto == null) {
-                    buf.append(request.getProtocol());
-                } else {
-                    buf.append(proto.toString());
-                }
-            } else {
-                buf.append(request.getProtocol());
-            }
         }
     }
 
@@ -963,7 +989,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class UserElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (request != null) {
                 String value = request.getRemoteUser();
                 if (value != null) {
@@ -978,189 +1004,12 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     }
 
     /**
-     * write date and time, in configurable format (default CLF) - %t or %{format}t
-     */
-    protected class DateAndTimeElement implements AccessLogElement {
-
-        /**
-         * Format prefix specifying request start time
-         */
-        private static final String requestStartPrefix = "begin";
-
-        /**
-         * Format prefix specifying response end time
-         */
-        private static final String responseEndPrefix = "end";
-
-        /**
-         * Separator between optional prefix and rest of format
-         */
-        private static final String prefixSeparator = ":";
-
-        /**
-         * Special format for seconds since epoch
-         */
-        private static final String secFormat = "sec";
-
-        /**
-         * Special format for milliseconds since epoch
-         */
-        private static final String msecFormat = "msec";
-
-        /**
-         * Special format for millisecond part of timestamp
-         */
-        private static final String msecFractionFormat = "msec_frac";
-
-        /**
-         * The patterns we use to replace "S" and "SSS" millisecond
-         * formatting of SimpleDateFormat by our own handling
-         */
-        private static final String msecPattern = "{#}";
-        private static final String tripleMsecPattern =
-            msecPattern + msecPattern + msecPattern;
-
-        /* Our format description string, null if CLF */
-        private final String format;
-        /* Whether to use begin of request or end of response as the timestamp */
-        private final boolean usesBegin;
-        /* The format type */
-        private final FormatType type;
-        /* Whether we need to postprocess by adding milliseconds */
-        private boolean usesMsecs = false;
-
-        protected DateAndTimeElement() {
-            this(null);
-        }
-
-        /**
-         * Replace the millisecond formatting character 'S' by
-         * some dummy characters in order to make the resulting
-         * formatted time stamps cacheable. We replace the dummy
-         * chars later with the actual milliseconds because that's
-         * relatively cheap.
-         */
-        private String tidyFormat(String format) {
-            boolean escape = false;
-            StringBuilder result = new StringBuilder();
-            int len = format.length();
-            char x;
-            for (int i = 0; i < len; i++) {
-                x = format.charAt(i);
-                if (escape || x != 'S') {
-                    result.append(x);
-                } else {
-                    result.append(msecPattern);
-                    usesMsecs = true;
-                }
-                if (x == '\'') {
-                    escape = !escape;
-                }
-            }
-            return result.toString();
-        }
-
-        protected DateAndTimeElement(String header) {
-            String format = header;
-            boolean usesBegin = false;
-            FormatType type = FormatType.CLF;
-
-            if (format != null) {
-                if (format.equals(requestStartPrefix)) {
-                    usesBegin = true;
-                    format = "";
-                } else if (format.startsWith(requestStartPrefix + prefixSeparator)) {
-                    usesBegin = true;
-                    format = format.substring(6);
-                } else if (format.equals(responseEndPrefix)) {
-                    usesBegin = false;
-                    format = "";
-                } else if (format.startsWith(responseEndPrefix + prefixSeparator)) {
-                    usesBegin = false;
-                    format = format.substring(4);
-                }
-                if (format.length() == 0) {
-                    type = FormatType.CLF;
-                } else if (format.equals(secFormat)) {
-                    type = FormatType.SEC;
-                } else if (format.equals(msecFormat)) {
-                    type = FormatType.MSEC;
-                } else if (format.equals(msecFractionFormat)) {
-                    type = FormatType.MSEC_FRAC;
-                } else {
-                    type = FormatType.SDF;
-                    format = tidyFormat(format);
-                }
-            }
-            this.format = format;
-            this.usesBegin = usesBegin;
-            this.type = type;
-        }
-
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            long timestamp = date.getTime();
-            long frac;
-            if (usesBegin) {
-                timestamp -= time;
-            }
-            /*  Implementation note: This is deliberately not implemented using
-             *  switch. If a switch is used the compiler (at least the Oracle
-             *  one) will use a synthetic class to implement the switch. The
-             *  problem is that this class needs to be pre-loaded when using a
-             *  SecurityManager and the name of that class will depend on any
-             *  anonymous inner classes and any other synthetic classes. As such
-             *  the name is not constant and keeping the pre-loading up to date
-             *  as the name changes is error prone.
-             */
-            if (type == FormatType.CLF) {
-                buf.append(localDateCache.get().getFormat(timestamp));
-            } else if (type == FormatType.SEC) {
-                buf.append(Long.toString(timestamp / 1000));
-            } else if (type == FormatType.MSEC) {
-                buf.append(Long.toString(timestamp));
-            } else if (type == FormatType.MSEC_FRAC) {
-                frac = timestamp % 1000;
-                if (frac < 100) {
-                    if (frac < 10) {
-                        buf.append('0');
-                        buf.append('0');
-                    } else {
-                        buf.append('0');
-                    }
-                }
-                buf.append(Long.toString(frac));
-            } else {
-                // FormatType.SDF
-                String temp = localDateCache.get().getFormat(format, locale, timestamp);
-                if (usesMsecs) {
-                    frac = timestamp % 1000;
-                    StringBuilder tripleMsec = new StringBuilder(4);
-                    if (frac < 100) {
-                        if (frac < 10) {
-                            tripleMsec.append('0');
-                            tripleMsec.append('0');
-                        } else {
-                            tripleMsec.append('0');
-                        }
-                    }
-                    tripleMsec.append(frac);
-                    temp = temp.replace(tripleMsecPattern, tripleMsec);
-                    temp = temp.replace(msecPattern, Long.toString(frac));
-                }
-                buf.append(temp);
-            }
-        }
-    }
-
-    /**
      * write first line of the request (method and request URI) - %r
      */
     protected static class RequestElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (request != null) {
                 String method = request.getMethod();
                 if (method == null) {
@@ -1189,7 +1038,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class HttpStatusCodeElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (response != null) {
                 // This approach is used to reduce GC from toString conversion
                 int status = response.getStatus();
@@ -1198,69 +1047,10 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
                             .append((char) ('0' + ((status / 10) % 10)))
                             .append((char) ('0' + (status % 10)));
                 } else {
-                   buf.append(Integer.toString(status));
+                    buf.append(Integer.toString(status));
                 }
             } else {
                 buf.append('-');
-            }
-        }
-    }
-
-    /**
-     * write local or remote port for request connection - %p and %{xxx}p
-     */
-    protected class PortElement implements AccessLogElement, CachedElement {
-
-        /**
-         * Type of port to log
-         */
-        private static final String localPort = "local";
-        private static final String remotePort = "remote";
-
-        private final PortType portType;
-
-        public PortElement() {
-            portType = PortType.LOCAL;
-        }
-
-        public PortElement(String type) {
-            switch (type) {
-            case remotePort:
-                portType = PortType.REMOTE;
-                break;
-            case localPort:
-                portType = PortType.LOCAL;
-                break;
-            default:
-                log.error(sm.getString("accessLogValve.invalidPortType", type));
-                portType = PortType.LOCAL;
-                break;
-            }
-        }
-
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            if (requestAttributesEnabled && portType == PortType.LOCAL) {
-                Object port = request.getAttribute(SERVER_PORT_ATTRIBUTE);
-                if (port == null) {
-                    buf.append(Integer.toString(request.getServerPort()));
-                } else {
-                    buf.append(port.toString());
-                }
-            } else {
-                if (portType == PortType.LOCAL) {
-                    buf.append(Integer.toString(request.getServerPort()));
-                } else {
-                    buf.append(Integer.toString(request.getRemotePort()));
-                }
-            }
-        }
-
-        @Override
-        public void cache(Request request) {
-            if (portType == PortType.REMOTE) {
-                request.getRemotePort();
             }
         }
     }
@@ -1280,7 +1070,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             // Don't need to flush since trigger for log message is after the
             // response has been committed
             long length = response.getBytesWritten(false);
@@ -1312,7 +1102,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class MethodElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (request != null) {
                 buf.append(request.getMethod());
             }
@@ -1327,7 +1117,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         /**
          * @param millis <code>true</code>, write time in millis - %D,
-         * if <code>false</code>, write time in seconds - %T
+         *               if <code>false</code>, write time in seconds - %T
          */
         public ElapsedTimeElement(boolean millis) {
             this.millis = millis;
@@ -1335,7 +1125,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (millis) {
                 buf.append(Long.toString(time));
             } else {
@@ -1373,7 +1163,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class QueryElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             String query = null;
             if (request != null) {
                 query = request.getQueryString();
@@ -1391,7 +1181,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class SessionIdElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (request == null) {
                 buf.append('-');
             } else {
@@ -1411,40 +1201,12 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     protected static class RequestURIElement implements AccessLogElement {
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (request != null) {
                 buf.append(request.getRequestURI());
             } else {
                 buf.append('-');
             }
-        }
-    }
-
-    /**
-     * write local server name - %v
-     */
-    protected class LocalServerNameElement implements AccessLogElement {
-        @Override
-        public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
-            String value = null;
-            if (requestAttributesEnabled) {
-                Object serverName = request.getAttribute(SERVER_NAME_ATTRIBUTE);
-                if (serverName != null) {
-                    value = serverName.toString();
-                }
-            }
-            if (value == null || value.length() == 0) {
-                value = request.getServerName();
-            }
-            if (value == null || value.length() == 0) {
-                value = "-";
-            }
-
-            if (ipv6Canonical) {
-                value = IPv6Utils.canonize(value);
-            }
-            buf.append(value);
         }
     }
 
@@ -1460,7 +1222,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             buf.append(str);
         }
     }
@@ -1477,7 +1239,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             Enumeration<String> iter = request.getHeaders(header);
             if (iter.hasMoreElements()) {
                 buf.append(iter.nextElement());
@@ -1502,7 +1264,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             String value = "-";
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
@@ -1529,7 +1291,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             if (null != response) {
                 Iterator<String> iter = response.getHeaders(header).iterator();
                 if (iter.hasNext()) {
@@ -1556,7 +1318,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             Object value = null;
             if (request != null) {
                 value = request.getAttribute(header);
@@ -1587,7 +1349,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
 
         @Override
         public void addElement(CharArrayWriter buf, Date date, Request request,
-                Response response, long time) {
+                               Response response, long time) {
             Object value = null;
             if (null != request) {
                 HttpSession sess = request.getSession(false);
@@ -1652,150 +1414,354 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
     }
 
     /**
-     * Parse pattern string and create the array of AccessLogElement.
-     * @return the log elements array
+     * write remote IP address - %a
      */
-    protected AccessLogElement[] createLogElements() {
-        List<AccessLogElement> list = new ArrayList<>();
-        boolean replace = false;
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < pattern.length(); i++) {
-            char ch = pattern.charAt(i);
-            if (replace) {
-                /*
-                 * For code that processes {, the behavior will be ... if I do
-                 * not encounter a closing } - then I ignore the {
-                 */
-                if ('{' == ch) {
-                    StringBuilder name = new StringBuilder();
-                    int j = i + 1;
-                    for (; j < pattern.length() && '}' != pattern.charAt(j); j++) {
-                        name.append(pattern.charAt(j));
-                    }
-                    if (j + 1 < pattern.length()) {
-                        /* the +1 was to account for } which we increment now */
-                        j++;
-                        list.add(createAccessLogElement(name.toString(),
-                                pattern.charAt(j)));
-                        i = j; /* Since we walked more than one character */
-                    } else {
-                        // D'oh - end of string - pretend we never did this
-                        // and do processing the "old way"
-                        list.add(createAccessLogElement(ch));
-                    }
+    protected class RemoteAddrElement implements AccessLogElement, CachedElement {
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            String value = null;
+            if (requestAttributesEnabled) {
+                Object addr = request.getAttribute(REMOTE_ADDR_ATTRIBUTE);
+                if (addr == null) {
+                    value = request.getRemoteAddr();
                 } else {
-                    list.add(createAccessLogElement(ch));
+                    value = addr.toString();
                 }
-                replace = false;
-            } else if (ch == '%') {
-                replace = true;
-                list.add(new StringElement(buf.toString()));
-                buf = new StringBuilder();
             } else {
-                buf.append(ch);
+                value = request.getRemoteAddr();
             }
-        }
-        if (buf.length() > 0) {
-            list.add(new StringElement(buf.toString()));
-        }
-        return list.toArray(new AccessLogElement[0]);
-    }
 
-
-    private CachedElement[] createCachedElements(AccessLogElement[] elements) {
-        List<CachedElement> list = new ArrayList<>();
-        for (AccessLogElement element : elements) {
-            if (element instanceof CachedElement) {
-                list.add((CachedElement) element);
+            if (ipv6Canonical) {
+                value = IPv6Utils.canonize(value);
             }
+            buf.append(value);
         }
-        return list.toArray(new CachedElement[0]);
-    }
 
-
-    /**
-     * Create an AccessLogElement implementation which needs an element name.
-     * @param name Header name
-     * @param pattern char in the log pattern
-     * @return the log element
-     */
-    protected AccessLogElement createAccessLogElement(String name, char pattern) {
-        switch (pattern) {
-        case 'i':
-            return new HeaderElement(name);
-        case 'c':
-            return new CookieElement(name);
-        case 'o':
-            return new ResponseHeaderElement(name);
-        case 'p':
-            return new PortElement(name);
-        case 'r':
-            if (TLSUtil.isTLSRequestAttribute(name)) {
-                tlsAttributeRequired = true;
+        @Override
+        public void cache(Request request) {
+            if (!requestAttributesEnabled) {
+                request.getRemoteAddr();
             }
-            return new RequestAttributeElement(name);
-        case 's':
-            return new SessionAttributeElement(name);
-        case 't':
-            return new DateAndTimeElement(name);
-        default:
-            return new StringElement("???");
         }
     }
 
     /**
-     * Create an AccessLogElement implementation.
-     * @param pattern char in the log pattern
-     * @return the log element
+     * write remote host name - %h
      */
-    protected AccessLogElement createAccessLogElement(char pattern) {
-        switch (pattern) {
-        case 'a':
-            return new RemoteAddrElement();
-        case 'A':
-            return new LocalAddrElement(ipv6Canonical);
-        case 'b':
-            return new ByteSentElement(true);
-        case 'B':
-            return new ByteSentElement(false);
-        case 'D':
-            return new ElapsedTimeElement(true);
-        case 'F':
-            return new FirstByteTimeElement();
-        case 'h':
-            return new HostElement();
-        case 'H':
-            return new ProtocolElement();
-        case 'l':
-            return new LogicalUserNameElement();
-        case 'm':
-            return new MethodElement();
-        case 'p':
-            return new PortElement();
-        case 'q':
-            return new QueryElement();
-        case 'r':
-            return new RequestElement();
-        case 's':
-            return new HttpStatusCodeElement();
-        case 'S':
-            return new SessionIdElement();
-        case 't':
-            return new DateAndTimeElement();
-        case 'T':
-            return new ElapsedTimeElement(false);
-        case 'u':
-            return new UserElement();
-        case 'U':
-            return new RequestURIElement();
-        case 'v':
-            return new LocalServerNameElement();
-        case 'I':
-            return new ThreadNameElement();
-        case 'X':
-            return new ConnectionStatusElement();
-        default:
-            return new StringElement("???" + pattern + "???");
+    protected class HostElement implements AccessLogElement, CachedElement {
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            String value = null;
+            if (requestAttributesEnabled) {
+                Object host = request.getAttribute(REMOTE_HOST_ATTRIBUTE);
+                if (host != null) {
+                    value = host.toString();
+                }
+            }
+            if (value == null || value.length() == 0) {
+                value = request.getRemoteHost();
+            }
+            if (value == null || value.length() == 0) {
+                value = "-";
+            }
+
+            if (ipv6Canonical) {
+                value = IPv6Utils.canonize(value);
+            }
+            buf.append(value);
+        }
+
+        @Override
+        public void cache(Request request) {
+            if (!requestAttributesEnabled) {
+                request.getRemoteHost();
+            }
+        }
+    }
+
+    /**
+     * write request protocol - %H
+     */
+    protected class ProtocolElement implements AccessLogElement {
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            if (requestAttributesEnabled) {
+                Object proto = request.getAttribute(PROTOCOL_ATTRIBUTE);
+                if (proto == null) {
+                    buf.append(request.getProtocol());
+                } else {
+                    buf.append(proto.toString());
+                }
+            } else {
+                buf.append(request.getProtocol());
+            }
+        }
+    }
+
+    /**
+     * write date and time, in configurable format (default CLF) - %t or %{format}t
+     */
+    protected class DateAndTimeElement implements AccessLogElement {
+
+        /**
+         * Format prefix specifying request start time
+         */
+        private static final String requestStartPrefix = "begin";
+
+        /**
+         * Format prefix specifying response end time
+         */
+        private static final String responseEndPrefix = "end";
+
+        /**
+         * Separator between optional prefix and rest of format
+         */
+        private static final String prefixSeparator = ":";
+
+        /**
+         * Special format for seconds since epoch
+         */
+        private static final String secFormat = "sec";
+
+        /**
+         * Special format for milliseconds since epoch
+         */
+        private static final String msecFormat = "msec";
+
+        /**
+         * Special format for millisecond part of timestamp
+         */
+        private static final String msecFractionFormat = "msec_frac";
+
+        /**
+         * The patterns we use to replace "S" and "SSS" millisecond
+         * formatting of SimpleDateFormat by our own handling
+         */
+        private static final String msecPattern = "{#}";
+        private static final String tripleMsecPattern =
+                msecPattern + msecPattern + msecPattern;
+
+        /* Our format description string, null if CLF */
+        private final String format;
+        /* Whether to use begin of request or end of response as the timestamp */
+        private final boolean usesBegin;
+        /* The format type */
+        private final FormatType type;
+        /* Whether we need to postprocess by adding milliseconds */
+        private boolean usesMsecs = false;
+
+        protected DateAndTimeElement() {
+            this(null);
+        }
+
+        protected DateAndTimeElement(String header) {
+            String format = header;
+            boolean usesBegin = false;
+            FormatType type = FormatType.CLF;
+
+            if (format != null) {
+                if (format.equals(requestStartPrefix)) {
+                    usesBegin = true;
+                    format = "";
+                } else if (format.startsWith(requestStartPrefix + prefixSeparator)) {
+                    usesBegin = true;
+                    format = format.substring(6);
+                } else if (format.equals(responseEndPrefix)) {
+                    usesBegin = false;
+                    format = "";
+                } else if (format.startsWith(responseEndPrefix + prefixSeparator)) {
+                    usesBegin = false;
+                    format = format.substring(4);
+                }
+                if (format.length() == 0) {
+                    type = FormatType.CLF;
+                } else if (format.equals(secFormat)) {
+                    type = FormatType.SEC;
+                } else if (format.equals(msecFormat)) {
+                    type = FormatType.MSEC;
+                } else if (format.equals(msecFractionFormat)) {
+                    type = FormatType.MSEC_FRAC;
+                } else {
+                    type = FormatType.SDF;
+                    format = tidyFormat(format);
+                }
+            }
+            this.format = format;
+            this.usesBegin = usesBegin;
+            this.type = type;
+        }
+
+        /**
+         * Replace the millisecond formatting character 'S' by
+         * some dummy characters in order to make the resulting
+         * formatted time stamps cacheable. We replace the dummy
+         * chars later with the actual milliseconds because that's
+         * relatively cheap.
+         */
+        private String tidyFormat(String format) {
+            boolean escape = false;
+            StringBuilder result = new StringBuilder();
+            int len = format.length();
+            char x;
+            for (int i = 0; i < len; i++) {
+                x = format.charAt(i);
+                if (escape || x != 'S') {
+                    result.append(x);
+                } else {
+                    result.append(msecPattern);
+                    usesMsecs = true;
+                }
+                if (x == '\'') {
+                    escape = !escape;
+                }
+            }
+            return result.toString();
+        }
+
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            long timestamp = date.getTime();
+            long frac;
+            if (usesBegin) {
+                timestamp -= time;
+            }
+            /*  Implementation note: This is deliberately not implemented using
+             *  switch. If a switch is used the compiler (at least the Oracle
+             *  one) will use a synthetic class to implement the switch. The
+             *  problem is that this class needs to be pre-loaded when using a
+             *  SecurityManager and the name of that class will depend on any
+             *  anonymous inner classes and any other synthetic classes. As such
+             *  the name is not constant and keeping the pre-loading up to date
+             *  as the name changes is error prone.
+             */
+            if (type == FormatType.CLF) {
+                buf.append(localDateCache.get().getFormat(timestamp));
+            } else if (type == FormatType.SEC) {
+                buf.append(Long.toString(timestamp / 1000));
+            } else if (type == FormatType.MSEC) {
+                buf.append(Long.toString(timestamp));
+            } else if (type == FormatType.MSEC_FRAC) {
+                frac = timestamp % 1000;
+                if (frac < 100) {
+                    if (frac < 10) {
+                        buf.append('0');
+                        buf.append('0');
+                    } else {
+                        buf.append('0');
+                    }
+                }
+                buf.append(Long.toString(frac));
+            } else {
+                // FormatType.SDF
+                String temp = localDateCache.get().getFormat(format, locale, timestamp);
+                if (usesMsecs) {
+                    frac = timestamp % 1000;
+                    StringBuilder tripleMsec = new StringBuilder(4);
+                    if (frac < 100) {
+                        if (frac < 10) {
+                            tripleMsec.append('0');
+                            tripleMsec.append('0');
+                        } else {
+                            tripleMsec.append('0');
+                        }
+                    }
+                    tripleMsec.append(frac);
+                    temp = temp.replace(tripleMsecPattern, tripleMsec);
+                    temp = temp.replace(msecPattern, Long.toString(frac));
+                }
+                buf.append(temp);
+            }
+        }
+    }
+
+    /**
+     * write local or remote port for request connection - %p and %{xxx}p
+     */
+    protected class PortElement implements AccessLogElement, CachedElement {
+
+        /**
+         * Type of port to log
+         */
+        private static final String localPort = "local";
+        private static final String remotePort = "remote";
+
+        private final PortType portType;
+
+        public PortElement() {
+            portType = PortType.LOCAL;
+        }
+
+        public PortElement(String type) {
+            switch (type) {
+                case remotePort:
+                    portType = PortType.REMOTE;
+                    break;
+                case localPort:
+                    portType = PortType.LOCAL;
+                    break;
+                default:
+                    log.error(sm.getString("accessLogValve.invalidPortType", type));
+                    portType = PortType.LOCAL;
+                    break;
+            }
+        }
+
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            if (requestAttributesEnabled && portType == PortType.LOCAL) {
+                Object port = request.getAttribute(SERVER_PORT_ATTRIBUTE);
+                if (port == null) {
+                    buf.append(Integer.toString(request.getServerPort()));
+                } else {
+                    buf.append(port.toString());
+                }
+            } else {
+                if (portType == PortType.LOCAL) {
+                    buf.append(Integer.toString(request.getServerPort()));
+                } else {
+                    buf.append(Integer.toString(request.getRemotePort()));
+                }
+            }
+        }
+
+        @Override
+        public void cache(Request request) {
+            if (portType == PortType.REMOTE) {
+                request.getRemotePort();
+            }
+        }
+    }
+
+    /**
+     * write local server name - %v
+     */
+    protected class LocalServerNameElement implements AccessLogElement {
+        @Override
+        public void addElement(CharArrayWriter buf, Date date, Request request,
+                               Response response, long time) {
+            String value = null;
+            if (requestAttributesEnabled) {
+                Object serverName = request.getAttribute(SERVER_NAME_ATTRIBUTE);
+                if (serverName != null) {
+                    value = serverName.toString();
+                }
+            }
+            if (value == null || value.length() == 0) {
+                value = request.getServerName();
+            }
+            if (value == null || value.length() == 0) {
+                value = "-";
+            }
+
+            if (ipv6Canonical) {
+                value = IPv6Utils.canonize(value);
+            }
+            buf.append(value);
         }
     }
 }

@@ -42,20 +42,18 @@ public class UserDatabaseRealm extends RealmBase {
     // ----------------------------------------------------- Instance Variables
 
     /**
-     * The <code>UserDatabase</code> we will use to authenticate users and
-     * identify associated roles.
-     */
-    protected volatile UserDatabase database = null;
-    private final Object databaseLock = new Object();
-
-    /**
      * Descriptive information about this Realm implementation.
+     *
      * @deprecated This will be removed in Tomcat 9 onwards.
      */
     @Deprecated
     protected static final String name = "UserDatabaseRealm";
-
-
+    private final Object databaseLock = new Object();
+    /**
+     * The <code>UserDatabase</code> we will use to authenticate users and
+     * identify associated roles.
+     */
+    protected volatile UserDatabase database = null;
     /**
      * The global JNDI name of the <code>UserDatabase</code> resource we will be
      * utilizing.
@@ -72,7 +70,7 @@ public class UserDatabaseRealm extends RealmBase {
 
     /**
      * @return the global JNDI name of the <code>UserDatabase</code> resource we
-     *         will be using.
+     * will be using.
      */
     public String getResourceName() {
         return resourceName;
@@ -96,7 +94,7 @@ public class UserDatabaseRealm extends RealmBase {
      * application) JNDI context.
      *
      * @return {@code true} if a local JNDI context will be used, {@code false}
-     *         if the the global JNDI context will be used
+     * if the the global JNDI context will be used
      */
     public boolean getLocalJndiResource() {
         return localJndiResource;
@@ -125,7 +123,7 @@ public class UserDatabaseRealm extends RealmBase {
      * <code>User</code> is a member of has the role.
      *
      * @param principal Principal for whom the role is to be checked
-     * @param role Security role to be checked
+     * @param role      Security role to be checked
      */
     @Override
     public boolean hasRole(Wrapper wrapper, Principal principal, String role) {
@@ -302,8 +300,8 @@ public class UserDatabaseRealm extends RealmBase {
      * component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *                that needs to be reported
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that needs to be reported
      */
     @Override
     protected void stopInternal() throws LifecycleException {

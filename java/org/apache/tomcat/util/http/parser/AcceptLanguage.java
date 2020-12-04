@@ -32,15 +32,6 @@ public class AcceptLanguage {
         this.quality = quality;
     }
 
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public double getQuality() {
-        return quality;
-    }
-
-
     public static List<AcceptLanguage> parse(StringReader input) throws IOException {
 
         List<AcceptLanguage> result = new ArrayList<>();
@@ -74,5 +65,13 @@ public class AcceptLanguage {
         } while (true);
 
         return result;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public double getQuality() {
+        return quality;
     }
 }

@@ -29,6 +29,8 @@ import java.util.List;
  * defined it.
  */
 public class TagXml {
+    private final List<TagAttributeInfo> attributes = new ArrayList<>();
+    private final List<TagVariableInfo> variables = new ArrayList<>();
     private String name;
     private String tagClass;
     private String teiClass;
@@ -38,8 +40,6 @@ public class TagXml {
     private String largeIcon;
     private String info;
     private boolean dynamicAttributes;
-    private final List<TagAttributeInfo> attributes = new ArrayList<>();
-    private final List<TagVariableInfo> variables = new ArrayList<>();
 
     public String getName() {
         return name;

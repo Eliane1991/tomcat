@@ -23,7 +23,7 @@ import java.io.IOException;
  *
  * @since Servlet 3.1
  */
-public interface WriteListener extends java.util.EventListener{
+public interface WriteListener extends java.util.EventListener {
 
     /**
      * Invoked when it it possible to write data without blocking. The container

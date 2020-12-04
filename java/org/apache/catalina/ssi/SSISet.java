@@ -18,6 +18,7 @@ package org.apache.catalina.ssi;
 
 
 import java.io.PrintWriter;
+
 /**
  * Implements the Server-side #set command
  *
@@ -31,7 +32,7 @@ public class SSISet implements SSICommand {
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer)
+                        String[] paramNames, String[] paramValues, PrintWriter writer)
             throws SSIStopProcessingException {
         long lastModified = 0;
         String errorMessage = ssiMediator.getConfigErrMsg();

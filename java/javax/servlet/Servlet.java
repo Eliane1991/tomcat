@@ -73,22 +73,16 @@ public interface Servlet {
      * <li>Does not return within a time period defined by the Web server
      * </ol>
      *
-     *
-     * @param config
-     *            a <code>ServletConfig</code> object containing the servlet's
-     *            configuration and initialization parameters
-     *
-     * @exception ServletException
-     *                if an exception has occurred that interferes with the
-     *                servlet's normal operation
-     *
+     * @param config a <code>ServletConfig</code> object containing the servlet's
+     *               configuration and initialization parameters
+     * @throws ServletException if an exception has occurred that interferes with the
+     *                          servlet's normal operation
      * @see UnavailableException
      * @see #getServletConfig
      */
     public void init(ServletConfig config) throws ServletException;
 
     /**
-     *
      * Returns a {@link ServletConfig} object, which contains initialization and
      * startup parameters for this servlet. The <code>ServletConfig</code>
      * object returned is the one passed to the <code>init</code> method.
@@ -100,8 +94,7 @@ public interface Servlet {
      * does this.
      *
      * @return the <code>ServletConfig</code> object that initializes this
-     *         servlet
-     *
+     * servlet
      * @see #init
      */
     public ServletConfig getServletConfig();
@@ -129,21 +122,13 @@ public interface Servlet {
      * ="http://java.sun.com/Series/Tutorial/java/threads/multithreaded.html">
      * the Java tutorial on multi-threaded programming</a>.
      *
-     *
-     * @param req
-     *            the <code>ServletRequest</code> object that contains the
+     * @param req the <code>ServletRequest</code> object that contains the
      *            client's request
-     *
-     * @param res
-     *            the <code>ServletResponse</code> object that contains the
+     * @param res the <code>ServletResponse</code> object that contains the
      *            servlet's response
-     *
-     * @exception ServletException
-     *                if an exception occurs that interferes with the servlet's
-     *                normal operation
-     *
-     * @exception IOException
-     *                if an input or output exception occurs
+     * @throws ServletException if an exception occurs that interferes with the servlet's
+     *                          normal operation
+     * @throws IOException      if an input or output exception occurs
      */
     public void service(ServletRequest req, ServletResponse res)
             throws ServletException, IOException;

@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 
-
 public class JspPropertyGroupDescriptorImpl
-        implements JspPropertyGroupDescriptor{
+        implements JspPropertyGroupDescriptor {
 
     private final JspPropertyGroup jspPropertyGroup;
 
@@ -76,7 +75,7 @@ public class JspPropertyGroupDescriptorImpl
 
         if (jspPropertyGroup.getErrorOnUndeclaredNamespace() != null) {
             result =
-                jspPropertyGroup.getErrorOnUndeclaredNamespace().toString();
+                    jspPropertyGroup.getErrorOnUndeclaredNamespace().toString();
         }
 
         return result;

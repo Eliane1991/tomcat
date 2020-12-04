@@ -35,6 +35,32 @@ public class CallParamRule extends Rule {
     // ----------------------------------------------------------- Constructors
 
     /**
+     * The attribute from which to save the parameter value
+     */
+    protected final String attributeName;
+    /**
+     * The zero-relative index of the parameter we are saving.
+     */
+    protected final int paramIndex;
+    /**
+     * Is the parameter to be set from the stack?
+     */
+    protected final boolean fromStack;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The position of the object from the top of the stack
+     */
+    protected final int stackIndex;
+    /**
+     * Stack is used to allow nested body text to be processed.
+     * Lazy creation.
+     */
+    protected ArrayStack<String> bodyTextStack;
+
+
+    /**
      * Construct a "call parameter" rule that will save the body text of this
      * element as the parameter value.
      *
@@ -44,12 +70,11 @@ public class CallParamRule extends Rule {
         this(paramIndex, null);
     }
 
-
     /**
      * Construct a "call parameter" rule that will save the value of the
      * specified attribute as the parameter value.
      *
-     * @param paramIndex The zero-relative parameter number
+     * @param paramIndex    The zero-relative parameter number
      * @param attributeName The name of the attribute to save
      */
     public CallParamRule(int paramIndex,
@@ -57,58 +82,24 @@ public class CallParamRule extends Rule {
         this(attributeName, paramIndex, 0, false);
     }
 
-
     private CallParamRule(String attributeName, int paramIndex, int stackIndex,
-            boolean fromStack) {
+                          boolean fromStack) {
         this.attributeName = attributeName;
         this.paramIndex = paramIndex;
         this.stackIndex = stackIndex;
         this.fromStack = fromStack;
     }
 
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The attribute from which to save the parameter value
-     */
-    protected final String attributeName;
-
-
-    /**
-     * The zero-relative index of the parameter we are saving.
-     */
-    protected final int paramIndex;
-
-
-    /**
-     * Is the parameter to be set from the stack?
-     */
-    protected final boolean fromStack;
-
-    /**
-     * The position of the object from the top of the stack
-     */
-    protected final int stackIndex;
-
-    /**
-     * Stack is used to allow nested body text to be processed.
-     * Lazy creation.
-     */
-    protected ArrayStack<String> bodyTextStack;
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Process the start of this element.
      *
-     * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     * @param namespace  the namespace URI of the matching element, or an
+     *                   empty string if the parser is not namespace aware or the element has
+     *                   no namespace
+     * @param name       the local name if the parser is namespace aware, or just
+     *                   the element name otherwise
      * @param attributes The attribute list for this element
      */
     @Override
@@ -121,7 +112,7 @@ public class CallParamRule extends Rule {
 
             param = attributes.getValue(attributeName);
 
-        } else if(fromStack) {
+        } else if (fromStack) {
 
             param = digester.peek(stackIndex);
 
@@ -141,7 +132,7 @@ public class CallParamRule extends Rule {
         // the instance variables will be overwritten
         // if this CallParamRule is reused in subsequent nesting.
 
-        if(param != null) {
+        if (param != null) {
             Object parameters[] = (Object[]) digester.peekParams();
             parameters[paramIndex] = param;
         }
@@ -152,11 +143,11 @@ public class CallParamRule extends Rule {
      * Process the body text of this element.
      *
      * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
-     * @param bodyText The body text of this element
+     *                  empty string if the parser is not namespace aware or the element has
+     *                  no namespace
+     * @param name      the local name if the parser is namespace aware, or just
+     *                  the element name otherwise
+     * @param bodyText  The body text of this element
      */
     @Override
     public void body(String namespace, String name, String bodyText)

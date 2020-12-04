@@ -51,29 +51,25 @@ import java.util.*;
  * @author Remy Maucherat
  */
 public class NamingContextListener
-    implements LifecycleListener, ContainerListener, PropertyChangeListener {
+        implements LifecycleListener, ContainerListener, PropertyChangeListener {
 
-    private static final Log log = LogFactory.getLog(NamingContextListener.class);
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm =
+            StringManager.getManager(Constants.Package);
 
 
     // ----------------------------------------------------- Instance Variables
-
+    private static final Log log = LogFactory.getLog(NamingContextListener.class);
     /**
      * Name of the associated naming context.
      */
     protected String name = "/";
-
-
     /**
      * Associated container.
      */
     protected Object container = null;
-
-    /**
-     * Token for configuring associated JNDI context.
-     */
-    private Object token = null;
-
     /**
      * Initialized flag.
      */
@@ -108,20 +104,15 @@ public class NamingContextListener
      * Objectnames hashtable.
      */
     protected HashMap<String, ObjectName> objectNames = new HashMap<>();
-
-
+    /**
+     * Token for configuring associated JNDI context.
+     */
+    private Object token = null;
     /**
      * Determines if an attempt to write to a read-only context results in an
      * exception or if the request is ignored.
      */
     private boolean exceptionOnFailedWrite = true;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -139,7 +130,7 @@ public class NamingContextListener
      * Controls whether or not an attempt to modify the JNDI context will
      * trigger an exception or if the request will be ignored.
      *
-     * @param exceptionOnFailedWrite    The new value
+     * @param exceptionOnFailedWrite The new value
      */
     public void setExceptionOnFailedWrite(boolean exceptionOnFailedWrite) {
         this.exceptionOnFailedWrite = exceptionOnFailedWrite;
@@ -205,8 +196,8 @@ public class NamingContextListener
                 ContextAccessController.setSecurityToken(getName(), token);
                 ContextAccessController.setSecurityToken(container, token);
                 ContextBindings.bindContext(container, namingContext, token);
-                if( log.isDebugEnabled() ) {
-                    log.debug("Bound " + container );
+                if (log.isDebugEnabled()) {
+                    log.debug("Bound " + container);
                 }
 
                 // Configure write when read-only behaviour
@@ -220,7 +211,7 @@ public class NamingContextListener
                     createNamingContext();
                 } catch (NamingException e) {
                     log.error
-                        (sm.getString("naming.namingContextCreationFailed", e));
+                            (sm.getString("naming.namingContextCreationFailed", e));
                 }
 
                 namingResources.addPropertyChangeListener(this);
@@ -238,8 +229,7 @@ public class NamingContextListener
                 }
 
                 if (container instanceof Server) {
-                    org.apache.naming.factory.ResourceLinkFactory.setGlobalContext
-                        (namingContext);
+                    org.apache.naming.factory.ResourceLinkFactory.setGlobalContext(namingContext);
                     try {
                         ContextBindings.bindClassLoader(container, token,
                                 this.getClass().getClassLoader());
@@ -248,7 +238,7 @@ public class NamingContextListener
                     }
                     if (container instanceof StandardServer) {
                         ((StandardServer) container).setGlobalNamingContext
-                            (namingContext);
+                                (namingContext);
                     }
                 }
 
@@ -315,10 +305,9 @@ public class NamingContextListener
      * NO-OP.
      *
      * @param event ContainerEvent that has occurred
-     *
      * @deprecated The {@link ContainerListener} interface and implementing
-     *             methods will be removed from this class for Tomcat 10
-     *             onwards.
+     * methods will be removed from this class for Tomcat 10
+     * onwards.
      */
     @Deprecated
     @Override
@@ -348,8 +337,8 @@ public class NamingContextListener
             ContextAccessController.setWritable(getName(), token);
 
             processGlobalResourcesChange(event.getPropertyName(),
-                                         event.getOldValue(),
-                                         event.getNewValue());
+                    event.getOldValue(),
+                    event.getNewValue());
 
             // Setting the context in read only mode
             ContextAccessController.setReadOnly(getName());
@@ -366,7 +355,7 @@ public class NamingContextListener
      * Process a property change on the naming resources, by making the
      * corresponding addition or removal to the associated JNDI context.
      *
-     * @param name Property name of the change to be processed
+     * @param name     Property name of the change to be processed
      * @param oldValue The old value (or <code>null</code> if adding)
      * @param newValue The new value (or <code>null</code> if removing)
      */
@@ -442,14 +431,14 @@ public class NamingContextListener
         } else if (name.equals("resourceEnvRef")) {
             if (oldValue != null) {
                 ContextResourceEnvRef resourceEnvRef =
-                    (ContextResourceEnvRef) oldValue;
+                        (ContextResourceEnvRef) oldValue;
                 if (resourceEnvRef.getName() != null) {
                     removeResourceEnvRef(resourceEnvRef.getName());
                 }
             }
             if (newValue != null) {
                 ContextResourceEnvRef resourceEnvRef =
-                    (ContextResourceEnvRef) newValue;
+                        (ContextResourceEnvRef) newValue;
                 if (resourceEnvRef.getName() != null) {
                     addResourceEnvRef(resourceEnvRef);
                 }
@@ -490,7 +479,7 @@ public class NamingContextListener
      * Create and initialize the JNDI naming context.
      */
     private void createNamingContext()
-        throws NamingException {
+            throws NamingException {
 
         // Creating the comp subcontext
         if (container instanceof Server) {
@@ -513,7 +502,7 @@ public class NamingContextListener
 
         // Resource links
         ContextResourceLink[] resourceLinks =
-            namingResources.findResourceLinks();
+                namingResources.findResourceLinks();
         for (i = 0; i < resourceLinks.length; i++) {
             addResourceLink(resourceLinks[i]);
         }
@@ -532,7 +521,7 @@ public class NamingContextListener
 
         // Environment entries
         ContextEnvironment[] contextEnvironments =
-            namingResources.findEnvironments();
+                namingResources.findEnvironments();
         for (i = 0; i < contextEnvironments.length; i++) {
             addEnvironment(contextEnvironments[i]);
         }
@@ -582,7 +571,7 @@ public class NamingContextListener
         if (container instanceof Context) {
             try {
                 compCtx.bind("Resources",
-                             ((Context) container).getResources());
+                        ((Context) container).getResources());
             } catch (NamingException e) {
                 log.error(sm.getString("naming.bindFailed", e));
             }
@@ -597,10 +586,10 @@ public class NamingContextListener
      *
      * @param resource The resource
      * @return ObjectName The object name
-     * @exception MalformedObjectNameException if a name cannot be created
+     * @throws MalformedObjectNameException if a name cannot be created
      */
     protected ObjectName createObjectName(ContextResource resource)
-        throws MalformedObjectNameException {
+            throws MalformedObjectNameException {
 
         String domain = null;
         if (container instanceof StandardServer) {
@@ -616,13 +605,13 @@ public class NamingContextListener
         String quotedResourceName = ObjectName.quote(resource.getName());
         if (container instanceof Server) {
             name = new ObjectName(domain + ":type=DataSource" +
-                        ",class=" + resource.getType() +
-                        ",name=" + quotedResourceName);
+                    ",class=" + resource.getType() +
+                    ",name=" + quotedResourceName);
         } else if (container instanceof Context) {
-            String contextName = ((Context)container).getName();
+            String contextName = ((Context) container).getName();
             if (!contextName.startsWith("/"))
                 contextName = "/" + contextName;
-            Host host = (Host) ((Context)container).getParent();
+            Host host = (Host) ((Context) container).getParent();
             name = new ObjectName(domain + ":type=DataSource" +
                     ",host=" + host.getName() +
                     ",context=" + contextName +
@@ -764,8 +753,8 @@ public class NamingContextListener
             Class<?> clazz = Class.forName(type);
             Constructor<?> c = null;
             try {
-                 c = clazz.getConstructor(String.class);
-                 return c.newInstance(value);
+                c = clazz.getConstructor(String.class);
+                return c.newInstance(value);
             } catch (NoSuchMethodException e) {
                 // Ignore
             }
@@ -842,7 +831,7 @@ public class NamingContextListener
                         wsdlURL = ((Context) container).getServletContext().getResource(
                                 "/" + service.getWsdlfile());
                         log.debug("  Changing service ref wsdl file for /"
-                                    + service.getWsdlfile());
+                                + service.getWsdlfile());
                     } catch (MalformedURLException e) {
                         log.error(sm.getString("naming.wsdlFailed", e));
                     }
@@ -874,7 +863,7 @@ public class NamingContextListener
                         jaxrpcURL = ((Context) container).getServletContext().getResource(
                                 "/" + service.getJaxrpcmappingfile());
                         log.debug("  Changing service ref jaxrpc file for /"
-                                    + service.getJaxrpcmappingfile());
+                                + service.getJaxrpcmappingfile());
                     } catch (MalformedURLException e) {
                         log.error(sm.getString("naming.wsdlFailed", e));
                     }
@@ -975,8 +964,8 @@ public class NamingContextListener
             log.error(sm.getString("naming.bindFailed", e));
         }
 
-        if (("javax.sql.DataSource".equals(ref.getClassName())  ||
-            "javax.sql.XADataSource".equals(ref.getClassName())) &&
+        if (("javax.sql.DataSource".equals(ref.getClassName()) ||
+                "javax.sql.XADataSource".equals(ref.getClassName())) &&
                 resource.getSingleton()) {
             Object actualResource = null;
             try {
@@ -1039,19 +1028,19 @@ public class NamingContextListener
 
         // Create a reference to the resource.
         Reference ref = new ResourceLinkRef
-            (resourceLink.getType(), resourceLink.getGlobal(), resourceLink.getFactory(), null);
+                (resourceLink.getType(), resourceLink.getGlobal(), resourceLink.getFactory(), null);
         Iterator<String> i = resourceLink.listProperties();
         while (i.hasNext()) {
             String key = i.next();
             Object val = resourceLink.getProperty(key);
-            if (val!=null) {
+            if (val != null) {
                 StringRefAddr refAddr = new StringRefAddr(key, val.toString());
                 ref.add(refAddr);
             }
         }
         javax.naming.Context ctx =
-            "UserTransaction".equals(resourceLink.getName())
-            ? compCtx : envCtx;
+                "UserTransaction".equals(resourceLink.getName())
+                        ? compCtx : envCtx;
         try {
             if (log.isDebugEnabled())
                 log.debug("  Adding resource link " + resourceLink.getName());
@@ -1220,7 +1209,7 @@ public class NamingContextListener
      * Create all intermediate subcontexts.
      */
     private void createSubcontexts(javax.naming.Context ctx, String name)
-        throws NamingException {
+            throws NamingException {
         javax.naming.Context currentContext = ctx;
         StringTokenizer tokenizer = new StringTokenizer(name, "/");
         while (tokenizer.hasMoreTokens()) {
@@ -1232,7 +1221,7 @@ public class NamingContextListener
                     // Silent catch. Probably an object is already bound in
                     // the context.
                     currentContext =
-                        (javax.naming.Context) currentContext.lookup(token);
+                            (javax.naming.Context) currentContext.lookup(token);
                 }
             }
         }

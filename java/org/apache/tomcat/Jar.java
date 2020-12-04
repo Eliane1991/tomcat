@@ -42,12 +42,10 @@ public interface Jar extends AutoCloseable {
     /**
      * Determines if a specific entry exists within the JAR.
      *
-     * @param name  Entry to look for
-     * @return      Implementations will always return {@code false}
-     *
+     * @param name Entry to look for
+     * @return Implementations will always return {@code false}
      * @throws IOException if an I/O error occurs while processing the JAR file
-     *   entries
-     *
+     *                     entries
      * @deprecated Unused. This will be removed in Tomcat 9 onwards.
      */
     @Deprecated
@@ -58,10 +56,9 @@ public interface Jar extends AutoCloseable {
      * Obtain an {@link InputStream} for a given entry in a JAR. The caller is
      * responsible for closing the stream.
      *
-     * @param name  Entry to obtain an {@link InputStream} for
-     * @return      An {@link InputStream} for the specified entry or null if
-     *              the entry does not exist
-     *
+     * @param name Entry to obtain an {@link InputStream} for
+     * @return An {@link InputStream} for the specified entry or null if
+     * the entry does not exist
      * @throws IOException if an I/O error occurs while processing the JAR file
      */
     InputStream getInputStream(String name) throws IOException;
@@ -69,12 +66,10 @@ public interface Jar extends AutoCloseable {
     /**
      * Obtain the last modified time for the given resource in the JAR.
      *
-     * @param name  Entry to obtain the modification time for
-     *
+     * @param name Entry to obtain the modification time for
      * @return The time (in the same format as
-     *         {@link System#currentTimeMillis()} that the resource was last
-     *         modified. Returns -1 if the entry does not exist
-     *
+     * {@link System#currentTimeMillis()} that the resource was last
+     * modified. Returns -1 if the entry does not exist
      * @throws IOException if an I/O error occurs while processing the JAR file
      */
     long getLastModified(String name) throws IOException;
@@ -82,11 +77,9 @@ public interface Jar extends AutoCloseable {
     /**
      * Determine if the given resource in present in the JAR.
      *
-     * @param name  Entry to look for
-     *
+     * @param name Entry to look for
      * @return {@code true} if the entry is present in the JAR, otherwise
-     *         {@code false}
-     *
+     * {@code false}
      * @throws IOException if an I/O error occurs while processing the JAR file
      */
     boolean exists(String name) throws IOException;
@@ -105,15 +98,15 @@ public interface Jar extends AutoCloseable {
     /**
      * Obtains the name of the current entry.
      *
-     * @return  The entry name
+     * @return The entry name
      */
     String getEntryName();
 
     /**
      * Obtains the input stream for the current entry.
      *
-     * @return  The input stream
-     * @throws IOException  If the stream cannot be obtained
+     * @return The input stream
+     * @throws IOException If the stream cannot be obtained
      */
     InputStream getEntryInputStream() throws IOException;
 
@@ -127,7 +120,6 @@ public interface Jar extends AutoCloseable {
      * accessed correctly.
      *
      * @param entry The entry to generate the URL for
-     *
      * @return a URL for the specified entry in the JAR
      */
     String getURL(String entry);
@@ -136,7 +128,6 @@ public interface Jar extends AutoCloseable {
      * Obtain the manifest for the JAR file.
      *
      * @return The manifest for this JAR file.
-     *
      * @throws IOException If an I/O error occurs trying to obtain the manifest
      */
     Manifest getManifest() throws IOException;
@@ -145,7 +136,7 @@ public interface Jar extends AutoCloseable {
      * Resets the internal pointer used to track JAR entries to the beginning of
      * the JAR.
      *
-     * @throws IOException  If the pointer cannot be reset
+     * @throws IOException If the pointer cannot be reset
      */
     void reset() throws IOException;
 }

@@ -41,6 +41,24 @@ import java.util.Set;
         Endpoint.class})
 public class WsSci implements ServletContainerInitializer {
 
+    static WsServerContainer init(ServletContext servletContext,
+                                  boolean initBySciMechanism) {
+
+        WsServerContainer sc = new WsServerContainer(servletContext);
+
+        servletContext.setAttribute(
+                Constants.SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE, sc);
+
+        servletContext.addListener(new WsSessionListener(sc));
+        // Can't register the ContextListener again if the ContextListener is
+        // calling this method
+        if (initBySciMechanism) {
+            servletContext.addListener(new WsContextListener());
+        }
+
+        return sc;
+    }
+
     @Override
     public void onStartup(Set<Class<?>> clazzes, ServletContext ctx)
             throws ServletException {
@@ -127,24 +145,5 @@ public class WsSci implements ServletContainerInitializer {
         } catch (DeploymentException e) {
             throw new ServletException(e);
         }
-    }
-
-
-    static WsServerContainer init(ServletContext servletContext,
-            boolean initBySciMechanism) {
-
-        WsServerContainer sc = new WsServerContainer(servletContext);
-
-        servletContext.setAttribute(
-                Constants.SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE, sc);
-
-        servletContext.addListener(new WsSessionListener(sc));
-        // Can't register the ContextListener again if the ContextListener is
-        // calling this method
-        if (initBySciMechanism) {
-            servletContext.addListener(new WsContextListener());
-        }
-
-        return sc;
     }
 }

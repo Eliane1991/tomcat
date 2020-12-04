@@ -41,137 +41,113 @@ import java.util.Properties;
  *
  * @author Bip Thelin
  * @deprecated Removed in Tomcat 10 and replaced by DataSourceStore
- *  with removal of legacy JDBC code
+ * with removal of legacy JDBC code
  */
 @Deprecated
 public class JDBCStore extends StoreBase {
 
     /**
-     * Context name associated with this Store
-     */
-    private String name = null;
-
-    /**
      * Name to register for this Store, used for logging.
      */
     protected static final String storeName = "JDBCStore";
-
     /**
      * Name to register for the background thread.
      */
     protected static final String threadName = "JDBCStore";
-
     /**
      * The connection username to use when trying to connect to the database.
      */
     protected String connectionName = null;
-
-
     /**
      * The connection URL to use when trying to connect to the database.
      */
     protected String connectionPassword = null;
-
     /**
      * Connection string to use when connecting to the DB.
      */
     protected String connectionURL = null;
-
-    /**
-     * The database connection.
-     */
-    private Connection dbConnection = null;
-
     /**
      * Instance of the JDBC Driver class we use as a connection factory.
      */
     protected Driver driver = null;
-
     /**
      * Driver to use.
      */
     protected String driverName = null;
-
     /**
      * name of the JNDI resource
      */
     protected String dataSourceName = null;
-
-    /**
-     * Context local datasource.
-     */
-    private boolean localDataSource = false;
-
     /**
      * DataSource to use
      */
     protected DataSource dataSource = null;
-
-
-    // ------------------------------------------------------------ Table & cols
-
     /**
      * Table to use.
      */
     protected String sessionTable = "tomcat$sessions";
-
     /**
      * Column to use for /Engine/Host/Context name
      */
     protected String sessionAppCol = "app";
-
     /**
      * Id column to use.
      */
     protected String sessionIdCol = "id";
 
+
+    // ------------------------------------------------------------ Table & cols
     /**
      * Data column to use.
      */
     protected String sessionDataCol = "data";
-
     /**
      * {@code Is Valid} column to use.
      */
     protected String sessionValidCol = "valid";
-
     /**
      * Max Inactive column to use.
      */
     protected String sessionMaxInactiveCol = "maxinactive";
-
     /**
      * Last Accessed column to use.
      */
     protected String sessionLastAccessedCol = "lastaccess";
-
-
-    // ----------------------------------------------------------- SQL Variables
-
     /**
      * Variable to hold the <code>getSize()</code> prepared statement.
      */
     protected PreparedStatement preparedSizeSql = null;
-
     /**
      * Variable to hold the <code>save()</code> prepared statement.
      */
     protected PreparedStatement preparedSaveSql = null;
-
     /**
      * Variable to hold the <code>clear()</code> prepared statement.
      */
     protected PreparedStatement preparedClearSql = null;
 
+
+    // ----------------------------------------------------------- SQL Variables
     /**
      * Variable to hold the <code>remove()</code> prepared statement.
      */
     protected PreparedStatement preparedRemoveSql = null;
-
     /**
      * Variable to hold the <code>load()</code> prepared statement.
      */
     protected PreparedStatement preparedLoadSql = null;
+    /**
+     * Context name associated with this Store
+     */
+    private String name = null;
+    /**
+     * The database connection.
+     */
+    private Connection dbConnection = null;
+    /**
+     * Context local datasource.
+     */
+    private boolean localDataSource = false;
 
 
     // -------------------------------------------------------------- Properties
@@ -217,6 +193,13 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
+     * @return the driver for this Store.
+     */
+    public String getDriverName() {
+        return driverName;
+    }
+
+    /**
      * Set the driver for this Store.
      *
      * @param driverName The new driver
@@ -228,13 +211,6 @@ public class JDBCStore extends StoreBase {
                 oldDriverName,
                 this.driverName);
         this.driverName = driverName;
-    }
-
-    /**
-     * @return the driver for this Store.
-     */
-    public String getDriverName() {
-        return driverName;
     }
 
     /**
@@ -270,6 +246,13 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
+     * @return the Connection URL for this Store.
+     */
+    public String getConnectionURL() {
+        return connectionURL;
+    }
+
+    /**
      * Set the Connection URL for this Store.
      *
      * @param connectionURL The new Connection URL
@@ -283,10 +266,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the Connection URL for this Store.
+     * @return the table for this Store.
      */
-    public String getConnectionURL() {
-        return connectionURL;
+    public String getSessionTable() {
+        return sessionTable;
     }
 
     /**
@@ -303,10 +286,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the table for this Store.
+     * @return the web application name column for the table.
      */
-    public String getSessionTable() {
-        return sessionTable;
+    public String getSessionAppCol() {
+        return this.sessionAppCol;
     }
 
     /**
@@ -323,10 +306,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the web application name column for the table.
+     * @return the Id column for the table.
      */
-    public String getSessionAppCol() {
-        return this.sessionAppCol;
+    public String getSessionIdCol() {
+        return this.sessionIdCol;
     }
 
     /**
@@ -343,10 +326,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the Id column for the table.
+     * @return the data column for the table
      */
-    public String getSessionIdCol() {
-        return this.sessionIdCol;
+    public String getSessionDataCol() {
+        return this.sessionDataCol;
     }
 
     /**
@@ -363,10 +346,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the data column for the table
+     * @return the {@code Is Valid} column
      */
-    public String getSessionDataCol() {
-        return this.sessionDataCol;
+    public String getSessionValidCol() {
+        return this.sessionValidCol;
     }
 
     /**
@@ -383,10 +366,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the {@code Is Valid} column
+     * @return the {@code Max Inactive} column
      */
-    public String getSessionValidCol() {
-        return this.sessionValidCol;
+    public String getSessionMaxInactiveCol() {
+        return this.sessionMaxInactiveCol;
     }
 
     /**
@@ -403,10 +386,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the {@code Max Inactive} column
+     * @return the {@code Last Accessed} column
      */
-    public String getSessionMaxInactiveCol() {
-        return this.sessionMaxInactiveCol;
+    public String getSessionLastAccessedCol() {
+        return this.sessionLastAccessedCol;
     }
 
     /**
@@ -423,10 +406,10 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the {@code Last Accessed} column
+     * @return the name of the JNDI DataSource-factory
      */
-    public String getSessionLastAccessedCol() {
-        return this.sessionLastAccessedCol;
+    public String getDataSourceName() {
+        return this.dataSourceName;
     }
 
     /**
@@ -444,13 +427,6 @@ public class JDBCStore extends StoreBase {
     }
 
     /**
-     * @return the name of the JNDI DataSource-factory
-     */
-    public String getDataSourceName() {
-        return this.dataSourceName;
-    }
-
-    /**
      * @return if the datasource will be looked up in the webapp JNDI Context.
      */
     public boolean getLocalDataSource() {
@@ -464,7 +440,7 @@ public class JDBCStore extends StoreBase {
      * @param localDataSource the new flag value
      */
     public void setLocalDataSource(boolean localDataSource) {
-      this.localDataSource = localDataSource;
+        this.localDataSource = localDataSource;
     }
 
 
@@ -486,10 +462,9 @@ public class JDBCStore extends StoreBase {
      * zero-length array is returned.
      *
      * @param expiredOnly flag, whether only keys of expired sessions should
-     *        be returned
+     *                    be returned
      * @return array containing the list of session IDs
-     *
-     * @exception IOException if an input/output error occurred
+     * @throws IOException if an input/output error occurred
      */
     private String[] keys(boolean expiredOnly) throws IOException {
         String keys[] = null;
@@ -547,8 +522,7 @@ public class JDBCStore extends StoreBase {
      * <code>0</code> is returned.
      *
      * @return the count of all sessions currently saved in this Store
-     *
-     * @exception IOException if an input/output error occurred
+     * @throws IOException if an input/output error occurred
      */
     @Override
     public int getSize() throws IOException {
@@ -598,8 +572,8 @@ public class JDBCStore extends StoreBase {
      *
      * @param id a value of type <code>String</code>
      * @return the stored <code>Session</code>
-     * @exception ClassNotFoundException if an error occurs
-     * @exception IOException if an input/output error occurred
+     * @throws ClassNotFoundException if an error occurs
+     * @throws IOException            if an input/output error occurred
      */
     @Override
     public Session load(String id) throws ClassNotFoundException, IOException {
@@ -631,7 +605,7 @@ public class JDBCStore extends StoreBase {
                     try (ResultSet rst = preparedLoadSql.executeQuery()) {
                         if (rst.next()) {
                             try (ObjectInputStream ois =
-                                    getObjectInputStream(rst.getBinaryStream(2))) {
+                                         getObjectInputStream(rst.getBinaryStream(2))) {
                                 if (contextLog.isDebugEnabled()) {
                                     contextLog.debug(sm.getString(
                                             getStoreName() + ".loading", id, sessionTable));
@@ -668,8 +642,7 @@ public class JDBCStore extends StoreBase {
      * takes no action.
      *
      * @param id Session identifier of the Session to be removed
-     *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     public void remove(String id) throws IOException {
@@ -708,7 +681,7 @@ public class JDBCStore extends StoreBase {
      * this Store, if present.  If no such Session is present, this method
      * takes no action.
      *
-     * @param id Session identifier of the Session to be removed
+     * @param id    Session identifier of the Session to be removed
      * @param _conn open connection to be used
      * @throws SQLException if an error occurs while talking to the database
      */
@@ -728,7 +701,7 @@ public class JDBCStore extends StoreBase {
     /**
      * Remove all of the Sessions in this Store.
      *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     public void clear() throws IOException {
@@ -744,7 +717,7 @@ public class JDBCStore extends StoreBase {
                 try {
                     if (preparedClearSql == null) {
                         String clearSql = "DELETE FROM " + sessionTable
-                             + " WHERE " + sessionAppCol + " = ?";
+                                + " WHERE " + sessionAppCol + " = ?";
                         preparedClearSql = _conn.prepareStatement(clearSql);
                     }
 
@@ -768,7 +741,7 @@ public class JDBCStore extends StoreBase {
      * Save a session to the Store.
      *
      * @param session the session to be stored
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     @Override
     public void save(Session session) throws IOException {
@@ -790,21 +763,21 @@ public class JDBCStore extends StoreBase {
 
                     bos = new ByteArrayOutputStream();
                     try (ObjectOutputStream oos =
-                            new ObjectOutputStream(new BufferedOutputStream(bos))) {
+                                 new ObjectOutputStream(new BufferedOutputStream(bos))) {
                         ((StandardSession) session).writeObjectData(oos);
                     }
                     byte[] obs = bos.toByteArray();
                     int size = obs.length;
                     try (ByteArrayInputStream bis = new ByteArrayInputStream(obs, 0, size);
-                            InputStream in = new BufferedInputStream(bis, size)) {
+                         InputStream in = new BufferedInputStream(bis, size)) {
                         if (preparedSaveSql == null) {
                             String saveSql = "INSERT INTO " + sessionTable + " ("
-                               + sessionIdCol + ", " + sessionAppCol + ", "
-                               + sessionDataCol + ", " + sessionValidCol
-                               + ", " + sessionMaxInactiveCol + ", "
-                               + sessionLastAccessedCol
-                               + ") VALUES (?, ?, ?, ?, ?, ?)";
-                           preparedSaveSql = _conn.prepareStatement(saveSql);
+                                    + sessionIdCol + ", " + sessionAppCol + ", "
+                                    + sessionDataCol + ", " + sessionValidCol
+                                    + ", " + sessionMaxInactiveCol + ", "
+                                    + sessionLastAccessedCol
+                                    + ") VALUES (?, ?, ?, ?, ?, ?)";
+                            preparedSaveSql = _conn.prepareStatement(saveSql);
                         }
 
                         preparedSaveSql.setString(1, session.getIdInternal());
@@ -870,8 +843,7 @@ public class JDBCStore extends StoreBase {
      * this Store.
      *
      * @return database connection ready to use
-     *
-     * @exception SQLException if a database error occurs
+     * @throws SQLException if a database error occurs
      */
     protected Connection open() throws SQLException {
 
@@ -914,7 +886,7 @@ public class JDBCStore extends StoreBase {
             } catch (ReflectiveOperationException e) {
                 manager.getContext().getLogger().error(
                         sm.getString(getStoreName() + ".checkConnectionClassNotFoundException",
-                        e.toString()));
+                                e.toString()));
                 throw new SQLException(e);
             }
         }
@@ -1016,8 +988,8 @@ public class JDBCStore extends StoreBase {
      * Start this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void startInternal() throws LifecycleException {
@@ -1034,8 +1006,8 @@ public class JDBCStore extends StoreBase {
      * Stop this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void stopInternal() throws LifecycleException {

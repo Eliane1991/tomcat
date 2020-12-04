@@ -27,6 +27,10 @@ public abstract class AbstractCatalinaCommandTask extends AbstractCatalinaTask {
      * The context path of the web application we are managing.
      */
     protected String path = null;
+    /**
+     * The context version of the web application we are managing.
+     */
+    protected String version = null;
 
     public String getPath() {
         return this.path;
@@ -35,11 +39,6 @@ public abstract class AbstractCatalinaCommandTask extends AbstractCatalinaTask {
     public void setPath(String path) {
         this.path = path;
     }
-
-    /**
-     * The context version of the web application we are managing.
-     */
-    protected String version = null;
 
     public String getVersion() {
         return this.version;
@@ -56,10 +55,8 @@ public abstract class AbstractCatalinaCommandTask extends AbstractCatalinaTask {
      * Create query string for the specified command.
      *
      * @param command Command to be executed
-     *
      * @return The generated query string
-     *
-     * @exception BuildException if an error occurs
+     * @throws BuildException if an error occurs
      */
     public StringBuilder createQueryString(String command) throws BuildException {
         StringBuilder buffer = new StringBuilder();

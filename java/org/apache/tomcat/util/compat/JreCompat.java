@@ -40,11 +40,10 @@ public class JreCompat {
     private static final int RUNTIME_MAJOR_VERSION = 7;
 
     private static final JreCompat instance;
-    private static StringManager sm =
-            StringManager.getManager(JreCompat.class.getPackage().getName());
     private static final boolean jre9Available;
     private static final boolean jre8Available;
-
+    private static StringManager sm =
+            StringManager.getManager(JreCompat.class.getPackage().getName());
 
     static {
         // This is Tomcat 8 with a minimum Java version of Java 7. The latest
@@ -54,8 +53,7 @@ public class JreCompat {
             instance = new Jre9Compat();
             jre9Available = true;
             jre8Available = true;
-        }
-        else if (Jre8Compat.isSupported()) {
+        } else if (Jre8Compat.isSupported()) {
             instance = new Jre8Compat();
             jre9Available = false;
             jre8Available = true;
@@ -78,39 +76,34 @@ public class JreCompat {
         return jre8Available;
     }
 
-
-    @SuppressWarnings("unused")
-    public void setUseServerCipherSuitesOrder(SSLParameters engine, boolean useCipherSuitesOrder) {
-        throw new UnsupportedOperationException(sm.getString("jreCompat.noServerCipherSuiteOrder"));
-    }
-
-
-    @SuppressWarnings("unused")
-    public LoadStoreParameter getDomainLoadStoreParameter(URI uri) {
-        throw new UnsupportedOperationException(sm.getString("jreCompat.noDomainLoadStoreParameter"));
-    }
-
-
-    // Java 7 implementation of Java 9 methods
-
     public static boolean isAlpnSupported() {
         return isJre9Available() || (isJre8Available() && Jre8Compat.isAlpnSupported());
     }
-
 
     public static boolean isJre9Available() {
         return jre9Available;
     }
 
 
+    // Java 7 implementation of Java 9 methods
+
+    @SuppressWarnings("unused")
+    public void setUseServerCipherSuitesOrder(SSLParameters engine, boolean useCipherSuitesOrder) {
+        throw new UnsupportedOperationException(sm.getString("jreCompat.noServerCipherSuiteOrder"));
+    }
+
+    @SuppressWarnings("unused")
+    public LoadStoreParameter getDomainLoadStoreParameter(URI uri) {
+        throw new UnsupportedOperationException(sm.getString("jreCompat.noDomainLoadStoreParameter"));
+    }
+
     /**
      * Test if the provided exception is an instance of
      * java.lang.reflect.InaccessibleObjectException.
      *
      * @param t The exception to test
-     *
      * @return {@code true} if the exception is an instance of
-     *         InaccessibleObjectException, otherwise {@code false}
+     * InaccessibleObjectException, otherwise {@code false}
      */
     public boolean isInstanceOfInaccessibleObjectException(Throwable t) {
         // Exception does not exist prior to Java 9
@@ -121,9 +114,9 @@ public class JreCompat {
     /**
      * Set the application protocols the server will accept for ALPN
      *
-     * @param sslParameters    The SSL parameters for a connection
-     * @param protocols        The application protocols to be allowed for that
-     *                         connection
+     * @param sslParameters The SSL parameters for a connection
+     * @param protocols     The application protocols to be allowed for that
+     *                      connection
      */
     public void setApplicationProtocols(SSLParameters sslParameters, String[] protocols) {
         throw new UnsupportedOperationException(sm.getString("jreCompat.noApplicationProtocols"));
@@ -136,7 +129,6 @@ public class JreCompat {
      *
      * @param sslEngine The SSLEngine for which to obtain the negotiated
      *                  protocol
-     *
      * @return The name of the negotiated protocol
      */
     public String getApplicationProtocol(SSLEngine sslEngine) {
@@ -163,8 +155,8 @@ public class JreCompat {
      * Obtains the URLs for all the JARs on the module path when the JVM starts
      * and adds them to the provided Deque.
      *
-     * @param classPathUrlsToProcess    The Deque to which the modules should be
-     *                                  added
+     * @param classPathUrlsToProcess The Deque to which the modules should be
+     *                               added
      */
     public void addBootModulePath(Deque<URL> classPathUrlsToProcess) {
         // NO-OP for Java 7. There is no module path.
@@ -177,10 +169,8 @@ public class JreCompat {
      * required to be in this package, it is provided as a convenience method.
      *
      * @param s The JAR file to open
-     *
      * @return A JarFile instance based on the provided path
-     *
-     * @throws IOException  If an I/O error occurs creating the JarFile instance
+     * @throws IOException If an I/O error occurs creating the JarFile instance
      */
     public final JarFile jarFileNewInstance(String s) throws IOException {
         return jarFileNewInstance(new File(s));
@@ -192,10 +182,8 @@ public class JreCompat {
      * JarFile will be multi-release JAR aware.
      *
      * @param f The JAR file to open
-     *
      * @return A JarFile instance based on the provided file
-     *
-     * @throws IOException  If an I/O error occurs creating the JarFile instance
+     * @throws IOException If an I/O error occurs creating the JarFile instance
      */
     public JarFile jarFileNewInstance(File f) throws IOException {
         return new JarFile(f);
@@ -205,10 +193,9 @@ public class JreCompat {
     /**
      * Is this JarFile a multi-release JAR file.
      *
-     * @param jarFile   The JarFile to test
-     *
+     * @param jarFile The JarFile to test
      * @return {@code true} If it is a multi-release JAR file and is configured
-     *         to behave as such.
+     * to behave as such.
      */
     public boolean jarFileIsMultiRelease(JarFile jarFile) {
         // Java 8 doesn't support multi-release so default to false
@@ -225,11 +212,10 @@ public class JreCompat {
      * Is the accessibleObject accessible (as a result of appropriate module
      * exports) on the provided instance?
      *
-     * @param base  The specific instance to be tested.
-     * @param accessibleObject  The method/field/constructor to be tested.
-     *
+     * @param base             The specific instance to be tested.
+     * @param accessibleObject The method/field/constructor to be tested.
      * @return {code true} if the AccessibleObject can be accessed otherwise
-     *         {code false}
+     * {code false}
      */
     public boolean canAccess(Object base, AccessibleObject accessibleObject) {
         // Java 8 doesn't support modules so default to true
@@ -240,10 +226,9 @@ public class JreCompat {
     /**
      * Is the given class in an exported package?
      *
-     * @param type  The class to test
-     *
+     * @param type The class to test
      * @return Always {@code true} for Java 8. {@code true} if the enclosing
-     *         package is exported for Java 9+
+     * package is exported for Java 9+
      */
     public boolean isExported(Class<?> type) {
         return true;
@@ -253,10 +238,9 @@ public class JreCompat {
     /**
      * What is the module of the given class?
      *
-     * @param type  The class to test
-     *
+     * @param type The class to test
      * @return Always {@code true} for Java 8. {@code true} if the enclosing
-     *         package is exported for Java 9+
+     * package is exported for Java 9+
      */
     public String getModuleName(Class<?> type) {
         return "NO_MODULE_JAVA_8";

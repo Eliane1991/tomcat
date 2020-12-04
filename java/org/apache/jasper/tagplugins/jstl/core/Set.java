@@ -29,7 +29,7 @@ public class Set implements TagPlugin {
 
         //the flags to indicate whether the attributes have been specified
         boolean hasValue = false, hasVar = false, hasScope = false,
-        hasTarget = false;
+                hasTarget = false;
 
         //the scope name
         String strScope;
@@ -49,19 +49,19 @@ public class Set implements TagPlugin {
 
         //initialize the "result" which will be assigned to the var or target.property
         ctxt.generateJavaSource("Object " + resultName + " = null;");
-        if(hasValue){
+        if (hasValue) {
             ctxt.generateJavaSource(resultName + " = ");
             ctxt.generateAttribute("value");
             ctxt.generateJavaSource(";");
-        }else{
+        } else {
             ctxt.dontUseTagPlugin();
             return;
         }
 
         //initialize the strScope
-        if(hasScope){
+        if (hasScope) {
             strScope = ctxt.getConstantAttribute("scope");
-        }else{
+        } else {
             strScope = "page";
         }
 
@@ -75,20 +75,20 @@ public class Set implements TagPlugin {
             jspCtxt = "_jspx_page_context";
         }
         //if the attribute var has been specified then assign the result to the var;
-        if(hasVar){
+        if (hasVar) {
             String strVar = ctxt.getConstantAttribute("var");
             ctxt.generateJavaSource("if(null != " + resultName + "){");
             ctxt.generateJavaSource("    " + jspCtxt + ".setAttribute(\"" + strVar + "\"," + resultName + "," + iScope + ");");
             ctxt.generateJavaSource("} else {");
-            if(hasScope){
+            if (hasScope) {
                 ctxt.generateJavaSource("    " + jspCtxt + ".removeAttribute(\"" + strVar + "\"," + iScope + ");");
-            }else{
+            } else {
                 ctxt.generateJavaSource("    " + jspCtxt + ".removeAttribute(\"" + strVar + "\");");
             }
             ctxt.generateJavaSource("}");
 
             //else assign the result to the target.property
-        }else if(hasTarget){
+        } else if (hasTarget) {
 
             //generate the temp variable name
             String pdName = ctxt.getTemporaryVariableName();

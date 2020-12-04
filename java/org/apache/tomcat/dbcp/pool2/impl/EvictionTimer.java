@@ -47,26 +47,20 @@ import java.util.concurrent.TimeUnit;
  */
 class EvictionTimer {
 
-    /** Executor instance */
+    /**
+     * Keys are weak references to tasks, values are runners managed by executor.
+     */
+    private static final HashMap<WeakReference<Runnable>, WeakRunner> taskMap = new HashMap<>(); // @GuardedBy("EvictionTimer.class")
+    /**
+     * Executor instance
+     */
     private static ScheduledThreadPoolExecutor executor; //@GuardedBy("EvictionTimer.class")
 
-    /** Keys are weak references to tasks, values are runners managed by executor. */
-    private static final HashMap<WeakReference<Runnable>, WeakRunner> taskMap = new HashMap<>(); // @GuardedBy("EvictionTimer.class")
-
-    /** Prevents instantiation */
+    /**
+     * Prevents instantiation
+     */
     private EvictionTimer() {
         // Hide the default constructor
-    }
-
-
-    /**
-     * @since 2.4.3
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("EvictionTimer []");
-        return builder.toString();
     }
 
     /**
@@ -76,9 +70,9 @@ class EvictionTimer {
      * to cancel the task to prevent memory and/or thread leaks in application
      * server environments.
      *
-     * @param task      Task to be scheduled.
-     * @param delay     Delay in milliseconds before task is executed.
-     * @param period    Time in milliseconds between executions.
+     * @param task   Task to be scheduled.
+     * @param delay  Delay in milliseconds before task is executed.
+     * @param period Time in milliseconds between executions.
      */
     static synchronized void schedule(
             final BaseGenericObjectPool<?>.Evictor task, final long delay, final long period) {
@@ -98,11 +92,11 @@ class EvictionTimer {
     /**
      * Removes the specified eviction task from the timer.
      *
-     * @param evictor   Task to be cancelled.
-     * @param timeout   If the associated executor is no longer required, how
-     *                  long should this thread wait for the executor to
-     *                  terminate?
-     * @param unit      The units for the specified timeout.
+     * @param evictor    Task to be cancelled.
+     * @param timeout    If the associated executor is no longer required, how
+     *                   long should this thread wait for the executor to
+     *                   terminate?
+     * @param unit       The units for the specified timeout.
      * @param restarting The state of the evictor.
      */
     static synchronized void cancel(
@@ -147,6 +141,16 @@ class EvictionTimer {
      */
     static synchronized int getNumTasks() {
         return taskMap.size();
+    }
+
+    /**
+     * @since 2.4.3
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("EvictionTimer []");
+        return builder.toString();
     }
 
     /**
@@ -207,7 +211,7 @@ class EvictionTimer {
          * @param ref the reference to track.
          */
         private WeakRunner(WeakReference<Runnable> ref) {
-           this.ref = ref;
+            this.ref = ref;
         }
 
         @Override

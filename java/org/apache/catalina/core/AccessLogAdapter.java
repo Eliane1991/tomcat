@@ -32,7 +32,7 @@ public class AccessLogAdapter implements AccessLog {
 
     public AccessLogAdapter(AccessLog log) {
         Objects.requireNonNull(log);
-        logs = new AccessLog[] { log };
+        logs = new AccessLog[]{log};
     }
 
     public void add(AccessLog log) {
@@ -44,14 +44,9 @@ public class AccessLogAdapter implements AccessLog {
 
     @Override
     public void log(Request request, Response response, long time) {
-        for (AccessLog log: logs) {
+        for (AccessLog log : logs) {
             log.log(request, response, time);
         }
-    }
-
-    @Override
-    public void setRequestAttributesEnabled(boolean requestAttributesEnabled) {
-        // NOOP
     }
 
     @Override
@@ -59,5 +54,10 @@ public class AccessLogAdapter implements AccessLog {
         // NOOP. Could return logs[0].getRequestAttributesEnabled(), but I do
         // not see a use case for that.
         return false;
+    }
+
+    @Override
+    public void setRequestAttributesEnabled(boolean requestAttributesEnabled) {
+        // NOOP
     }
 }

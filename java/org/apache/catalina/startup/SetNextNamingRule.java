@@ -42,16 +42,29 @@ public class SetNextNamingRule extends Rule {
 
 
     /**
+     * The method name to call on the parent object.
+     */
+    protected final String methodName;
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The Java class name of the parameter type expected by the method.
+     */
+    protected final String paramType;
+
+
+    /**
      * Construct a "set next" rule with the specified method name.
      *
      * @param methodName Method name of the parent method to call
-     * @param paramType Java class of the parent method's argument
-     *  (if you wish to use a primitive type, specify the corresponding
-     *  Java wrapper class instead, such as <code>java.lang.Boolean</code>
-     *  for a <code>boolean</code> parameter)
+     * @param paramType  Java class of the parent method's argument
+     *                   (if you wish to use a primitive type, specify the corresponding
+     *                   Java wrapper class instead, such as <code>java.lang.Boolean</code>
+     *                   for a <code>boolean</code> parameter)
      */
     public SetNextNamingRule(String methodName,
-                       String paramType) {
+                             String paramType) {
 
         this.methodName = methodName;
         this.paramType = paramType;
@@ -59,32 +72,16 @@ public class SetNextNamingRule extends Rule {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The method name to call on the parent object.
-     */
-    protected final String methodName;
-
-
-    /**
-     * The Java class name of the parameter type expected by the method.
-     */
-    protected final String paramType;
-
-
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Process the end of this element.
      *
      * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     *                  empty string if the parser is not namespace aware or the element has
+     *                  no namespace
+     * @param name      the local name if the parser is namespace aware, or just
+     *                  the element name otherwise
      */
     @Override
     public void end(String namespace, String name) throws Exception {

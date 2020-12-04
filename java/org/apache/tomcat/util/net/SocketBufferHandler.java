@@ -22,16 +22,14 @@ import java.nio.ByteBuffer;
 
 public class SocketBufferHandler {
 
+    private final boolean direct;
     private volatile boolean readBufferConfiguredForWrite = true;
     private volatile ByteBuffer readBuffer;
-
     private volatile boolean writeBufferConfiguredForWrite = true;
     private volatile ByteBuffer writeBuffer;
 
-    private final boolean direct;
-
     public SocketBufferHandler(int readBufferSize, int writeBufferSize,
-            boolean direct) {
+                               boolean direct) {
         this.direct = direct;
         if (direct) {
             readBuffer = ByteBuffer.allocateDirect(readBufferSize);

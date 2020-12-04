@@ -31,6 +31,11 @@ public class Http2OutputBuffer implements HttpOutputBuffer {
     private HttpOutputBuffer next;
 
 
+    public Http2OutputBuffer(Response coyoteResponse, StreamOutputBuffer streamOutputBuffer) {
+        this.coyoteResponse = coyoteResponse;
+        this.next = streamOutputBuffer;
+    }
+
     /**
      * Add a filter at the start of the existing processing chain. Subsequent
      * calls to the {@link HttpOutputBuffer} methods of this object will be
@@ -38,19 +43,12 @@ public class Http2OutputBuffer implements HttpOutputBuffer {
      * method on the next HttpOutputBuffer in the chain until the call reaches
      * the StreamOutputBuffer.
      *
-     * @param filter    The filter to add to the start of the processing chain
+     * @param filter The filter to add to the start of the processing chain
      */
     public void addFilter(OutputFilter filter) {
         filter.setBuffer(next);
         next = filter;
     }
-
-
-    public Http2OutputBuffer(Response coyoteResponse, StreamOutputBuffer streamOutputBuffer) {
-        this.coyoteResponse = coyoteResponse;
-        this.next = streamOutputBuffer;
-    }
-
 
     @Override
     public int doWrite(ByteBuffer chunk) throws IOException {

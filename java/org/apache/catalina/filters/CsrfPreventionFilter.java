@@ -57,8 +57,8 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
      * to HTTP GET requests and should not trigger any security sensitive
      * actions.
      *
-     * @param entryPoints   Comma separated list of URLs to be configured as
-     *                      entry points.
+     * @param entryPoints Comma separated list of URLs to be configured as
+     *                    entry points.
      */
     public void setEntryPoints(String entryPoints) {
         String values[] = entryPoints.split(",");
@@ -74,7 +74,7 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
      * of a previous nonce rather than the current one. If not set, the default
      * value of 5 will be used.
      *
-     * @param nonceCacheSize    The number of nonces to cache
+     * @param nonceCacheSize The number of nonces to cache
      */
     public void setNonceCacheSize(int nonceCacheSize) {
         this.nonceCacheSize = nonceCacheSize;
@@ -84,7 +84,7 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
      * Sets the request parameter name to use for CSRF nonces.
      *
      * @param parameterName The request parameter name to use
-     *        for CSRF nonces.
+     *                      for CSRF nonces.
      */
     public void setNonceRequestParameterName(String parameterName) {
         this.nonceRequestParameterName = parameterName;
@@ -103,7 +103,7 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
         ServletResponse wResponse = null;
 
@@ -117,7 +117,7 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
 
             if (Constants.METHOD_GET.equals(req.getMethod())
                     && entryPoints.contains(getRequestedPath(req))) {
-                if(log.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     log.trace("Skipping CSRF nonce-check for GET request to entry point " + getRequestedPath(req));
                 }
 
@@ -129,58 +129,58 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
             @SuppressWarnings("unchecked")
             LruCache<String> nonceCache = (session == null) ? null
                     : (LruCache<String>) session.getAttribute(
-                            Constants.CSRF_NONCE_SESSION_ATTR_NAME);
+                    Constants.CSRF_NONCE_SESSION_ATTR_NAME);
 
             if (!skipNonceCheck) {
                 String previousNonce =
-                    req.getParameter(nonceRequestParameterName);
+                        req.getParameter(nonceRequestParameterName);
 
-                if(previousNonce == null) {
-                    if(log.isDebugEnabled()) {
+                if (previousNonce == null) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Rejecting request for " + getRequestedPath(req)
-                                  + ", session "
-                                  + (null == session ? "(none)" : session.getId())
-                                  + " with no CSRF nonce found in request");
+                                + ", session "
+                                + (null == session ? "(none)" : session.getId())
+                                + " with no CSRF nonce found in request");
                     }
 
                     res.sendError(getDenyStatus());
                     return;
-                } else if(nonceCache == null) {
-                    if(log.isDebugEnabled()) {
+                } else if (nonceCache == null) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Rejecting request for " + getRequestedPath(req)
-                                  + ", session "
-                                  + (null == session ? "(none)" : session.getId())
-                                  + " due to empty / missing nonce cache");
+                                + ", session "
+                                + (null == session ? "(none)" : session.getId())
+                                + " due to empty / missing nonce cache");
                     }
 
                     res.sendError(getDenyStatus());
                     return;
-                } else if(!nonceCache.contains(previousNonce)) {
-                    if(log.isDebugEnabled()) {
+                } else if (!nonceCache.contains(previousNonce)) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Rejecting request for " + getRequestedPath(req)
-                                  + ", session "
-                                  + (null == session ? "(none)" : session.getId())
-                                  + " due to invalid nonce " + previousNonce);
+                                + ", session "
+                                + (null == session ? "(none)" : session.getId())
+                                + " due to invalid nonce " + previousNonce);
                     }
 
                     res.sendError(getDenyStatus());
                     return;
                 }
-                if(log.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     log.trace("Allowing request to " + getRequestedPath(req)
-                               + " with valid CSRF nonce " + previousNonce);
+                            + " with valid CSRF nonce " + previousNonce);
                 }
             }
 
             if (nonceCache == null) {
-                if(log.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("Creating new CSRF nonce cache with size=" + nonceCacheSize + " for session " + (null == session ? "(will create)" : session.getId()));
                 }
 
                 nonceCache = new LruCache<>(nonceCacheSize);
                 if (session == null) {
-                    if(log.isDebugEnabled()) {
-                         log.debug("Creating new session to store CSRF nonce cache");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Creating new session to store CSRF nonce cache");
                     }
 
                     session = req.getSession(true);
@@ -266,7 +266,7 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
                 path = path.substring(0, question);
             }
             StringBuilder sb = new StringBuilder(path);
-            if (query.length() >0) {
+            if (query.length() > 0) {
                 sb.append(query);
                 sb.append('&');
             } else {
@@ -286,13 +286,14 @@ public class CsrfPreventionFilter extends CsrfPreventionFilterBase {
 
         // Although the internal implementation uses a Map, this cache
         // implementation is only concerned with the keys.
-        private final Map<T,T> cache;
+        private final Map<T, T> cache;
 
         public LruCache(final int cacheSize) {
-            cache = new LinkedHashMap<T,T>() {
+            cache = new LinkedHashMap<T, T>() {
                 private static final long serialVersionUID = 1L;
+
                 @Override
-                protected boolean removeEldestEntry(Map.Entry<T,T> eldest) {
+                protected boolean removeEldestEntry(Map.Entry<T, T> eldest) {
                     if (size() > cacheSize) {
                         return true;
                     }

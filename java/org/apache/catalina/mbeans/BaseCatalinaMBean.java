@@ -25,6 +25,14 @@ import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 public abstract class BaseCatalinaMBean<T> extends BaseModelMBean {
 
+    protected static Object newInstance(String type) throws MBeanException {
+        try {
+            return Class.forName(type).newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new MBeanException(e);
+        }
+    }
+
     protected T doGetManagedResource() throws MBeanException {
         try {
             @SuppressWarnings("unchecked")
@@ -32,15 +40,6 @@ public abstract class BaseCatalinaMBean<T> extends BaseModelMBean {
             return resource;
         } catch (InstanceNotFoundException | RuntimeOperationsException |
                 InvalidTargetObjectTypeException e) {
-            throw new MBeanException(e);
-        }
-    }
-
-
-    protected static Object newInstance(String type) throws MBeanException {
-        try {
-            return Class.forName(type).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new MBeanException(e);
         }
     }

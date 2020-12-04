@@ -64,7 +64,7 @@ public class LogConfigurationException extends RuntimeException {
      * Construct a new exception with the specified detail message and cause.
      *
      * @param message The detail message
-     * @param cause The underlying cause
+     * @param cause   The underlying cause
      */
     public LogConfigurationException(String message, Throwable cause) {
         super(message, cause);

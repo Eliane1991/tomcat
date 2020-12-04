@@ -56,99 +56,71 @@ import java.util.TimeZone;
 public class AccessLogValve extends AbstractAccessLogValve {
 
     private static final Log log = LogFactory.getLog(AccessLogValve.class);
-
-    //------------------------------------------------------ Constructor
-    public AccessLogValve() {
-        super();
-    }
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The as-of date for the currently open log file, or a zero-length
-     * string if there is no open log file.
-     */
-    private volatile String dateStamp = "";
-
-
-    /**
-     * The directory in which log files are created.
-     */
-    private String directory = "logs";
-
     /**
      * The prefix that is added to log file filenames.
      */
     protected volatile String prefix = "access_log";
 
-
+    // ----------------------------------------------------- Instance Variables
     /**
      * Should we rotate our log file? Default is true (like old behavior)
      */
     protected boolean rotatable = true;
-
     /**
      * Should we defer inclusion of the date stamp in the file
      * name until rotate time? Default is false.
      */
     protected boolean renameOnRotate = false;
-
-
-    /**
-     * Buffered logging.
-     */
-    private boolean buffered = true;
-
-
     /**
      * The suffix that is added to log file filenames.
      */
     protected volatile String suffix = "";
-
-
     /**
      * The PrintWriter to which we are currently logging, if any.
      */
     protected PrintWriter writer = null;
-
-
     /**
      * A date formatter to format a Date using the format
      * given by <code>fileDateFormat</code>.
      */
     protected SimpleDateFormat fileDateFormatter = null;
-
-
     /**
      * The current log file we are writing to. Helpful when checkExists
      * is true.
      */
     protected File currentLogFile = null;
-
-    /**
-     * Instant when the log daily rotation was last checked.
-     */
-    private volatile long rotationLastChecked = 0L;
-
-    /**
-     * Do we check for log file existence? Helpful if an external
-     * agent renames the log file so we can automagically recreate it.
-     */
-    private boolean checkExists = false;
-
     /**
      * Date format to place in log file name.
      */
     protected String fileDateFormat = ".yyyy-MM-dd";
-
     /**
      * Character set used by the log file. If it is <code>null</code>, the
      * system default character set will be used. An empty string will be
      * treated as <code>null</code> when this property is assigned.
      */
     protected volatile String encoding = null;
-
+    /**
+     * The as-of date for the currently open log file, or a zero-length
+     * string if there is no open log file.
+     */
+    private volatile String dateStamp = "";
+    /**
+     * The directory in which log files are created.
+     */
+    private String directory = "logs";
+    /**
+     * Buffered logging.
+     */
+    private boolean buffered = true;
+    /**
+     * Instant when the log daily rotation was last checked.
+     */
+    private volatile long rotationLastChecked = 0L;
+    /**
+     * Do we check for log file existence? Helpful if an external
+     * agent renames the log file so we can automagically recreate it.
+     */
+    private boolean checkExists = false;
     /**
      * The number of days to retain the access log files before they are
      * removed.
@@ -156,8 +128,12 @@ public class AccessLogValve extends AbstractAccessLogValve {
     private int maxDays = -1;
     private volatile boolean checkForOldLogs = false;
 
-    // ------------------------------------------------------------- Properties
+    //------------------------------------------------------ Constructor
+    public AccessLogValve() {
+        super();
+    }
 
+    // ------------------------------------------------------------- Properties
 
     public int getMaxDays() {
         return maxDays;
@@ -188,6 +164,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
 
     /**
      * Check for file existence before logging.
+     *
      * @return <code>true</code> if file existence is checked first
      */
     public boolean isCheckExists() {
@@ -250,8 +227,9 @@ public class AccessLogValve extends AbstractAccessLogValve {
     /**
      * Should we defer inclusion of the date stamp in the file
      * name until rotate time.
+     *
      * @return <code>true</code> if the logs file names are time stamped
-     *  only when they are rotated
+     * only when they are rotated
      */
     public boolean isRenameOnRotate() {
         return renameOnRotate;
@@ -271,6 +249,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
 
     /**
      * Is the logging buffered. Usually buffering can increase performance.
+     *
      * @return <code>true</code> if the logging uses a buffer
      */
     public boolean isBuffered() {
@@ -315,6 +294,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
 
     /**
      * Set the date format date based log rotation.
+     *
      * @param fileDateFormat The format for the file timestamp
      */
     public void setFileDateFormat(String fileDateFormat) {
@@ -336,7 +316,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * Return the character set name that is used to write the log file.
      *
      * @return Character set name, or <code>null</code> if the system default
-     *  character set is used.
+     * character set is used.
      */
     public String getEncoding() {
         return encoding;
@@ -422,7 +402,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
             // Only do a logfile switch check once a second, max.
             long systime = System.currentTimeMillis();
             if ((systime - rotationLastChecked) > 1000) {
-                synchronized(this) {
+                synchronized (this) {
                     if ((systime - rotationLastChecked) > 1000) {
                         rotationLastChecked = systime;
 
@@ -525,7 +505,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
         File newLogFile = getLogFile(false);
         File rotatedLogFile = getLogFile(true);
         if (rotatedLogFile.exists() && !newLogFile.exists() &&
-            !rotatedLogFile.equals(newLogFile)) {
+                !rotatedLogFile.equals(newLogFile)) {
             try {
                 if (!rotatedLogFile.renameTo(newLogFile)) {
                     log.error(sm.getString("accessLogValve.renameFail", rotatedLogFile, newLogFile));
@@ -604,7 +584,7 @@ public class AccessLogValve extends AbstractAccessLogValve {
         // Log this message
         try {
             message.write(System.lineSeparator());
-            synchronized(this) {
+            synchronized (this) {
                 if (writer != null) {
                     message.writeTo(writer);
                     if (!buffered) {
@@ -661,8 +641,8 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * Start this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void startInternal() throws LifecycleException {
@@ -685,8 +665,8 @@ public class AccessLogValve extends AbstractAccessLogValve {
      * Stop this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#stopInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void stopInternal() throws LifecycleException {

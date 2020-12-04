@@ -27,9 +27,11 @@ public class HpackException extends Exception {
     public HpackException(String message, Throwable cause) {
         super(message, cause);
     }
+
     public HpackException(String message) {
         super(message);
     }
+
     public HpackException() {
         super();
     }

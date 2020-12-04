@@ -32,7 +32,7 @@ import java.security.PrivilegedAction;
  * Write text to a character-output stream, buffering characters so as
  * to provide for the efficient writing of single characters, arrays,
  * and strings.
- *
+ * <p>
  * Provide support for discarding for the output that has been buffered.
  *
  * @author Rajiv Mordani
@@ -86,6 +86,7 @@ public class BodyContentImpl extends BodyContent {
 
     /**
      * Constructor.
+     *
      * @param enclosingWriter The wrapped writer
      */
     public BodyContentImpl(JspWriter enclosingWriter) {
@@ -98,6 +99,7 @@ public class BodyContentImpl extends BodyContent {
 
     /**
      * Write a single character.
+     *
      * @param c The char to write
      * @throws IOException Error writing to wrapped writer
      */
@@ -108,7 +110,7 @@ public class BodyContentImpl extends BodyContent {
         } else {
             ensureOpen();
             if (nextChar >= bufferSize) {
-                reAllocBuff (1);
+                reAllocBuff(1);
             }
             cb[nextChar++] = (char) c;
         }
@@ -126,8 +128,8 @@ public class BodyContentImpl extends BodyContent {
      * unnecessarily.
      *
      * @param cbuf A character array
-     * @param off Offset from which to start reading characters
-     * @param len Number of characters to write
+     * @param off  Offset from which to start reading characters
+     * @param len  Number of characters to write
      * @throws IOException Error writing to wrapped writer
      */
     @Override
@@ -145,16 +147,17 @@ public class BodyContentImpl extends BodyContent {
             }
 
             if (len >= bufferSize - nextChar)
-                reAllocBuff (len);
+                reAllocBuff(len);
 
             System.arraycopy(cbuf, off, cb, nextChar, len);
-            nextChar+=len;
+            nextChar += len;
         }
     }
 
     /**
      * Write an array of characters.  This method cannot be inherited from the
      * Writer class because it must suppress I/O exceptions.
+     *
      * @param buf Content to write
      * @throws IOException Error writing to wrapped writer
      */
@@ -170,7 +173,7 @@ public class BodyContentImpl extends BodyContent {
     /**
      * Write a portion of a String.
      *
-     * @param s String to be written
+     * @param s   String to be written
      * @param off Offset from which to start reading characters
      * @param len Number of characters to be written
      * @throws IOException Error writing to wrapped writer
@@ -192,6 +195,7 @@ public class BodyContentImpl extends BodyContent {
     /**
      * Write a string.  This method cannot be inherited from the Writer class
      * because it must suppress I/O exceptions.
+     *
      * @param s String to be written
      * @throws IOException Error writing to wrapped writer
      */
@@ -340,9 +344,8 @@ public class BodyContentImpl extends BodyContent {
      * <code>{@link #write(int)}</code> method.
      *
      * @param s The array of chars to be printed
-     *
      * @throws NullPointerException If <code>s</code> is <code>null</code>
-     * @throws IOException Error writing to wrapped writer
+     * @throws IOException          Error writing to wrapped writer
      */
     @Override
     public void print(char[] s) throws IOException {
@@ -484,7 +487,7 @@ public class BodyContentImpl extends BodyContent {
      * @throws IOException Error writing to wrapped writer
      */
     @Override
-    public void println(double x) throws IOException{
+    public void println(double x) throws IOException {
         print(x);
         println();
     }
@@ -602,7 +605,7 @@ public class BodyContentImpl extends BodyContent {
      */
     @Override
     public int getRemaining() {
-        return (writer == null) ? bufferSize-nextChar : 0;
+        return (writer == null) ? bufferSize - nextChar : 0;
     }
 
     /**
@@ -614,7 +617,7 @@ public class BodyContentImpl extends BodyContent {
      */
     @Override
     public Reader getReader() {
-        return (writer == null) ? new CharArrayReader (cb, 0, nextChar) : null;
+        return (writer == null) ? new CharArrayReader(cb, 0, nextChar) : null;
     }
 
     /**
@@ -635,7 +638,7 @@ public class BodyContentImpl extends BodyContent {
      * implementation so some things are extra efficient.
      *
      * @param out The writer into which to place the contents of this body
-     * evaluation
+     *            evaluation
      * @throws IOException Error writing to writer
      */
     @Override

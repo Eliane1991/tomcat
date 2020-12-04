@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,7 @@ import java.util.List;
 public class ConnectorStoreAppender extends StoreAppender {
 
     protected static final HashMap<String, String> replacements = new HashMap<>();
+
     static {
         replacements.put("backlog", "acceptCount");
         replacements.put("soLinger", "connectionLinger");
@@ -59,7 +60,7 @@ public class ConnectorStoreAppender extends StoreAppender {
 
     @Override
     public void printAttributes(PrintWriter writer, int indent,
-            boolean include, Object bean, StoreDescription desc)
+                                boolean include, Object bean, StoreDescription desc)
             throws Exception {
 
         // Render a className attribute if requested
@@ -128,7 +129,7 @@ public class ConnectorStoreAppender extends StoreAppender {
             }
             if ("protocol".equals(descriptor.getName())
                     || "protocolHandlerClassName".equals(descriptor
-                            .getName()))
+                    .getName()))
                 continue;
             propertyKeys.add(descriptor.getName());
         }
@@ -188,13 +189,13 @@ public class ConnectorStoreAppender extends StoreAppender {
      * Print Attributes for the connector
      *
      * @param aWriter Current writer
-     * @param indent Indentation level
-     * @param bean The connector bean
-     * @param aDesc The connector description
+     * @param indent  Indentation level
+     * @param bean    The connector bean
+     * @param aDesc   The connector description
      * @throws Exception Store error occurred
      */
     protected void storeConnectorAttributes(PrintWriter aWriter, int indent,
-            Object bean, StoreDescription aDesc) throws Exception {
+                                            Object bean, StoreDescription aDesc) throws Exception {
         if (aDesc.isAttributes()) {
             printAttributes(aWriter, indent, false, bean, aDesc);
         }
@@ -204,12 +205,12 @@ public class ConnectorStoreAppender extends StoreAppender {
      * Print the open tag for connector attributes (override).
      *
      * @see org.apache.catalina.storeconfig.StoreAppender#printOpenTag(java.io.PrintWriter,
-     *      int, java.lang.Object,
-     *      org.apache.catalina.storeconfig.StoreDescription)
+     * int, java.lang.Object,
+     * org.apache.catalina.storeconfig.StoreDescription)
      */
     @Override
     public void printOpenTag(PrintWriter aWriter, int indent, Object bean,
-            StoreDescription aDesc) throws Exception {
+                             StoreDescription aDesc) throws Exception {
         aWriter.print("<");
         aWriter.print(aDesc.getTag());
         storeConnectorAttributes(aWriter, indent, bean, aDesc);
@@ -220,12 +221,12 @@ public class ConnectorStoreAppender extends StoreAppender {
      * Print a tag for connector attributes (override).
      *
      * @see org.apache.catalina.storeconfig.StoreAppender#printTag(java.io.PrintWriter,
-     *      int, java.lang.Object,
-     *      org.apache.catalina.storeconfig.StoreDescription)
+     * int, java.lang.Object,
+     * org.apache.catalina.storeconfig.StoreDescription)
      */
     @Override
     public void printTag(PrintWriter aWriter, int indent, Object bean,
-            StoreDescription aDesc) throws Exception {
+                         StoreDescription aDesc) throws Exception {
         aWriter.print("<");
         aWriter.print(aDesc.getTag());
         storeConnectorAttributes(aWriter, indent, bean, aDesc);
@@ -236,11 +237,11 @@ public class ConnectorStoreAppender extends StoreAppender {
      * Print a value but replace certain attribute names.
      *
      * @see org.apache.catalina.storeconfig.StoreAppender#printValue(java.io.PrintWriter,
-     *      int, java.lang.String, java.lang.Object)
+     * int, java.lang.String, java.lang.Object)
      */
     @Override
     public void printValue(PrintWriter writer, int indent, String name,
-            Object value) {
+                           Object value) {
         String repl = name;
         if (replacements.get(name) != null) {
             repl = replacements.get(name);
@@ -253,12 +254,12 @@ public class ConnectorStoreAppender extends StoreAppender {
      * </li><li> Don't save catalina.base path at server.xml</li><li></ul>
      *
      * @see org.apache.catalina.storeconfig.StoreAppender#isPrintValue(java.lang.Object,
-     *      java.lang.Object, java.lang.String,
-     *      org.apache.catalina.storeconfig.StoreDescription)
+     * java.lang.Object, java.lang.String,
+     * org.apache.catalina.storeconfig.StoreDescription)
      */
     @Override
     public boolean isPrintValue(Object bean, Object bean2, String attrName,
-            StoreDescription desc) {
+                                StoreDescription desc) {
         boolean isPrint = super.isPrintValue(bean, bean2, attrName, desc);
         if (isPrint) {
             if ("jkHome".equals(attrName)) {

@@ -24,7 +24,7 @@ import java.util.jar.JarFile;
 public abstract class AbstractSingleArchiveResource extends AbstractArchiveResource {
 
     protected AbstractSingleArchiveResource(AbstractArchiveResourceSet archiveResourceSet, String webAppPath,
-            String baseUrl, JarEntry jarEntry, String codeBaseUrl) {
+                                            String baseUrl, JarEntry jarEntry, String codeBaseUrl) {
         super(archiveResourceSet, webAppPath, baseUrl, jarEntry, codeBaseUrl);
     }
 

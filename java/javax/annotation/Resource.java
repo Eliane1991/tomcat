@@ -29,20 +29,6 @@ import java.lang.annotation.Target;
 public @interface Resource {
 
     /**
-     * The AuthenticationType, either CONTAINER or APPLICATION
-     */
-    public enum AuthenticationType {
-        /**
-         * Container authentication
-         */
-        CONTAINER,
-        /**
-         * Application authentication
-         */
-        APPLICATION
-    }
-
-    /**
      * @return a String with the name of the resource
      */
     public String name() default "";
@@ -75,9 +61,22 @@ public @interface Resource {
     public String mappedName() default "";
 
     /**
-     * @since Common Annotations 1.1
-     *
      * @return The name of the entry, if any, to use for this resource
+     * @since Common Annotations 1.1
      */
     public String lookup() default "";
+
+    /**
+     * The AuthenticationType, either CONTAINER or APPLICATION
+     */
+    public enum AuthenticationType {
+        /**
+         * Container authentication
+         */
+        CONTAINER,
+        /**
+         * Application authentication
+         */
+        APPLICATION
+    }
 }

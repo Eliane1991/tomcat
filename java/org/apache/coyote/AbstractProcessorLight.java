@@ -149,9 +149,8 @@ public abstract class AbstractProcessorLight implements Processor {
      * Add an entry to the access log for a failed connection attempt.
      *
      * @param socketWrapper The connection to process
-     *
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected void logAccess(SocketWrapperBase<?> socketWrapper) throws IOException {
         // NO-OP by default
@@ -167,12 +166,10 @@ public abstract class AbstractProcessorLight implements Processor {
      * calls to {@link #dispatch(SocketEvent)}. Requests may be pipe-lined.
      *
      * @param socketWrapper The connection to process
-     *
      * @return The state the caller should put the socket in when this method
-     *         returns
-     *
+     * returns
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected abstract SocketState service(SocketWrapperBase<?> socketWrapper) throws IOException;
 
@@ -183,12 +180,10 @@ public abstract class AbstractProcessorLight implements Processor {
      * HTTP requests.
      *
      * @param status The event to process
-     *
      * @return The state the caller should put the socket in when this method
-     *         returns
-     *
+     * returns
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected abstract SocketState dispatch(SocketEvent status) throws IOException;
 

@@ -36,6 +36,12 @@ class ScriptingVariabler {
 
     private static final Integer MAX_SCOPE = Integer.valueOf(Integer.MAX_VALUE);
 
+    public static void set(Node.Nodes page, ErrorDispatcher err)
+            throws JasperException {
+        page.visit(new CustomTagCounter());
+        page.visit(new ScriptingVariableVisitor(err));
+    }
+
     /*
      * Assigns an identifier (of type integer) to every custom tag, in order
      * to help identify, for every custom tag, the scripting variables that it
@@ -146,11 +152,5 @@ class ScriptingVariabler {
 
             n.setScriptingVars(vec, scope);
         }
-    }
-
-    public static void set(Node.Nodes page, ErrorDispatcher err)
-            throws JasperException {
-        page.visit(new CustomTagCounter());
-        page.visit(new ScriptingVariableVisitor(err));
     }
 }

@@ -121,13 +121,13 @@ public class EmptyResource implements WebResource {
     }
 
     @Override
-    public void setMimeType(String mimeType) {
-        // NOOP
+    public String getMimeType() {
+        return null;
     }
 
     @Override
-    public String getMimeType() {
-        return null;
+    public void setMimeType(String mimeType) {
+        // NOOP
     }
 
     @Override

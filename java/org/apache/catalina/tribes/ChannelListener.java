@@ -17,8 +17,8 @@
 package org.apache.catalina.tribes;
 
 import java.io.Serializable;
+
 /**
- *
  * <p>Title: ChannelListener</p>
  *
  * <p>Description: An interface to listens to incoming messages from a channel </p>
@@ -36,21 +36,22 @@ public interface ChannelListener {
 
     /**
      * Receive a message from the channel
-     * @param msg Serializable
+     *
+     * @param msg    Serializable
      * @param sender - the source of the message
      */
     public void messageReceived(Serializable msg, Member sender);
 
     /**
      * Invoked by the channel to determine if the listener will process this message or not.
-     * @param msg Serializable
+     *
+     * @param msg    Serializable
      * @param sender Member
      * @return boolean
      */
     public boolean accept(Serializable msg, Member sender);
 
     /**
-     *
      * @param listener Object
      * @return boolean
      * @see Object#equals(Object)
@@ -59,7 +60,6 @@ public interface ChannelListener {
     public boolean equals(Object listener);
 
     /**
-     *
      * @return int
      * @see Object#hashCode()
      */

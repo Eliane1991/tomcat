@@ -44,64 +44,43 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
 
 
     // ----------------------------------------------------- Instance Variables
-
-    /**
-     * Associated Coyote response.
-     */
-    protected Response response;
-
-
-    private volatile boolean ackSent = false;
-
-
-    /**
-     * Finished flag.
-     */
-    protected boolean responseFinished;
-
-
     /**
      * The buffer used for header composition.
      */
     protected final ByteBuffer headerBuffer;
-
-
+    /**
+     * Associated Coyote response.
+     */
+    protected Response response;
+    /**
+     * Finished flag.
+     */
+    protected boolean responseFinished;
     /**
      * Filter library for processing the response body.
      */
     protected OutputFilter[] filterLibrary;
-
-
     /**
      * Active filters for the current request.
      */
     protected OutputFilter[] activeFilters;
-
-
     /**
      * Index of the last active filter.
      */
     protected int lastActiveFilter;
-
-
     /**
      * Underlying output buffer.
      */
     protected HttpOutputBuffer outputStreamOutputBuffer;
-
-
     /**
      * Wrapper for socket where data will be written to.
      */
     protected SocketWrapperBase<?> socketWrapper;
-
-
     /**
      * Bytes written to client for the current request
      */
     protected long byteCount = 0;
-
-
+    private volatile boolean ackSent = false;
     @Deprecated
     private boolean sendReasonPhrase = false;
 
@@ -191,7 +170,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doWrite(ByteBuffer)}
+     * {@link #doWrite(ByteBuffer)}
      */
     @Deprecated
     @Override
@@ -372,17 +351,17 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
         // Write status code
         int status = response.getStatus();
         switch (status) {
-        case 200:
-            write(Constants._200_BYTES);
-            break;
-        case 400:
-            write(Constants._400_BYTES);
-            break;
-        case 404:
-            write(Constants._404_BYTES);
-            break;
-        default:
-            write(status);
+            case 200:
+                write(Constants._200_BYTES);
+                break;
+            case 400:
+                write(Constants._400_BYTES);
+                break;
+            case 404:
+                write(Constants._404_BYTES);
+                break;
+            default:
+                write(status);
         }
 
         headerBuffer.put(Constants.SP);
@@ -413,7 +392,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
     /**
      * Send a header.
      *
-     * @param name Header name
+     * @param name  Header name
      * @param value Header value
      */
     public void sendHeader(MessageBytes name, MessageBytes value) {
@@ -509,7 +488,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
         int len = s.length();
         checkLengthBeforeWrite(len);
         for (int i = 0; i < len; i++) {
-            char c = s.charAt (i);
+            char c = s.charAt(i);
             // Note: This is clearly incorrect for many strings,
             // but is the only consistent approach within the current
             // servlet framework. It must suffice until servlet output
@@ -534,7 +513,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
         int len = s.length();
         checkLengthBeforeWrite(len);
         for (int i = 0; i < len; i++) {
-            char c = s.charAt (i);
+            char c = s.charAt(i);
             headerBuffer.put((byte) c);
         }
     }
@@ -559,18 +538,19 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
     /**
      * Writes any remaining buffered data.
      *
-     * @param block     Should this method block until the buffer is empty
-     * @return  <code>true</code> if data remains in the buffer (which can only
-     *          happen in non-blocking mode) else <code>false</code>.
+     * @param block Should this method block until the buffer is empty
+     * @return <code>true</code> if data remains in the buffer (which can only
+     * happen in non-blocking mode) else <code>false</code>.
      * @throws IOException Error writing data
      */
-    protected boolean flushBuffer(boolean block) throws IOException  {
+    protected boolean flushBuffer(boolean block) throws IOException {
         return socketWrapper.flush(block);
     }
 
 
     /**
      * Is standard Servlet blocking IO being used for output?
+     *
      * @return <code>true</code> if this is blocking IO
      */
     protected final boolean isBlocking() {
@@ -608,7 +588,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
          * Write chunk.
          *
          * @deprecated Unused. Will be removed in Tomcat 9. Use
-         *             {@link #doWrite(ByteBuffer)}
+         * {@link #doWrite(ByteBuffer)}
          */
         @Deprecated
         @Override

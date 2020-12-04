@@ -37,22 +37,47 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMBean {
 
-    private static final Log log = LogFactory.getLog(NioReceiver.class);
-
     /**
      * The string manager for this package.
      */
     protected static final StringManager sm = StringManager.getManager(NioReceiver.class);
-
+    private static final Log log = LogFactory.getLog(NioReceiver.class);
+    protected final Deque<Runnable> events = new ConcurrentLinkedDeque<>();
+    protected long lastCheck = System.currentTimeMillis();
     private volatile boolean running = false;
-
     private AtomicReference<Selector> selector = new AtomicReference<>();
     private ServerSocketChannel serverChannel = null;
     private DatagramChannel datagramChannel = null;
 
-    protected final Deque<Runnable> events = new ConcurrentLinkedDeque<>();
-
     public NioReceiver() {
+    }
+
+    public static void cancelledKey(SelectionKey key) {
+        ObjectReader reader = (ObjectReader) key.attachment();
+        if (reader != null) {
+            reader.setCancelled(true);
+            reader.finish();
+        }
+        key.cancel();
+        key.attach(null);
+        if (key.channel() instanceof SocketChannel)
+            try {
+                ((SocketChannel) key.channel()).socket().close();
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) log.debug("", e);
+            }
+        if (key.channel() instanceof DatagramChannel)
+            try {
+                ((DatagramChannel) key.channel()).socket().close();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) log.debug("", e);
+            }
+        try {
+            key.channel().close();
+        } catch (IOException e) {
+            if (log.isDebugEnabled()) log.debug("", e);
+        }
+
     }
 
     @Override
@@ -65,17 +90,16 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
      * Start cluster receiver.
      *
      * @throws IOException If the receiver fails to start
-     *
      * @see org.apache.catalina.tribes.ChannelReceiver#start()
      */
     @Override
     public void start() throws IOException {
         super.start();
         try {
-            setPool(new RxTaskPool(getMaxThreads(),getMinThreads(),this));
+            setPool(new RxTaskPool(getMaxThreads(), getMinThreads(), this));
         } catch (Exception x) {
             log.fatal(sm.getString("nioReceiver.threadpool.fail"), x);
-            if ( x instanceof IOException ) throw (IOException)x;
+            if (x instanceof IOException) throw (IOException) x;
             else throw new IOException(x.getMessage());
         }
         try {
@@ -88,21 +112,19 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
             t.start();
         } catch (Exception x) {
             log.fatal(sm.getString("nioReceiver.start.fail"), x);
-            if ( x instanceof IOException ) throw (IOException)x;
+            if (x instanceof IOException) throw (IOException) x;
             else throw new IOException(x.getMessage());
         }
     }
 
     @Override
     public AbstractRxTask createRxTask() {
-        NioReplicationTask thread = new NioReplicationTask(this,this);
+        NioReplicationTask thread = new NioReplicationTask(this, this);
         thread.setUseBufferPool(this.getUseBufferPool());
         thread.setRxBufSize(getRxBufSize());
         thread.setOptions(getWorkerThreadOptions());
         return thread;
     }
-
-
 
     protected void bind() throws IOException {
         // allocate an unbound server socket channel
@@ -113,18 +135,18 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
         this.selector.set(Selector.open());
         // set the port the server channel will listen to
         //serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
-        bind(serverSocket,getPort(),getAutoBind());
+        bind(serverSocket, getPort(), getAutoBind());
         // set non-blocking mode for the listening socket
         serverChannel.configureBlocking(false);
         // register the ServerSocketChannel with the Selector
         serverChannel.register(this.selector.get(), SelectionKey.OP_ACCEPT);
 
         //set up the datagram channel
-        if (this.getUdpPort()>0) {
+        if (this.getUdpPort() > 0) {
             datagramChannel = DatagramChannel.open();
             configureDatagraChannel();
             //bind to the address to avoid security checks
-            bindUdp(datagramChannel.socket(),getUdpPort(),getAutoBind());
+            bindUdp(datagramChannel.socket(), getUdpPort(), getAutoBind());
         }
     }
 
@@ -155,7 +177,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
             return;
         }
         Runnable r = null;
-        while ((r = events.pollFirst()) != null ) {
+        while ((r = events.pollFirst()) != null) {
             try {
                 if (log.isTraceEnabled()) {
                     log.trace("Processing event in selector:" + r);
@@ -167,30 +189,14 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
         }
     }
 
-    public static void cancelledKey(SelectionKey key) {
-        ObjectReader reader = (ObjectReader)key.attachment();
-        if ( reader != null ) {
-            reader.setCancelled(true);
-            reader.finish();
-        }
-        key.cancel();
-        key.attach(null);
-        if (key.channel() instanceof SocketChannel)
-            try { ((SocketChannel)key.channel()).socket().close(); } catch (IOException e) { if (log.isDebugEnabled()) log.debug("", e); }
-        if (key.channel() instanceof DatagramChannel)
-            try { ((DatagramChannel)key.channel()).socket().close(); } catch (Exception e) { if (log.isDebugEnabled()) log.debug("", e); }
-        try { key.channel().close(); } catch (IOException e) { if (log.isDebugEnabled()) log.debug("", e); }
-
-    }
-    protected long lastCheck = System.currentTimeMillis();
     protected void socketTimeouts() {
         long now = System.currentTimeMillis();
-        if ( (now-lastCheck) < getSelectorTimeout() ) return;
+        if ((now - lastCheck) < getSelectorTimeout()) return;
         //timeout
         Selector tmpsel = this.selector.get();
-        Set<SelectionKey> keys =  (isListening()&&tmpsel!=null)?tmpsel.keys():null;
-        if ( keys == null ) return;
-        for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext();) {
+        Set<SelectionKey> keys = (isListening() && tmpsel != null) ? tmpsel.keys() : null;
+        if (keys == null) return;
+        for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext(); ) {
             SelectionKey key = iter.next();
             try {
 //                if (key.interestOps() == SelectionKey.OP_READ) {
@@ -202,10 +208,10 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
 //                    }
 //                }
 //                else
-                if ( key.interestOps() == 0 ) {
+                if (key.interestOps() == 0) {
                     //check for keys that didn't make it in.
                     ObjectReader ka = (ObjectReader) key.attachment();
-                    if ( ka != null ) {
+                    if (ka != null) {
                         long delta = now - ka.getLastAccess();
                         if (delta > getTimeout() && (!ka.isAccessed())) {
                             if (log.isWarnEnabled())
@@ -222,7 +228,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
                         cancelledKey(key);
                     }//end if
                 }//end if
-            }catch ( CancelledKeyException ckx ) {
+            } catch (CancelledKeyException ckx) {
                 cancelledKey(key);
             }
         }
@@ -233,6 +239,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
     /**
      * Get data from channel and store in byte array
      * send it to cluster
+     *
      * @throws IOException IO error
      */
     protected void listen() throws Exception {
@@ -246,9 +253,9 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
         // Avoid NPEs if selector is set to null on stop.
         Selector selector = this.selector.get();
 
-        if (selector!=null && datagramChannel!=null) {
+        if (selector != null && datagramChannel != null) {
             ObjectReader oreader = new ObjectReader(MAX_UDP_SIZE); //max size for a datagram packet
-            registerChannel(selector,datagramChannel,SelectionKey.OP_READ,oreader);
+            registerChannel(selector, datagramChannel, SelectionKey.OP_READ, oreader);
         }
 
         while (doListen() && selector != null) {
@@ -265,16 +272,16 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
                     //if that happens, we must ensure that that
                     //thread has enough time to call interestOps
 //                    synchronized (interestOpsMutex) {
-                        //if we got the lock, means there are no
-                        //keys trying to register for the
-                        //interestOps method
+                    //if we got the lock, means there are no
+                    //keys trying to register for the
+                    //interestOps method
 //                    }
                     continue; // nothing to do
                 }
                 // get an iterator over the set of selected keys
                 Iterator<SelectionKey> it = selector.selectedKeys().iterator();
                 // look at each key in the selected set
-                while (it!=null && it.hasNext()) {
+                while (it != null && it.hasNext()) {
                     SelectionKey key = it.next();
                     // Is a new connection coming in?
                     if (key.isAcceptable()) {
@@ -286,13 +293,13 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
                         channel.socket().setKeepAlive(getSoKeepAlive());
                         channel.socket().setOOBInline(getOoBInline());
                         channel.socket().setReuseAddress(getSoReuseAddress());
-                        channel.socket().setSoLinger(getSoLingerOn(),getSoLingerTime());
+                        channel.socket().setSoLinger(getSoLingerOn(), getSoLingerTime());
                         channel.socket().setSoTimeout(getTimeout());
                         Object attach = new ObjectReader(channel);
                         registerChannel(selector,
-                                        channel,
-                                        SelectionKey.OP_READ,
-                                        attach);
+                                channel,
+                                SelectionKey.OP_READ,
+                                attach);
                     }
                     // is there data to read on this channel?
                     if (key.isReadable()) {
@@ -315,17 +322,16 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
 
         }
         serverChannel.close();
-        if (datagramChannel!=null) {
+        if (datagramChannel != null) {
             try {
                 datagramChannel.close();
-            }catch (Exception iox) {
-                if (log.isDebugEnabled()) log.debug("Unable to close datagram channel.",iox);
+            } catch (Exception iox) {
+                if (log.isDebugEnabled()) log.debug("Unable to close datagram channel.", iox);
             }
-            datagramChannel=null;
+            datagramChannel = null;
         }
         closeSelector();
     }
-
 
 
     /**
@@ -344,7 +350,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
                 int count = 0;
                 while (running && count < 50) {
                     Thread.sleep(100);
-                    count ++;
+                    count++;
                 }
                 if (running) {
                     log.warn(sm.getString("nioReceiver.stop.threadRunning"));
@@ -368,16 +374,16 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
                 key.attach(null);
                 key.cancel();
             }
-        } catch (IOException ignore){
+        } catch (IOException ignore) {
             if (log.isWarnEnabled()) {
                 log.warn(sm.getString("nioReceiver.cleanup.fail"), ignore);
             }
-        } catch (ClosedSelectorException ignore){
+        } catch (ClosedSelectorException ignore) {
             // Ignore
         }
         try {
             selector.selectNow();
-        } catch (Throwable t){
+        } catch (Throwable t) {
             ExceptionUtils.handleThrowable(t);
             // Ignore everything else
         }
@@ -389,17 +395,18 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
     /**
      * Register the given channel with the given selector for
      * the given operations of interest
+     *
      * @param selector The selector to use
-     * @param channel The channel
-     * @param ops The operations to register
-     * @param attach Attachment object
+     * @param channel  The channel
+     * @param ops      The operations to register
+     * @param attach   Attachment object
      * @throws Exception IO error with channel
      */
     protected void registerChannel(Selector selector,
                                    SelectableChannel channel,
                                    int ops,
                                    Object attach) throws Exception {
-        if (channel == null)return; // could happen
+        if (channel == null) return; // could happen
         // set the new channel non-blocking
         channel.configureBlocking(false);
         // register it with the selector
@@ -425,11 +432,12 @@ public class NioReceiver extends ReceiverBase implements Runnable, NioReceiverMB
 
     /**
      * Sample data handler method for a channel with data ready to read.
+     *
      * @param key A SelectionKey object associated with a channel
-     *  determined by the selector to be ready for reading.  If the
-     *  channel returns an EOF condition, it is closed here, which
-     *  automatically invalidates the associated key.  The selector
-     *  will then de-register the channel on the next select call.
+     *            determined by the selector to be ready for reading.  If the
+     *            channel returns an EOF condition, it is closed here, which
+     *            automatically invalidates the associated key.  The selector
+     *            will then de-register the channel on the next select call.
      * @throws Exception IO error with channel
      */
     protected void readDataFromSocket(SelectionKey key) throws Exception {

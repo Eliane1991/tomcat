@@ -105,7 +105,7 @@ public abstract class AbstractJsseEndpoint<S> extends AbstractEndpoint<S> {
 
 
     protected SSLEngine createSSLEngine(String sniHostName, List<Cipher> clientRequestedCiphers,
-            List<String> clientRequestedApplicationProtocols) {
+                                        List<String> clientRequestedApplicationProtocols) {
         SSLHostConfig sslHostConfig = getSSLHostConfig(sniHostName);
 
         SSLHostConfigCertificate certificate = selectCertificate(sslHostConfig, clientRequestedCiphers);
@@ -143,17 +143,17 @@ public abstract class AbstractJsseEndpoint<S> extends AbstractEndpoint<S> {
             }
         }
         switch (sslHostConfig.getCertificateVerification()) {
-        case NONE:
-            sslParameters.setNeedClientAuth(false);
-            sslParameters.setWantClientAuth(false);
-            break;
-        case OPTIONAL:
-        case OPTIONAL_NO_CA:
-            sslParameters.setWantClientAuth(true);
-            break;
-        case REQUIRED:
-            sslParameters.setNeedClientAuth(true);
-            break;
+            case NONE:
+                sslParameters.setNeedClientAuth(false);
+                sslParameters.setWantClientAuth(false);
+                break;
+            case OPTIONAL:
+            case OPTIONAL_NO_CA:
+                sslParameters.setWantClientAuth(true);
+                break;
+            case REQUIRED:
+                sslParameters.setNeedClientAuth(true);
+                break;
         }
         // The getter (at least in OpenJDK and derivatives) returns a defensive copy
         engine.setSSLParameters(sslParameters);
@@ -225,7 +225,7 @@ public abstract class AbstractJsseEndpoint<S> extends AbstractEndpoint<S> {
     private void testServerCipherSuitesOrderSupport() {
         // Only need to test for this if running on Java < 8 and not using the
         // OpenSSL SSLImplementation
-        if(!JreCompat.isJre8Available() &&
+        if (!JreCompat.isJre8Available() &&
                 !OpenSSLImplementation.class.getName().equals(getSslImplementationName())) {
             for (SSLHostConfig sslHostConfig : sslHostConfigs.values()) {
                 if (sslHostConfig.getHonorCipherOrder() != null) {

@@ -90,7 +90,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
     /**
      * The configuration information for this <code>LoginModule</code>.
      */
-    protected Map<String,?> options = null;
+    protected Map<String, ?> options = null;
 
 
     /**
@@ -110,7 +110,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * The state information that is shared with other configured
      * <code>LoginModule</code> instances.
      */
-    protected Map<String,?> sharedState = null;
+    protected Map<String, ?> sharedState = null;
 
 
     /**
@@ -133,10 +133,9 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * failed somewhere in the overall authentication chain.
      *
      * @return <code>true</code> if this method succeeded, or
-     *  <code>false</code> if this <code>LoginModule</code> should be
-     *  ignored
-     *
-     * @exception LoginException if the abort fails
+     * <code>false</code> if this <code>LoginModule</code> should be
+     * ignored
+     * @throws LoginException if the abort fails
      */
     @Override
     public boolean abort() throws LoginException {
@@ -166,10 +165,9 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * succeeded in the overall authentication chain.
      *
      * @return <code>true</code> if the authentication succeeded, or
-     *  <code>false</code> if this <code>LoginModule</code> should be
-     *  ignored
-     *
-     * @exception LoginException if the commit fails
+     * <code>false</code> if this <code>LoginModule</code> should be
+     * ignored
+     * @throws LoginException if the commit fails
      */
     @Override
     public boolean commit() throws LoginException {
@@ -205,17 +203,17 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * Initialize this <code>LoginModule</code> with the specified
      * configuration information.
      *
-     * @param subject The <code>Subject</code> to be authenticated
+     * @param subject         The <code>Subject</code> to be authenticated
      * @param callbackHandler A <code>CallbackHandler</code> for communicating
-     *  with the end user as necessary
-     * @param sharedState State information shared with other
-     *  <code>LoginModule</code> instances
-     * @param options Configuration information for this specific
-     *  <code>LoginModule</code> instance
+     *                        with the end user as necessary
+     * @param sharedState     State information shared with other
+     *                        <code>LoginModule</code> instances
+     * @param options         Configuration information for this specific
+     *                        <code>LoginModule</code> instance
      */
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler,
-                           Map<String,?> sharedState, Map<String,?> options) {
+                           Map<String, ?> sharedState, Map<String, ?> options) {
         if (log.isDebugEnabled()) {
             log.debug("Init");
         }
@@ -246,7 +244,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
             credentialHandler = new MessageDigestCredentialHandler();
         }
 
-        for (Entry<String,?> entry : options.entrySet()) {
+        for (Entry<String, ?> entry : options.entrySet()) {
             if ("pathname".equals(entry.getKey())) {
                 continue;
             }
@@ -271,10 +269,9 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * Phase 1 of authenticating a <code>Subject</code>.
      *
      * @return <code>true</code> if the authentication succeeded, or
-     *  <code>false</code> if this <code>LoginModule</code> should be
-     *  ignored
-     *
-     * @exception LoginException if the authentication fails
+     * <code>false</code> if this <code>LoginModule</code> should be
+     * ignored
+     * @throws LoginException if the authentication fails
      */
     @Override
     public boolean login() throws LoginException {
@@ -307,7 +304,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
             callbackHandler.handle(callbacks);
             username = ((NameCallback) callbacks[0]).getName();
             password =
-                new String(((PasswordCallback) callbacks[1]).getPassword());
+                    new String(((PasswordCallback) callbacks[1]).getPassword());
             nonce = ((TextInputCallback) callbacks[2]).getText();
             nc = ((TextInputCallback) callbacks[3]).getText();
             cnonce = ((TextInputCallback) callbacks[4]).getText();
@@ -349,9 +346,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
      * Log out this user.
      *
      * @return <code>true</code> in all cases because the
-     *  <code>LoginModule</code> should not be ignored
-     *
-     * @exception LoginException if logging out failed
+     * <code>LoginModule</code> should not be ignored
+     * @throws LoginException if logging out failed
      */
     @Override
     public boolean logout() throws LoginException {

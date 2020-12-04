@@ -37,23 +37,19 @@ public class TLSClientHelloExtractor {
 
     private static final Log log = LogFactory.getLog(TLSClientHelloExtractor.class);
     private static final StringManager sm = StringManager.getManager(TLSClientHelloExtractor.class);
-
-    private final ExtractorResult result;
-    private final List<Cipher> clientRequestedCiphers;
-    private final String sniValue;
-    private final List<String> clientRequestedApplicationProtocols;
-
     private static final int TLS_RECORD_HEADER_LEN = 5;
-
     private static final int TLS_EXTENSION_SERVER_NAME = 0;
     private static final int TLS_EXTENSION_ALPN = 16;
-
     public static byte[] USE_TLS_RESPONSE = ("HTTP/1.1 400 \r\n" +
             "Content-Type: text/plain;charset=UTF-8\r\n" +
             "Connection: close\r\n" +
             "\r\n" +
             "Bad Request\r\n" +
             "This combination of host and port requires TLS.\r\n").getBytes(StandardCharsets.UTF_8);
+    private final ExtractorResult result;
+    private final List<Cipher> clientRequestedCiphers;
+    private final String sniValue;
+    private final List<String> clientRequestedApplicationProtocols;
 
 
     /**
@@ -143,16 +139,16 @@ public class TLSClientHelloExtractor {
                 // Extension size is another two bytes
                 char extensionDataSize = netInBuffer.getChar();
                 switch (extensionType) {
-                case TLS_EXTENSION_SERVER_NAME: {
-                    sniValue = readSniExtension(netInBuffer);
-                    break;
-                }
-                case TLS_EXTENSION_ALPN:
-                    readAlpnExtension(netInBuffer, clientRequestedApplicationProtocols);
-                    break;
-                default: {
-                    skipBytes(netInBuffer, extensionDataSize);
-                }
+                    case TLS_EXTENSION_SERVER_NAME: {
+                        sniValue = readSniExtension(netInBuffer);
+                        break;
+                    }
+                    case TLS_EXTENSION_ALPN:
+                        readAlpnExtension(netInBuffer, clientRequestedApplicationProtocols);
+                        break;
+                    default: {
+                        skipBytes(netInBuffer, extensionDataSize);
+                    }
                 }
             }
             result = ExtractorResult.COMPLETE;
@@ -169,39 +165,6 @@ public class TLSClientHelloExtractor {
         }
     }
 
-
-    public ExtractorResult getResult() {
-        return result;
-    }
-
-
-    public String getSNIValue() {
-        if (result == ExtractorResult.COMPLETE) {
-            return sniValue;
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-
-    public List<Cipher> getClientRequestedCiphers() {
-        if (result == ExtractorResult.COMPLETE || result == ExtractorResult.NOT_PRESENT) {
-            return clientRequestedCiphers;
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-
-    public List<String> getClientRequestedApplicationProtocols() {
-        if (result == ExtractorResult.COMPLETE || result == ExtractorResult.NOT_PRESENT) {
-            return clientRequestedApplicationProtocols;
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-
     private static ExtractorResult handleIncompleteRead(ByteBuffer bb) {
         if (bb.limit() == bb.capacity()) {
             // Buffer not big enough
@@ -212,7 +175,6 @@ public class TLSClientHelloExtractor {
         }
     }
 
-
     private static boolean isAvailable(ByteBuffer bb, int size) {
         if (bb.remaining() < size) {
             bb.position(bb.limit());
@@ -220,7 +182,6 @@ public class TLSClientHelloExtractor {
         }
         return true;
     }
-
 
     private static boolean isTLSHandshake(ByteBuffer bb) {
         // For a TLS client hello the first byte must be 22 - handshake
@@ -235,7 +196,6 @@ public class TLSClientHelloExtractor {
         }
         return true;
     }
-
 
     private static boolean isHttp(ByteBuffer bb) {
         // Based on code in Http11InputBuffer
@@ -297,14 +257,12 @@ public class TLSClientHelloExtractor {
         return true;
     }
 
-
     private static boolean isAllRecordAvailable(ByteBuffer bb) {
         // Next two bytes (unsigned) are the size of the record. We need all of
         // it.
         int size = bb.getChar();
         return isAvailable(bb, size);
     }
-
 
     private static boolean isClientHello(ByteBuffer bb) {
         // Client hello is handshake type 1
@@ -314,7 +272,6 @@ public class TLSClientHelloExtractor {
         return false;
     }
 
-
     private static boolean isAllClientHelloAvailable(ByteBuffer bb) {
         // Next three bytes (unsigned) are the size of the client hello. We need
         // all of it.
@@ -322,11 +279,9 @@ public class TLSClientHelloExtractor {
         return isAvailable(bb, size);
     }
 
-
     private static void skipBytes(ByteBuffer bb, int size) {
         bb.position(bb.position() + size);
     }
-
 
     private static String readSniExtension(ByteBuffer bb) {
         // First 2 bytes are size of server name list (only expecting one)
@@ -338,7 +293,6 @@ public class TLSClientHelloExtractor {
         bb.get(serverNameBytes);
         return new String(serverNameBytes, StandardCharsets.UTF_8);
     }
-
 
     private static void readAlpnExtension(ByteBuffer bb, List<String> protocolNames) {
         // First 2 bytes are size of the protocol list
@@ -352,6 +306,34 @@ public class TLSClientHelloExtractor {
             protocolNames.add(new String(inputBuffer, 0, len, StandardCharsets.UTF_8));
             toRead--;
             toRead -= len;
+        }
+    }
+
+    public ExtractorResult getResult() {
+        return result;
+    }
+
+    public String getSNIValue() {
+        if (result == ExtractorResult.COMPLETE) {
+            return sniValue;
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    public List<Cipher> getClientRequestedCiphers() {
+        if (result == ExtractorResult.COMPLETE || result == ExtractorResult.NOT_PRESENT) {
+            return clientRequestedCiphers;
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    public List<String> getClientRequestedApplicationProtocols() {
+        if (result == ExtractorResult.COMPLETE || result == ExtractorResult.NOT_PRESENT) {
+            return clientRequestedApplicationProtocols;
+        } else {
+            throw new IllegalStateException();
         }
     }
 

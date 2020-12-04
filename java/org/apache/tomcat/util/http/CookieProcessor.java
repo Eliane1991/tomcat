@@ -35,13 +35,11 @@ public interface CookieProcessor {
      * Generate the {@code Set-Cookie} HTTP header value for the given Cookie.
      *
      * @param cookie The cookie for which the header will be generated
-     *
      * @return The header value in a form that can be added directly to the
-     *         response
-     *
+     * response
      * @deprecated This method has been replaced with
-     *             {@link #generateHeader(Cookie, HttpServletRequest)} and will
-     *             be removed from Tomcat 10 onwards.
+     * {@link #generateHeader(Cookie, HttpServletRequest)} and will
+     * be removed from Tomcat 10 onwards.
      */
     @Deprecated
     String generateHeader(Cookie cookie);
@@ -57,11 +55,9 @@ public interface CookieProcessor {
      * Chromium project</a>.
      *
      * @param request The servlet request
-     *
-     * @param cookie The cookie for which the header will be generated
-     *
+     * @param cookie  The cookie for which the header will be generated
      * @return The header value in a form that can be added directly to the
-     *         response
+     * response
      */
     String generateHeader(Cookie cookie, HttpServletRequest request);
 

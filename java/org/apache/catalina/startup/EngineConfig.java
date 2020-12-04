@@ -35,29 +35,24 @@ import org.apache.tomcat.util.res.StringManager;
  * @author Craig R. McClanahan
  */
 public class EngineConfig
-    implements LifecycleListener {
-
-
-    private static final Log log = LogFactory.getLog(EngineConfig.class);
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The Engine we are associated with.
-     */
-    protected Engine engine = null;
+        implements LifecycleListener {
 
 
     /**
      * The string resources for this package.
      */
     protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
+            StringManager.getManager(Constants.Package);
+
+    // ----------------------------------------------------- Instance Variables
+    private static final Log log = LogFactory.getLog(EngineConfig.class);
+    /**
+     * The Engine we are associated with.
+     */
+    protected Engine engine = null;
 
 
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Process the START event for an associated Engine.

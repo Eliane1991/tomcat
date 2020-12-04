@@ -35,14 +35,17 @@ import java.util.jar.Manifest;
 
 public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
 
+    protected final Object archiveLock = new Object();
+    protected HashMap<String, JarEntry> archiveEntries = null;
     private URL baseUrl;
     private String baseUrlString;
-
     private JarFile archive = null;
-    protected HashMap<String,JarEntry> archiveEntries = null;
-    protected final Object archiveLock = new Object();
     private long archiveUseCount = 0;
 
+    @Override
+    public final URL getBaseUrl() {
+        return baseUrl;
+    }
 
     protected final void setBaseUrl(URL baseUrl) {
         this.baseUrl = baseUrl;
@@ -51,11 +54,6 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
         } else {
             this.baseUrlString = baseUrl.toString();
         }
-    }
-
-    @Override
-    public final URL getBaseUrl() {
-        return baseUrl;
     }
 
     protected final String getBaseUrlString() {
@@ -103,9 +101,9 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
             if (webAppMount.startsWith(path)) {
                 int i = webAppMount.indexOf('/', path.length());
                 if (i == -1) {
-                    return new String[] {webAppMount.substring(path.length())};
+                    return new String[]{webAppMount.substring(path.length())};
                 } else {
-                    return new String[] {
+                    return new String[]{
                             webAppMount.substring(path.length(), i)};
                 }
             }
@@ -168,11 +166,10 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
      *               false, a map will always be returned. If true,
      *               implementations may use this as a hint in determining the
      *               optimum way to respond.
-     *
      * @return The archives entries mapped to their names or null if
-     *         {@link #getArchiveEntry(String)} should be used.
+     * {@link #getArchiveEntry(String)} should be used.
      */
-    protected abstract HashMap<String,JarEntry> getArchiveEntries(boolean single);
+    protected abstract HashMap<String, JarEntry> getArchiveEntries(boolean single);
 
 
     /**
@@ -182,7 +179,6 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
      * returns null should this method be used.
      *
      * @param pathInArchive The path in the archive of the entry required
-     *
      * @return The specified archive entry or null if it does not exist
      */
     protected abstract JarEntry getArchiveEntry(String pathInArchive);
@@ -251,7 +247,7 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
                     // Calls JarFile.getJarEntry() which is multi-release aware
                     jarEntry = getArchiveEntry(pathInJar);
                 } else {
-                    Map<String,JarEntry> jarEntries = getArchiveEntries(true);
+                    Map<String, JarEntry> jarEntries = getArchiveEntries(true);
                     if (!(pathInJar.charAt(pathInJar.length() - 1) == '/')) {
                         if (jarEntries == null) {
                             jarEntry = getArchiveEntry(pathInJar + '/');
@@ -284,7 +280,7 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
     protected abstract boolean isMultiRelease();
 
     protected abstract WebResource createArchiveResource(JarEntry jarEntry,
-            String webAppPath, Manifest manifest);
+                                                         String webAppPath, Manifest manifest);
 
     @Override
     public final boolean isReadOnly() {

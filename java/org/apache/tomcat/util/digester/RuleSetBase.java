@@ -22,7 +22,7 @@ package org.apache.tomcat.util.digester;
  * logic in the <code>addRuleSet()</code> implementation.</p>
  *
  * @deprecated Unnecessary once deprecated methods are removed. Will be removed
- *             in Tomcat 9.
+ * in Tomcat 9.
  */
 @Deprecated
 public abstract class RuleSetBase implements RuleSet {
@@ -63,7 +63,7 @@ public abstract class RuleSetBase implements RuleSet {
      * by a Digester instance.
      *
      * @param digester Digester instance to which the new Rule instances
-     *  should be added.
+     *                 should be added.
      */
     @Override
     public abstract void addRuleInstances(Digester digester);

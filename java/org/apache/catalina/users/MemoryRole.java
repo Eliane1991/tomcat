@@ -36,11 +36,20 @@ public class MemoryRole extends AbstractRole {
 
 
     /**
+     * The {@link MemoryUserDatabase} that owns this role.
+     */
+    protected final MemoryUserDatabase database;
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
      * Package-private constructor used by the factory method in
      * {@link MemoryUserDatabase}.
      *
-     * @param database The {@link MemoryUserDatabase} that owns this role
-     * @param rolename Role name of this role
+     * @param database    The {@link MemoryUserDatabase} that owns this role
+     * @param rolename    Role name of this role
      * @param description Description of this role
      */
     MemoryRole(MemoryUserDatabase database,
@@ -54,17 +63,7 @@ public class MemoryRole extends AbstractRole {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The {@link MemoryUserDatabase} that owns this role.
-     */
-    protected final MemoryUserDatabase database;
-
-
     // ------------------------------------------------------------- Properties
-
 
     /**
      * Return the {@link UserDatabase} within which this role is defined.

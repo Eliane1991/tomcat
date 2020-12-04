@@ -115,14 +115,15 @@ public interface Container extends Lifecycle {
      * Obtain the log to which events for this container should be logged.
      *
      * @return The Logger with which this Container is associated.  If there is
-     *         no associated Logger, return the Logger associated with the
-     *         parent Container (if any); otherwise return <code>null</code>.
+     * no associated Logger, return the Logger associated with the
+     * parent Container (if any); otherwise return <code>null</code>.
      */
     public Log getLogger();
 
 
     /**
      * Return the logger name that the container will use.
+     *
      * @return the abbreviated name of this container for logging messages
      */
     public String getLogName();
@@ -149,8 +150,7 @@ public interface Container extends Lifecycle {
      * Calculate the key properties string to be added to an object's
      * {@link ObjectName} to indicate that it is associated with this container.
      *
-     * @return          A string suitable for appending to the ObjectName
-     *
+     * @return A string suitable for appending to the ObjectName
      */
     public String getMBeanKeyProperties();
 
@@ -168,8 +168,8 @@ public interface Container extends Lifecycle {
      * Get the Cluster for this container.
      *
      * @return The Cluster with which this Container is associated. If there is
-     *         no associated Cluster, return the Cluster associated with our
-     *         parent Container (if any); otherwise return <code>null</code>.
+     * no associated Cluster, return the Cluster associated with our
+     * parent Container (if any); otherwise return <code>null</code>.
      */
     public Cluster getCluster();
 
@@ -192,9 +192,9 @@ public interface Container extends Lifecycle {
      * children with non-positive delay values.
      *
      * @return The delay between the invocation of the backgroundProcess method
-     *         on this container and its children. A non-positive value
-     *         indicates that background processing will be managed by the
-     *         parent.
+     * on this container and its children. A non-positive value
+     * indicates that background processing will be managed by the
+     * parent.
      */
     public int getBackgroundProcessorDelay();
 
@@ -225,10 +225,9 @@ public interface Container extends Lifecycle {
      * parent, Container names must be unique.
      *
      * @param name New name of this container
-     *
-     * @exception IllegalStateException if this Container has already been
-     *  added to the children of a parent Container (after which the name
-     *  may not be changed)
+     * @throws IllegalStateException if this Container has already been
+     *                               added to the children of a parent Container (after which the name
+     *                               may not be changed)
      */
     public void setName(String name);
 
@@ -237,8 +236,8 @@ public interface Container extends Lifecycle {
      * Get the parent container.
      *
      * @return Return the Container for which this Container is a child, if
-     *         there is one. If there is no defined parent, return
-     *         <code>null</code>.
+     * there is one. If there is no defined parent, return
+     * <code>null</code>.
      */
     public Container getParent();
 
@@ -249,10 +248,9 @@ public interface Container extends Lifecycle {
      * Container by throwing an exception.
      *
      * @param container Container to which this Container is being added
-     *  as a child
-     *
-     * @exception IllegalArgumentException if this Container refuses to become
-     *  attached to the specified Container
+     *                  as a child
+     * @throws IllegalArgumentException if this Container refuses to become
+     *                                  attached to the specified Container
      */
     public void setParent(Container container);
 
@@ -261,8 +259,8 @@ public interface Container extends Lifecycle {
      * Get the parent class loader.
      *
      * @return the parent class loader for this component. If not set, return
-     *         {@link #getParent()}.{@link #getParentClassLoader()}. If no
-     *         parent has been set, return the system class loader.
+     * {@link #getParent()}.{@link #getParentClassLoader()}. If no
+     * parent has been set, return the system class loader.
      */
     public ClassLoader getParentClassLoader();
 
@@ -282,8 +280,8 @@ public interface Container extends Lifecycle {
      * Obtain the Realm with which this Container is associated.
      *
      * @return The associated Realm; if there is no associated Realm, the
-     *         Realm associated with the parent Container (if any); otherwise
-     *         return <code>null</code>.
+     * Realm associated with the parent Container (if any); otherwise
+     * return <code>null</code>.
      */
     public Realm getRealm();
 
@@ -316,13 +314,12 @@ public interface Container extends Lifecycle {
      * to be attached to the specified Container, in which case it is not added
      *
      * @param child New child Container to be added
-     *
-     * @exception IllegalArgumentException if this exception is thrown by
-     *  the <code>setParent()</code> method of the child Container
-     * @exception IllegalArgumentException if the new child does not have
-     *  a name unique from that of existing children of this Container
-     * @exception IllegalStateException if this Container does not support
-     *  child Containers
+     * @throws IllegalArgumentException if this exception is thrown by
+     *                                  the <code>setParent()</code> method of the child Container
+     * @throws IllegalArgumentException if the new child does not have
+     *                                  a name unique from that of existing children of this Container
+     * @throws IllegalStateException    if this Container does not support
+     *                                  child Containers
      */
     public void addChild(Container child);
 
@@ -347,9 +344,8 @@ public interface Container extends Lifecycle {
      * Obtain a child Container by name.
      *
      * @param name Name of the child Container to be retrieved
-     *
      * @return The child Container with the given name or <code>null</code> if
-     *         no such child exists.
+     * no such child exists.
      */
     public Container findChild(String name);
 
@@ -358,7 +354,7 @@ public interface Container extends Lifecycle {
      * Obtain the child Containers associated with this Container.
      *
      * @return An array containing all children of this container. If this
-     *         Container has no children, a zero-length array is returned.
+     * Container has no children, a zero-length array is returned.
      */
     public Container[] findChildren();
 
@@ -367,8 +363,8 @@ public interface Container extends Lifecycle {
      * Obtain the container listeners associated with this Container.
      *
      * @return An array containing the container listeners associated with this
-     *         Container. If this Container has no registered container
-     *         listeners, a zero-length array is returned.
+     * Container. If this Container has no registered container
+     * listeners, a zero-length array is returned.
      */
     public ContainerListener[] findContainerListeners();
 
@@ -413,15 +409,16 @@ public interface Container extends Lifecycle {
      * Log a request/response that was destined for this container but has been
      * handled earlier in the processing chain so that the request/response
      * still appears in the correct access logs.
-     * @param request       Request (associated with the response) to log
-     * @param response      Response (associated with the request) to log
-     * @param time          Time taken to process the request/response in
-     *                      milliseconds (use 0 if not known)
-     * @param   useDefault  Flag that indicates that the request/response should
-     *                      be logged in the engine's default access log
+     *
+     * @param request    Request (associated with the response) to log
+     * @param response   Response (associated with the request) to log
+     * @param time       Time taken to process the request/response in
+     *                   milliseconds (use 0 if not known)
+     * @param useDefault Flag that indicates that the request/response should
+     *                   be logged in the engine's default access log
      */
     public void logAccess(Request request, Response response, long time,
-            boolean useDefault);
+                          boolean useDefault);
 
 
     /**
@@ -431,7 +428,7 @@ public interface Container extends Lifecycle {
      * request/response still appears in the correct access logs.
      *
      * @return The AccessLog to use for a request/response destined for this
-     *         container
+     * container
      */
     public AccessLog getAccessLog();
 
@@ -442,7 +439,7 @@ public interface Container extends Lifecycle {
      * children to be processed in parallel.
      *
      * @return The currently configured number of threads used to start/stop
-     *         children associated with this container
+     * children associated with this container
      */
     public int getStartStopThreads();
 
@@ -451,7 +448,8 @@ public interface Container extends Lifecycle {
      * Sets the number of threads available for starting and stopping any
      * children associated with this container. This allows start/stop calls to
      * children to be processed in parallel.
-     * @param   startStopThreads    The new number of threads to be used
+     *
+     * @param startStopThreads The new number of threads to be used
      */
     public void setStartStopThreads(int startStopThreads);
 
@@ -459,7 +457,7 @@ public interface Container extends Lifecycle {
     /**
      * Obtain the location of CATALINA_BASE.
      *
-     * @return  The location of CATALINA_BASE.
+     * @return The location of CATALINA_BASE.
      */
     public File getCatalinaBase();
 

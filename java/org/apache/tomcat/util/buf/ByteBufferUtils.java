@@ -88,11 +88,11 @@ public class ByteBufferUtils {
      * Buffers are assumed to be in 'write to' mode since there would be no need
      * to expand a buffer while it was in 'read from' mode.
      *
-     * @param in        Buffer to expand
-     * @param newSize   The size t which the buffer should be expanded
-     * @return          The expanded buffer with any data from the input buffer
-     *                  copied in to it or the original buffer if there was no
-     *                  need for expansion
+     * @param in      Buffer to expand
+     * @param newSize The size t which the buffer should be expanded
+     * @return The expanded buffer with any data from the input buffer
+     * copied in to it or the original buffer if there was no
+     * need for expansion
      */
     public static ByteBuffer expand(ByteBuffer in, int newSize) {
         if (in.capacity() >= newSize) {

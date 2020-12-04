@@ -35,15 +35,71 @@ public class ServletDef implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final StringManager sm =
-        StringManager.getManager(Constants.PACKAGE_NAME);
+            StringManager.getManager(Constants.PACKAGE_NAME);
 
     // ------------------------------------------------------------- Properties
-
-
+    /**
+     * The set of initialization parameters for this servlet, keyed by
+     * parameter name.
+     */
+    private final Map<String, String> parameters = new HashMap<>();
+    /**
+     * The set of security role references for this servlet
+     */
+    private final Set<SecurityRoleRef> securityRoleRefs = new HashSet<>();
     /**
      * The description of this servlet.
      */
     private String description = null;
+    /**
+     * The display name of this servlet.
+     */
+    private String displayName = null;
+    /**
+     * The small icon associated with this servlet.
+     */
+    private String smallIcon = null;
+    /**
+     * The large icon associated with this servlet.
+     */
+    private String largeIcon = null;
+    /**
+     * The name of this servlet, which must be unique among the servlets
+     * defined for a particular web application.
+     */
+    private String servletName = null;
+    /**
+     * The fully qualified name of the Java class that implements this servlet.
+     */
+    private String servletClass = null;
+    /**
+     * The name of the JSP file to which this servlet definition applies
+     */
+    private String jspFile = null;
+    /**
+     * The load-on-startup order for this servlet
+     */
+    private Integer loadOnStartup = null;
+    /**
+     * The run-as configuration for this servlet
+     */
+    private String runAs = null;
+    /**
+     * The multipart configuration, if any, for this servlet
+     */
+    private MultipartDef multipartDef = null;
+    /**
+     * Does this servlet support async.
+     */
+    private Boolean asyncSupported = null;
+    /**
+     * Is this servlet enabled.
+     */
+    private Boolean enabled = null;
+    /**
+     * Can this ServletDef be overridden by an SCI?
+     */
+    private boolean overridable = false;
 
     public String getDescription() {
         return this.description;
@@ -53,12 +109,6 @@ public class ServletDef implements Serializable {
         this.description = description;
     }
 
-
-    /**
-     * The display name of this servlet.
-     */
-    private String displayName = null;
-
     public String getDisplayName() {
         return this.displayName;
     }
@@ -66,12 +116,6 @@ public class ServletDef implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
-
-    /**
-     * The small icon associated with this servlet.
-     */
-    private String smallIcon = null;
 
     public String getSmallIcon() {
         return this.smallIcon;
@@ -81,11 +125,6 @@ public class ServletDef implements Serializable {
         this.smallIcon = smallIcon;
     }
 
-    /**
-     * The large icon associated with this servlet.
-     */
-    private String largeIcon = null;
-
     public String getLargeIcon() {
         return this.largeIcon;
     }
@@ -93,13 +132,6 @@ public class ServletDef implements Serializable {
     public void setLargeIcon(String largeIcon) {
         this.largeIcon = largeIcon;
     }
-
-
-    /**
-     * The name of this servlet, which must be unique among the servlets
-     * defined for a particular web application.
-     */
-    private String servletName = null;
 
     public String getServletName() {
         return this.servletName;
@@ -113,12 +145,6 @@ public class ServletDef implements Serializable {
         this.servletName = servletName;
     }
 
-
-    /**
-     * The fully qualified name of the Java class that implements this servlet.
-     */
-    private String servletClass = null;
-
     public String getServletClass() {
         return this.servletClass;
     }
@@ -126,12 +152,6 @@ public class ServletDef implements Serializable {
     public void setServletClass(String servletClass) {
         this.servletClass = servletClass;
     }
-
-
-    /**
-     * The name of the JSP file to which this servlet definition applies
-     */
-    private String jspFile = null;
 
     public String getJspFile() {
         return this.jspFile;
@@ -141,13 +161,6 @@ public class ServletDef implements Serializable {
         this.jspFile = jspFile;
     }
 
-
-    /**
-     * The set of initialization parameters for this servlet, keyed by
-     * parameter name.
-     */
-    private final Map<String, String> parameters = new HashMap<>();
-
     public Map<String, String> getParameterMap() {
         return this.parameters;
     }
@@ -156,7 +169,7 @@ public class ServletDef implements Serializable {
      * Add an initialization parameter to the set of parameters associated
      * with this servlet.
      *
-     * @param name The initialisation parameter name
+     * @param name  The initialisation parameter name
      * @param value The initialisation parameter value
      */
     public void addInitParameter(String name, String value) {
@@ -170,11 +183,6 @@ public class ServletDef implements Serializable {
 
     }
 
-    /**
-     * The load-on-startup order for this servlet
-     */
-    private Integer loadOnStartup = null;
-
     public Integer getLoadOnStartup() {
         return this.loadOnStartup;
     }
@@ -182,12 +190,6 @@ public class ServletDef implements Serializable {
     public void setLoadOnStartup(String loadOnStartup) {
         this.loadOnStartup = Integer.valueOf(loadOnStartup);
     }
-
-
-    /**
-     * The run-as configuration for this servlet
-     */
-    private String runAs = null;
 
     public String getRunAs() {
         return this.runAs;
@@ -197,12 +199,6 @@ public class ServletDef implements Serializable {
         this.runAs = runAs;
     }
 
-
-    /**
-     * The set of security role references for this servlet
-     */
-    private final Set<SecurityRoleRef> securityRoleRefs = new HashSet<>();
-
     public Set<SecurityRoleRef> getSecurityRoleRefs() {
         return this.securityRoleRefs;
     }
@@ -210,16 +206,12 @@ public class ServletDef implements Serializable {
     /**
      * Add a security-role-ref to the set of security-role-refs associated
      * with this servlet.
+     *
      * @param securityRoleRef The security role
      */
     public void addSecurityRoleRef(SecurityRoleRef securityRoleRef) {
         securityRoleRefs.add(securityRoleRef);
     }
-
-    /**
-     * The multipart configuration, if any, for this servlet
-     */
-    private MultipartDef multipartDef = null;
 
     public MultipartDef getMultipartDef() {
         return this.multipartDef;
@@ -229,12 +221,6 @@ public class ServletDef implements Serializable {
         this.multipartDef = multipartDef;
     }
 
-
-    /**
-     * Does this servlet support async.
-     */
-    private Boolean asyncSupported = null;
-
     public Boolean getAsyncSupported() {
         return this.asyncSupported;
     }
@@ -243,12 +229,6 @@ public class ServletDef implements Serializable {
         this.asyncSupported = Boolean.valueOf(asyncSupported);
     }
 
-
-    /**
-     * Is this servlet enabled.
-     */
-    private Boolean enabled = null;
-
     public Boolean getEnabled() {
         return this.enabled;
     }
@@ -256,12 +236,6 @@ public class ServletDef implements Serializable {
     public void setEnabled(String enabled) {
         this.enabled = Boolean.valueOf(enabled);
     }
-
-
-    /**
-     * Can this ServletDef be overridden by an SCI?
-     */
-    private boolean overridable = false;
 
     public boolean isOverridable() {
         return overridable;

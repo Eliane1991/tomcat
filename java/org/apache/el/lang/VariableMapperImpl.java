@@ -43,7 +43,7 @@ public class VariableMapperImpl extends VariableMapper implements Externalizable
 
     @Override
     public ValueExpression setVariable(String variable,
-            ValueExpression expression) {
+                                       ValueExpression expression) {
         if (expression == null) {
             return vars.remove(variable);
         } else {

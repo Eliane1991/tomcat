@@ -32,6 +32,40 @@ public class AbandonedConfig {
      * Whether or not borrowObject performs abandoned object removal.
      */
     private boolean removeAbandonedOnBorrow = false;
+    /**
+     * Whether or not pool maintenance (evictor) performs abandoned object
+     * removal.
+     */
+    private boolean removeAbandonedOnMaintenance = false;
+    /**
+     * Timeout in seconds before an abandoned object can be removed.
+     */
+    private int removeAbandonedTimeout = 300;
+    /**
+     * Determines whether or not to log stack traces for application code
+     * which abandoned an object.
+     */
+    private boolean logAbandoned = false;
+    /**
+     * Determines whether or not to log full stack traces when logAbandoned is true.
+     * If disabled, then a faster method for logging stack traces with only class data
+     * may be used if possible.
+     *
+     * @since 2.5
+     */
+    private boolean requireFullStackTrace = true;
+    /**
+     * PrintWriter to use to log information on abandoned objects.
+     * Use of default system encoding is deliberate.
+     */
+    private PrintWriter logWriter = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
+    /**
+     * If the pool implements
+     * {@link org.apache.tomcat.dbcp.pool2.UsageTracking}, should the pool
+     * record a stack trace every time a method is called on a pooled object and
+     * retain the most recent stack trace to aid debugging of abandoned objects?
+     */
+    private boolean useUsageTracking = false;
 
     /**
      * <p>Flag to remove abandoned objects if they exceed the
@@ -54,18 +88,12 @@ public class AbandonedConfig {
      * removeAbandonedTimeout when borrowObject is invoked.</p>
      *
      * @param removeAbandonedOnBorrow true means abandoned objects will be
-     *   removed by borrowObject
+     *                                removed by borrowObject
      * @see #getRemoveAbandonedOnBorrow()
      */
     public void setRemoveAbandonedOnBorrow(final boolean removeAbandonedOnBorrow) {
         this.removeAbandonedOnBorrow = removeAbandonedOnBorrow;
     }
-
-    /**
-     * Whether or not pool maintenance (evictor) performs abandoned object
-     * removal.
-     */
-    private boolean removeAbandonedOnMaintenance = false;
 
     /**
      * <p>Flag to remove abandoned objects if they exceed the
@@ -77,7 +105,7 @@ public class AbandonedConfig {
      * <p>If set to true, abandoned objects are removed by the pool
      * maintenance thread when it runs.  This setting has no effect
      * unless maintenance is enabled by setting
-     *{@link GenericObjectPool#getTimeBetweenEvictionRunsMillis() timeBetweenEvictionRunsMillis}
+     * {@link GenericObjectPool#getTimeBetweenEvictionRunsMillis() timeBetweenEvictionRunsMillis}
      * to a positive number.</p>
      *
      * @return true if abandoned objects are to be removed by the evictor
@@ -91,17 +119,12 @@ public class AbandonedConfig {
      * removeAbandonedTimeout when pool maintenance runs.</p>
      *
      * @param removeAbandonedOnMaintenance true means abandoned objects will be
-     *   removed by pool maintenance
+     *                                     removed by pool maintenance
      * @see #getRemoveAbandonedOnMaintenance
      */
     public void setRemoveAbandonedOnMaintenance(final boolean removeAbandonedOnMaintenance) {
         this.removeAbandonedOnMaintenance = removeAbandonedOnMaintenance;
     }
-
-    /**
-     * Timeout in seconds before an abandoned object can be removed.
-     */
-    private int removeAbandonedTimeout = 300;
 
     /**
      * <p>Timeout in seconds before an abandoned object can be removed.</p>
@@ -136,22 +159,15 @@ public class AbandonedConfig {
     }
 
     /**
-     * Determines whether or not to log stack traces for application code
-     * which abandoned an object.
-     */
-    private boolean logAbandoned = false;
-
-    /**
      * Flag to log stack traces for application code which abandoned
      * an object.
-     *
+     * <p>
      * Defaults to false.
      * Logging of abandoned objects adds overhead for every object created
      * because a stack trace has to be generated.
      *
      * @return boolean true if stack trace logging is turned on for abandoned
      * objects
-     *
      */
     public boolean getLogAbandoned() {
         return this.logAbandoned;
@@ -163,20 +179,10 @@ public class AbandonedConfig {
      *
      * @param logAbandoned true turns on abandoned stack trace logging
      * @see #getLogAbandoned()
-     *
      */
     public void setLogAbandoned(final boolean logAbandoned) {
         this.logAbandoned = logAbandoned;
     }
-
-    /**
-     * Determines whether or not to log full stack traces when logAbandoned is true.
-     * If disabled, then a faster method for logging stack traces with only class data
-     * may be used if possible.
-     *
-     * @since 2.5
-     */
-    private boolean requireFullStackTrace = true;
 
     /**
      * Indicates if full stack traces are required when {@link #getLogAbandoned() logAbandoned}
@@ -207,12 +213,6 @@ public class AbandonedConfig {
     }
 
     /**
-     * PrintWriter to use to log information on abandoned objects.
-     * Use of default system encoding is deliberate.
-     */
-    private PrintWriter logWriter = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
-
-    /**
      * Returns the log writer being used by this configuration to log
      * information on abandoned objects. If not set, a PrintWriter based on
      * System.out with the system default encoding is used.
@@ -236,14 +236,6 @@ public class AbandonedConfig {
     /**
      * If the pool implements
      * {@link org.apache.tomcat.dbcp.pool2.UsageTracking}, should the pool
-     * record a stack trace every time a method is called on a pooled object and
-     * retain the most recent stack trace to aid debugging of abandoned objects?
-     */
-    private boolean useUsageTracking = false;
-
-    /**
-     * If the pool implements
-     * {@link org.apache.tomcat.dbcp.pool2.UsageTracking}, should the pool
      * record a
      * stack trace every time a method is called on a pooled object and retain
      * the most recent stack trace to aid debugging of abandoned objects?
@@ -262,9 +254,9 @@ public class AbandonedConfig {
      * object and retain the most recent stack trace to aid debugging of
      * abandoned objects.
      *
-     * @param   useUsageTracking    A value of {@code true} will enable
-     *                              the recording of a stack trace on every use
-     *                              of a pooled object
+     * @param useUsageTracking A value of {@code true} will enable
+     *                         the recording of a stack trace on every use
+     *                         of a pooled object
      */
     public void setUseUsageTracking(final boolean useUsageTracking) {
         this.useUsageTracking = useUsageTracking;

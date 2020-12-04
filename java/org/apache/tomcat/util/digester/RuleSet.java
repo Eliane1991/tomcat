@@ -44,7 +44,6 @@ public interface RuleSet {
     /**
      * @return the namespace URI that will be applied to all Rule instances
      * created from this RuleSet.
-     *
      * @deprecated Unused. Will be removed in Tomcat 9
      */
     @Deprecated
@@ -61,7 +60,7 @@ public interface RuleSet {
      * by a Digester instance.
      *
      * @param digester Digester instance to which the new Rule instances
-     *  should be added.
+     *                 should be added.
      */
     public void addRuleInstances(Digester digester);
 

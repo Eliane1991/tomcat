@@ -20,6 +20,7 @@ package org.apache.catalina.ssi;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
+
 /**
  * Interface used by SSIMediator to talk to the 'outside world' ( usually a
  * servlet )
@@ -30,8 +31,7 @@ public interface SSIExternalResolver {
     /**
      * Adds any external variables to the variableNames collection.
      *
-     * @param variableNames
-     *            the collection to add to
+     * @param variableNames the collection to add to
      */
     public void addVariableNames(Collection<String> variableNames);
 
@@ -44,10 +44,8 @@ public interface SSIExternalResolver {
      * the variable will be removed ( ie. a call to getVariableValue will
      * return null )
      *
-     * @param name
-     *            of the variable
-     * @param value
-     *            of the variable
+     * @param name  of the variable
+     * @param value of the variable
      */
     public void setVariableValue(String name, String value);
 

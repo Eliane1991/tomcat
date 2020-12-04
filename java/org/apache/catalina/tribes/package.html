@@ -15,11 +15,11 @@
   limitations under the License.
 -->
 <head>
-<title>Apache Tribes - The Tomcat Cluster Communication Module</title>
+    <title>Apache Tribes - The Tomcat Cluster Communication Module</title>
 </head>
 <body>
 <h2>QuickStart</h2>
-    <pre><code>
+<pre><code>
             //create a channel
             Channel myChannel = new GroupChannel();
 
@@ -46,43 +46,43 @@
 
     </code></pre>
 <h2>Interfaces for the Application Developer</h2>
-    <ol>
-        <li><code>org.apache.catalina.tribes.Channel</code>
-            Main component to interact with to send messages
-        </li>
-        <li><code>org.apache.catalina.tribes.MembershipListener</code>
-            Listen to membership changes
-        </li>
-        <li><code>org.apache.catalina.tribes.ChannelListener</code>
-            Listen to data messages
-        </li>
-        <li><code>org.apache.catalina.tribes.Member</code>
-            Identifies a node, implementation specific, default is org.apache.catalina.tribes.membership.MemberImpl
-        </li>
-    </ol>
-    <h3>Interfaces for the Tribes Component Developer</h3>
-    <ol>
-        <li><code>org.apache.catalina.tribes.Channel</code>
-            Main component to that the application interacts with
-        </li>
-        <li><code>org.apache.catalina.tribes.ChannelReceiver</code>
-            IO Component to receive messages over some network transport
-        </li>
-        <li><code>org.apache.catalina.tribes.ChannelSender</code>
-            IO Component to send messages over some network transport
-        </li>
-        <li><code>org.apache.catalina.tribes.MembershipService</code>
-            IO Component that handles membership discovery and
-        </li>
-        <li><code>org.apache.catalina.tribes.ChannelInterceptor</code>
-            interceptors between the Channel and the IO layer
-        </li>
-        <li><code>org.apache.catalina.tribes.ChannelMessage</code>
-            The message that is sent through the interceptor stack down to the IO layer
-        </li>
+<ol>
+    <li><code>org.apache.catalina.tribes.Channel</code>
+        Main component to interact with to send messages
+    </li>
+    <li><code>org.apache.catalina.tribes.MembershipListener</code>
+        Listen to membership changes
+    </li>
+    <li><code>org.apache.catalina.tribes.ChannelListener</code>
+        Listen to data messages
+    </li>
+    <li><code>org.apache.catalina.tribes.Member</code>
+        Identifies a node, implementation specific, default is org.apache.catalina.tribes.membership.MemberImpl
+    </li>
+</ol>
+<h3>Interfaces for the Tribes Component Developer</h3>
+<ol>
+    <li><code>org.apache.catalina.tribes.Channel</code>
+        Main component to that the application interacts with
+    </li>
+    <li><code>org.apache.catalina.tribes.ChannelReceiver</code>
+        IO Component to receive messages over some network transport
+    </li>
+    <li><code>org.apache.catalina.tribes.ChannelSender</code>
+        IO Component to send messages over some network transport
+    </li>
+    <li><code>org.apache.catalina.tribes.MembershipService</code>
+        IO Component that handles membership discovery and
+    </li>
+    <li><code>org.apache.catalina.tribes.ChannelInterceptor</code>
+        interceptors between the Channel and the IO layer
+    </li>
+    <li><code>org.apache.catalina.tribes.ChannelMessage</code>
+        The message that is sent through the interceptor stack down to the IO layer
+    </li>
 
-        <li><code>org.apache.catalina.tribes.Member</code>
-            Identifies a node, implementation specific to the underlying IO logic
-        </li>
-    </ol>
+    <li><code>org.apache.catalina.tribes.Member</code>
+        Identifies a node, implementation specific to the underlying IO logic
+    </li>
+</ol>
 </body>

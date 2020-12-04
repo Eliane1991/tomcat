@@ -34,6 +34,30 @@ public class ArrayELResolver extends ELResolver {
         this.readOnly = readOnly;
     }
 
+    private static final void checkBounds(Object base, int idx) {
+        if (idx < 0 || idx >= Array.getLength(base)) {
+            throw new PropertyNotFoundException(
+                    new ArrayIndexOutOfBoundsException(idx).getMessage());
+        }
+    }
+
+    private static final int coerce(Object property) {
+        if (property instanceof Number) {
+            return ((Number) property).intValue();
+        }
+        if (property instanceof Character) {
+            return ((Character) property).charValue();
+        }
+        if (property instanceof Boolean) {
+            return ((Boolean) property).booleanValue() ? 1 : 0;
+        }
+        if (property instanceof String) {
+            return Integer.parseInt((String) property);
+        }
+        throw new IllegalArgumentException(property != null ?
+                property.toString() : "null");
+    }
+
     @Override
     public Class<?> getType(ELContext context, Object base, Object property) {
         Objects.requireNonNull(context);
@@ -70,7 +94,7 @@ public class ArrayELResolver extends ELResolver {
 
     @Override
     public void setValue(ELContext context, Object base, Object property,
-            Object value) {
+                         Object value) {
         Objects.requireNonNull(context);
 
         if (base != null && base.getClass().isArray()) {
@@ -121,30 +145,6 @@ public class ArrayELResolver extends ELResolver {
             return Integer.class;
         }
         return null;
-    }
-
-    private static final void checkBounds(Object base, int idx) {
-        if (idx < 0 || idx >= Array.getLength(base)) {
-            throw new PropertyNotFoundException(
-                    new ArrayIndexOutOfBoundsException(idx).getMessage());
-        }
-    }
-
-    private static final int coerce(Object property) {
-        if (property instanceof Number) {
-            return ((Number) property).intValue();
-        }
-        if (property instanceof Character) {
-            return ((Character) property).charValue();
-        }
-        if (property instanceof Boolean) {
-            return ((Boolean) property).booleanValue() ? 1 : 0;
-        }
-        if (property instanceof String) {
-            return Integer.parseInt((String) property);
-        }
-        throw new IllegalArgumentException(property != null ?
-                property.toString() : "null");
     }
 
 }

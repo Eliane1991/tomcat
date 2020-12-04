@@ -33,7 +33,7 @@ public final class UpgradeToken {
     private final String protocol;
 
     public UpgradeToken(HttpUpgradeHandler httpUpgradeHandler, ContextBind contextBind, InstanceManager instanceManager,
-            String protocol) {
+                        String protocol) {
         this.contextBind = contextBind;
         this.httpUpgradeHandler = httpUpgradeHandler;
         this.instanceManager = instanceManager;

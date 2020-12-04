@@ -52,7 +52,7 @@ public class VoidInputFilter implements InputFilter {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doRead(ApplicationBufferHandler)}
+     * {@link #doRead(ApplicationBufferHandler)}
      */
     @Deprecated
     @Override

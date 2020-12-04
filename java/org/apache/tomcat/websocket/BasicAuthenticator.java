@@ -32,7 +32,7 @@ public class BasicAuthenticator extends Authenticator {
 
     @Override
     public String getAuthorization(String requestUri, String WWWAuthenticate,
-            Map<String, Object> userProperties) throws AuthenticationException {
+                                   Map<String, Object> userProperties) throws AuthenticationException {
 
         String userName = (String) userProperties.get(Constants.WS_AUTHENTICATION_USER_NAME);
         String password = (String) userProperties.get(Constants.WS_AUTHENTICATION_PASSWORD);

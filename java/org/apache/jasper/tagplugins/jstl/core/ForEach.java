@@ -86,7 +86,7 @@ public final class ForEach implements TagPlugin {
         ctxt.generateAttribute("items");
         ctxt.generateJavaSource(";");
 
-        String indexV=null, beginV=null, endV=null, stepV=null;
+        String indexV = null, beginV = null, endV = null, stepV = null;
         if (hasBegin) {
             beginV = ctxt.getTemporaryVariableName();
             ctxt.generateJavaSource("int " + beginV + " = ");
@@ -193,7 +193,7 @@ public final class ForEach implements TagPlugin {
             }
             if (hasBegin) {
                 ctxt.generateJavaSource("if(" + beginV + "+" + indexV +
-                        ">"+ endV + ")");
+                        ">" + endV + ")");
             } else {
                 ctxt.generateJavaSource("if(" + indexV + ">" + endV + ")");
             }
@@ -211,140 +211,140 @@ public final class ForEach implements TagPlugin {
         // Object[]
         ctxt.generateDeclaration("ObjectArrayIterator",
                 "private Iterator toIterator(final Object[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return a[index++];}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return a[index++];}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // boolean[]
         ctxt.generateDeclaration("booleanArrayIterator",
                 "private Iterator toIterator(final boolean[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Boolean(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Boolean(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // byte[]
         ctxt.generateDeclaration("byteArrayIterator",
                 "private Iterator toIterator(final byte[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Byte(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Byte(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // char[]
         ctxt.generateDeclaration("charArrayIterator",
                 "private Iterator toIterator(final char[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Character(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Character(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // short[]
         ctxt.generateDeclaration("shortArrayIterator",
                 "private Iterator toIterator(final short[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Short(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Short(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // int[]
         ctxt.generateDeclaration("intArrayIterator",
                 "private Iterator toIterator(final int[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Integer(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Integer(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // long[]
         ctxt.generateDeclaration("longArrayIterator",
                 "private Iterator toIterator(final long[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Long(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Long(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // float[]
         ctxt.generateDeclaration("floatArrayIterator",
                 "private Iterator toIterator(final float[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Float(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Float(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // double[]
         ctxt.generateDeclaration("doubleArrayIterator",
                 "private Iterator toIterator(final double[] a){\n" +
-                "  return (new Iterator() {\n" +
-                "    int index=0;\n" +
-                "    public boolean hasNext() {\n" +
-                "      return index < a.length;}\n" +
-                "    public Object next() {\n" +
-                "      return new Double(a[index++]);}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    int index=0;\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return index < a.length;}\n" +
+                        "    public Object next() {\n" +
+                        "      return new Double(a[index++]);}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
         // Enumeration
         ctxt.generateDeclaration("enumIterator",
                 "private Iterator toIterator(final Enumeration e){\n" +
-                "  return (new Iterator() {\n" +
-                "    public boolean hasNext() {\n" +
-                "      return e.hasMoreElements();}\n" +
-                "    public Object next() {\n" +
-                "      return e.nextElement();}\n" +
-                "    public void remove() {}\n" +
-                "  });\n" +
-                "}"
+                        "  return (new Iterator() {\n" +
+                        "    public boolean hasNext() {\n" +
+                        "      return e.hasMoreElements();}\n" +
+                        "    public Object next() {\n" +
+                        "      return e.nextElement();}\n" +
+                        "    public void remove() {}\n" +
+                        "  });\n" +
+                        "}"
         );
 
     }

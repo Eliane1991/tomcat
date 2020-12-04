@@ -48,7 +48,7 @@ public class EchoAnnotation {
 
     @OnMessage
     public void echoBinaryMessage(Session session, ByteBuffer bb,
-            boolean last) {
+                                  boolean last) {
         try {
             if (session.isOpen()) {
                 session.getBasicRemote().sendBinary(bb, last);
@@ -65,7 +65,7 @@ public class EchoAnnotation {
     /**
      * Process a received pong. This is a NO-OP.
      *
-     * @param pm    Ignored.
+     * @param pm Ignored.
      */
     @OnMessage
     public void echoPongMessage(PongMessage pm) {

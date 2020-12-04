@@ -62,7 +62,7 @@ public class Asn1Writer {
         int dataSize = data.length;
         // How many bytes to write the length?
         int lengthSize = 1;
-        if (dataSize >127) {
+        if (dataSize > 127) {
             // 1 byte we have is now used to record how many bytes we need to
             // record a length > 127
             // Result is lengthSize = 1 + number of bytes to record length

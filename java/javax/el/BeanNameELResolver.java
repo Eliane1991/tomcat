@@ -56,7 +56,7 @@ public class BeanNameELResolver extends ELResolver {
 
     @Override
     public void setValue(ELContext context, Object base, Object property,
-            Object value) {
+                         Object value) {
         Objects.requireNonNull(context);
         if (base != null || !(property instanceof String)) {
             return;
@@ -144,7 +144,7 @@ public class BeanNameELResolver extends ELResolver {
 
     @Override
     public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
-            Object base) {
+                                                             Object base) {
         return null;
     }
 

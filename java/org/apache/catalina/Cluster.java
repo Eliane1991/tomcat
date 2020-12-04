@@ -50,18 +50,18 @@ public interface Cluster {
     public void setClusterName(String clusterName);
 
     /**
-     * Set the Container associated with our Cluster
-     *
-     * @param container The Container to use
-     */
-    public void setContainer(Container container);
-
-    /**
      * Get the Container associated with our Cluster
      *
      * @return The Container associated with our Cluster
      */
     public Container getContainer();
+
+    /**
+     * Set the Container associated with our Cluster
+     *
+     * @param container The Container to use
+     */
+    public void setContainer(Container container);
 
 
     // --------------------------------------------------------- Public Methods
@@ -71,8 +71,7 @@ public interface Cluster {
      * sessions.
      *
      * @param name Name (key) of the application with which the manager is
-     * associated
-     *
+     *             associated
      * @return The newly created Manager instance
      */
     public Manager createManager(String name);
@@ -82,12 +81,14 @@ public interface Cluster {
      * Register a manager with the cluster. If the cluster is not responsible
      * for creating a manager, then the container will at least notify the
      * cluster that this manager is participating in the cluster.
+     *
      * @param manager Manager
      */
     public void registerManager(Manager manager);
 
     /**
      * Removes a manager from the cluster
+     *
      * @param manager Manager
      */
     public void removeManager(Manager manager);

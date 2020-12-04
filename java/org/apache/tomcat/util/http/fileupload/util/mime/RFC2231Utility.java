@@ -18,14 +18,16 @@ package org.apache.tomcat.util.http.fileupload.util.mime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+
 /**
  * Utility class to decode/encode character set on HTTP Header fields based on RFC 2231.
  * This implementation adheres to RFC 5987 in particular, which was defined for HTTP headers
- *
+ * <p>
  * RFC 5987 builds on RFC 2231, but has lesser scope like <a href="https://tools.ietf.org/html/rfc5987#section-3.2">mandatory charset definition</a>
  * and <a href="https://tools.ietf.org/html/rfc5987#section-4">no parameter continuation</a>
  *
  * <p>
+ *
  * @see <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a>
  * @see <a href="https://tools.ietf.org/html/rfc5987">RFC 5987</a>
  */
@@ -46,6 +48,7 @@ public final class RFC2231Utility {
     /**
      * Checks if Asterisk (*) at the end of parameter name to indicate,
      * if it has charset and language information to decode the value
+     *
      * @param paramName The parameter, which is being checked.
      * @return {@code true}, if encoded as per RFC 2231, {@code false} otherwise
      */
@@ -59,6 +62,7 @@ public final class RFC2231Utility {
     /**
      * If {@code paramName} has Asterisk (*) at the end, it will be stripped off,
      * else the passed value will be returned
+     *
      * @param paramName The parameter, which is being inspected.
      * @return stripped {@code paramName} of Asterisk (*), if RFC2231 encoded
      */
@@ -105,12 +109,13 @@ public final class RFC2231Utility {
 
     /**
      * Convert {@code text} to their corresponding Hex value
+     *
      * @param text - ASCII text input
      * @return Byte array of characters decoded from ASCII table
      */
     private static byte[] fromHex(String text) {
         ByteArrayOutputStream out = new ByteArrayOutputStream(text.length());
-        for (int i = 0; i < text.length();) {
+        for (int i = 0; i < text.length(); ) {
             char c = text.charAt(i++);
             if (c == '%') {
                 if (i > text.length() - 2) {

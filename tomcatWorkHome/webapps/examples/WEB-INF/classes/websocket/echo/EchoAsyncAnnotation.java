@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
  * The three annotated echo endpoints can be used to test with Autobahn and
  * the following command "wstest -m fuzzingclient -s servers.json". See the
  * Autobahn documentation for setup and general information.
- *
+ * <p>
  * Note: This one is disabled by default since it allocates memory, and needs
  * to be enabled back.
  */
@@ -88,7 +88,7 @@ public class EchoAsyncAnnotation {
     /**
      * Process a received pong. This is a NO-OP.
      *
-     * @param pm    Ignored.
+     * @param pm Ignored.
      */
     @OnMessage
     public void echoPongMessage(PongMessage pm) {

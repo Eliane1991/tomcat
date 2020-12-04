@@ -54,7 +54,7 @@ public class SessionsTask extends AbstractCatalinaCommandTask {
     /**
      * Execute the requested operation.
      *
-     * @exception BuildException if an error occurs
+     * @throws BuildException if an error occurs
      */
     @Override
     public void execute() throws BuildException {

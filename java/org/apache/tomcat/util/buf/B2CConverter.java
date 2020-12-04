@@ -30,70 +30,18 @@ import java.util.Locale;
  */
 public class B2CConverter {
 
-    private static final StringManager sm =
-        StringManager.getManager(Constants.Package);
-
-    private static final CharsetCache charsetCache = new CharsetCache();
-
-
     // Protected so unit tests can use it
     protected static final int LEFTOVER_SIZE = 9;
-
-    /**
-     * Obtain the Charset for the given encoding
-     *
-     * @param enc The name of the encoding for the required charset
-     *
-     * @return The Charset corresponding to the requested encoding
-     *
-     * @throws UnsupportedEncodingException If the requested Charset is not
-     *                                      available
-     */
-    public static Charset getCharset(String enc)
-            throws UnsupportedEncodingException {
-
-        // Encoding names should all be ASCII
-        String lowerCaseEnc = enc.toLowerCase(Locale.ENGLISH);
-
-        return getCharsetLower(lowerCaseEnc);
-    }
-
-
-    /**
-     * Only to be used when it is known that the encoding name is in lower case.
-     * @param lowerCaseEnc The name of the encoding for the required charset in
-     *                     lower case
-     *
-     * @return The Charset corresponding to the requested encoding
-     *
-     * @throws UnsupportedEncodingException If the requested Charset is not
-     *                                      available
-     *
-     * @deprecated Will be removed in Tomcat 9.0.x
-     */
-    @Deprecated
-    public static Charset getCharsetLower(String lowerCaseEnc)
-            throws UnsupportedEncodingException {
-
-        Charset charset = charsetCache.getCharset(lowerCaseEnc);
-
-        if (charset == null) {
-            // Pre-population of the cache means this must be invalid
-            throw new UnsupportedEncodingException(
-                    sm.getString("b2cConverter.unknownEncoding", lowerCaseEnc));
-        }
-        return charset;
-    }
-
-
+    private static final StringManager sm =
+            StringManager.getManager(Constants.Package);
+    private static final CharsetCache charsetCache = new CharsetCache();
     private final CharsetDecoder decoder;
-    private ByteBuffer bb = null;
-    private CharBuffer cb = null;
-
     /**
      * Leftover buffer used for incomplete characters.
      */
     private final ByteBuffer leftovers;
+    private ByteBuffer bb = null;
+    private CharBuffer cb = null;
 
     public B2CConverter(Charset charset) {
         this(charset, false);
@@ -121,6 +69,47 @@ public class B2CConverter {
     }
 
     /**
+     * Obtain the Charset for the given encoding
+     *
+     * @param enc The name of the encoding for the required charset
+     * @return The Charset corresponding to the requested encoding
+     * @throws UnsupportedEncodingException If the requested Charset is not
+     *                                      available
+     */
+    public static Charset getCharset(String enc)
+            throws UnsupportedEncodingException {
+
+        // Encoding names should all be ASCII
+        String lowerCaseEnc = enc.toLowerCase(Locale.ENGLISH);
+
+        return getCharsetLower(lowerCaseEnc);
+    }
+
+    /**
+     * Only to be used when it is known that the encoding name is in lower case.
+     *
+     * @param lowerCaseEnc The name of the encoding for the required charset in
+     *                     lower case
+     * @return The Charset corresponding to the requested encoding
+     * @throws UnsupportedEncodingException If the requested Charset is not
+     *                                      available
+     * @deprecated Will be removed in Tomcat 9.0.x
+     */
+    @Deprecated
+    public static Charset getCharsetLower(String lowerCaseEnc)
+            throws UnsupportedEncodingException {
+
+        Charset charset = charsetCache.getCharset(lowerCaseEnc);
+
+        if (charset == null) {
+            // Pre-population of the cache means this must be invalid
+            throw new UnsupportedEncodingException(
+                    sm.getString("b2cConverter.unknownEncoding", lowerCaseEnc));
+        }
+        return charset;
+    }
+
+    /**
      * Reset the decoder state.
      */
     public void recycle() {
@@ -131,10 +120,9 @@ public class B2CConverter {
     /**
      * Convert the given bytes to characters.
      *
-     * @param bc byte input
-     * @param cc char output
-     * @param endOfInput    Is this all of the available data
-     *
+     * @param bc         byte input
+     * @param cc         char output
+     * @param endOfInput Is this all of the available data
      * @throws IOException If the conversion can not be completed
      */
     public void convert(ByteChunk bc, CharChunk cc, boolean endOfInput)
@@ -200,11 +188,10 @@ public class B2CConverter {
     /**
      * Convert the given bytes to characters.
      *
-     * @param bc byte input
-     * @param cc char output
-     * @param ic byte input channel
-     * @param endOfInput    Is this all of the available data
-     *
+     * @param bc         byte input
+     * @param cc         char output
+     * @param ic         byte input channel
+     * @param endOfInput Is this all of the available data
      * @throws IOException If the conversion can not be completed
      */
     public void convert(ByteBuffer bc, CharBuffer cc, ByteChunk.ByteInputChannel ic, boolean endOfInput)

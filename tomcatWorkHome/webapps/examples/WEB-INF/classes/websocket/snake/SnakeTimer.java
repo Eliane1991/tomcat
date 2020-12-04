@@ -29,13 +29,10 @@ public class SnakeTimer {
 
     private static final Log log =
             LogFactory.getLog(SnakeTimer.class);
-
-    private static Timer gameTimer = null;
-
     private static final long TICK_DELAY = 100;
-
     private static final ConcurrentHashMap<Integer, Snake> snakes =
             new ConcurrentHashMap<>();
+    private static Timer gameTimer = null;
 
     protected static synchronized void addSnake(Snake snake) {
         if (snakes.size() == 0) {
@@ -61,7 +58,7 @@ public class SnakeTimer {
     protected static void tick() {
         StringBuilder sb = new StringBuilder();
         for (Iterator<Snake> iterator = SnakeTimer.getSnakes().iterator();
-                iterator.hasNext();) {
+             iterator.hasNext(); ) {
             Snake snake = iterator.next();
             snake.update(SnakeTimer.getSnakes());
             sb.append(snake.getLocationsJson());

@@ -16,8 +16,8 @@
 --%>
 <html>
 
-<jsp:useBean id="cb" scope="session" class="colors.ColorGameBean" />
-<jsp:setProperty name="cb" property="*" />
+<jsp:useBean id="cb" scope="session" class="colors.ColorGameBean"/>
+<jsp:setProperty name="cb" property="*"/>
 
 <%
     cb.processRequest();
@@ -25,45 +25,46 @@
 
 <body bgcolor=<%= cb.getColor1() %>>
 <font size=6 color=<%= cb.getColor2() %>>
-<p>
+    <p>
 
-<% if (cb.getHint()==true) { %>
+            <% if (cb.getHint()==true) { %>
 
     <p> Hint #1: Vampires prey at night!
-    <p>  <p> Hint #2: Nancy without the n.
+    <p>
+    <p> Hint #2: Nancy without the n.
 
-<% } %>
+            <% } %>
 
-<% if  (cb.getSuccess()==true) { %>
+            <% if  (cb.getSuccess()==true) { %>
 
     <p> CONGRATULATIONS!!
-    <% if  (cb.getHintTaken()==true) { %>
+            <% if  (cb.getHintTaken()==true) { %>
 
-        <p> ( although I know you cheated and peeked into the hints)
+    <p> ( although I know you cheated and peeked into the hints)
 
-    <% } %>
+            <% } %>
 
-<% } %>
+            <% } %>
 
-<p> Total attempts so far: <%= cb.getAttempts() %>
-<p>
+    <p> Total attempts so far: <%= cb.getAttempts() %>
+    <p>
 
-<p>
+    <p>
 
-<form method=POST action=colrs.jsp>
+        <form method=POST action=colrs.jsp>
 
-Color #1: <input type=text name= color1 size=16>
+            Color #1: <input type=text name=color1 size=16>
 
-<br>
+            <br>
 
-Color #2: <input type=text name= color2 size=16>
+            Color #2: <input type=text name=color2 size=16>
 
-<p>
+    <p>
 
-<input type=submit name=action value="Submit">
-<input type=submit name=action value="Hint">
+        <input type=submit name=action value="Submit">
+        <input type=submit name=action value="Hint">
 
-</form>
+        </form>
 
 </font>
 </body>

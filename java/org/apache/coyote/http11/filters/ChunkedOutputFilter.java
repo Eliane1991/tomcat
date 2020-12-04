@@ -39,6 +39,21 @@ public class ChunkedOutputFilter implements OutputFilter {
 
 
     // ------------------------------------------------------------ Constructor
+    /**
+     * Chunk header.
+     */
+    protected final ByteBuffer chunkHeader = ByteBuffer.allocate(10);
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * End chunk.
+     */
+    protected final ByteBuffer endChunk = ByteBuffer.wrap(END_CHUNK_BYTES);
+    /**
+     * Next buffer in the pipeline.
+     */
+    protected HttpOutputBuffer buffer;
 
 
     /**
@@ -50,27 +65,6 @@ public class ChunkedOutputFilter implements OutputFilter {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Next buffer in the pipeline.
-     */
-    protected HttpOutputBuffer buffer;
-
-
-    /**
-     * Chunk header.
-     */
-    protected final ByteBuffer chunkHeader = ByteBuffer.allocate(10);
-
-
-    /**
-     * End chunk.
-     */
-    protected final ByteBuffer endChunk = ByteBuffer.wrap(END_CHUNK_BYTES);
-
-
     // ------------------------------------------------------------- Properties
 
 
@@ -78,7 +72,7 @@ public class ChunkedOutputFilter implements OutputFilter {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doWrite(ByteBuffer)}
+     * {@link #doWrite(ByteBuffer)}
      */
     @Deprecated
     @Override

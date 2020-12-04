@@ -35,7 +35,7 @@ public interface Member extends Serializable {
      * When a member leaves the cluster, the payload of the memberDisappeared member
      * will be the following bytes. This indicates a soft shutdown, and not a crash
      */
-    public static final byte[] SHUTDOWN_PAYLOAD = new byte[] {66, 65, 66, 89, 45, 65, 76, 69, 88};
+    public static final byte[] SHUTDOWN_PAYLOAD = new byte[]{66, 65, 66, 89, 45, 65, 76, 69, 88};
 
     /**
      * @return the name of this node, should be unique within the group.
@@ -44,6 +44,7 @@ public interface Member extends Serializable {
 
     /**
      * Returns the listen host for the ChannelReceiver implementation
+     *
      * @return IPv4 or IPv6 representation of the host address this member listens to incoming data
      * @see ChannelReceiver
      */
@@ -51,6 +52,7 @@ public interface Member extends Serializable {
 
     /**
      * Returns the listen port for the ChannelReceiver implementation
+     *
      * @return the listen port for this member, -1 if its not listening on an insecure port
      * @see ChannelReceiver
      */
@@ -59,6 +61,7 @@ public interface Member extends Serializable {
     /**
      * Returns the secure listen port for the ChannelReceiver implementation.
      * Returns -1 if its not listening to a secure port.
+     *
      * @return the listen port for this member, -1 if its not listening on a secure port
      * @see ChannelReceiver
      */
@@ -66,6 +69,7 @@ public interface Member extends Serializable {
 
     /**
      * Returns the UDP port that this member is listening to for UDP messages.
+     *
      * @return the listen UDP port for this member, -1 if its not listening on a UDP port
      */
     public int getUdpPort();
@@ -75,6 +79,7 @@ public interface Member extends Serializable {
      * Contains information on how long this member has been online.
      * The result is the number of milli seconds this member has been
      * broadcasting its membership to the group.
+     *
      * @return nr of milliseconds since this member started.
      */
     public long getMemberAliveTime();
@@ -83,17 +88,19 @@ public interface Member extends Serializable {
 
     /**
      * The current state of the member
+     *
      * @return boolean - true if the member is functioning correctly
      */
     public boolean isReady();
+
     /**
      * The current state of the member
+     *
      * @return boolean - true if the member is suspect, but the crash has not been confirmed
      */
     public boolean isSuspect();
 
     /**
-     *
      * @return boolean - true if the member has been confirmed to malfunction
      */
     public boolean isFailing();
@@ -101,12 +108,14 @@ public interface Member extends Serializable {
     /**
      * returns a UUID unique for this member over all sessions.
      * If the member crashes and restarts, the uniqueId will be different.
+     *
      * @return byte[]
      */
     public byte[] getUniqueId();
 
     /**
      * returns the payload associated with this member
+     *
      * @return byte[]
      */
     public byte[] getPayload();
@@ -115,6 +124,7 @@ public interface Member extends Serializable {
 
     /**
      * returns the command associated with this member
+     *
      * @return byte[]
      */
     public byte[] getCommand();
@@ -123,6 +133,7 @@ public interface Member extends Serializable {
 
     /**
      * Domain for this cluster
+     *
      * @return byte[]
      */
     public byte[] getDomain();
@@ -130,7 +141,8 @@ public interface Member extends Serializable {
     /**
      * Highly optimized version of serializing a member into a byte array
      * Returns a cached byte[] reference, do not modify this data
-     * @param getalive  calculate memberAlive time
+     *
+     * @param getalive calculate memberAlive time
      * @return the data as a byte array
      */
     public byte[] getData(boolean getalive);
@@ -138,8 +150,9 @@ public interface Member extends Serializable {
     /**
      * Highly optimized version of serializing a member into a byte array
      * Returns a cached byte[] reference, do not modify this data
-     * @param getalive  calculate memberAlive time
-     * @param reset     reset the cached data package, and create a new one
+     *
+     * @param getalive calculate memberAlive time
+     * @param reset    reset the cached data package, and create a new one
      * @return the data as a byte array
      */
     public byte[] getData(boolean getalive, boolean reset);
@@ -147,6 +160,7 @@ public interface Member extends Serializable {
     /**
      * Length of a message obtained by {@link #getData(boolean)} or
      * {@link #getData(boolean, boolean)}.
+     *
      * @return the data length
      */
     public int getDataLength();

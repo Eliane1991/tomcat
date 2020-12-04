@@ -19,6 +19,7 @@ package org.apache.juli;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogRecord;
+
 /**
  * A {@link FileHandler} implementation that uses a queue of log entries.
  *
@@ -40,24 +41,24 @@ import java.util.logging.LogRecord;
  */
 public class AsyncFileHandler extends FileHandler {
 
-    public static final int OVERFLOW_DROP_LAST    = 1;
-    public static final int OVERFLOW_DROP_FIRST   = 2;
-    public static final int OVERFLOW_DROP_FLUSH   = 3;
+    public static final int OVERFLOW_DROP_LAST = 1;
+    public static final int OVERFLOW_DROP_FIRST = 2;
+    public static final int OVERFLOW_DROP_FLUSH = 3;
     public static final int OVERFLOW_DROP_CURRENT = 4;
 
     public static final int DEFAULT_OVERFLOW_DROP_TYPE = 1;
-    public static final int DEFAULT_MAX_RECORDS        = 10000;
-    public static final int DEFAULT_LOGGER_SLEEP_TIME  = 1000;
+    public static final int DEFAULT_MAX_RECORDS = 10000;
+    public static final int DEFAULT_LOGGER_SLEEP_TIME = 1000;
 
     public static final int OVERFLOW_DROP_TYPE = Integer.parseInt(
             System.getProperty("org.apache.juli.AsyncOverflowDropType",
-                               Integer.toString(DEFAULT_OVERFLOW_DROP_TYPE)));
+                    Integer.toString(DEFAULT_OVERFLOW_DROP_TYPE)));
     public static final int MAX_RECORDS = Integer.parseInt(
             System.getProperty("org.apache.juli.AsyncMaxRecordCount",
-                               Integer.toString(DEFAULT_MAX_RECORDS)));
+                    Integer.toString(DEFAULT_MAX_RECORDS)));
     public static final int LOGGER_SLEEP_TIME = Integer.parseInt(
             System.getProperty("org.apache.juli.AsyncLoggerPollInterval",
-                               Integer.toString(DEFAULT_LOGGER_SLEEP_TIME)));
+                    Integer.toString(DEFAULT_LOGGER_SLEEP_TIME)));
 
     protected static final LinkedBlockingDeque<LogEntry> queue =
             new LinkedBlockingDeque<>(MAX_RECORDS);
@@ -172,6 +173,7 @@ public class AsyncFileHandler extends FileHandler {
     protected static class LogEntry {
         private final LogRecord record;
         private final AsyncFileHandler handler;
+
         public LogEntry(LogRecord record, AsyncFileHandler handler) {
             super();
             this.record = record;

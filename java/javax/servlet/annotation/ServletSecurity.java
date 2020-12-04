@@ -34,6 +34,22 @@ import java.lang.annotation.*;
 public @interface ServletSecurity {
 
     /**
+     * The default constraint to apply to requests not handled by specific
+     * method constraints
+     *
+     * @return http constraint
+     */
+    HttpConstraint value() default @HttpConstraint;
+
+    /**
+     * An array of HttpMethodConstraint objects to which the security constraint
+     * will be applied
+     *
+     * @return array of http method constraint
+     */
+    HttpMethodConstraint[] httpMethodConstraints() default {};
+
+    /**
      * Represents the two possible values of the empty role semantic, active
      * when a list of role names is empty.
      */
@@ -66,20 +82,4 @@ public @interface ServletSecurity {
          */
         CONFIDENTIAL
     }
-
-    /**
-     * The default constraint to apply to requests not handled by specific
-     * method constraints
-     *
-     * @return http constraint
-     */
-    HttpConstraint value() default @HttpConstraint;
-
-    /**
-     * An array of HttpMethodConstraint objects to which the security constraint
-     * will be applied
-     *
-     * @return array of http method constraint
-     */
-    HttpMethodConstraint[] httpMethodConstraints() default {};
 }

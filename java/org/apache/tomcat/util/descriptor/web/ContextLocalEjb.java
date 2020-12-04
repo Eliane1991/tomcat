@@ -17,7 +17,6 @@
 package org.apache.tomcat.util.descriptor.web;
 
 
-
 /**
  * Representation of a local EJB resource reference for a web application, as
  * represented in a <code>&lt;ejb-local-ref&gt;</code> element in the
@@ -36,6 +35,14 @@ public class ContextLocalEjb extends ResourceBase {
      * The name of the EJB home implementation class.
      */
     private String home = null;
+    /**
+     * The link to a J2EE EJB definition.
+     */
+    private String link = null;
+    /**
+     * The name of the EJB local implementation class.
+     */
+    private String local = null;
 
     public String getHome() {
         return this.home;
@@ -45,12 +52,6 @@ public class ContextLocalEjb extends ResourceBase {
         this.home = home;
     }
 
-
-    /**
-     * The link to a J2EE EJB definition.
-     */
-    private String link = null;
-
     public String getLink() {
         return this.link;
     }
@@ -58,12 +59,6 @@ public class ContextLocalEjb extends ResourceBase {
     public void setLink(String link) {
         this.link = link;
     }
-
-
-    /**
-     * The name of the EJB local implementation class.
-     */
-    private String local = null;
 
     public String getLocal() {
         return this.local;

@@ -36,16 +36,16 @@ public class JavaClass {
     /**
      * Constructor gets all contents as arguments.
      *
-     * @param className Name of this class.
-     * @param superclassName Name of this class's superclass.
-     * @param accessFlags Access rights defined by bit flags
-     * @param constant_pool Array of constants
-     * @param interfaceNames Implemented interfaces
+     * @param className                 Name of this class.
+     * @param superclassName            Name of this class's superclass.
+     * @param accessFlags               Access rights defined by bit flags
+     * @param constant_pool             Array of constants
+     * @param interfaceNames            Implemented interfaces
      * @param runtimeVisibleAnnotations "RuntimeVisibleAnnotations" attribute defined on the Class, or null
      */
     JavaClass(final String className, final String superclassName,
-            final int accessFlags, final ConstantPool constant_pool, final String[] interfaceNames,
-            final Annotations runtimeVisibleAnnotations) {
+              final int accessFlags, final ConstantPool constant_pool, final String[] interfaceNames,
+              final Annotations runtimeVisibleAnnotations) {
         this.accessFlags = accessFlags;
         this.runtimeVisibleAnnotations = runtimeVisibleAnnotations;
         this.className = className;

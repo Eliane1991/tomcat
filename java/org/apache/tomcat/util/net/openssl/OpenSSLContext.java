@@ -44,47 +44,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
 
-    private static final Base64 BASE64_ENCODER = new Base64(64, new byte[] {'\n'});
-
+    static final CertificateFactory X509_CERT_FACTORY;
+    private static final Base64 BASE64_ENCODER = new Base64(64, new byte[]{'\n'});
     private static final Log log = LogFactory.getLog(OpenSSLContext.class);
-
     // Note: this uses the main "net" package strings as many are common with APR
     private static final StringManager netSm = StringManager.getManager(AbstractEndpoint.class);
     private static final StringManager sm = StringManager.getManager(OpenSSLContext.class);
-
     private static final String defaultProtocol = "TLS";
-
-    private final SSLHostConfig sslHostConfig;
-    private final SSLHostConfigCertificate certificate;
-    private OpenSSLSessionContext sessionContext;
-    private X509TrustManager x509TrustManager;
-
-    private final List<String> negotiableProtocols;
-
-    private String enabledProtocol;
-
-    public String getEnabledProtocol() {
-        return enabledProtocol;
-    }
-
-    public void setEnabledProtocol(String protocol) {
-        enabledProtocol = (protocol == null) ? defaultProtocol : protocol;
-    }
-
-    private final long aprPool;
-    private final AtomicInteger aprPoolDestroyed = new AtomicInteger(0);
-
-    // OpenSSLConfCmd context
-    protected final long cctx;
-    // SSL context
-    protected final long ctx;
-
-    static final CertificateFactory X509_CERT_FACTORY;
-
     private static final String BEGIN_KEY = "-----BEGIN PRIVATE KEY-----\n";
-
     private static final Object END_KEY = "\n-----END PRIVATE KEY-----";
-    private boolean initialized = false;
 
     static {
         try {
@@ -93,6 +61,20 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
             throw new IllegalStateException(sm.getString("openssl.X509FactoryError"), e);
         }
     }
+
+    // OpenSSLConfCmd context
+    protected final long cctx;
+    // SSL context
+    protected final long ctx;
+    private final SSLHostConfig sslHostConfig;
+    private final SSLHostConfigCertificate certificate;
+    private final List<String> negotiableProtocols;
+    private final long aprPool;
+    private final AtomicInteger aprPoolDestroyed = new AtomicInteger(0);
+    private OpenSSLSessionContext sessionContext;
+    private X509TrustManager x509TrustManager;
+    private String enabledProtocol;
+    private boolean initialized = false;
 
     public OpenSSLContext(SSLHostConfigCertificate certificate, List<String> negotiableProtocols)
             throws SSLException {
@@ -108,10 +90,10 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
                     if (log.isDebugEnabled())
                         log.debug(sm.getString("openssl.makeConf"));
                     cctx = SSLConf.make(aprPool,
-                                        SSL.SSL_CONF_FLAG_FILE |
-                                        SSL.SSL_CONF_FLAG_SERVER |
-                                        SSL.SSL_CONF_FLAG_CERTIFICATE |
-                                        SSL.SSL_CONF_FLAG_SHOW_ERRORS);
+                            SSL.SSL_CONF_FLAG_FILE |
+                                    SSL.SSL_CONF_FLAG_SERVER |
+                                    SSL.SSL_CONF_FLAG_CERTIFICATE |
+                                    SSL.SSL_CONF_FLAG_SHOW_ERRORS);
                 } catch (Exception e) {
                     throw new SSLException(sm.getString("openssl.errMakeConf"), e);
                 }
@@ -161,13 +143,81 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
             this.negotiableProtocols = negotiableProtocols;
 
             success = true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new SSLException(sm.getString("openssl.errorSSLCtxInit"), e);
         } finally {
             if (!success) {
                 destroy();
             }
         }
+    }
+
+    private static int getCertificateIndex(SSLHostConfigCertificate certificate) {
+        int result;
+        // If the type is undefined there will only be one certificate (enforced
+        // in SSLHostConfig) so use the RSA slot.
+        if (certificate.getType() == Type.RSA || certificate.getType() == Type.UNDEFINED) {
+            result = SSL.SSL_AIDX_RSA;
+        } else if (certificate.getType() == Type.EC) {
+            result = SSL.SSL_AIDX_ECC;
+        } else if (certificate.getType() == Type.DSA) {
+            result = SSL.SSL_AIDX_DSA;
+        } else {
+            result = SSL.SSL_AIDX_MAX;
+        }
+        return result;
+    }
+
+    /*
+     * Find a valid alias when none was specified in the config.
+     */
+    private static String findAlias(X509KeyManager keyManager,
+                                    SSLHostConfigCertificate certificate) {
+
+        Type type = certificate.getType();
+        String result = null;
+
+        List<Type> candidateTypes = new ArrayList<>();
+        if (Type.UNDEFINED.equals(type)) {
+            // Try all types to find an suitable alias
+            candidateTypes.addAll(Arrays.asList(Type.values()));
+            candidateTypes.remove(Type.UNDEFINED);
+        } else {
+            // Look for the specific type to find a suitable alias
+            candidateTypes.add(type);
+        }
+
+        Iterator<Type> iter = candidateTypes.iterator();
+        while (result == null && iter.hasNext()) {
+            result = keyManager.chooseServerAlias(iter.next().toString(), null, null);
+        }
+
+        return result;
+    }
+
+    private static X509TrustManager chooseTrustManager(TrustManager[] managers) {
+        for (TrustManager m : managers) {
+            if (m instanceof X509TrustManager) {
+                return (X509TrustManager) m;
+            }
+        }
+        throw new IllegalStateException(sm.getString("openssl.trustManagerMissing"));
+    }
+
+    private static X509Certificate[] certificates(byte[][] chain) {
+        X509Certificate[] peerCerts = new X509Certificate[chain.length];
+        for (int i = 0; i < peerCerts.length; i++) {
+            peerCerts[i] = new OpenSSLX509Certificate(chain[i]);
+        }
+        return peerCerts;
+    }
+
+    public String getEnabledProtocol() {
+        return enabledProtocol;
+    }
+
+    public void setEnabledProtocol(String protocol) {
+        enabledProtocol = (protocol == null) ? defaultProtocol : protocol;
     }
 
     @Override
@@ -193,7 +243,7 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
      *            {@code OpenSSLKeyManager}
      * @param tms Must contain a TrustManager of the type
      *            {@code X509TrustManager}
-     * @param sr Is not used for this implementation.
+     * @param sr  Is not used for this implementation.
      */
     @Override
     public synchronized void init(KeyManager[] kms, TrustManager[] tms, SecureRandom sr) {
@@ -245,18 +295,18 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
             // Client certificate verification
             int value = 0;
             switch (sslHostConfig.getCertificateVerification()) {
-            case NONE:
-                value = SSL.SSL_CVERIFY_NONE;
-                break;
-            case OPTIONAL:
-                value = SSL.SSL_CVERIFY_OPTIONAL;
-                break;
-            case OPTIONAL_NO_CA:
-                value = SSL.SSL_CVERIFY_OPTIONAL_NO_CA;
-                break;
-            case REQUIRED:
-                value = SSL.SSL_CVERIFY_REQUIRE;
-                break;
+                case NONE:
+                    value = SSL.SSL_CVERIFY_NONE;
+                    break;
+                case OPTIONAL:
+                    value = SSL.SSL_CVERIFY_OPTIONAL;
+                    break;
+                case OPTIONAL_NO_CA:
+                    value = SSL.SSL_CVERIFY_OPTIONAL_NO_CA;
+                    break;
+                case REQUIRED:
+                    value = SSL.SSL_CVERIFY_REQUIRE;
+                    break;
             }
             SSLContext.setVerify(ctx, value, sslHostConfig.getCertificateVerificationDepth());
 
@@ -364,7 +414,6 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
         }
     }
 
-
     public void addCertificate(SSLHostConfigCertificate certificate) throws Exception {
         // Load Server key and certificate
         if (certificate.getCertificateFile() != null) {
@@ -409,69 +458,6 @@ public class OpenSSLContext implements org.apache.tomcat.util.net.SSLContext {
             }
         }
     }
-
-
-    private static int getCertificateIndex(SSLHostConfigCertificate certificate) {
-        int result;
-        // If the type is undefined there will only be one certificate (enforced
-        // in SSLHostConfig) so use the RSA slot.
-        if (certificate.getType() == Type.RSA || certificate.getType() == Type.UNDEFINED) {
-            result = SSL.SSL_AIDX_RSA;
-        } else if (certificate.getType() == Type.EC) {
-            result = SSL.SSL_AIDX_ECC;
-        } else if (certificate.getType() == Type.DSA) {
-            result = SSL.SSL_AIDX_DSA;
-        } else {
-            result = SSL.SSL_AIDX_MAX;
-        }
-        return result;
-    }
-
-
-    /*
-     * Find a valid alias when none was specified in the config.
-     */
-    private static String findAlias(X509KeyManager keyManager,
-            SSLHostConfigCertificate certificate) {
-
-        Type type = certificate.getType();
-        String result = null;
-
-        List<Type> candidateTypes = new ArrayList<>();
-        if (Type.UNDEFINED.equals(type)) {
-            // Try all types to find an suitable alias
-            candidateTypes.addAll(Arrays.asList(Type.values()));
-            candidateTypes.remove(Type.UNDEFINED);
-        } else {
-            // Look for the specific type to find a suitable alias
-            candidateTypes.add(type);
-        }
-
-        Iterator<Type> iter = candidateTypes.iterator();
-        while (result == null && iter.hasNext()) {
-            result = keyManager.chooseServerAlias(iter.next().toString(),  null,  null);
-        }
-
-        return result;
-    }
-
-    private static X509TrustManager chooseTrustManager(TrustManager[] managers) {
-        for (TrustManager m : managers) {
-            if (m instanceof X509TrustManager) {
-                return (X509TrustManager) m;
-            }
-        }
-        throw new IllegalStateException(sm.getString("openssl.trustManagerMissing"));
-    }
-
-    private static X509Certificate[] certificates(byte[][] chain) {
-        X509Certificate[] peerCerts = new X509Certificate[chain.length];
-        for (int i = 0; i < peerCerts.length; i++) {
-            peerCerts[i] = new OpenSSLX509Certificate(chain[i]);
-        }
-        return peerCerts;
-    }
-
 
     long getSSLContextID() {
         return ctx;

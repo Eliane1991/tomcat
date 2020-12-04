@@ -36,15 +36,13 @@ public interface Authenticator {
      * configuration of the {@link Context} with which this Authenticator is
      * associated.
      *
-     * @param request Request we are processing
+     * @param request  Request we are processing
      * @param response Response we are populating
-     *
      * @return <code>true</code> if any specified constraints have been
-     *         satisfied, or <code>false</code> if one more constraints were not
-     *         satisfied (in which case an authentication challenge will have
-     *         been written to the response).
-     *
-     * @exception IOException if an input/output error occurs
+     * satisfied, or <code>false</code> if one more constraints were not
+     * satisfied (in which case an authentication challenge will have
+     * been written to the response).
+     * @throws IOException if an input/output error occurs
      */
     public boolean authenticate(Request request, HttpServletResponse response)
             throws IOException;

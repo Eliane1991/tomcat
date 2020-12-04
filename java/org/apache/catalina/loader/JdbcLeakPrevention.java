@@ -33,7 +33,7 @@ import java.util.List;
  * {@link WebappClassLoaderBase#clearReferences()} for details - but the short
  * version is do not just create a new instance of this class with the new
  * keyword.
- *
+ * <p>
  * Since this class is loaded by {@link WebappClassLoaderBase}, it cannot refer
  * to any internal Tomcat classes as that will cause the security manager to
  * complain.
@@ -62,7 +62,7 @@ public class JdbcLeakPrevention {
             Driver driver = drivers.nextElement();
             // Only unload the drivers this web app loaded
             if (driver.getClass().getClassLoader() !=
-                this.getClass().getClassLoader()) {
+                    this.getClass().getClassLoader()) {
                 continue;
             }
             // Only report drivers that were originally registered. Skip any

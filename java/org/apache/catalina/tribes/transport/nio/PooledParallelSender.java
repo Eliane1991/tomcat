@@ -34,7 +34,7 @@ public class PooledParallelSender extends PooledSender implements PooledParallel
         if (!isConnected()) {
             throw new ChannelException(sm.getString("pooledParallelSender.sender.disconnected"));
         }
-        ParallelNioSender sender = (ParallelNioSender)getSender();
+        ParallelNioSender sender = (ParallelNioSender) getSender();
         if (sender == null) {
             ChannelException cx = new ChannelException(sm.getString(
                     "pooledParallelSender.unable.retrieveSender.timeout",
@@ -60,10 +60,10 @@ public class PooledParallelSender extends PooledSender implements PooledParallel
     public DataSender getNewDataSender() {
         try {
             ParallelNioSender sender = new ParallelNioSender();
-            AbstractSender.transferProperties(this,sender);
+            AbstractSender.transferProperties(this, sender);
             return sender;
-        } catch ( IOException x ) {
-            throw new RuntimeException(sm.getString("pooledParallelSender.unable.open"),x);
+        } catch (IOException x) {
+            throw new RuntimeException(sm.getString("pooledParallelSender.unable.open"), x);
         }
     }
 }

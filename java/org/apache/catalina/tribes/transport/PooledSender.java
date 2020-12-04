@@ -26,15 +26,15 @@ import java.util.List;
 
 public abstract class PooledSender extends AbstractSender implements MultiPointSender {
 
-    private static final Log log = LogFactory.getLog(PooledSender.class);
     protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
-
+            StringManager.getManager(Constants.Package);
+    private static final Log log = LogFactory.getLog(PooledSender.class);
     private final SenderQueue queue;
     private int poolSize = 25;
     private long maxWait = 3000;
+
     public PooledSender() {
-        queue = new SenderQueue(this,poolSize);
+        queue = new SenderQueue(this, poolSize);
     }
 
     public abstract DataSender getNewDataSender();
@@ -70,14 +70,13 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
         return queue.getInUsePoolSize();
     }
 
+    public int getPoolSize() {
+        return poolSize;
+    }
 
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
         queue.setLimit(poolSize);
-    }
-
-    public int getPoolSize() {
-        return poolSize;
     }
 
     public long getMaxWait() {
@@ -91,7 +90,7 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
     @Override
     public boolean keepalive() {
         //do nothing, the pool checks on every return
-        return (queue==null)?false:queue.checkIdleKeepAlive();
+        return (queue == null) ? false : queue.checkIdleKeepAlive();
     }
 
     @Override
@@ -109,10 +108,8 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
     //  ----------------------------------------------------- Inner Class
 
     private static class SenderQueue {
-        private int limit = 25;
-
         PooledSender parent = null;
-
+        private int limit = 25;
         private List<DataSender> notinuse = null;
 
         private List<DataSender> inuse = null;
@@ -132,6 +129,7 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
         public int getLimit() {
             return limit;
         }
+
         /**
          * @param limit The limit to set.
          */
@@ -159,8 +157,8 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
 
         public synchronized DataSender getSender(long timeout) {
             long start = System.currentTimeMillis();
-            while ( true ) {
-                if (!isOpen)throw new IllegalStateException(sm.getString("pooledSender.closed.queue"));
+            while (true) {
+                if (!isOpen) throw new IllegalStateException(sm.getString("pooledSender.closed.queue"));
                 DataSender sender = null;
                 if (notinuse.size() == 0 && inuse.size() < limit) {
                     sender = parent.getNewDataSender();
@@ -172,24 +170,25 @@ public abstract class PooledSender extends AbstractSender implements MultiPointS
                     return sender;
                 }//end if
                 long delta = System.currentTimeMillis() - start;
-                if ( delta > timeout && timeout>0) return null;
+                if (delta > timeout && timeout > 0) return null;
                 else {
                     try {
-                        wait(Math.max(timeout - delta,1));
-                    }catch (InterruptedException x){}
+                        wait(Math.max(timeout - delta, 1));
+                    } catch (InterruptedException x) {
+                    }
                 }//end if
             }
         }
 
         public synchronized void returnSender(DataSender sender) {
-            if ( !isOpen) {
+            if (!isOpen) {
                 sender.disconnect();
                 return;
             }
             //to do
             inuse.remove(sender);
             //just in case the limit has changed
-            if ( notinuse.size() < this.getLimit() ) notinuse.add(sender);
+            if (notinuse.size() < this.getLimit()) notinuse.add(sender);
             else
                 try {
                     sender.disconnect();

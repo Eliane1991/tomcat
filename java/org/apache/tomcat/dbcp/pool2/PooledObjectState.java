@@ -44,7 +44,7 @@ public enum PooledObjectState {
      * from the queue. It should be returned to the head of the queue once
      * eviction testing completes.
      * TODO: Consider allocating object and ignoring the result of the eviction
-     *       test.
+     * test.
      */
     EVICTION_RETURN_TO_HEAD,
 

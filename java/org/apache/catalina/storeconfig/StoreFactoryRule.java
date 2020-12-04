@@ -33,20 +33,32 @@ public class StoreFactoryRule extends Rule {
     // ----------------------------------------------------------- Constructors
 
     /**
+     * The attribute name of an attribute that can override the implementation
+     * class name.
+     */
+    private String attributeName;
+
+    // ----------------------------------------------------- Instance Variables
+    private String appenderAttributeName;
+    /**
+     * The name of the <code>IStoreFactory</code> implementation class.
+     */
+    private String storeFactoryClass;
+    private String storeAppenderClass;
+
+    /**
      * Construct a new instance of this Rule.
      *
-     * @param storeFactoryClass
-     *            Default name of the StoreFactory implementation class to be
-     *            created
-     * @param attributeName
-     *            Name of the attribute that optionally includes an override
-     *            name of the IStoreFactory class
-     * @param storeAppenderClass The store appender class
+     * @param storeFactoryClass     Default name of the StoreFactory implementation class to be
+     *                              created
+     * @param attributeName         Name of the attribute that optionally includes an override
+     *                              name of the IStoreFactory class
+     * @param storeAppenderClass    The store appender class
      * @param appenderAttributeName The attribute name for the store
-     *  appender class
+     *                              appender class
      */
     public StoreFactoryRule(String storeFactoryClass, String attributeName,
-            String storeAppenderClass, String appenderAttributeName) {
+                            String storeAppenderClass, String appenderAttributeName) {
 
         this.storeFactoryClass = storeFactoryClass;
         this.attributeName = attributeName;
@@ -55,32 +67,15 @@ public class StoreFactoryRule extends Rule {
 
     }
 
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The attribute name of an attribute that can override the implementation
-     * class name.
-     */
-    private String attributeName;
-
-    private String appenderAttributeName;
-
-    /**
-     * The name of the <code>IStoreFactory</code> implementation class.
-     */
-    private String storeFactoryClass;
-
-    private String storeAppenderClass;
-
     // --------------------------------------------------------- Public Methods
 
     /**
      * Handle the beginning of an XML element.
      *
-     * @param namespace XML namespace
-     * @param name The element name
+     * @param namespace  XML namespace
+     * @param name       The element name
      * @param attributes The attributes of this element
-     * @exception Exception if a processing error occurs
+     * @throws Exception if a processing error occurs
      */
     @Override
     public void begin(String namespace, String name, Attributes attributes)
@@ -103,14 +98,14 @@ public class StoreFactoryRule extends Rule {
     /**
      * Create new instance from attribute className!
      *
-     * @param attr class Name attribute
+     * @param attr        class Name attribute
      * @param defaultName Default Class
-     * @param attributes current digester attribute elements
+     * @param attributes  current digester attribute elements
      * @return new configured object instance
      * @throws ReflectiveOperationException Error creating an instance
      */
     protected Object newInstance(String attr, String defaultName,
-            Attributes attributes) throws ReflectiveOperationException {
+                                 Attributes attributes) throws ReflectiveOperationException {
         String className = defaultName;
         if (attr != null) {
             String value = attributes.getValue(attr);

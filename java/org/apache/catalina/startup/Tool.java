@@ -74,21 +74,15 @@ public final class Tool {
     private static final Log log = LogFactory.getLog(Tool.class);
 
     // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * Set <code>ant.home</code> system property?
-     */
-    private static boolean ant = false;
-
-
     /**
      * The pathname of our installation base directory.
      */
     private static final String catalinaHome =
             System.getProperty(Constants.CATALINA_HOME_PROP);
-
-
+    /**
+     * Set <code>ant.home</code> system property?
+     */
+    private static boolean ant = false;
     /**
      * Include common classes in the repositories?
      */
@@ -161,27 +155,27 @@ public final class Tool {
             packed.add(new File(catalinaHome, "lib"));
             if (common) {
                 unpacked.add(new File(catalinaHome,
-                                      "common" + File.separator + "classes"));
+                        "common" + File.separator + "classes"));
                 packed.add(new File(catalinaHome,
-                                    "common" + File.separator + "lib"));
+                        "common" + File.separator + "lib"));
             }
             if (server) {
                 unpacked.add(new File(catalinaHome,
-                                      "server" + File.separator + "classes"));
+                        "server" + File.separator + "classes"));
                 packed.add(new File(catalinaHome,
-                                    "server" + File.separator + "lib"));
+                        "server" + File.separator + "lib"));
             }
             if (shared) {
                 unpacked.add(new File(catalinaHome,
-                                      "shared" + File.separator + "classes"));
+                        "shared" + File.separator + "classes"));
                 packed.add(new File(catalinaHome,
-                                    "shared" + File.separator + "lib"));
+                        "shared" + File.separator + "lib"));
             }
             classLoader =
-                ClassLoaderFactory.createClassLoader
-                (unpacked.toArray(new File[0]),
-                 packed.toArray(new File[0]),
-                 null);
+                    ClassLoaderFactory.createClassLoader
+                            (unpacked.toArray(new File[0]),
+                                    packed.toArray(new File[0]),
+                                    null);
         } catch (Throwable t) {
             Bootstrap.handleThrowable(t);
             log.error("Class loader creation threw exception", t);

@@ -39,12 +39,12 @@ import java.util.Set;
  */
 public class ReflectionUtil {
 
-    protected static final String[] PRIMITIVE_NAMES = new String[] { "boolean",
-            "byte", "char", "double", "float", "int", "long", "short", "void" };
+    protected static final String[] PRIMITIVE_NAMES = new String[]{"boolean",
+            "byte", "char", "double", "float", "int", "long", "short", "void"};
 
-    protected static final Class<?>[] PRIMITIVES = new Class[] { boolean.class,
+    protected static final Class<?>[] PRIMITIVES = new Class[]{boolean.class,
             byte.class, char.class, double.class, float.class, int.class,
-            long.class, short.class, Void.TYPE };
+            long.class, short.class, Void.TYPE};
 
     private ReflectionUtil() {
         super();
@@ -79,10 +79,11 @@ public class ReflectionUtil {
 
     /**
      * Converts an array of Class names to Class types.
-     * @param s  The array of class names
+     *
+     * @param s The array of class names
      * @return An array of Class instance where the element at index i in the
-     *         result is an instance of the class with the name at index i in
-     *         the input
+     * result is an instance of the class with the name at index i in
+     * the input
      * @throws ClassNotFoundException If a class of a given name cannot be found
      */
     public static Class<?>[] toTypeArray(String[] s) throws ClassNotFoundException {
@@ -97,9 +98,10 @@ public class ReflectionUtil {
 
     /**
      * Converts an array of Class types to Class names.
+     *
      * @param c The array of class instances
      * @return An array of Class names where the element at index i in the
-     *         result is the name of the class instance at index i in the input
+     * result is the name of the class instance at index i in the input
      */
     public static String[] toTypeNameArray(Class<?>[] c) {
         if (c == null)
@@ -113,14 +115,15 @@ public class ReflectionUtil {
 
     /**
      * Returns a method based on the criteria.
-     * @param ctx the context in which the expression is being evaluated
-     * @param base the object that owns the method
-     * @param property the name of the method
-     * @param paramTypes the parameter types to use
+     *
+     * @param ctx         the context in which the expression is being evaluated
+     * @param base        the object that owns the method
+     * @param property    the name of the method
+     * @param paramTypes  the parameter types to use
      * @param paramValues the parameter values
      * @return the method specified
      * @throws MethodNotFoundException If a method cannot be found that matches
-     *         the given criteria
+     *                                 the given criteria
      */
     /*
      * This class duplicates code in javax.el.Util. When making changes keep
@@ -128,7 +131,7 @@ public class ReflectionUtil {
      */
     @SuppressWarnings("null")
     public static Method getMethod(EvaluationContext ctx, Object base, Object property,
-            Class<?>[] paramTypes, Object[] paramValues)
+                                   Class<?>[] paramTypes, Object[] paramValues)
             throws MethodNotFoundException {
 
         if (base == null || property == null) {
@@ -148,7 +151,7 @@ public class ReflectionUtil {
         }
 
         Method[] methods = base.getClass().getMethods();
-        Map<Method,MatchResult> candidates = new HashMap<>();
+        Map<Method, MatchResult> candidates = new HashMap<>();
 
         for (Method m : methods) {
             if (!m.getName().equals(methodName)) {
@@ -170,12 +173,12 @@ public class ReflectionUtil {
                 // Method has wrong number of parameters
                 continue;
             }
-            if (m.isVarArgs() && paramCount < mParamCount -1) {
+            if (m.isVarArgs() && paramCount < mParamCount - 1) {
                 // Method has wrong number of parameters
                 continue;
             }
             if (m.isVarArgs() && paramCount == mParamCount && paramValues != null &&
-                    paramValues.length > paramCount && !paramTypes[mParamCount -1].isArray()) {
+                    paramValues.length > paramCount && !paramTypes[mParamCount - 1].isArray()) {
                 // Method arguments don't match
                 continue;
             }
@@ -287,14 +290,14 @@ public class ReflectionUtil {
                 throw new MethodNotFoundException(MessageFactory.get(
                         "error.method.ambiguous", base, property,
                         paramString(paramTypes)));
-                }
+            }
         }
 
         // Handle case where no match at all was found
         if (match == null) {
             throw new MethodNotFoundException(MessageFactory.get(
-                        "error.method.notfound", base, property,
-                        paramString(paramTypes)));
+                    "error.method.notfound", base, property,
+                    paramString(paramTypes)));
         }
 
         return getMethod(base.getClass(), base, match);
@@ -305,7 +308,7 @@ public class ReflectionUtil {
      * the code in sync.
      */
     private static Method resolveAmbiguousMethod(Set<Method> candidates,
-            Class<?>[] paramTypes) {
+                                                 Class<?>[] paramTypes) {
         // Identify which parameter isn't an exact match
         Method m = candidates.iterator().next();
 
@@ -326,12 +329,12 @@ public class ReflectionUtil {
         }
 
         for (Method c : candidates) {
-           if (c.getParameterTypes()[nonMatchIndex] ==
-                   paramTypes[nonMatchIndex]) {
-               // Methods have different non-matching parameters
-               // Result is ambiguous
-               return null;
-           }
+            if (c.getParameterTypes()[nonMatchIndex] ==
+                    paramTypes[nonMatchIndex]) {
+                // Methods have different non-matching parameters
+                // Result is ambiguous
+                return null;
+            }
         }
 
         // Can't be null
@@ -558,22 +561,20 @@ public class ReflectionUtil {
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             return o == this
                     || (null != o
                     && this.getClass().equals(o.getClass())
-                    && ((MatchResult)o).getExact() == this.getExact()
-                    && ((MatchResult)o).getAssignable() == this.getAssignable()
-                    && ((MatchResult)o).getCoercible() == this.getCoercible()
-                    && ((MatchResult)o).isBridge() == this.isBridge()
-                    )
+                    && ((MatchResult) o).getExact() == this.getExact()
+                    && ((MatchResult) o).getAssignable() == this.getAssignable()
+                    && ((MatchResult) o).getCoercible() == this.getCoercible()
+                    && ((MatchResult) o).isBridge() == this.isBridge()
+            )
                     ;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return (this.isBridge() ? 1 << 24 : 0)
                     ^ this.getExact() << 16
                     ^ this.getAssignable() << 8

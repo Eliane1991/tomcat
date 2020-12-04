@@ -56,7 +56,7 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
     private static final String IMPLICIT_TLD = "implicit.tld";
 
     // Maps tag names to tag file paths
-    private final Hashtable<String,String> tagFileMap;
+    private final Hashtable<String, String> tagFileMap;
 
     private final ParserController pc;
     private final PageInfo pi;
@@ -64,11 +64,11 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
 
     public ImplicitTagLibraryInfo(JspCompilationContext ctxt,
-            ParserController pc,
-            PageInfo pi,
-            String prefix,
-            String tagdir,
-            ErrorDispatcher err) throws JasperException {
+                                  ParserController pc,
+                                  PageInfo pi,
+                                  String prefix,
+                                  String tagdir,
+                                  ErrorDispatcher err) throws JasperException {
         super(prefix, null);
         this.pc = pc;
         this.pi = pi;
@@ -88,7 +88,7 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
         // Determine the value of the <short-name> subelement of the
         // "imaginary" <taglib> element
         if (tagdir.equals(WEB_INF_TAGS)
-                || tagdir.equals( WEB_INF_TAGS + "/")) {
+                || tagdir.equals(WEB_INF_TAGS + "/")) {
             shortname = TAGS_SHORTNAME;
         } else {
             shortname = tagdir.substring(WEB_INF_TAGS.length());

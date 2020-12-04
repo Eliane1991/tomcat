@@ -28,18 +28,19 @@ import java.util.ArrayList;
  * method. This way, an application will always know if a message was delivered successfully or not.
  */
 public class ChannelException extends Exception {
-    private static final long serialVersionUID = 1L;
     /**
      * Empty list to avoid reinstantiating lists
      */
     protected static final FaultyMember[] EMPTY_LIST = new FaultyMember[0];
+    private static final long serialVersionUID = 1L;
     /**
      * Holds a list of faulty members
      */
-    private ArrayList<FaultyMember> faultyMembers=null;
+    private ArrayList<FaultyMember> faultyMembers = null;
 
     /**
      * Constructor, creates a ChannelException
+     *
      * @see java.lang.Exception#Exception()
      */
     public ChannelException() {
@@ -48,6 +49,7 @@ public class ChannelException extends Exception {
 
     /**
      * Constructor, creates a ChannelException with an error message
+     *
      * @param message The error message
      * @see java.lang.Exception#Exception(String)
      */
@@ -57,9 +59,10 @@ public class ChannelException extends Exception {
 
     /**
      * Constructor, creates a ChannelException with an error message and a cause
+     *
      * @param message The error message
-     * @param cause Throwable
-     * @see java.lang.Exception#Exception(String,Throwable)
+     * @param cause   Throwable
+     * @see java.lang.Exception#Exception(String, Throwable)
      */
     public ChannelException(String message, Throwable cause) {
         super(message, cause);
@@ -67,6 +70,7 @@ public class ChannelException extends Exception {
 
     /**
      * Constructor, creates a ChannelException with a cause
+     *
      * @param cause Throwable
      * @see java.lang.Exception#Exception(Throwable)
      */
@@ -76,13 +80,14 @@ public class ChannelException extends Exception {
 
     /**
      * Returns the message for this exception
+     *
      * @return the error message
      * @see java.lang.Exception#getMessage()
      */
     @Override
     public String getMessage() {
         StringBuilder buf = new StringBuilder(super.getMessage());
-        if (faultyMembers==null || faultyMembers.size() == 0 ) {
+        if (faultyMembers == null || faultyMembers.size() == 0) {
             buf.append("; No faulty members identified.");
         } else {
             buf.append("; Faulty members:");
@@ -96,49 +101,52 @@ public class ChannelException extends Exception {
 
     /**
      * Adds a faulty member, and the reason the member failed.
+     *
      * @param mbr Member
-     * @param x Exception
+     * @param x   Exception
      * @return <code>true</code> if the member was added
      */
-    public boolean addFaultyMember(Member mbr, Exception x ) {
-        return addFaultyMember(new FaultyMember(mbr,x));
+    public boolean addFaultyMember(Member mbr, Exception x) {
+        return addFaultyMember(new FaultyMember(mbr, x));
     }
 
     /**
      * Adds a list of faulty members
+     *
      * @param mbrs FaultyMember[]
      * @return the number of members added
      */
     public int addFaultyMember(FaultyMember[] mbrs) {
         int result = 0;
-        for (int i=0; mbrs!=null && i<mbrs.length; i++ ) {
-            if ( addFaultyMember(mbrs[i]) ) result++;
+        for (int i = 0; mbrs != null && i < mbrs.length; i++) {
+            if (addFaultyMember(mbrs[i])) result++;
         }
         return result;
     }
 
     /**
      * Adds a faulty member
+     *
      * @param mbr FaultyMember
      * @return <code>true</code> if the member was added
      */
     public boolean addFaultyMember(FaultyMember mbr) {
-        if ( this.faultyMembers==null ) this.faultyMembers = new ArrayList<>();
-        if ( !faultyMembers.contains(mbr) ) return faultyMembers.add(mbr);
+        if (this.faultyMembers == null) this.faultyMembers = new ArrayList<>();
+        if (!faultyMembers.contains(mbr)) return faultyMembers.add(mbr);
         else return false;
     }
 
     /**
      * Returns an array of members that failed and the reason they failed.
+     *
      * @return FaultyMember[]
      */
     public FaultyMember[] getFaultyMembers() {
-        if ( this.faultyMembers==null ) return EMPTY_LIST;
+        if (this.faultyMembers == null) return EMPTY_LIST;
         return faultyMembers.toArray(new FaultyMember[0]);
     }
 
     /**
-     *
      * <p>Title: FaultyMember class</p>
      *
      * <p>Description: Represent a failure to a specific member when a message was sent
@@ -149,6 +157,7 @@ public class ChannelException extends Exception {
     public static class FaultyMember {
         protected final Exception cause;
         protected final Member member;
+
         public FaultyMember(Member mbr, Exception x) {
             this.member = mbr;
             this.cause = x;
@@ -164,18 +173,18 @@ public class ChannelException extends Exception {
 
         @Override
         public String toString() {
-            return "FaultyMember:"+member.toString();
+            return "FaultyMember:" + member.toString();
         }
 
         @Override
         public int hashCode() {
-            return (member!=null)?member.hashCode():0;
+            return (member != null) ? member.hashCode() : 0;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (member==null || (!(o instanceof FaultyMember)) || (((FaultyMember)o).member==null)) return false;
-            return member.equals(((FaultyMember)o).member);
+            if (member == null || (!(o instanceof FaultyMember)) || (((FaultyMember) o).member == null)) return false;
+            return member.equals(((FaultyMember) o).member);
         }
     }
 

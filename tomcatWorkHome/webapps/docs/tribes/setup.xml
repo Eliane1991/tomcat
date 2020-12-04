@@ -16,8 +16,8 @@
   limitations under the License.
 -->
 <!DOCTYPE document [
-  <!ENTITY project SYSTEM "project.xml">
-]>
+        <!ENTITY project SYSTEM "project.xml">
+        ]>
 <document url="setup.html">
 
     &project;
@@ -26,12 +26,12 @@
         <title>Apache Tribes - Configuration</title>
     </properties>
 
-<body>
+    <body>
 
 
-<section name="Configuration Overview">
-    <p>TODO</p>
-</section>
-</body>
+        <section name="Configuration Overview">
+            <p>TODO</p>
+        </section>
+    </body>
 
 </document>

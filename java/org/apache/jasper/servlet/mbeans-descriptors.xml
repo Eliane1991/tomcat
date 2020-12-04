@@ -16,33 +16,33 @@
   limitations under the License.
 -->
 <!DOCTYPE mbeans-descriptors PUBLIC
-   "-//Apache Software Foundation//DTD Model MBeans Configuration File"
-   "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd">
+        "-//Apache Software Foundation//DTD Model MBeans Configuration File"
+        "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd">
 <mbeans-descriptors>
 
-  <mbean         name="JspMonitor"
-          description="JSP Monitoring"
-               domain="Catalina"
-                group="Monitoring"
-                 type="org.apache.jasper.servlet.JspServlet">
+    <mbean name="JspMonitor"
+           description="JSP Monitoring"
+           domain="Catalina"
+           group="Monitoring"
+           type="org.apache.jasper.servlet.JspServlet">
 
-    <attribute   name="jspCount"
-          description="The number of JSPs that have been loaded into a webapp"
-                 type="int"
-                 writeable="false"/>
+        <attribute name="jspCount"
+                   description="The number of JSPs that have been loaded into a webapp"
+                   type="int"
+                   writeable="false"/>
 
-    <attribute   name="jspReloadCount"
-          description="The number of JSPs that have been reloaded"
-                 type="int"/>
+        <attribute name="jspReloadCount"
+                   description="The number of JSPs that have been reloaded"
+                   type="int"/>
 
-    <attribute   name="jspUnloadCount"
-          description="The number of JSPs that have been unloaded"
-                 type="int"/>
+        <attribute name="jspUnloadCount"
+                   description="The number of JSPs that have been unloaded"
+                   type="int"/>
 
-    <attribute   name="jspQueueLength"
-          description="The length of the JSP queue (if enabled via maxLoadedJsps)"
-                 type="int"/>
+        <attribute name="jspQueueLength"
+                   description="The length of the JSP queue (if enabled via maxLoadedJsps)"
+                   type="int"/>
 
-  </mbean>
+    </mbean>
 
 </mbeans-descriptors>

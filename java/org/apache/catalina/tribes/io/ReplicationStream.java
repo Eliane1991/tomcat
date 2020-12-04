@@ -47,14 +47,13 @@ public final class ReplicationStream extends ObjectInputStream {
     /**
      * Construct a new instance of CustomObjectInputStream
      *
-     * @param stream The input stream we will read from
+     * @param stream       The input stream we will read from
      * @param classLoaders The class loader array used to instantiate objects
-     *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public ReplicationStream(InputStream stream,
                              ClassLoader[] classLoaders)
-        throws IOException {
+            throws IOException {
 
         super(stream);
         this.classLoaders = classLoaders;
@@ -65,13 +64,12 @@ public final class ReplicationStream extends ObjectInputStream {
      * description, by using the class loader assigned to this Context.
      *
      * @param classDesc Class description from the input stream
-     *
-     * @exception ClassNotFoundException if this class cannot be found
-     * @exception IOException if an input/output error occurs
+     * @throws ClassNotFoundException if this class cannot be found
+     * @throws IOException            if an input/output error occurs
      */
     @Override
     public Class<?> resolveClass(ObjectStreamClass classDesc)
-        throws ClassNotFoundException, IOException {
+            throws ClassNotFoundException, IOException {
         String name = classDesc.getName();
         try {
             return resolveClass(name);
@@ -83,7 +81,7 @@ public final class ReplicationStream extends ObjectInputStream {
     public Class<?> resolveClass(String name) throws ClassNotFoundException {
 
         boolean tryRepFirst = name.startsWith("org.apache.catalina.tribes");
-            try {
+        try {
             if (tryRepFirst)
                 return findReplicationClass(name);
             else
@@ -117,7 +115,7 @@ public final class ReplicationStream extends ObjectInputStream {
         Class<?>[] classObjs = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
             Class<?> cl = this.resolveClass(interfaces[i]);
-            if (latestLoader==null) latestLoader = cl.getClassLoader();
+            if (latestLoader == null) latestLoader = cl.getClassLoader();
             if ((cl.getModifiers() & Modifier.PUBLIC) == 0) {
                 if (hasNonPublicInterface) {
                     if (nonPublicLoader != cl.getClassLoader()) {
@@ -146,7 +144,7 @@ public final class ReplicationStream extends ObjectInputStream {
         return clazz;
     }
 
-    public Class<?> findExternalClass(String name) throws ClassNotFoundException  {
+    public Class<?> findExternalClass(String name) throws ClassNotFoundException {
         ClassNotFoundException cnfe = null;
         for (ClassLoader classLoader : classLoaders) {
             try {
@@ -156,12 +154,12 @@ public final class ReplicationStream extends ObjectInputStream {
                 cnfe = x;
             }
         }
-        if ( cnfe != null ) throw cnfe;
+        if (cnfe != null) throw cnfe;
         else throw new ClassNotFoundException(name);
     }
 
     @Override
-    public void close() throws IOException  {
+    public void close() throws IOException {
         this.classLoaders = null;
         super.close();
     }

@@ -37,10 +37,10 @@ public final class ContextName {
      * Creates an instance from a context name, display name, base name,
      * directory name, WAR name or context.xml name.
      *
-     * @param name  The name to use as the basis for this object
-     * @param stripFileExtension    If a .war or .xml file extension is present
-     *                              at the end of the provided name should it be
-     *                              removed?
+     * @param name               The name to use as the basis for this object
+     * @param stripFileExtension If a .war or .xml file extension is present
+     *                           at the end of the provided name should it be
+     *                           removed?
      */
     public ContextName(String name, boolean stripFileExtension) {
 
@@ -65,7 +65,7 @@ public final class ContextName {
         if (stripFileExtension &&
                 (tmp1.toLowerCase(Locale.ENGLISH).endsWith(".war") ||
                         tmp1.toLowerCase(Locale.ENGLISH).endsWith(".xml"))) {
-            tmp1 = tmp1.substring(0, tmp1.length() -4);
+            tmp1 = tmp1.substring(0, tmp1.length() - 4);
         }
 
         baseName = tmp1;
@@ -97,8 +97,8 @@ public final class ContextName {
     /**
      * Construct an instance from a path and version.
      *
-     * @param path      Context path to use
-     * @param version   Context version to use
+     * @param path    Context path to use
+     * @param version Context version to use
      */
     public ContextName(String path, String version) {
         // Path should never be null, '/' or '/ROOT'

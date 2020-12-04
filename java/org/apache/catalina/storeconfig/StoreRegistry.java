@@ -37,17 +37,8 @@ import java.util.Map;
  */
 public class StoreRegistry {
     private static Log log = LogFactory.getLog(StoreRegistry.class);
-
-    private Map<String, StoreDescription> descriptors = new HashMap<>();
-
-    private String encoding = "UTF-8";
-
-    private String name;
-
-    private String version;
-
     // Access Information
-    private static Class<?> interfaces[] = { CatalinaCluster.class,
+    private static Class<?> interfaces[] = {CatalinaCluster.class,
             ChannelSender.class, ChannelReceiver.class, Channel.class,
             MembershipService.class, ClusterDeployer.class, Realm.class,
             Manager.class, DirContext.class, LifecycleListener.class,
@@ -55,7 +46,11 @@ public class StoreRegistry {
             DataSender.class, ChannelInterceptor.class, Member.class,
             WebResourceRoot.class, WebResourceSet.class,
             CredentialHandler.class, UpgradeProtocol.class,
-            CookieProcessor.class };
+            CookieProcessor.class};
+    private Map<String, StoreDescription> descriptors = new HashMap<>();
+    private String encoding = "UTF-8";
+    private String name;
+    private String version;
 
     /**
      * @return Returns the name.
@@ -65,8 +60,7 @@ public class StoreRegistry {
     }
 
     /**
-     * @param name
-     *            The name to set.
+     * @param name The name to set.
      */
     public void setName(String name) {
         this.name = name;
@@ -80,8 +74,7 @@ public class StoreRegistry {
     }
 
     /**
-     * @param version
-     *            The version to set.
+     * @param version The version to set.
      */
     public void setVersion(String version) {
         this.version = version;
@@ -198,6 +191,7 @@ public class StoreRegistry {
 
     /**
      * Set the encoding to use when writing the configuration files.
+     *
      * @param string The encoding
      */
     public void setEncoding(String string) {

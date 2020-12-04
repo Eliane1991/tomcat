@@ -127,7 +127,7 @@ public class CoyoteOutputStream extends ServletOutputStream {
      * CoyoteOutputStream->OutputBuffer->CoyoteResponse.
      *
      * @return <code>true</code> if this OutputStream is currently in
-     *         non-blocking mode.
+     * non-blocking mode.
      */
     private boolean checkNonBlockingWrite() {
         boolean nonBlocking = !ob.isBlocking();

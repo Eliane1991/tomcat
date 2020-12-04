@@ -29,36 +29,35 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * to satisfy the concurrency requirements.
  *
  * @deprecated Unused. This will be removed in Tomcat 10.
- *             Use {@link org.apache.tomcat.util.http.ConcurrentDateFormat}
+ * Use {@link org.apache.tomcat.util.http.ConcurrentDateFormat}
  */
 @Deprecated
 public class ConcurrentDateFormat {
 
-    private final String format;
-    private final Locale locale;
-    private final TimeZone timezone;
-    private final Queue<SimpleDateFormat> queue = new ConcurrentLinkedQueue<>();
-
     public static final String RFC1123_DATE = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-
     private static final ConcurrentDateFormat FORMAT_RFC1123;
 
     static {
         FORMAT_RFC1123 = new ConcurrentDateFormat(RFC1123_DATE, Locale.US, GMT);
     }
 
-    public static String formatRfc1123(Date date) {
-        return FORMAT_RFC1123.format(date);
-    }
+    private final String format;
+    private final Locale locale;
+    private final TimeZone timezone;
+    private final Queue<SimpleDateFormat> queue = new ConcurrentLinkedQueue<>();
 
     public ConcurrentDateFormat(String format, Locale locale,
-            TimeZone timezone) {
+                                TimeZone timezone) {
         this.format = format;
         this.locale = locale;
         this.timezone = timezone;
         SimpleDateFormat initial = createInstance();
         queue.add(initial);
+    }
+
+    public static String formatRfc1123(Date date) {
+        return FORMAT_RFC1123.format(date);
     }
 
     public String format(Date date) {

@@ -53,8 +53,8 @@ public class MultiThrowable extends Throwable {
 
     /**
      * @return {@code null} if there are no wrapped throwables, the Throwable if
-     *         there is a single wrapped throwable or the current instance of
-     *         there are multiple wrapped throwables
+     * there is a single wrapped throwable or the current instance of
+     * there are multiple wrapped throwables
      */
     public Throwable getThrowable() {
         if (size() == 0) {

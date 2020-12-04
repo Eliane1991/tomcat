@@ -37,14 +37,14 @@ public class ApplicationServletRegistration
      * The string manager for this package.
      */
     private static final StringManager sm =
-      StringManager.getManager(Constants.Package);
+            StringManager.getManager(Constants.Package);
 
     private final Wrapper wrapper;
     private final Context context;
     private ServletSecurityElement constraint;
 
     public ApplicationServletRegistration(Wrapper wrapper,
-            Context context) {
+                                          Context context) {
         this.wrapper = wrapper;
         this.context = context;
 
@@ -62,7 +62,7 @@ public class ApplicationServletRegistration
 
     @Override
     public Map<String, String> getInitParameters() {
-        ParameterMap<String,String> result = new ParameterMap<>();
+        ParameterMap<String, String> result = new ParameterMap<>();
 
         String[] parameterNames = wrapper.findInitParameters();
 
@@ -104,7 +104,7 @@ public class ApplicationServletRegistration
             if (entry.getKey() == null || entry.getValue() == null) {
                 throw new IllegalArgumentException(sm.getString(
                         "applicationFilterRegistration.nullInitParams",
-                                entry.getKey(), entry.getValue()));
+                        entry.getKey(), entry.getValue()));
             }
             if (getInitParameter(entry.getKey()) != null) {
                 conflicts.add(entry.getKey());
@@ -138,11 +138,6 @@ public class ApplicationServletRegistration
     }
 
     @Override
-    public void setRunAsRole(String roleName) {
-        wrapper.setRunAs(roleName);
-    }
-
-    @Override
     public Set<String> setServletSecurity(ServletSecurityElement constraint) {
         if (constraint == null) {
             throw new IllegalArgumentException(sm.getString(
@@ -159,7 +154,6 @@ public class ApplicationServletRegistration
         this.constraint = constraint;
         return context.addServletSecurity(this, constraint);
     }
-
 
     @Override
     public Set<String> addMapping(String... urlPatterns) {
@@ -218,6 +212,11 @@ public class ApplicationServletRegistration
     @Override
     public String getRunAsRole() {
         return wrapper.getRunAs();
+    }
+
+    @Override
+    public void setRunAsRole(String roleName) {
+        wrapper.setRunAs(roleName);
     }
 
 }

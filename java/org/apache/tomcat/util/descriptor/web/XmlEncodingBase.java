@@ -35,6 +35,18 @@ public abstract class XmlEncodingBase {
     private static Log log = LogFactory.getLog(XmlEncodingBase.class);
     private Charset charset = StandardCharsets.UTF_8;
 
+    /**
+     * Obtain the encoding of the XML source that was used to populated this
+     * object.
+     *
+     * @return The encoding of the associated XML source or <code>UTF-8</code>
+     * if the encoding could not be determined
+     * @deprecated This method will be removed in Tomcat 9
+     */
+    @Deprecated
+    public String getEncoding() {
+        return charset.name();
+    }
 
     /**
      * @param encoding The encoding of the XML source that was used to
@@ -50,34 +62,18 @@ public abstract class XmlEncodingBase {
         }
     }
 
-
-    /**
-     * Obtain the encoding of the XML source that was used to populated this
-     * object.
-     *
-     * @return The encoding of the associated XML source or <code>UTF-8</code>
-     *         if the encoding could not be determined
-     * @deprecated This method will be removed in Tomcat 9
-     */
-    @Deprecated
-    public String getEncoding() {
-        return charset.name();
-    }
-
-
-    public void setCharset(Charset charset) {
-        this.charset = charset;
-    }
-
-
     /**
      * Obtain the character encoding of the XML source that was used to
      * populated this object.
      *
      * @return The character encoding of the associated XML source or
-     *         <code>UTF-8</code> if the encoding could not be determined
+     * <code>UTF-8</code> if the encoding could not be determined
      */
     public Charset getCharset() {
         return charset;
+    }
+
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 }

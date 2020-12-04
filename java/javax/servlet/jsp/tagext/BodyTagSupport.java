@@ -31,6 +31,10 @@ import javax.servlet.jsp.JspWriter;
 public class BodyTagSupport extends TagSupport implements BodyTag {
 
     private static final long serialVersionUID = -7235752615580319833L;
+    /**
+     * The current BodyContent for this BodyTag.
+     */
+    protected transient BodyContent bodyContent;
 
     /**
      * Default constructor, all subclasses are required to only define a public
@@ -46,8 +50,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
      * Default processing of the start tag returning EVAL_BODY_BUFFERED.
      *
      * @return EVAL_BODY_BUFFERED
-     * @throws JspException
-     *             if an error occurred while processing this tag
+     * @throws JspException if an error occurred while processing this tag
      * @see BodyTag#doStartTag
      */
     @Override
@@ -55,12 +58,13 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
         return EVAL_BODY_BUFFERED;
     }
 
+    // Actions related to body evaluation
+
     /**
      * Default processing of the end tag returning EVAL_PAGE.
      *
      * @return EVAL_PAGE
-     * @throws JspException
-     *             if an error occurred while processing this tag
+     * @throws JspException if an error occurred while processing this tag
      * @see Tag#doEndTag
      */
     @Override
@@ -68,28 +72,11 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
         return super.doEndTag();
     }
 
-    // Actions related to body evaluation
-
-    /**
-     * Prepare for evaluation of the body: stash the bodyContent away.
-     *
-     * @param b
-     *            the BodyContent
-     * @see #doAfterBody
-     * @see #doInitBody()
-     * @see BodyTag#setBodyContent
-     */
-    @Override
-    public void setBodyContent(BodyContent b) {
-        this.bodyContent = b;
-    }
-
     /**
      * Prepare for evaluation of the body just before the first body evaluation:
      * no action.
      *
-     * @throws JspException
-     *             if an error occurred while processing this tag
+     * @throws JspException if an error occurred while processing this tag
      * @see #setBodyContent
      * @see #doAfterBody
      * @see BodyTag#doInitBody
@@ -104,8 +91,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
      * By default nothing is done with the bodyContent data (if any).
      *
      * @return SKIP_BODY
-     * @throws JspException
-     *             if an error occurred while processing this tag
+     * @throws JspException if an error occurred while processing this tag
      * @see #doInitBody
      * @see BodyTag#doAfterBody
      */
@@ -136,6 +122,21 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
     }
 
     /**
+     * Prepare for evaluation of the body: stash the bodyContent away.
+     *
+     * @param b the BodyContent
+     * @see #doAfterBody
+     * @see #doInitBody()
+     * @see BodyTag#setBodyContent
+     */
+    @Override
+    public void setBodyContent(BodyContent b) {
+        this.bodyContent = b;
+    }
+
+    // protected fields
+
+    /**
      * Get surrounding out JspWriter.
      *
      * @return the enclosing JspWriter, from the bodyContent.
@@ -143,11 +144,4 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
     public JspWriter getPreviousOut() {
         return bodyContent.getEnclosingWriter();
     }
-
-    // protected fields
-
-    /**
-     * The current BodyContent for this BodyTag.
-     */
-    protected transient BodyContent bodyContent;
 }

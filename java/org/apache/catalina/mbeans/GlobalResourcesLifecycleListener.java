@@ -38,21 +38,18 @@ import java.util.Iterator;
  */
 public class GlobalResourcesLifecycleListener implements LifecycleListener {
 
-    private static final Log log = LogFactory.getLog(GlobalResourcesLifecycleListener.class);
-
-
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The owning Catalina component that we are attached to.
-     */
-    protected Lifecycle component = null;
-
-
     /**
      * The configuration information registry for our managed beans.
      */
     protected static final Registry registry = MBeanUtils.createRegistry();
+
+
+    // ----------------------------------------------------- Instance Variables
+    private static final Log log = LogFactory.getLog(GlobalResourcesLifecycleListener.class);
+    /**
+     * The owning Catalina component that we are attached to.
+     */
+    protected Lifecycle component = null;
 
 
     // ---------------------------------------------- LifecycleListener Methods
@@ -103,16 +100,15 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
      * Create the MBeans for the interesting global JNDI resources in
      * the specified naming context.
      *
-     * @param prefix Prefix for complete object name paths
+     * @param prefix  Prefix for complete object name paths
      * @param context Context to be scanned
-     *
-     * @exception NamingException if a JNDI exception occurs
+     * @throws NamingException if a JNDI exception occurs
      */
     protected void createMBeans(String prefix, Context context) throws NamingException {
 
         if (log.isDebugEnabled()) {
             log.debug("Creating MBeans for Global JNDI Resources in Context '" +
-                prefix + "'");
+                    prefix + "'");
         }
 
         try {
@@ -134,9 +130,9 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
                     }
                 }
             }
-        } catch( RuntimeException ex) {
+        } catch (RuntimeException ex) {
             log.error("RuntimeException " + ex);
-        } catch( OperationNotSupportedException ex) {
+        } catch (OperationNotSupportedException ex) {
             log.error("Operation not supported " + ex);
         }
     }
@@ -145,10 +141,9 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
     /**
      * Create the MBeans for the specified UserDatabase and its contents.
      *
-     * @param name Complete resource name of this UserDatabase
+     * @param name     Complete resource name of this UserDatabase
      * @param database The UserDatabase to be processed
-     *
-     * @exception Exception if an exception occurs while creating MBeans
+     * @throws Exception if an exception occurs while creating MBeans
      */
     protected void createMBeans(String name, UserDatabase database) throws Exception {
 
@@ -159,7 +154,7 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
         }
         try {
             MBeanUtils.createMBean(database);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Cannot create UserDatabase MBean for resource " + name, e);
         }

@@ -63,7 +63,7 @@ public final class ClientAbortException extends IOException {
      * Construct a new ClientAbortException for the specified message
      * and throwable.
      *
-     * @param message Message describing this exception
+     * @param message   Message describing this exception
      * @param throwable Throwable that caused this exception
      */
     public ClientAbortException(String message, Throwable throwable) {

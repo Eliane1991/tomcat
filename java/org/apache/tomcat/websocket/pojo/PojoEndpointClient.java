@@ -32,11 +32,11 @@ import java.util.List;
 public class PojoEndpointClient extends PojoEndpointBase {
 
     public PojoEndpointClient(Object pojo,
-            List<Class<? extends Decoder>> decoders) throws DeploymentException {
+                              List<Class<? extends Decoder>> decoders) throws DeploymentException {
         setPojo(pojo);
         setMethodMapping(
                 new PojoMethodMapping(pojo.getClass(), decoders, null));
-        setPathParameters(Collections.<String,String>emptyMap());
+        setPathParameters(Collections.<String, String>emptyMap());
     }
 
     @Override

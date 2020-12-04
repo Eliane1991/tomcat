@@ -22,7 +22,7 @@ import javax.servlet.ServletContext;
 
 /**
  * Provides {@link ELInterpreter} instances for JSP compilation.
- *
+ * <p>
  * The search order is as follows:
  * <ol>
  * <li>ELInterpreter instance or implementation class name provided as a
@@ -41,8 +41,13 @@ public class ELInterpreterFactory {
             new DefaultELInterpreter();
 
 
+    private ELInterpreterFactory() {
+        // Utility class. Hide default constructor.
+    }
+
     /**
      * Obtain the correct EL Interpreter for the given web application.
+     *
      * @param context The Servlet context
      * @return the EL interpreter
      * @throws Exception If an error occurs creating the interpreter
@@ -81,25 +86,18 @@ public class ELInterpreterFactory {
         return result;
     }
 
-
     private static ELInterpreter createInstance(ServletContext context,
-            String className) throws Exception {
+                                                String className) throws Exception {
         return (ELInterpreter) context.getClassLoader().loadClass(
-                    className).getConstructor().newInstance();
+                className).getConstructor().newInstance();
     }
-
-
-    private ELInterpreterFactory() {
-        // Utility class. Hide default constructor.
-    }
-
 
     public static class DefaultELInterpreter implements ELInterpreter {
 
         @Override
         public String interpreterCall(JspCompilationContext context,
-                boolean isTagFile, String expression,
-                Class<?> expectedType, String fnmapvar) {
+                                      boolean isTagFile, String expression,
+                                      Class<?> expectedType, String fnmapvar) {
             return JspUtil.interpreterCall(isTagFile, expression, expectedType,
                     fnmapvar);
         }

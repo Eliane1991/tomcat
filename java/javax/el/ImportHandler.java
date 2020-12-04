@@ -31,7 +31,7 @@ public class ImportHandler {
 
     private static final boolean IS_SECURITY_ENABLED = (System.getSecurityManager() != null);
 
-    private static final Map<String,Set<String>> standardPackages = new HashMap<>();
+    private static final Map<String, Set<String>> standardPackages = new HashMap<>();
 
     static {
         // Servlet 4.0
@@ -268,10 +268,10 @@ public class ImportHandler {
 
     }
 
-    private Map<String,Set<String>> packageNames = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String,String> classNames = new ConcurrentHashMap<>();
-    private Map<String,Class<?>> clazzes = new ConcurrentHashMap<>();
-    private Map<String,Class<?>> statics = new ConcurrentHashMap<>();
+    private Map<String, Set<String>> packageNames = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> classNames = new ConcurrentHashMap<>();
+    private Map<String, Class<?>> clazzes = new ConcurrentHashMap<>();
+    private Map<String, Class<?>> statics = new ConcurrentHashMap<>();
 
 
     public ImportHandler() {
@@ -334,7 +334,7 @@ public class ImportHandler {
         if (conflict != null) {
             throw new ELException(Util.message(null,
                     "importHandler.ambiguousStaticImport", name,
-                    conflict.getName() + '.' +  fieldOrMethodName));
+                    conflict.getName() + '.' + fieldOrMethodName));
         }
 
         statics.put(fieldOrMethodName, clazz);
@@ -402,7 +402,7 @@ public class ImportHandler {
 
         // Search the package imports - note there may be multiple matches
         // (which correctly triggers an error)
-        for (Map.Entry<String,Set<String>> entry : packageNames.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : packageNames.entrySet()) {
             if (!entry.getValue().isEmpty()) {
                 // Standard package where we know all the class names
                 if (!entry.getValue().contains(name)) {

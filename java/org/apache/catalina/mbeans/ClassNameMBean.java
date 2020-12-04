@@ -26,7 +26,6 @@ package org.apache.catalina.mbeans;
  * qualified class name of the managed object as its value.</p>
  *
  * @param <T> The type that this bean represents.
- *
  * @author Craig R. McClanahan
  */
 public class ClassNameMBean<T> extends BaseCatalinaMBean<T> {

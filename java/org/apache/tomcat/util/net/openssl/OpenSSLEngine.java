@@ -42,14 +42,21 @@ import java.util.*;
  */
 public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolInfo {
 
+    public static final Set<String> AVAILABLE_CIPHER_SUITES;
+    public static final Set<String> IMPLEMENTED_PROTOCOLS_SET;
+    // Protocols
+    static final int VERIFY_DEPTH = 10;
     private static final Log logger = LogFactory.getLog(OpenSSLEngine.class);
     private static final StringManager sm = StringManager.getManager(OpenSSLEngine.class);
-
     private static final Certificate[] EMPTY_CERTIFICATES = new Certificate[0];
-
-    public static final Set<String> AVAILABLE_CIPHER_SUITES;
-
-    public static final Set<String> IMPLEMENTED_PROTOCOLS_SET;
+    private static final int MAX_PLAINTEXT_LENGTH = 16 * 1024; // 2^14
+    private static final int MAX_COMPRESSED_LENGTH = MAX_PLAINTEXT_LENGTH + 1024;
+    private static final int MAX_CIPHERTEXT_LENGTH = MAX_COMPRESSED_LENGTH + 1024;
+    // Header (5) + Data (2^14) + Compression (1024) + Encryption (1024) + MAC (20) + Padding (256)
+    static final int MAX_ENCRYPTED_PACKET_LENGTH = MAX_CIPHERTEXT_LENGTH + 5 + 20 + 256;
+    static final int MAX_ENCRYPTION_OVERHEAD_LENGTH = MAX_ENCRYPTED_PACKET_LENGTH - MAX_PLAINTEXT_LENGTH;
+    private static final String INVALID_CIPHER = "SSL_NULL_WITH_NULL_NULL";
+    private static final long EMPTY_ADDR = Buffer.address(ByteBuffer.allocate(0));
 
     static {
         final Set<String> availableCipherSuites = new LinkedHashSet<>(128);
@@ -61,7 +68,7 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
                 SSLContext.setCipherSuite(sslCtx, "ALL");
                 final long ssl = SSL.newSSL(sslCtx, true);
                 try {
-                    for (String c: SSL.getCiphers(ssl)) {
+                    for (String c : SSL.getCiphers(ssl)) {
                         // Filter out bad input.
                         if (c == null || c.length() == 0 || availableCipherSuites.contains(c)) {
                             continue;
@@ -95,56 +102,9 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
         IMPLEMENTED_PROTOCOLS_SET = Collections.unmodifiableSet(protocols);
     }
 
-    private static final int MAX_PLAINTEXT_LENGTH = 16 * 1024; // 2^14
-    private static final int MAX_COMPRESSED_LENGTH = MAX_PLAINTEXT_LENGTH + 1024;
-    private static final int MAX_CIPHERTEXT_LENGTH = MAX_COMPRESSED_LENGTH + 1024;
-
-    // Protocols
-    static final int VERIFY_DEPTH = 10;
-
-    // Header (5) + Data (2^14) + Compression (1024) + Encryption (1024) + MAC (20) + Padding (256)
-    static final int MAX_ENCRYPTED_PACKET_LENGTH = MAX_CIPHERTEXT_LENGTH + 5 + 20 + 256;
-
-    static final int MAX_ENCRYPTION_OVERHEAD_LENGTH = MAX_ENCRYPTED_PACKET_LENGTH - MAX_PLAINTEXT_LENGTH;
-
-    enum ClientAuthMode {
-        NONE,
-        OPTIONAL,
-        REQUIRE,
-    }
-
-    private static final String INVALID_CIPHER = "SSL_NULL_WITH_NULL_NULL";
-
-    private static final long EMPTY_ADDR = Buffer.address(ByteBuffer.allocate(0));
-
     // OpenSSL state
     private final long ssl;
     private final long networkBIO;
-
-    private enum Accepted { NOT, IMPLICIT, EXPLICIT }
-    private Accepted accepted = Accepted.NOT;
-    private boolean handshakeFinished;
-    private int currentHandshake;
-    private boolean receivedShutdown;
-    private volatile boolean destroyed;
-
-    // Use an invalid cipherSuite until the handshake is completed
-    // See http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLEngine.html#getSession()
-    private volatile String version;
-    private volatile String cipher;
-    private volatile String applicationProtocol;
-
-    private volatile Certificate[] peerCerts;
-    @Deprecated
-    private volatile javax.security.cert.X509Certificate[] x509PeerCerts;
-    private volatile ClientAuthMode clientAuth = ClientAuthMode.NONE;
-
-    // SSL Engine status variables
-    private boolean isInboundDone;
-    private boolean isOutboundDone;
-    private boolean engineClosed;
-    private boolean sendHandshakeError = false;
-
     private final boolean clientMode;
     private final String fallbackApplicationProtocol;
     private final OpenSSLSessionContext sessionContext;
@@ -152,32 +112,49 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
     private final boolean initialized;
     private final int certificateVerificationDepth;
     private final boolean certificateVerificationOptionalNoCA;
-
-    private String selectedProtocol = null;
-
     private final OpenSSLSession session;
+    private Accepted accepted = Accepted.NOT;
+    private boolean handshakeFinished;
+    private int currentHandshake;
+    private boolean receivedShutdown;
+    private volatile boolean destroyed;
+    // Use an invalid cipherSuite until the handshake is completed
+    // See http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLEngine.html#getSession()
+    private volatile String version;
+    private volatile String cipher;
+    private volatile String applicationProtocol;
+    private volatile Certificate[] peerCerts;
+    @Deprecated
+    private volatile javax.security.cert.X509Certificate[] x509PeerCerts;
+    private volatile ClientAuthMode clientAuth = ClientAuthMode.NONE;
+    // SSL Engine status variables
+    private boolean isInboundDone;
+    private boolean isOutboundDone;
+    private boolean engineClosed;
+    private boolean sendHandshakeError = false;
+    private String selectedProtocol = null;
 
     /**
      * Creates a new instance
      *
-     * @param sslCtx an OpenSSL {@code SSL_CTX} object
-     * @param fallbackApplicationProtocol the fallback application protocol
-     * @param clientMode {@code true} if this is used for clients, {@code false}
-     * otherwise
-     * @param sessionContext the {@link OpenSSLSessionContext} this
-     * {@link SSLEngine} belongs to.
-     * @param alpn {@code true} if alpn should be used, {@code false}
-     * otherwise
-     * @param initialized {@code true} if this instance gets its protocol,
-     * cipher and client verification from the {@code SSL_CTX} {@code sslCtx}
-     * @param certificateVerificationDepth Certificate verification depth
+     * @param sslCtx                              an OpenSSL {@code SSL_CTX} object
+     * @param fallbackApplicationProtocol         the fallback application protocol
+     * @param clientMode                          {@code true} if this is used for clients, {@code false}
+     *                                            otherwise
+     * @param sessionContext                      the {@link OpenSSLSessionContext} this
+     *                                            {@link SSLEngine} belongs to.
+     * @param alpn                                {@code true} if alpn should be used, {@code false}
+     *                                            otherwise
+     * @param initialized                         {@code true} if this instance gets its protocol,
+     *                                            cipher and client verification from the {@code SSL_CTX} {@code sslCtx}
+     * @param certificateVerificationDepth        Certificate verification depth
      * @param certificateVerificationOptionalNoCA Skip CA verification in
-     *   optional mode
+     *                                            optional mode
      */
     OpenSSLEngine(long sslCtx, String fallbackApplicationProtocol,
-            boolean clientMode, OpenSSLSessionContext sessionContext, boolean alpn,
-            boolean initialized, int certificateVerificationDepth,
-            boolean certificateVerificationOptionalNoCA) {
+                  boolean clientMode, OpenSSLSessionContext sessionContext, boolean alpn,
+                  boolean initialized, int certificateVerificationDepth,
+                  boolean certificateVerificationOptionalNoCA) {
         if (sslCtx == 0) {
             throw new IllegalArgumentException(sm.getString("engine.noSSLContext"));
         }
@@ -193,31 +170,9 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
         this.certificateVerificationOptionalNoCA = certificateVerificationOptionalNoCA;
     }
 
-    @Override
-    public String getNegotiatedProtocol() {
-        return selectedProtocol;
-    }
-
-    /**
-     * Destroys this engine.
-     */
-    public synchronized void shutdown() {
-        if (!destroyed) {
-            destroyed = true;
-            if (networkBIO != 0) {
-                SSL.freeBIO(networkBIO);
-            }
-            if (ssl != 0) {
-                SSL.freeSSL(ssl);
-            }
-            // internal errors can cause shutdown without marking the engine closed
-            isInboundDone = isOutboundDone = engineClosed = true;
-        }
-    }
-
     /**
      * Write plain text data to the OpenSSL internal BIO
-     *
+     * <p>
      * Calling this function with src.remaining == 0 is undefined.
      */
     private static int writePlaintextData(final long ssl, final ByteBuffer src) {
@@ -367,6 +322,32 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
         }
 
         return 0;
+    }
+
+    private static long memoryAddress(ByteBuffer buf) {
+        return Buffer.address(buf);
+    }
+
+    @Override
+    public String getNegotiatedProtocol() {
+        return selectedProtocol;
+    }
+
+    /**
+     * Destroys this engine.
+     */
+    public synchronized void shutdown() {
+        if (!destroyed) {
+            destroyed = true;
+            if (networkBIO != 0) {
+                SSL.freeBIO(networkBIO);
+            }
+            if (ssl != 0) {
+                SSL.freeSSL(ssl);
+            }
+            // internal errors can cause shutdown without marking the engine closed
+            isInboundDone = isOutboundDone = engineClosed = true;
+        }
     }
 
     @Override
@@ -852,22 +833,22 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
             throw new SSLException(sm.getString("engine.engineClosed"));
         }
         switch (accepted) {
-        case NOT:
-            handshake();
-            accepted = Accepted.EXPLICIT;
-            break;
-        case IMPLICIT:
-            // A user did not start handshake by calling this method by him/herself,
-            // but handshake has been started already by wrap() or unwrap() implicitly.
-            // Because it's the user's first time to call this method, it is unfair to
-            // raise an exception.  From the user's standpoint, he or she never asked
-            // for renegotiation.
+            case NOT:
+                handshake();
+                accepted = Accepted.EXPLICIT;
+                break;
+            case IMPLICIT:
+                // A user did not start handshake by calling this method by him/herself,
+                // but handshake has been started already by wrap() or unwrap() implicitly.
+                // Because it's the user's first time to call this method, it is unfair to
+                // raise an exception.  From the user's standpoint, he or she never asked
+                // for renegotiation.
 
-            accepted = Accepted.EXPLICIT; // Next time this method is invoked by the user, we should raise an exception.
-            break;
-        case EXPLICIT:
-            renegotiate();
-            break;
+                accepted = Accepted.EXPLICIT; // Next time this method is invoked by the user, we should raise an exception.
+                break;
+            case EXPLICIT:
+                renegotiate();
+                break;
         }
     }
 
@@ -933,7 +914,6 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
         }
     }
 
-
     /*
      * Many calls to SSL methods do not check the last error. Those that do
      * check the last error need to ensure that any previously ignored error is
@@ -944,11 +924,6 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
      */
     private void clearLastError() {
         SSL.getLastErrorNumber();
-    }
-
-
-    private static long memoryAddress(ByteBuffer buf) {
-        return Buffer.address(buf);
     }
 
     private SSLEngineResult.Status getEngineStatus() {
@@ -1043,20 +1018,15 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
     }
 
     @Override
-    public void setUseClientMode(boolean clientMode) {
-        if (clientMode != this.clientMode) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @Override
     public boolean getUseClientMode() {
         return clientMode;
     }
 
     @Override
-    public void setNeedClientAuth(boolean b) {
-        setClientAuth(b ? ClientAuthMode.REQUIRE : ClientAuthMode.NONE);
+    public void setUseClientMode(boolean clientMode) {
+        if (clientMode != this.clientMode) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -1065,13 +1035,18 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
     }
 
     @Override
-    public void setWantClientAuth(boolean b) {
-        setClientAuth(b ? ClientAuthMode.OPTIONAL : ClientAuthMode.NONE);
+    public void setNeedClientAuth(boolean b) {
+        setClientAuth(b ? ClientAuthMode.REQUIRE : ClientAuthMode.NONE);
     }
 
     @Override
     public boolean getWantClientAuth() {
         return clientAuth == ClientAuthMode.OPTIONAL;
+    }
+
+    @Override
+    public void setWantClientAuth(boolean b) {
+        setClientAuth(b ? ClientAuthMode.OPTIONAL : ClientAuthMode.NONE);
     }
 
     private void setClientAuth(ClientAuthMode mode) {
@@ -1101,6 +1076,11 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
     }
 
     @Override
+    public boolean getEnableSessionCreation() {
+        return true;
+    }
+
+    @Override
     public void setEnableSessionCreation(boolean b) {
         if (!b) {
             String msg = sm.getString("engine.noRestrictSessionCreation");
@@ -1109,16 +1089,19 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
     }
 
     @Override
-    public boolean getEnableSessionCreation() {
-        return true;
-    }
-
-    @Override
     protected void finalize() throws Throwable {
         super.finalize();
         // Call shutdown as the user may have created the OpenSslEngine and not used it at all.
         shutdown();
     }
+
+    enum ClientAuthMode {
+        NONE,
+        OPTIONAL,
+        REQUIRE,
+    }
+
+    private enum Accepted {NOT, IMPLICIT, EXPLICIT}
 
     private class OpenSSLSession implements SSLSession {
 

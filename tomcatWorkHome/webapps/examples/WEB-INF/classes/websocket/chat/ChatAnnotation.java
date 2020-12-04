@@ -44,42 +44,6 @@ public class ChatAnnotation {
         nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
     }
 
-
-    @OnOpen
-    public void start(Session session) {
-        this.session = session;
-        connections.add(this);
-        String message = String.format("* %s %s", nickname, "has joined.");
-        broadcast(message);
-    }
-
-
-    @OnClose
-    public void end() {
-        connections.remove(this);
-        String message = String.format("* %s %s",
-                nickname, "has disconnected.");
-        broadcast(message);
-    }
-
-
-    @OnMessage
-    public void incoming(String message) {
-        // Never trust the client
-        String filteredMessage = String.format("%s: %s",
-                nickname, HTMLFilter.filter(message.toString()));
-        broadcast(filteredMessage);
-    }
-
-
-
-
-    @OnError
-    public void onError(Throwable t) throws Throwable {
-        log.error("Chat Error: " + t.toString(), t);
-    }
-
-
     private static void broadcast(String msg) {
         for (ChatAnnotation client : connections) {
             try {
@@ -99,5 +63,34 @@ public class ChatAnnotation {
                 broadcast(message);
             }
         }
+    }
+
+    @OnOpen
+    public void start(Session session) {
+        this.session = session;
+        connections.add(this);
+        String message = String.format("* %s %s", nickname, "has joined.");
+        broadcast(message);
+    }
+
+    @OnClose
+    public void end() {
+        connections.remove(this);
+        String message = String.format("* %s %s",
+                nickname, "has disconnected.");
+        broadcast(message);
+    }
+
+    @OnMessage
+    public void incoming(String message) {
+        // Never trust the client
+        String filteredMessage = String.format("%s: %s",
+                nickname, HTMLFilter.filter(message.toString()));
+        broadcast(filteredMessage);
+    }
+
+    @OnError
+    public void onError(Throwable t) throws Throwable {
+        log.error("Chat Error: " + t.toString(), t);
     }
 }

@@ -58,8 +58,18 @@ public class DummyProxySession implements Session {
     }
 
     @Override
+    public void setAuthType(String authType) {
+        // NOOP
+    }
+
+    @Override
     public long getCreationTime() {
         return 0;
+    }
+
+    @Override
+    public void setCreationTime(long time) {
+        // NOOP
     }
 
     @Override
@@ -70,6 +80,11 @@ public class DummyProxySession implements Session {
     @Override
     public String getId() {
         return sessionId;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.sessionId = id;
     }
 
     @Override
@@ -103,8 +118,18 @@ public class DummyProxySession implements Session {
     }
 
     @Override
+    public void setManager(Manager manager) {
+        // NOOP
+    }
+
+    @Override
     public int getMaxInactiveInterval() {
         return 0;
+    }
+
+    @Override
+    public void setMaxInactiveInterval(int interval) {
+        // NOOP
     }
 
     @Override
@@ -120,6 +145,11 @@ public class DummyProxySession implements Session {
     @Override
     public Principal getPrincipal() {
         return null;
+    }
+
+    @Override
+    public void setPrincipal(Principal principal) {
+        // NOOP
     }
 
     @Override
@@ -143,6 +173,11 @@ public class DummyProxySession implements Session {
     }
 
     @Override
+    public void setValid(boolean isValid) {
+        // NOOP
+    }
+
+    @Override
     public void recycle() {
         // NOOP
     }
@@ -158,34 +193,9 @@ public class DummyProxySession implements Session {
     }
 
     @Override
-    public void setAuthType(String authType) {
-        // NOOP
-    }
-
-    @Override
-    public void setCreationTime(long time) {
-        // NOOP
-    }
-
-    @Override
-    public void setId(String id) {
-        this.sessionId = id;
-    }
-
-    @Override
     public void setId(String id, boolean notify) {
         this.sessionId = id;
         // Ignore notify
-    }
-
-    @Override
-    public void setManager(Manager manager) {
-        // NOOP
-    }
-
-    @Override
-    public void setMaxInactiveInterval(int interval) {
-        // NOOP
     }
 
     @Override
@@ -199,18 +209,8 @@ public class DummyProxySession implements Session {
     }
 
     @Override
-    public void setPrincipal(Principal principal) {
-        // NOOP
-    }
-
-    @Override
-    public void setValid(boolean isValid) {
-        // NOOP
-    }
-
-    @Override
     public void tellChangedSessionId(String newId, String oldId,
-            boolean notifySessionListeners, boolean notifyContainerListeners) {
+                                     boolean notifySessionListeners, boolean notifyContainerListeners) {
         // NOOP
     }
 

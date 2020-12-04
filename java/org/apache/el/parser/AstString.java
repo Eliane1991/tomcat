@@ -27,11 +27,11 @@ import javax.el.ELException;
  * @author Jacob Hookom [jacob@hookom.net]
  */
 public final class AstString extends SimpleNode {
+    private volatile String string;
+
     public AstString(int id) {
         super(id);
     }
-
-    private volatile String string;
 
     public String getString() {
         if (this.string == null) {

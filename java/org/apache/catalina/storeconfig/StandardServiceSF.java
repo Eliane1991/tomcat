@@ -34,15 +34,15 @@ public class StandardServiceSF extends StoreFactoryBase {
     /**
      * Store the specified service element children.
      *
-     * @param aWriter Current output writer
-     * @param indent Indentation level
-     * @param aService Service to store
+     * @param aWriter    Current output writer
+     * @param indent     Indentation level
+     * @param aService   Service to store
      * @param parentDesc The element description
      * @throws Exception Configuration storing error
      */
     @Override
     public void storeChildren(PrintWriter aWriter, int indent, Object aService,
-            StoreDescription parentDesc) throws Exception {
+                              StoreDescription parentDesc) throws Exception {
         if (aService instanceof StandardService) {
             StandardService service = (StandardService) aService;
             // Store nested <Listener> elements

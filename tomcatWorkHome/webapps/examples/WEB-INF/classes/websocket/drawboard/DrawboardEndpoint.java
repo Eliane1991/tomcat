@@ -30,13 +30,95 @@ public final class DrawboardEndpoint extends Endpoint {
 
     private static final Log log =
             LogFactory.getLog(DrawboardEndpoint.class);
-
-
+    private static final Object roomLock = new Object();
     /**
      * Our room where players can join.
      */
     private static volatile Room room = null;
-    private static final Object roomLock = new Object();
+    /**
+     * The player that is associated with this Endpoint and the current room.
+     * Note that this variable is only accessed from the Room Thread.<br><br>
+     * <p>
+     * TODO: Currently, Tomcat uses an Endpoint instance once - however
+     * the java doc of endpoint says:
+     * "Each instance of a websocket endpoint is guaranteed not to be called by
+     * more than one thread at a time per active connection."
+     * This could mean that after calling onClose(), the instance
+     * could be reused for another connection so onOpen() will get called
+     * (possibly from another thread).<br>
+     * If this is the case, we would need a variable holder for the variables
+     * that are accessed by the Room thread, and read the reference to the holder
+     * at the beginning of onOpen, onMessage, onClose methods to ensure the room
+     * thread always gets the correct instance of the variable holder.
+     */
+    private Room.Player player;
+    private final MessageHandler.Whole<String> stringHandler =
+            new MessageHandler.Whole<String>() {
+
+                @Override
+                public void onMessage(final String message) {
+                    // Invoke handling of the message in the room.
+                    room.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+
+                                // Currently, the only types of messages the client will send
+                                // are draw messages prefixed by a Message ID
+                                // (starting with char '1'), and pong messages (starting
+                                // with char '0').
+                                // Draw messages should look like this:
+                                // ID|type,colR,colB,colG,colA,thickness,x1,y1,x2,y2,lastInChain
+
+                                boolean dontSwallowException = false;
+                                try {
+                                    char messageType = message.charAt(0);
+                                    String messageContent = message.substring(1);
+                                    switch (messageType) {
+                                        case '0':
+                                            // Pong message.
+                                            // Do nothing.
+                                            break;
+
+                                        case '1':
+                                            // Draw message
+                                            int indexOfChar = messageContent.indexOf('|');
+                                            long msgId = Long.parseLong(
+                                                    messageContent.substring(0, indexOfChar));
+
+                                            DrawMessage msg = DrawMessage.parseFromString(
+                                                    messageContent.substring(indexOfChar + 1));
+
+                                            // Don't ignore RuntimeExceptions thrown by
+                                            // this method
+                                            // TODO: Find a better solution than this variable
+                                            dontSwallowException = true;
+                                            if (player != null) {
+                                                player.handleDrawMessage(msg, msgId);
+                                            }
+                                            dontSwallowException = false;
+
+                                            break;
+                                    }
+                                } catch (ParseException e) {
+                                    // Client sent invalid data
+                                    // Ignore, TODO: maybe close connection
+                                } catch (RuntimeException e) {
+                                    // Client sent invalid data.
+                                    // Ignore, TODO: maybe close connection
+                                    if (dontSwallowException) {
+                                        throw e;
+                                    }
+                                }
+
+                            } catch (RuntimeException ex) {
+                                log.error("Unexpected exception: " + ex.toString(), ex);
+                            }
+                        }
+                    });
+
+                }
+            };
 
     public static Room getRoom(boolean create) {
         if (create) {
@@ -52,25 +134,6 @@ public final class DrawboardEndpoint extends Endpoint {
             return room;
         }
     }
-
-    /**
-     * The player that is associated with this Endpoint and the current room.
-     * Note that this variable is only accessed from the Room Thread.<br><br>
-     *
-     * TODO: Currently, Tomcat uses an Endpoint instance once - however
-     * the java doc of endpoint says:
-     * "Each instance of a websocket endpoint is guaranteed not to be called by
-     * more than one thread at a time per active connection."
-     * This could mean that after calling onClose(), the instance
-     * could be reused for another connection so onOpen() will get called
-     * (possibly from another thread).<br>
-     * If this is the case, we would need a variable holder for the variables
-     * that are accessed by the Room thread, and read the reference to the holder
-     * at the beginning of onOpen, onMessage, onClose methods to ensure the room
-     * thread always gets the correct instance of the variable holder.
-     */
-    private Room.Player player;
-
 
     @Override
     public void onOpen(Session session, EndpointConfig config) {
@@ -105,7 +168,6 @@ public final class DrawboardEndpoint extends Endpoint {
 
     }
 
-
     @Override
     public void onClose(Session session, CloseReason closeReason) {
         Room room = getRoom(false);
@@ -132,8 +194,6 @@ public final class DrawboardEndpoint extends Endpoint {
         }
     }
 
-
-
     @Override
     public void onError(Session session, Throwable t) {
         // Most likely cause is a user closing their browser. Check to see if
@@ -143,7 +203,7 @@ public final class DrawboardEndpoint extends Endpoint {
         Throwable root = t;
         while (root.getCause() != null && count < 20) {
             root = root.getCause();
-            count ++;
+            count++;
         }
         if (root instanceof EOFException) {
             // Assume this is triggered by the user closing their browser and
@@ -155,76 +215,6 @@ public final class DrawboardEndpoint extends Endpoint {
             log.error("onError: " + t.toString(), t);
         }
     }
-
-
-
-    private final MessageHandler.Whole<String> stringHandler =
-            new MessageHandler.Whole<String>() {
-
-        @Override
-        public void onMessage(final String message) {
-            // Invoke handling of the message in the room.
-            room.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-                        // Currently, the only types of messages the client will send
-                        // are draw messages prefixed by a Message ID
-                        // (starting with char '1'), and pong messages (starting
-                        // with char '0').
-                        // Draw messages should look like this:
-                        // ID|type,colR,colB,colG,colA,thickness,x1,y1,x2,y2,lastInChain
-
-                        boolean dontSwallowException = false;
-                        try {
-                            char messageType = message.charAt(0);
-                            String messageContent = message.substring(1);
-                            switch (messageType) {
-                            case '0':
-                                // Pong message.
-                                // Do nothing.
-                                break;
-
-                            case '1':
-                                // Draw message
-                                int indexOfChar = messageContent.indexOf('|');
-                                long msgId = Long.parseLong(
-                                        messageContent.substring(0, indexOfChar));
-
-                                DrawMessage msg = DrawMessage.parseFromString(
-                                        messageContent.substring(indexOfChar + 1));
-
-                                // Don't ignore RuntimeExceptions thrown by
-                                // this method
-                                // TODO: Find a better solution than this variable
-                                dontSwallowException = true;
-                                if (player != null) {
-                                    player.handleDrawMessage(msg, msgId);
-                                }
-                                dontSwallowException = false;
-
-                                break;
-                            }
-                        } catch (ParseException e) {
-                            // Client sent invalid data
-                            // Ignore, TODO: maybe close connection
-                        } catch (RuntimeException e) {
-                            // Client sent invalid data.
-                            // Ignore, TODO: maybe close connection
-                            if (dontSwallowException) {
-                                throw e;
-                            }
-                        }
-
-                    } catch (RuntimeException ex) {
-                        log.error("Unexpected exception: " + ex.toString(), ex);
-                    }
-                }
-            });
-
-        }
-    };
 
 
 }

@@ -34,11 +34,28 @@ public class ResourceBase implements Serializable, Injectable {
 
 
     // ------------------------------------------------------------- Properties
-
+    /**
+     * Holder for our configured properties.
+     */
+    private final HashMap<String, Object> properties = new HashMap<>();
+    private final List<InjectionTarget> injectionTargets = new ArrayList<>();
     /**
      * The description of this resource.
      */
     private String description = null;
+    /**
+     * The name of this resource.
+     */
+    private String name = null;
+    /**
+     * The name of the resource implementation class.
+     */
+    private String type = null;
+    private String lookupName = null;
+    /**
+     * The NamingResources with which we are associated (if any).
+     */
+    private NamingResources resources = null;
 
     public String getDescription() {
         return this.description;
@@ -47,13 +64,6 @@ public class ResourceBase implements Serializable, Injectable {
     public void setDescription(String description) {
         this.description = description;
     }
-
-
-
-    /**
-     * The name of this resource.
-     */
-    private String name = null;
 
     @Override
     public String getName() {
@@ -64,12 +74,6 @@ public class ResourceBase implements Serializable, Injectable {
         this.name = name;
     }
 
-
-    /**
-     * The name of the resource implementation class.
-     */
-    private String type = null;
-
     public String getType() {
         return this.type;
     }
@@ -77,9 +81,6 @@ public class ResourceBase implements Serializable, Injectable {
     public void setType(String type) {
         this.type = type;
     }
-
-
-    private String lookupName = null;
 
     public String getLookupName() {
         return lookupName;
@@ -93,12 +94,6 @@ public class ResourceBase implements Serializable, Injectable {
         this.lookupName = lookupName;
     }
 
-
-    /**
-     * Holder for our configured properties.
-     */
-    private final HashMap<String, Object> properties = new HashMap<>();
-
     /**
      * @param name The property name
      * @return a configured property.
@@ -109,7 +104,8 @@ public class ResourceBase implements Serializable, Injectable {
 
     /**
      * Set a configured property.
-     * @param name The property name
+     *
+     * @param name  The property name
      * @param value The property value
      */
     public void setProperty(String name, Object value) {
@@ -118,6 +114,7 @@ public class ResourceBase implements Serializable, Injectable {
 
     /**
      * Remove a configured property.
+     *
      * @param name The property name
      */
     public void removeProperty(String name) {
@@ -126,13 +123,12 @@ public class ResourceBase implements Serializable, Injectable {
 
     /**
      * List properties.
+     *
      * @return the property names iterator
      */
     public Iterator<String> listProperties() {
         return properties.keySet().iterator();
     }
-
-    private final List<InjectionTarget> injectionTargets = new ArrayList<>();
 
     @Override
     public void addInjectionTarget(String injectionTargetName, String jndiName) {
@@ -144,7 +140,6 @@ public class ResourceBase implements Serializable, Injectable {
     public List<InjectionTarget> getInjectionTargets() {
         return injectionTargets;
     }
-
 
     @Override
     public int hashCode() {
@@ -158,7 +153,6 @@ public class ResourceBase implements Serializable, Injectable {
         result = prime * result + ((lookupName == null) ? 0 : lookupName.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -216,12 +210,6 @@ public class ResourceBase implements Serializable, Injectable {
         }
         return true;
     }
-
-
-    /**
-     * The NamingResources with which we are associated (if any).
-     */
-    private NamingResources resources = null;
 
     public NamingResources getNamingResources() {
         return this.resources;

@@ -32,10 +32,8 @@ public class ServletRequestEvent extends java.util.EventObject {
      * Construct a ServletRequestEvent for the given ServletContext and
      * ServletRequest.
      *
-     * @param sc
-     *            the ServletContext of the web application.
-     * @param request
-     *            the ServletRequest that is sending the event.
+     * @param sc      the ServletContext of the web application.
+     * @param request the ServletRequest that is sending the event.
      */
     public ServletRequestEvent(ServletContext sc, ServletRequest request) {
         super(sc);
@@ -44,6 +42,7 @@ public class ServletRequestEvent extends java.util.EventObject {
 
     /**
      * Get the associated ServletRequest.
+     *
      * @return the ServletRequest that is changing.
      */
     public ServletRequest getServletRequest() {
@@ -52,6 +51,7 @@ public class ServletRequestEvent extends java.util.EventObject {
 
     /**
      * Get the associated ServletContext.
+     *
      * @return the ServletContext that is changing.
      */
     public ServletContext getServletContext() {

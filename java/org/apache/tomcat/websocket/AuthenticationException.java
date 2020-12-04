@@ -26,6 +26,7 @@ public class AuthenticationException extends Exception {
 
     /**
      * Create authentication exception.
+     *
      * @param message the error message
      */
     public AuthenticationException(String message) {

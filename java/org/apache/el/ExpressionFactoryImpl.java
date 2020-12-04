@@ -25,9 +25,8 @@ import javax.el.*;
 
 
 /**
- * @see javax.el.ExpressionFactory
- *
  * @author Jacob Hookom [jacob@hookom.net]
+ * @see javax.el.ExpressionFactory
  */
 public class ExpressionFactoryImpl extends ExpressionFactory {
 
@@ -45,8 +44,8 @@ public class ExpressionFactoryImpl extends ExpressionFactory {
 
     @Override
     public MethodExpression createMethodExpression(ELContext context,
-            String expression, Class<?> expectedReturnType,
-            Class<?>[] expectedParamTypes) {
+                                                   String expression, Class<?> expectedReturnType,
+                                                   Class<?>[] expectedParamTypes) {
         ExpressionBuilder builder = new ExpressionBuilder(expression, context);
         return builder.createMethodExpression(expectedReturnType,
                 expectedParamTypes);
@@ -54,7 +53,7 @@ public class ExpressionFactoryImpl extends ExpressionFactory {
 
     @Override
     public ValueExpression createValueExpression(ELContext context,
-            String expression, Class<?> expectedType) {
+                                                 String expression, Class<?> expectedType) {
         if (expectedType == null) {
             throw new NullPointerException(MessageFactory
                     .get("error.value.expectedType"));
@@ -65,7 +64,7 @@ public class ExpressionFactoryImpl extends ExpressionFactory {
 
     @Override
     public ValueExpression createValueExpression(Object instance,
-            Class<?> expectedType) {
+                                                 Class<?> expectedType) {
         if (expectedType == null) {
             throw new NullPointerException(MessageFactory
                     .get("error.value.expectedType"));

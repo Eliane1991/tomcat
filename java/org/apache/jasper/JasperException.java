@@ -34,7 +34,8 @@ public class JasperException extends javax.servlet.ServletException {
     /**
      * Creates a JasperException with the embedded exception and the reason for
      * throwing a JasperException.
-     * @param reason The exception message
+     *
+     * @param reason    The exception message
      * @param exception The root cause
      */
     public JasperException(String reason, Throwable exception) {
@@ -43,6 +44,7 @@ public class JasperException extends javax.servlet.ServletException {
 
     /**
      * Creates a JasperException with the embedded exception.
+     *
      * @param exception The root cause
      */
     public JasperException(Throwable exception) {

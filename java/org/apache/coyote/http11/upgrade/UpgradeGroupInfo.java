@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  This aggregates the data collected from each UpgradeInfo instance.
+ * This aggregates the data collected from each UpgradeInfo instance.
  */
 public class UpgradeGroupInfo extends BaseModelMBean {
 
@@ -58,6 +58,7 @@ public class UpgradeGroupInfo extends BaseModelMBean {
         }
         return bytes;
     }
+
     public synchronized void setBytesReceived(long bytesReceived) {
         deadBytesReceived = bytesReceived;
         for (UpgradeInfo ui : upgradeInfos) {
@@ -73,6 +74,7 @@ public class UpgradeGroupInfo extends BaseModelMBean {
         }
         return bytes;
     }
+
     public synchronized void setBytesSent(long bytesSent) {
         deadBytesSent = bytesSent;
         for (UpgradeInfo ui : upgradeInfos) {
@@ -88,6 +90,7 @@ public class UpgradeGroupInfo extends BaseModelMBean {
         }
         return msgs;
     }
+
     public synchronized void setMsgsReceived(long msgsReceived) {
         deadMsgsReceived = msgsReceived;
         for (UpgradeInfo ui : upgradeInfos) {
@@ -103,6 +106,7 @@ public class UpgradeGroupInfo extends BaseModelMBean {
         }
         return msgs;
     }
+
     public synchronized void setMsgsSent(long msgsSent) {
         deadMsgsSent = msgsSent;
         for (UpgradeInfo ui : upgradeInfos) {

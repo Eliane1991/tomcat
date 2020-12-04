@@ -59,6 +59,10 @@ public class JniLifecycleListener implements LifecycleListener {
         }
     }
 
+    public String getLibraryName() {
+        return libraryName;
+    }
+
     public void setLibraryName(String libraryName) {
 
         if (!this.libraryPath.isEmpty()) {
@@ -68,8 +72,8 @@ public class JniLifecycleListener implements LifecycleListener {
         this.libraryName = libraryName;
     }
 
-    public String getLibraryName() {
-        return libraryName;
+    public String getLibraryPath() {
+        return libraryPath;
     }
 
     public void setLibraryPath(String libraryPath) {
@@ -79,10 +83,6 @@ public class JniLifecycleListener implements LifecycleListener {
         }
 
         this.libraryPath = libraryPath;
-    }
-
-    public String getLibraryPath() {
-        return libraryPath;
     }
 
 }

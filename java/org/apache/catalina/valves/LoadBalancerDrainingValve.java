@@ -53,7 +53,7 @@ import java.io.IOException;
  * authentication valve would save a request to a protected resource.</p>
  *
  * @see <a href="https://tomcat.apache.org/connectors-doc/generic_howto/loadbalancers.html">Load
- *      balancer documentation</a>
+ * balancer documentation</a>
  */
 public class LoadBalancerDrainingValve extends ValveBase {
 
@@ -67,7 +67,7 @@ public class LoadBalancerDrainingValve extends ValveBase {
      * The HTTP response code that will be used to redirect the request
      * back to the load-balancer for re-balancing. Defaults to 307
      * (TEMPORARY_REDIRECT).
-     *
+     * <p>
      * HTTP status code 305 (USE_PROXY) might be an option, here. too.
      */
     private int _redirectStatusCode = HttpServletResponse.SC_TEMPORARY_REDIRECT;
@@ -115,7 +115,6 @@ public class LoadBalancerDrainingValve extends ValveBase {
      * in the DISABLED activation state.
      *
      * @return The cookie name used to ignore normal processing rules.
-     *
      * @see #setIgnoreCookieValue
      */
     public String getIgnoreCookieName() {
@@ -126,13 +125,12 @@ public class LoadBalancerDrainingValve extends ValveBase {
      * Sets the name of the cookie that can be used to override the
      * re-balancing behavior of this Valve when the current node is
      * in the DISABLED activation state.
-     *
+     * <p>
      * There is no default value for this setting: the ability to override
      * the re-balancing behavior of this Valve is <i>disabled</i> by default.
      *
      * @param cookieName The cookie name to use to ignore normal
      *                   processing rules.
-     *
      * @see #getIgnoreCookieValue
      */
     public void setIgnoreCookieName(String cookieName) {
@@ -145,7 +143,6 @@ public class LoadBalancerDrainingValve extends ValveBase {
      * in the DISABLED activation state.
      *
      * @return The cookie value used to ignore normal processing rules.
-     *
      * @see #setIgnoreCookieValue
      */
     public String getIgnoreCookieValue() {
@@ -161,7 +158,6 @@ public class LoadBalancerDrainingValve extends ValveBase {
      *
      * @param cookieValue The cookie value to use to ignore normal
      *                    processing rules.
-     *
      * @see #getIgnoreCookieValue
      */
     public void setIgnoreCookieValue(String cookieValue) {
@@ -170,7 +166,7 @@ public class LoadBalancerDrainingValve extends ValveBase {
 
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
-        if  ("DIS".equals(request.getAttribute(ATTRIBUTE_KEY_JK_LB_ACTIVATION)) &&
+        if ("DIS".equals(request.getAttribute(ATTRIBUTE_KEY_JK_LB_ACTIVATION)) &&
                 !request.isRequestedSessionIdValid()) {
 
             if (containerLog.isDebugEnabled()) {

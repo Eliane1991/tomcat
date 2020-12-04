@@ -29,13 +29,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * A dinky coordinator, just uses a sorted version of the member array.
  *
  * @author rnewson
- *
  */
 public class SimpleCoordinator extends ChannelInterceptorBase {
 
-    private Member[] view;
-
     private final AtomicBoolean membershipChanged = new AtomicBoolean();
+    private Member[] view;
 
     private void membershipChanged() {
         membershipChanged.set(true);
@@ -86,7 +84,7 @@ public class SimpleCoordinator extends ChannelInterceptorBase {
         }
 
         final Member[] members = getMembers();
-        final Member[] view = new Member[members.length+1];
+        final Member[] view = new Member[members.length + 1];
         System.arraycopy(members, 0, view, 0, members.length);
         view[members.length] = getLocalMember(false);
         Arrays.sort(view, AbsoluteOrder.comp);

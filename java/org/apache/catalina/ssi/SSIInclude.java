@@ -19,6 +19,7 @@ package org.apache.catalina.ssi;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
 /**
  * Implements the Server-side #include command
  *
@@ -33,7 +34,7 @@ public final class SSIInclude implements SSICommand {
      */
     @Override
     public long process(SSIMediator ssiMediator, String commandName,
-            String[] paramNames, String[] paramValues, PrintWriter writer) {
+                        String[] paramNames, String[] paramValues, PrintWriter writer) {
         long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         for (int i = 0; i < paramNames.length; i++) {

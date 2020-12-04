@@ -59,7 +59,7 @@ public class ResourcesTask extends AbstractCatalinaTask {
     /**
      * Execute the requested operation.
      *
-     * @exception BuildException if an error occurs
+     * @throws BuildException if an error occurs
      */
     @Override
     public void execute() throws BuildException {
@@ -71,7 +71,7 @@ public class ResourcesTask extends AbstractCatalinaTask {
                         URLEncoder.encode(type, getCharset()));
             } catch (UnsupportedEncodingException e) {
                 throw new BuildException
-                    ("Invalid 'charset' attribute: " + getCharset());
+                        ("Invalid 'charset' attribute: " + getCharset());
             }
         } else {
             execute("/resources");

@@ -37,6 +37,7 @@ public interface ServerEndpointConfig extends EndpointConfig {
     /**
      * Returns the path at which this WebSocket server endpoint has been
      * registered. It may be a path or a level 0 URI template.
+     *
      * @return The registered path
      */
     String getPath();
@@ -50,12 +51,6 @@ public interface ServerEndpointConfig extends EndpointConfig {
 
     public final class Builder {
 
-        public static Builder create(
-                Class<?> endpointClass, String path) {
-            return new Builder(endpointClass, path);
-        }
-
-
         private final Class<?> endpointClass;
         private final String path;
         private List<Class<? extends Encoder>> encoders =
@@ -67,11 +62,15 @@ public interface ServerEndpointConfig extends EndpointConfig {
         private Configurator configurator =
                 Configurator.fetchContainerDefaultConfigurator();
 
-
         private Builder(Class<?> endpointClass,
-                String path) {
+                        String path) {
             this.endpointClass = endpointClass;
             this.path = path;
+        }
+
+        public static Builder create(
+                Class<?> endpointClass, String path) {
+            return new Builder(endpointClass, path);
         }
 
         public ServerEndpointConfig build() {
@@ -137,11 +136,10 @@ public interface ServerEndpointConfig extends EndpointConfig {
 
     public class Configurator {
 
-        private static volatile Configurator defaultImpl = null;
         private static final Object defaultImplLock = new Object();
-
         private static final String DEFAULT_IMPL_CLASSNAME =
                 "org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator";
+        private static volatile Configurator defaultImpl = null;
 
         static Configurator fetchContainerDefaultConfigurator() {
             if (defaultImpl == null) {
@@ -188,23 +186,13 @@ public interface ServerEndpointConfig extends EndpointConfig {
             return result;
         }
 
-
-        private static class PrivilegedLoadDefault implements PrivilegedAction<Configurator> {
-
-            @Override
-            public Configurator run() {
-                return Configurator.loadDefault();
-            }
-        }
-
-
         public String getNegotiatedSubprotocol(List<String> supported,
-                List<String> requested) {
+                                               List<String> requested) {
             return fetchContainerDefaultConfigurator().getNegotiatedSubprotocol(supported, requested);
         }
 
         public List<Extension> getNegotiatedExtensions(List<Extension> installed,
-                List<Extension> requested) {
+                                                       List<Extension> requested) {
             return fetchContainerDefaultConfigurator().getNegotiatedExtensions(installed, requested);
         }
 
@@ -213,7 +201,7 @@ public interface ServerEndpointConfig extends EndpointConfig {
         }
 
         public void modifyHandshake(ServerEndpointConfig sec,
-                HandshakeRequest request, HandshakeResponse response) {
+                                    HandshakeRequest request, HandshakeResponse response) {
             fetchContainerDefaultConfigurator().modifyHandshake(sec, request, response);
         }
 
@@ -221,6 +209,14 @@ public interface ServerEndpointConfig extends EndpointConfig {
                 throws InstantiationException {
             return fetchContainerDefaultConfigurator().getEndpointInstance(
                     clazz);
+        }
+
+        private static class PrivilegedLoadDefault implements PrivilegedAction<Configurator> {
+
+            @Override
+            public Configurator run() {
+                return Configurator.loadDefault();
+            }
         }
     }
 }

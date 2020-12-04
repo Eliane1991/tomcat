@@ -36,6 +36,11 @@ class ObjectNameWrapper {
     private static final Log log = LogFactory.getLog(ObjectNameWrapper.class);
 
     private static MBeanServer MBEAN_SERVER = getPlatformMBeanServer();
+    private final ObjectName objectName;
+
+    public ObjectNameWrapper(final ObjectName objectName) {
+        this.objectName = objectName;
+    }
 
     private static MBeanServer getPlatformMBeanServer() {
         try {
@@ -57,12 +62,6 @@ class ObjectNameWrapper {
 
     public static ObjectNameWrapper wrap(final String name) throws MalformedObjectNameException {
         return wrap(new ObjectName(name));
-    }
-
-    private final ObjectName objectName;
-
-    public ObjectNameWrapper(final ObjectName objectName) {
-        this.objectName = objectName;
     }
 
     public void registerMBean(final Object object) {

@@ -23,21 +23,21 @@ public interface TcpFailureDetectorMBean {
     // Attributes
     public long getConnectTimeout();
 
+    public void setConnectTimeout(long connectTimeout);
+
     public boolean getPerformSendTest();
-
-    public boolean getPerformReadTest();
-
-    public long getReadTestTimeout();
-
-    public int getRemoveSuspectsTimeout();
-
-    public void setPerformReadTest(boolean performReadTest);
 
     public void setPerformSendTest(boolean performSendTest);
 
+    public boolean getPerformReadTest();
+
+    public void setPerformReadTest(boolean performReadTest);
+
+    public long getReadTestTimeout();
+
     public void setReadTestTimeout(long readTestTimeout);
 
-    public void setConnectTimeout(long connectTimeout);
+    public int getRemoveSuspectsTimeout();
 
     public void setRemoveSuspectsTimeout(int removeSuspectsTimeout);
 

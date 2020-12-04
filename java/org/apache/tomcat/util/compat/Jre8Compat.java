@@ -32,17 +32,13 @@ import java.util.Map;
 
 class Jre8Compat extends JreCompat {
 
-    private static final Log log = LogFactory.getLog(Jre8Compat.class);
-    private static final StringManager sm = StringManager.getManager(Jre8Compat.class);
-
-    private static final int RUNTIME_MAJOR_VERSION = 8;
-
-    private static final Method setUseCipherSuitesOrderMethod;
-    private static final Constructor<?> domainLoadStoreParameterConstructor;
-
     protected static final Method setApplicationProtocolsMethod;
     protected static final Method getApplicationProtocolMethod;
-
+    private static final Log log = LogFactory.getLog(Jre8Compat.class);
+    private static final StringManager sm = StringManager.getManager(Jre8Compat.class);
+    private static final int RUNTIME_MAJOR_VERSION = 8;
+    private static final Method setUseCipherSuitesOrderMethod;
+    private static final Constructor<?> domainLoadStoreParameterConstructor;
 
     static {
         Method m1 = null;
@@ -91,10 +87,13 @@ class Jre8Compat extends JreCompat {
         return setUseCipherSuitesOrderMethod != null;
     }
 
+    public static boolean isAlpnSupported() {
+        return setApplicationProtocolsMethod != null && getApplicationProtocolMethod != null;
+    }
 
     @Override
     public void setUseServerCipherSuitesOrder(SSLParameters sslParameters,
-            boolean useCipherSuitesOrder) {
+                                              boolean useCipherSuitesOrder) {
         try {
             setUseCipherSuitesOrderMethod.invoke(sslParameters,
                     Boolean.valueOf(useCipherSuitesOrder));
@@ -107,7 +106,6 @@ class Jre8Compat extends JreCompat {
         }
     }
 
-
     @Override
     public LoadStoreParameter getDomainLoadStoreParameter(URI uri) {
         try {
@@ -118,7 +116,6 @@ class Jre8Compat extends JreCompat {
             throw new UnsupportedOperationException(e);
         }
     }
-
 
     @Override
     public int jarFileRuntimeMajorVersion() {
@@ -138,7 +135,6 @@ class Jre8Compat extends JreCompat {
         }
     }
 
-
     @Override
     public String getApplicationProtocol(SSLEngine sslEngine) {
         if (getApplicationProtocolMethod != null) {
@@ -150,11 +146,6 @@ class Jre8Compat extends JreCompat {
         } else {
             return super.getApplicationProtocol(sslEngine);
         }
-    }
-
-
-    public static boolean isAlpnSupported() {
-        return setApplicationProtocolsMethod != null && getApplicationProtocolMethod != null;
     }
 
 

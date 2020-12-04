@@ -42,34 +42,22 @@ public class SSIMediator {
     protected static final String DEFAULT_CONFIG_ERR_MSG = "[an error occurred while processing this directive]";
     protected static final String DEFAULT_CONFIG_TIME_FMT = "%A, %d-%b-%Y %T %Z";
     protected static final String DEFAULT_CONFIG_SIZE_FMT = "abbrev";
-
-    protected String configErrMsg = DEFAULT_CONFIG_ERR_MSG;
-    protected String configTimeFmt = DEFAULT_CONFIG_TIME_FMT;
-    protected String configSizeFmt = DEFAULT_CONFIG_SIZE_FMT;
     protected final String className = getClass().getName();
     protected final SSIExternalResolver ssiExternalResolver;
     protected final long lastModifiedDate;
-    protected Strftime strftime;
     protected final SSIConditionalState conditionalState = new SSIConditionalState();
+    protected String configErrMsg = DEFAULT_CONFIG_ERR_MSG;
+    protected String configTimeFmt = DEFAULT_CONFIG_TIME_FMT;
+    protected String configSizeFmt = DEFAULT_CONFIG_SIZE_FMT;
+    protected Strftime strftime;
 
 
     public SSIMediator(SSIExternalResolver ssiExternalResolver,
-            long lastModifiedDate) {
+                       long lastModifiedDate) {
         this.ssiExternalResolver = ssiExternalResolver;
         this.lastModifiedDate = lastModifiedDate;
         setConfigTimeFmt(DEFAULT_CONFIG_TIME_FMT, true);
     }
-
-
-    public void setConfigErrMsg(String configErrMsg) {
-        this.configErrMsg = configErrMsg;
-    }
-
-
-    public void setConfigTimeFmt(String configTimeFmt) {
-        setConfigTimeFmt(configTimeFmt, false);
-    }
-
 
     public void setConfigTimeFmt(String configTimeFmt, boolean fromConstructor) {
         this.configTimeFmt = configTimeFmt;
@@ -80,26 +68,29 @@ public class SSIMediator {
         setDateVariables(fromConstructor);
     }
 
-
-    public void setConfigSizeFmt(String configSizeFmt) {
-        this.configSizeFmt = configSizeFmt;
-    }
-
-
     public String getConfigErrMsg() {
         return configErrMsg;
     }
 
+    public void setConfigErrMsg(String configErrMsg) {
+        this.configErrMsg = configErrMsg;
+    }
 
     public String getConfigTimeFmt() {
         return configTimeFmt;
     }
 
+    public void setConfigTimeFmt(String configTimeFmt) {
+        setConfigTimeFmt(configTimeFmt, false);
+    }
 
     public String getConfigSizeFmt() {
         return configSizeFmt;
     }
 
+    public void setConfigSizeFmt(String configSizeFmt) {
+        this.configSizeFmt = configSizeFmt;
+    }
 
     public SSIConditionalState getConditionalState() {
         return conditionalState;
@@ -184,6 +175,7 @@ public class SSIMediator {
     /**
      * Applies variable substitution to the specified String and returns the
      * new resolved string.
+     *
      * @param val The value which should be checked
      * @return the value after variable substitution
      */
@@ -213,7 +205,7 @@ public class SSIMediator {
             }
         }
 
-        for (int i = 0; i < sb.length();) {
+        for (int i = 0; i < sb.length(); ) {
             // Find the next $
             for (; i < sb.length(); i++) {
                 if (sb.charAt(i) == '$') {

@@ -62,26 +62,34 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ContextConfig implements LifecycleListener {
 
-    private static final Log log = LogFactory.getLog(ContextConfig.class);
-
-
     /**
      * The string resources for this package.
      */
     protected static final StringManager sm =
             StringManager.getManager(Constants.Package);
-
-
     protected static final LoginConfig DUMMY_LOGIN_CONFIG =
             new LoginConfig("NONE", null, null, null);
-
-
     /**
      * The set of Authenticators that we know how to configure.  The key is
      * the name of the implemented authentication method, and the value is
      * the fully qualified Java class name of the corresponding Valve.
      */
     protected static final Properties authenticators;
+    /**
+     * Cache of default web.xml fragments per Host
+     */
+    protected static final Map<Host, DefaultWebXmlCacheEntry> hostWebXmlCache =
+            new ConcurrentHashMap<>();
+    private static final Log log = LogFactory.getLog(ContextConfig.class);
+    /**
+     * Set used as the value for {@code JavaClassCacheEntry.sciSet} when there
+     * are no SCIs associated with a class.
+     */
+    private static final Set<ServletContainerInitializer> EMPTY_SCI_SET = Collections.emptySet();
+    /**
+     * Deployment count.
+     */
+    protected static long deploymentCount = 0L;
 
     static {
         // Load our mapping properties for the standard authenticators
@@ -97,57 +105,50 @@ public class ContextConfig implements LifecycleListener {
         authenticators = props;
     }
 
-    /**
-     * Deployment count.
-     */
-    protected static long deploymentCount = 0L;
-
-
-    /**
-     * Cache of default web.xml fragments per Host
-     */
-    protected static final Map<Host, DefaultWebXmlCacheEntry> hostWebXmlCache =
-            new ConcurrentHashMap<>();
-
-
-    /**
-     * Set used as the value for {@code JavaClassCacheEntry.sciSet} when there
-     * are no SCIs associated with a class.
-     */
-    private static final Set<ServletContainerInitializer> EMPTY_SCI_SET = Collections.emptySet();
-
 
     // ----------------------------------------------------- Instance Variables
+
+    /**
+     * Map of ServletContainerInitializer to classes they expressed interest in.
+     */
+    protected final Map<ServletContainerInitializer, Set<Class<?>>> initializerClassMap =
+            new LinkedHashMap<>();
+    /**
+     * Map of Types to ServletContainerInitializer that are interested in those
+     * types.
+     */
+    protected final Map<Class<?>, Set<ServletContainerInitializer>> typeInitializerMap =
+            new HashMap<>();
     /**
      * Custom mappings of login methods to authenticators
      */
     protected Map<String, Authenticator> customAuthenticators;
-
-
     /**
      * The Context we are associated with.
      */
     protected volatile Context context = null;
-
-
     /**
      * The default web application's deployment descriptor location.
      */
     protected String defaultWebXml = null;
-
-
     /**
      * Track any fatal errors during startup configuration processing.
      */
     protected boolean ok = false;
-
-
     /**
      * Original docBase.
      */
     protected String originalDocBase = null;
-
-
+    /**
+     * Flag that indicates if at least one {@link HandlesTypes} entry is present
+     * that represents an annotation.
+     */
+    protected boolean handlesTypesAnnotations = false;
+    /**
+     * Flag that indicates if at least one {@link HandlesTypes} entry is present
+     * that represents a non-annotation.
+     */
+    protected boolean handlesTypesNonAnnotations = false;
     /**
      * Anti-locking docBase. It is a path to a copy of the web application
      * in the java.io.tmpdir directory. This path is always an absolute one.
@@ -155,33 +156,17 @@ public class ContextConfig implements LifecycleListener {
     private File antiLockingDocBase = null;
 
 
-    /**
-     * Map of ServletContainerInitializer to classes they expressed interest in.
-     */
-    protected final Map<ServletContainerInitializer, Set<Class<?>>> initializerClassMap =
-            new LinkedHashMap<>();
-
-    /**
-     * Map of Types to ServletContainerInitializer that are interested in those
-     * types.
-     */
-    protected final Map<Class<?>, Set<ServletContainerInitializer>> typeInitializerMap =
-            new HashMap<>();
-
-    /**
-     * Flag that indicates if at least one {@link HandlesTypes} entry is present
-     * that represents an annotation.
-     */
-    protected boolean handlesTypesAnnotations = false;
-
-    /**
-     * Flag that indicates if at least one {@link HandlesTypes} entry is present
-     * that represents a non-annotation.
-     */
-    protected boolean handlesTypesNonAnnotations = false;
-
-
     // ------------------------------------------------------------- Properties
+
+    private static final String getClassName(String internalForm) {
+        if (!internalForm.startsWith("L")) {
+            return internalForm;
+        }
+
+        // Assume starts with L, ends with ; and uses / rather than .
+        return internalForm.substring(1,
+                internalForm.length() - 1).replace('/', '.');
+    }
 
     /**
      * Obtain the location of the default deployment descriptor.
@@ -196,7 +181,6 @@ public class ContextConfig implements LifecycleListener {
         return defaultWebXml;
     }
 
-
     /**
      * Set the location of the default deployment descriptor.
      *
@@ -207,6 +191,8 @@ public class ContextConfig implements LifecycleListener {
         this.defaultWebXml = path;
     }
 
+
+    // --------------------------------------------------------- Public Methods
 
     /**
      * Sets custom mappings of login methods to authenticators.
@@ -220,8 +206,7 @@ public class ContextConfig implements LifecycleListener {
     }
 
 
-    // --------------------------------------------------------- Public Methods
-
+    // -------------------------------------------------------- protected Methods
 
     /**
      * Process events for an associated Context.
@@ -259,10 +244,6 @@ public class ContextConfig implements LifecycleListener {
 
     }
 
-
-    // -------------------------------------------------------- protected Methods
-
-
     /**
      * Process the application classes annotations, if it exists.
      */
@@ -278,7 +259,6 @@ public class ContextConfig implements LifecycleListener {
                     ((StandardContext) context).getStartupTime());
         }
     }
-
 
     /**
      * Set up an Authenticator automatically if required, and one has not
@@ -358,7 +338,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     /**
      * Create (if necessary) and return a Digester configured to process the
      * context configuration descriptor for an application.
@@ -436,7 +415,6 @@ public class ContextConfig implements LifecycleListener {
 
     }
 
-
     /**
      * Process a context.xml.
      *
@@ -506,7 +484,6 @@ public class ContextConfig implements LifecycleListener {
             }
         }
     }
-
 
     /**
      * Adjust docBase.
@@ -618,7 +595,6 @@ public class ContextConfig implements LifecycleListener {
         context.setDocBase(docBase);
     }
 
-
     protected void antiLocking() {
 
         if ((context instanceof StandardContext)
@@ -671,7 +647,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     /**
      * Process a "init" event for this Context.
      */
@@ -690,7 +665,6 @@ public class ContextConfig implements LifecycleListener {
         contextConfig(contextDigester);
     }
 
-
     /**
      * Process a "before start" event for this Context.
      */
@@ -705,7 +679,6 @@ public class ContextConfig implements LifecycleListener {
 
         antiLocking();
     }
-
 
     /**
      * Process a "contextConfig" event for this Context.
@@ -763,7 +736,6 @@ public class ContextConfig implements LifecycleListener {
         }
 
     }
-
 
     /**
      * Process a "stop" event for this Context.
@@ -872,7 +844,6 @@ public class ContextConfig implements LifecycleListener {
 
     }
 
-
     /**
      * Process a "destroy" event for this Context.
      */
@@ -896,7 +867,6 @@ public class ContextConfig implements LifecycleListener {
             }
         }
     }
-
 
     private Server getServer() {
         Container c = context;
@@ -959,7 +929,6 @@ public class ContextConfig implements LifecycleListener {
         }
 
     }
-
 
     protected File getHostConfigBase() {
         File file = null;
@@ -1105,7 +1074,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     protected void processClasses(WebXml webXml, Set<WebXml> orderedFragments) {
         // Step 4. Process /WEB-INF/classes for annotations and
         // @HandlesTypes matches
@@ -1138,7 +1106,6 @@ public class ContextConfig implements LifecycleListener {
         // Cache, if used, is no longer required so clear it
         javaClassCache.clear();
     }
-
 
     private void configureContext(WebXml webxml) {
         // As far as possible, process in alphabetical order so it is easy to
@@ -1359,7 +1326,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     private WebXml getDefaultWebXmlFragment(WebXmlParser webXmlParser) {
 
         // Host should never be null
@@ -1474,7 +1440,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     private void convertJsps(WebXml webXml) {
         Map<String, String> jspInitParams;
         ServletDef jspServlet = webXml.getServlets().get("jsp");
@@ -1584,7 +1549,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     /**
      * Scan JARs that contain web-fragment.xml files that will be used to
      * configure this application to see if they also contain static resources.
@@ -1632,7 +1596,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     /**
      * Identify the default web.xml to be used and obtain an input source for
      * it.
@@ -1656,7 +1619,6 @@ public class ContextConfig implements LifecycleListener {
         return getWebXmlSource(defaultWebXml,
                 context.getCatalinaBase().getPath());
     }
-
 
     /**
      * Identify the host web.xml to be used and obtain an input source for
@@ -1783,7 +1745,6 @@ public class ContextConfig implements LifecycleListener {
         return source;
     }
 
-
     /**
      * Scan /WEB-INF/lib for JARs and for each one found add it and any
      * /META-INF/web-fragment.xml to the resulting Map. web-fragment.xml files
@@ -1880,7 +1841,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     protected void processAnnotationsUrl(URL url, WebXml fragment,
                                          boolean handlesTypesOnly, Map<String, JavaClassCacheEntry> javaClassCache) {
         if (url == null) {
@@ -1901,7 +1861,6 @@ public class ContextConfig implements LifecycleListener {
         }
 
     }
-
 
     protected void processAnnotationsJar(URL url, WebXml fragment,
                                          boolean handlesTypesOnly, Map<String, JavaClassCacheEntry> javaClassCache) {
@@ -1934,7 +1893,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     protected void processAnnotationsFile(File file, WebXml fragment,
                                           boolean handlesTypesOnly, Map<String, JavaClassCacheEntry> javaClassCache) {
 
@@ -1964,7 +1922,6 @@ public class ContextConfig implements LifecycleListener {
         }
     }
 
-
     protected void processAnnotationsStream(InputStream is, WebXml fragment,
                                             boolean handlesTypesOnly, Map<String, JavaClassCacheEntry> javaClassCache)
             throws ClassFormatException, IOException {
@@ -1979,7 +1936,6 @@ public class ContextConfig implements LifecycleListener {
 
         processClass(fragment, clazz);
     }
-
 
     protected void processClass(WebXml fragment, JavaClass clazz) {
         AnnotationEntry[] annotationsEntries = clazz.getAnnotationEntries();
@@ -1999,7 +1955,6 @@ public class ContextConfig implements LifecycleListener {
             }
         }
     }
-
 
     /**
      * For classes packaged with the web application, the class and each
@@ -2089,7 +2044,6 @@ public class ContextConfig implements LifecycleListener {
             }
         }
     }
-
 
     private String classHierarchyToString(String className,
                                           JavaClassCacheEntry entry, Map<String, JavaClassCacheEntry> javaClassCache) {
@@ -2206,16 +2160,6 @@ public class ContextConfig implements LifecycleListener {
             }
         }
         return EMPTY_SCI_SET;
-    }
-
-    private static final String getClassName(String internalForm) {
-        if (!internalForm.startsWith("L")) {
-            return internalForm;
-        }
-
-        // Assume starts with L, ends with ; and uses / rather than .
-        return internalForm.substring(1,
-                internalForm.length() - 1).replace('/', '.');
     }
 
     protected void processAnnotationWebServlet(String className,

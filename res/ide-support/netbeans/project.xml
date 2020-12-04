@@ -36,11 +36,11 @@
             <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>Tomcat 8.0</name>
             <properties>
-              <!-- load the local Tomcat build.properties, especially base.path. -->
-              <property-file>./build.properties</property-file>
-              <!-- prime some NetBeans build properties for Tomcat, which will   -->
-              <!-- also be defined in the standard properties.                   -->
-              <property-file>./nbproject/nb-tomcat-project.properties</property-file>
+                <!-- load the local Tomcat build.properties, especially base.path. -->
+                <property-file>./build.properties</property-file>
+                <!-- prime some NetBeans build properties for Tomcat, which will   -->
+                <!-- also be defined in the standard properties.                   -->
+                <property-file>./nbproject/nb-tomcat-project.properties</property-file>
             </properties>
             <folders>
                 <source-folder>
@@ -178,7 +178,9 @@
             -->
             <compilation-unit>
                 <package-root>java</package-root>
-                <classpath mode="compile">${base.path}/jaxrpc-1.1-rc4/geronimo-spec-jaxrpc-1.1-rc4.jar:${base.path}/wsdl4j-1.6.3/wsdl4j-1.6.3.jar:${base.path}/ecj-4.6.3/ecj-4.6.3.jar:${ant.includes}/</classpath>
+                <classpath mode="compile">
+                    ${base.path}/jaxrpc-1.1-rc4/geronimo-spec-jaxrpc-1.1-rc4.jar:${base.path}/wsdl4j-1.6.3/wsdl4j-1.6.3.jar:${base.path}/ecj-4.6.3/ecj-4.6.3.jar:${ant.includes}/
+                </classpath>
                 <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -189,7 +191,9 @@
             <compilation-unit>
                 <package-root>test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">output/classes:output/testclasses:${base.path}/junit-4.13/junit-4.13.jar:${base.path}/easymock-3.6/easymock-3.6.jar:${base.path}/objenesis-2.6/objenesis-2.6.jar:${base.path}/cglib-3.3.0/cglib-nodep-3.3.0.jar:${base.path}/hamcrest/hamcrest-2.2.jar</classpath>
+                <classpath mode="compile">
+                    output/classes:output/testclasses:${base.path}/junit-4.13/junit-4.13.jar:${base.path}/easymock-3.6/easymock-3.6.jar:${base.path}/objenesis-2.6/objenesis-2.6.jar:${base.path}/cglib-3.3.0/cglib-nodep-3.3.0.jar:${base.path}/hamcrest/hamcrest-2.2.jar
+                </classpath>
                 <source-level>1.7</source-level>
             </compilation-unit>
         </java-data>

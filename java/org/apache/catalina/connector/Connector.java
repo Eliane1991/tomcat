@@ -56,99 +56,60 @@ import java.util.Locale;
  */
 public class Connector extends LifecycleMBeanBase {
 
-    private static final Log log = LogFactory.getLog(Connector.class);
-
-
     /**
      * Alternate flag to enable recycling of facades.
      */
     public static final boolean RECYCLE_FACADES =
             Boolean.parseBoolean(System.getProperty("org.apache.catalina.connector.RECYCLE_FACADES", "false"));
-
-
     public static final String INTERNAL_EXECUTOR_NAME = "Internal";
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm = StringManager.getManager(Connector.class);
 
 
     // ------------------------------------------------------------ Constructor
-
-    public Connector() {
-        this(null);
-    }
-
-
-    public Connector(String protocol) {
-        /**
-         * 设置protocolHandler的类名,
-         * protocol 支持:HTTP/1.1 ,AJP/1.3
-         * protocolHandlerClassName
-         */
-        setProtocol(protocol);
-        // Instantiate protocol handler
-        ProtocolHandler p = null;
-        try {
-            Class<?> clazz = Class.forName(protocolHandlerClassName);
-            p = (ProtocolHandler) clazz.getConstructor().newInstance();
-        } catch (Exception e) {
-            log.error(sm.getString(
-                    "coyoteConnector.protocolHandlerInstantiationFailed"), e);
-        } finally {
-
-            // 完成 protocolHandler 的初始化
-            this.protocolHandler = p;
-        }
-
-        if (Globals.STRICT_SERVLET_COMPLIANCE) {
-            uriCharset = StandardCharsets.ISO_8859_1;
-        } else {
-            uriCharset = StandardCharsets.UTF_8;
-        }
-
-        // Default for Connector depends on this (deprecated) system property
-        if (Boolean.parseBoolean(System.getProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "false"))) {
-            encodedSolidusHandling = EncodedSolidusHandling.DECODE;
-        }
-    }
+    protected static final HashMap<String, String> replacements = new HashMap<>();
+    private static final Log log = LogFactory.getLog(Connector.class);
 
 
     // ----------------------------------------------------- Instance Variables
 
+    static {
+        replacements.put("acceptCount", "backlog");
+        replacements.put("connectionLinger", "soLinger");
+        replacements.put("connectionTimeout", "soTimeout");
+        replacements.put("rootFile", "rootfile");
+    }
 
+    /**
+     * Coyote protocol handler.
+     */
+    protected final ProtocolHandler protocolHandler;
     /**
      * The <code>Service</code> we are associated with (if any).
      */
     protected Service service = null;
-
-
     /**
      * Do we allow TRACE ?
      */
     protected boolean allowTrace = false;
-
-
     /**
      * Default timeout for asynchronous requests (ms).
      */
     protected long asyncTimeout = 30000;
-
-
     /**
      * The "enable DNS lookups" flag for this Connector.
      */
     protected boolean enableLookups = false;
-
-
     /**
      * Is generation of X-Powered-By response header enabled/disabled?
      */
     protected boolean xpoweredBy = false;
-
-
     /**
      * The port number on which we listen for requests.
      */
     protected int port = -1;
-
-
     /**
      * The server name to which we should pretend requests to this Connector
      * were directed.  This is useful when operating Tomcat behind a proxy
@@ -156,8 +117,6 @@ public class Connector extends LifecycleMBeanBase {
      * the server name included in the <code>Host</code> header is used.
      */
     protected String proxyName = null;
-
-
     /**
      * The server port to which we should pretend requests to this Connector
      * were directed.  This is useful when operating Tomcat behind a proxy
@@ -165,8 +124,6 @@ public class Connector extends LifecycleMBeanBase {
      * the port number specified by the <code>port</code> property is used.
      */
     protected int proxyPort = 0;
-
-
     /**
      * The flag that controls recycling of the facades of the request
      * processing objects. If set to <code>true</code> the object facades
@@ -175,40 +132,20 @@ public class Connector extends LifecycleMBeanBase {
      * always discarded.
      */
     protected boolean discardFacades = RECYCLE_FACADES;
-
-
     /**
      * The redirect port for non-SSL to SSL redirects.
      */
     protected int redirectPort = 443;
-
-
     /**
      * The request scheme that will be set on all requests received
      * through this connector.
      */
     protected String scheme = "http";
-
-
     /**
      * The secure connection flag that will be set on all requests received
      * through this connector.
      */
     protected boolean secure = false;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static final StringManager sm = StringManager.getManager(Connector.class);
-
-
-    /**
-     * The maximum number of cookies permitted for a request. Use a value less
-     * than zero for no limit. Defaults to 200.
-     */
-    private int maxCookieCount = 200;
-
     /**
      * The maximum number of parameters (GET plus POST) which will be
      * automatically parsed by the container. 10000 by default. A value of less
@@ -253,20 +190,10 @@ public class Connector extends LifecycleMBeanBase {
      */
     protected String protocolHandlerClassName =
             "org.apache.coyote.http11.Http11NioProtocol";
-
-
-    /**
-     * Coyote protocol handler.
-     */
-    protected final ProtocolHandler protocolHandler;
-
-
     /**
      * Coyote adapter.
      */
     protected Adapter adapter = null;
-
-
     /**
      * URI encoding.
      *
@@ -274,21 +201,24 @@ public class Connector extends LifecycleMBeanBase {
      */
     @Deprecated
     protected String URIEncoding = null;
-
-
     /**
      * @deprecated This will be removed in 9.0.x onwards
      */
     @Deprecated
     protected String URIEncodingLower = null;
-
-
+    /**
+     * URI encoding as body.
+     */
+    protected boolean useBodyEncodingForURI = false;
+    /**
+     * The maximum number of cookies permitted for a request. Use a value less
+     * than zero for no limit. Defaults to 200.
+     */
+    private int maxCookieCount = 200;
     /**
      * The URI encoding in use.
      */
     private Charset uriCharset = StandardCharsets.UTF_8;
-
-
     /**
      * The behavior when an encoded solidus (slash) is submitted.
      */
@@ -297,19 +227,41 @@ public class Connector extends LifecycleMBeanBase {
             UDecoder.ALLOW_ENCODED_SLASH ? EncodedSolidusHandling.DECODE : EncodedSolidusHandling.REJECT;
 
 
-    /**
-     * URI encoding as body.
-     */
-    protected boolean useBodyEncodingForURI = false;
+    public Connector() {
+        this(null);
+    }
 
+    public Connector(String protocol) {
+        /**
+         * 设置protocolHandler的类名,
+         * protocol 支持:HTTP/1.1 ,AJP/1.3
+         * protocolHandlerClassName
+         */
+        setProtocol(protocol);
+        // Instantiate protocol handler
+        ProtocolHandler p = null;
+        try {
+            Class<?> clazz = Class.forName(protocolHandlerClassName);
+            p = (ProtocolHandler) clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            log.error(sm.getString(
+                    "coyoteConnector.protocolHandlerInstantiationFailed"), e);
+        } finally {
 
-    protected static final HashMap<String, String> replacements = new HashMap<>();
+            // 完成 protocolHandler 的初始化
+            this.protocolHandler = p;
+        }
 
-    static {
-        replacements.put("acceptCount", "backlog");
-        replacements.put("connectionLinger", "soLinger");
-        replacements.put("connectionTimeout", "soTimeout");
-        replacements.put("rootFile", "rootfile");
+        if (Globals.STRICT_SERVLET_COMPLIANCE) {
+            uriCharset = StandardCharsets.ISO_8859_1;
+        } else {
+            uriCharset = StandardCharsets.UTF_8;
+        }
+
+        // Default for Connector depends on this (deprecated) system property
+        if (Boolean.parseBoolean(System.getProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "false"))) {
+            encodedSolidusHandling = EncodedSolidusHandling.DECODE;
+        }
     }
 
 
@@ -808,25 +760,6 @@ public class Connector extends LifecycleMBeanBase {
         return uriCharset.name();
     }
 
-
-    /**
-     * @return the character encoding to be used for the URI using lower case.
-     * @deprecated This will be removed in 9.0.x onwards
-     */
-    @Deprecated
-    public String getURIEncodingLower() {
-        return uriCharset.name().toLowerCase(Locale.ENGLISH);
-    }
-
-
-    /**
-     * @return The Charset to use to convert raw URI bytes (after %nn decoding)
-     * to characters. This will never be null
-     */
-    public Charset getURICharset() {
-        return uriCharset;
-    }
-
     /**
      * Set the URI encoding to be used for the URI.
      *
@@ -845,6 +778,22 @@ public class Connector extends LifecycleMBeanBase {
         setProperty("uRIEncoding", URIEncoding);
     }
 
+    /**
+     * @return the character encoding to be used for the URI using lower case.
+     * @deprecated This will be removed in 9.0.x onwards
+     */
+    @Deprecated
+    public String getURIEncodingLower() {
+        return uriCharset.name().toLowerCase(Locale.ENGLISH);
+    }
+
+    /**
+     * @return The Charset to use to convert raw URI bytes (after %nn decoding)
+     * to characters. This will never be null
+     */
+    public Charset getURICharset() {
+        return uriCharset;
+    }
 
     /**
      * @return the true if the entity body encoding should be used for the URI.
@@ -889,6 +838,14 @@ public class Connector extends LifecycleMBeanBase {
         setProperty("xpoweredBy", String.valueOf(xpoweredBy));
     }
 
+    /**
+     * Test if IP-based virtual hosting is enabled.
+     *
+     * @return <code>true</code> if IP vhosts are enabled
+     */
+    public boolean getUseIPVHosts() {
+        return useIPVHosts;
+    }
 
     /**
      * Enable the use of IP-based virtual hosting.
@@ -900,17 +857,6 @@ public class Connector extends LifecycleMBeanBase {
         this.useIPVHosts = useIPVHosts;
         setProperty("useIPVHosts", String.valueOf(useIPVHosts));
     }
-
-
-    /**
-     * Test if IP-based virtual hosting is enabled.
-     *
-     * @return <code>true</code> if IP vhosts are enabled
-     */
-    public boolean getUseIPVHosts() {
-        return useIPVHosts;
-    }
-
 
     public String getExecutorName() {
         Object obj = protocolHandler.getExecutor();

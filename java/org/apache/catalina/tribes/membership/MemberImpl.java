@@ -42,10 +42,10 @@ public class MemberImpl implements Member, java.io.Externalizable {
      * @deprecated This will be removed without replacement in Tomact 10 onwards
      */
     @Deprecated
-    public static final boolean DO_DNS_LOOKUPS = Boolean.parseBoolean(System.getProperty("org.apache.catalina.tribes.dns_lookups","false"));
+    public static final boolean DO_DNS_LOOKUPS = Boolean.parseBoolean(System.getProperty("org.apache.catalina.tribes.dns_lookups", "false"));
 
-    public static final transient byte[] TRIBES_MBR_BEGIN = new byte[] {84, 82, 73, 66, 69, 83, 45, 66, 1, 0};
-    public static final transient byte[] TRIBES_MBR_END   = new byte[] {84, 82, 73, 66, 69, 83, 45, 69, 1, 0};
+    public static final transient byte[] TRIBES_MBR_BEGIN = new byte[]{84, 82, 73, 66, 69, 83, 45, 66, 1, 0};
+    public static final transient byte[] TRIBES_MBR_END = new byte[]{84, 82, 73, 66, 69, 83, 45, 69, 1, 0};
     protected static final StringManager sm = StringManager.getManager(Constants.Package);
 
     /**
@@ -126,10 +126,9 @@ public class MemberImpl implements Member, java.io.Externalizable {
     /**
      * Construct a new member object.
      *
-     * @param host - the tcp listen host
-     * @param port - the tcp listen port
+     * @param host      - the tcp listen host
+     * @param port      - the tcp listen port
      * @param aliveTime - the number of milliseconds since this member was created
-     *
      * @throws IOException If there is an error converting the host name to an
      *                     IP address
      */
@@ -138,180 +137,26 @@ public class MemberImpl implements Member, java.io.Externalizable {
                       long aliveTime) throws IOException {
         setHostname(host);
         this.port = port;
-        this.memberAliveTime=aliveTime;
+        this.memberAliveTime = aliveTime;
     }
 
     public MemberImpl(String host,
                       int port,
                       long aliveTime,
                       byte[] payload) throws IOException {
-        this(host,port,aliveTime);
+        this(host, port, aliveTime);
         setPayload(payload);
     }
 
-    @Override
-    public boolean isReady() {
-        return SenderState.getSenderState(this).isReady();
-    }
-    @Override
-    public boolean isSuspect() {
-        return SenderState.getSenderState(this).isSuspect();
-    }
-    @Override
-    public boolean isFailing() {
-        return SenderState.getSenderState(this).isFailing();
-    }
-
-    /**
-     * Increment the message count.
-     */
-    protected void inc() {
-        msgCount.incrementAndGet();
-    }
-
-    /**
-     * Create a data package to send over the wire representing this member.
-     * This is faster than serialization.
-     * @return - the bytes for this member deserialized
-     */
-    public byte[] getData()  {
-        return getData(true);
-    }
-
-
-    @Override
-    public byte[] getData(boolean getalive)  {
-        return getData(getalive,false);
-    }
-
-
-    @Override
-    public synchronized int getDataLength() {
-        return TRIBES_MBR_BEGIN.length+ //start pkg
-               4+ //data length
-               8+ //alive time
-               4+ //port
-               4+ //secure port
-               4+ //udp port
-               1+ //host length
-               host.length+ //host
-               4+ //command length
-               command.length+ //command
-               4+ //domain length
-               domain.length+ //domain
-               16+ //unique id
-               4+ //payload length
-               payload.length+ //payload
-               TRIBES_MBR_END.length; //end pkg
-    }
-
-
-    @Override
-    public synchronized byte[] getData(boolean getalive, boolean reset)  {
-        if (reset) {
-            dataPkg = null;
-        }
-        // Look in cache first
-        if (dataPkg != null) {
-            if (getalive) {
-                // You'd be surprised, but System.currentTimeMillis
-                // shows up on the profiler
-                long alive = System.currentTimeMillis() - getServiceStartTime();
-                byte[] result = dataPkg.clone();
-                XByteBuffer.toBytes(alive, result, TRIBES_MBR_BEGIN.length + 4);
-                dataPkg = result;
-            }
-            return dataPkg;
-        }
-
-        //package looks like
-        //start package TRIBES_MBR_BEGIN.length
-        //package length - 4 bytes
-        //alive - 8 bytes
-        //port - 4 bytes
-        //secure port - 4 bytes
-        //udp port - 4 bytes
-        //host length - 1 byte
-        //host - hl bytes
-        //clen - 4 bytes
-        //command - clen bytes
-        //dlen - 4 bytes
-        //domain - dlen bytes
-        //uniqueId - 16 bytes
-        //payload length - 4 bytes
-        //payload plen bytes
-        //end package TRIBES_MBR_END.length
-        long alive=System.currentTimeMillis()-getServiceStartTime();
-        byte[] data = new byte[getDataLength()];
-
-        int bodylength = (getDataLength() - TRIBES_MBR_BEGIN.length - TRIBES_MBR_END.length - 4);
-
-        int pos = 0;
-
-        //TRIBES_MBR_BEGIN
-        System.arraycopy(TRIBES_MBR_BEGIN,0,data,pos,TRIBES_MBR_BEGIN.length);
-        pos += TRIBES_MBR_BEGIN.length;
-
-        //body length
-        XByteBuffer.toBytes(bodylength,data,pos);
-        pos += 4;
-
-        //alive data
-        XByteBuffer.toBytes(alive,data,pos);
-        pos += 8;
-        //port
-        XByteBuffer.toBytes(port,data,pos);
-        pos += 4;
-        //secure port
-        XByteBuffer.toBytes(securePort,data,pos);
-        pos += 4;
-        //udp port
-        XByteBuffer.toBytes(udpPort,data,pos);
-        pos += 4;
-        //host length
-        data[pos++] = (byte) host.length;
-        //host
-        System.arraycopy(host,0,data,pos,host.length);
-        pos+=host.length;
-        //clen - 4 bytes
-        XByteBuffer.toBytes(command.length,data,pos);
-        pos+=4;
-        //command - clen bytes
-        System.arraycopy(command,0,data,pos,command.length);
-        pos+=command.length;
-        //dlen - 4 bytes
-        XByteBuffer.toBytes(domain.length,data,pos);
-        pos+=4;
-        //domain - dlen bytes
-        System.arraycopy(domain,0,data,pos,domain.length);
-        pos+=domain.length;
-        //unique Id
-        System.arraycopy(uniqueId,0,data,pos,uniqueId.length);
-        pos+=uniqueId.length;
-        //payload
-        XByteBuffer.toBytes(payload.length,data,pos);
-        pos+=4;
-        System.arraycopy(payload,0,data,pos,payload.length);
-        pos+=payload.length;
-
-        //TRIBES_MBR_END
-        System.arraycopy(TRIBES_MBR_END,0,data,pos,TRIBES_MBR_END.length);
-        pos += TRIBES_MBR_END.length;
-
-        //create local data
-        dataPkg = data;
-        return data;
-    }
     /**
      * Deserializes a member from data sent over the wire.
      *
      * @param data   The bytes received
      * @param member The member object to populate
-     *
      * @return The populated member object.
      */
     public static Member getMember(byte[] data, MemberImpl member) {
-        return getMember(data,0,data.length,member);
+        return getMember(data, 0, data.length, member);
     }
 
     public static Member getMember(byte[] data, int offset, int length, MemberImpl member) {
@@ -335,25 +180,25 @@ public class MemberImpl implements Member, java.io.Externalizable {
 
         int pos = offset;
 
-        if (XByteBuffer.firstIndexOf(data,offset,TRIBES_MBR_BEGIN)!=pos) {
+        if (XByteBuffer.firstIndexOf(data, offset, TRIBES_MBR_BEGIN) != pos) {
             throw new IllegalArgumentException(sm.getString("memberImpl.invalid.package.begin", org.apache.catalina.tribes.util.Arrays.toString(TRIBES_MBR_BEGIN)));
         }
 
-        if ( length < (TRIBES_MBR_BEGIN.length+4) ) {
+        if (length < (TRIBES_MBR_BEGIN.length + 4)) {
             throw new ArrayIndexOutOfBoundsException(sm.getString("memberImpl.package.small"));
         }
 
         pos += TRIBES_MBR_BEGIN.length;
 
-        int bodylength = XByteBuffer.toInt(data,pos);
+        int bodylength = XByteBuffer.toInt(data, pos);
         pos += 4;
 
-        if ( length < (bodylength+4+TRIBES_MBR_BEGIN.length+TRIBES_MBR_END.length) ) {
+        if (length < (bodylength + 4 + TRIBES_MBR_BEGIN.length + TRIBES_MBR_END.length)) {
             throw new ArrayIndexOutOfBoundsException(sm.getString("memberImpl.notEnough.bytes"));
         }
 
-        int endpos = pos+bodylength;
-        if (XByteBuffer.firstIndexOf(data,endpos,TRIBES_MBR_END)!=endpos) {
+        int endpos = pos + bodylength;
+        if (XByteBuffer.firstIndexOf(data, endpos, TRIBES_MBR_END) != endpos) {
             throw new IllegalArgumentException(sm.getString("memberImpl.invalid.package.end", org.apache.catalina.tribes.util.Arrays.toString(TRIBES_MBR_END)));
         }
 
@@ -421,142 +266,24 @@ public class MemberImpl implements Member, java.io.Externalizable {
     }
 
     public static Member getMember(byte[] data) {
-       return getMember(data,new MemberImpl());
+        return getMember(data, new MemberImpl());
     }
 
     public static Member getMember(byte[] data, int offset, int length) {
-       return getMember(data,offset,length,new MemberImpl());
+        return getMember(data, offset, length, new MemberImpl());
     }
 
-    /**
-     * Return the name of this object
-     * @return a unique name to the cluster
-     */
-    @Override
-    public String getName() {
-        return "tcp://"+getHostname()+":"+getPort();
-    }
-
-    /**
-     * Return the listen port of this member
-     * @return - tcp listen port
-     */
-    @Override
-    public int getPort()  {
-        return this.port;
-    }
-
-    /**
-     * Return the TCP listen host for this member
-     * @return IP address or host name
-     */
-    @Override
-    public byte[] getHost()  {
-        return host;
-    }
-
-    public String getHostname() {
-        if ( this.hostname != null ) return hostname;
-        else {
-            try {
-                byte[] host = this.host;
-                if (DO_DNS_LOOKUPS)
-                    this.hostname = java.net.InetAddress.getByAddress(host).getHostName();
-                else
-                    this.hostname = org.apache.catalina.tribes.util.Arrays.toString(host,0,host.length,true);
-                return this.hostname;
-            }catch ( IOException x ) {
-                throw new RuntimeException(sm.getString("memberImpl.unableParse.hostname"),x);
-            }
-        }
-    }
-
-    public int getMsgCount() {
-        return msgCount.get();
-    }
-
-    /**
-     * Contains information on how long this member has been online.
-     * The result is the number of milli seconds this member has been
-     * broadcasting its membership to the cluster.
-     * @return nr of milliseconds since this member started.
-     */
-    @Override
-    public long getMemberAliveTime() {
-       return memberAliveTime;
-    }
-
-    public long getServiceStartTime() {
-        return serviceStartTime;
-    }
-
-    @Override
-    public byte[] getUniqueId() {
-        return uniqueId;
-    }
-
-    @Override
-    public byte[] getPayload() {
-        return payload;
-    }
-
-    @Override
-    public byte[] getCommand() {
-        return command;
-    }
-
-    @Override
-    public byte[] getDomain() {
-        return domain;
-    }
-
-    @Override
-    public int getSecurePort() {
-        return securePort;
-    }
-
-    @Override
-    public int getUdpPort() {
-        return udpPort;
-    }
-
-    @Override
-    public void setMemberAliveTime(long time) {
-       memberAliveTime=time;
-    }
-
-
-
-    /**
-     * String representation of this object
-     */
-    @Override
-    public String toString()  {
-        StringBuilder buf = new StringBuilder(getClass().getName());
-        buf.append('[');
-        buf.append(getName()).append(',');
-        buf.append(getHostname()).append(',');
-        buf.append(port).append(", alive=");
-        buf.append(memberAliveTime).append(", ");
-        buf.append("securePort=").append(securePort).append(", ");
-        buf.append("UDP Port=").append(udpPort).append(", ");
-        buf.append("id=").append(bToS(this.uniqueId)).append(", ");
-        buf.append("payload=").append(bToS(this.payload,8)).append(", ");
-        buf.append("command=").append(bToS(this.command,8)).append(", ");
-        buf.append("domain=").append(bToS(this.domain,8));
-        buf.append(']');
-        return buf.toString();
-    }
     public static String bToS(byte[] data) {
-        return bToS(data,data.length);
+        return bToS(data, data.length);
     }
+
     public static String bToS(byte[] data, int max) {
-        StringBuilder buf = new StringBuilder(4*16);
+        StringBuilder buf = new StringBuilder(4 * 16);
         buf.append('{');
-        for (int i=0; data!=null && i<data.length; i++ ) {
+        for (int i = 0; data != null && i < data.length; i++) {
             buf.append(String.valueOf(data[i])).append(' ');
-            if ( i==max ) {
-                buf.append("...("+data.length+")");
+            if (i == max) {
+                buf.append("...(" + data.length + ")");
                 break;
             }
         }
@@ -564,33 +291,213 @@ public class MemberImpl implements Member, java.io.Externalizable {
         return buf.toString();
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     * @return The hash code
-     */
     @Override
-    public int hashCode() {
-        return getHost()[0]+getHost()[1]+getHost()[2]+getHost()[3];
+    public boolean isReady() {
+        return SenderState.getSenderState(this).isReady();
+    }
+
+    @Override
+    public boolean isSuspect() {
+        return SenderState.getSenderState(this).isSuspect();
+    }
+
+    @Override
+    public boolean isFailing() {
+        return SenderState.getSenderState(this).isFailing();
     }
 
     /**
-     * Returns true if the param o is a McastMember with the same name
+     * Increment the message count.
+     */
+    protected void inc() {
+        msgCount.incrementAndGet();
+    }
+
+    /**
+     * Create a data package to send over the wire representing this member.
+     * This is faster than serialization.
      *
-     * @param o The object to test for equality
+     * @return - the bytes for this member deserialized
+     */
+    public byte[] getData() {
+        return getData(true);
+    }
+
+    @Override
+    public byte[] getData(boolean getalive) {
+        return getData(getalive, false);
+    }
+
+    @Override
+    public synchronized int getDataLength() {
+        return TRIBES_MBR_BEGIN.length + //start pkg
+                4 + //data length
+                8 + //alive time
+                4 + //port
+                4 + //secure port
+                4 + //udp port
+                1 + //host length
+                host.length + //host
+                4 + //command length
+                command.length + //command
+                4 + //domain length
+                domain.length + //domain
+                16 + //unique id
+                4 + //payload length
+                payload.length + //payload
+                TRIBES_MBR_END.length; //end pkg
+    }
+
+    @Override
+    public synchronized byte[] getData(boolean getalive, boolean reset) {
+        if (reset) {
+            dataPkg = null;
+        }
+        // Look in cache first
+        if (dataPkg != null) {
+            if (getalive) {
+                // You'd be surprised, but System.currentTimeMillis
+                // shows up on the profiler
+                long alive = System.currentTimeMillis() - getServiceStartTime();
+                byte[] result = dataPkg.clone();
+                XByteBuffer.toBytes(alive, result, TRIBES_MBR_BEGIN.length + 4);
+                dataPkg = result;
+            }
+            return dataPkg;
+        }
+
+        //package looks like
+        //start package TRIBES_MBR_BEGIN.length
+        //package length - 4 bytes
+        //alive - 8 bytes
+        //port - 4 bytes
+        //secure port - 4 bytes
+        //udp port - 4 bytes
+        //host length - 1 byte
+        //host - hl bytes
+        //clen - 4 bytes
+        //command - clen bytes
+        //dlen - 4 bytes
+        //domain - dlen bytes
+        //uniqueId - 16 bytes
+        //payload length - 4 bytes
+        //payload plen bytes
+        //end package TRIBES_MBR_END.length
+        long alive = System.currentTimeMillis() - getServiceStartTime();
+        byte[] data = new byte[getDataLength()];
+
+        int bodylength = (getDataLength() - TRIBES_MBR_BEGIN.length - TRIBES_MBR_END.length - 4);
+
+        int pos = 0;
+
+        //TRIBES_MBR_BEGIN
+        System.arraycopy(TRIBES_MBR_BEGIN, 0, data, pos, TRIBES_MBR_BEGIN.length);
+        pos += TRIBES_MBR_BEGIN.length;
+
+        //body length
+        XByteBuffer.toBytes(bodylength, data, pos);
+        pos += 4;
+
+        //alive data
+        XByteBuffer.toBytes(alive, data, pos);
+        pos += 8;
+        //port
+        XByteBuffer.toBytes(port, data, pos);
+        pos += 4;
+        //secure port
+        XByteBuffer.toBytes(securePort, data, pos);
+        pos += 4;
+        //udp port
+        XByteBuffer.toBytes(udpPort, data, pos);
+        pos += 4;
+        //host length
+        data[pos++] = (byte) host.length;
+        //host
+        System.arraycopy(host, 0, data, pos, host.length);
+        pos += host.length;
+        //clen - 4 bytes
+        XByteBuffer.toBytes(command.length, data, pos);
+        pos += 4;
+        //command - clen bytes
+        System.arraycopy(command, 0, data, pos, command.length);
+        pos += command.length;
+        //dlen - 4 bytes
+        XByteBuffer.toBytes(domain.length, data, pos);
+        pos += 4;
+        //domain - dlen bytes
+        System.arraycopy(domain, 0, data, pos, domain.length);
+        pos += domain.length;
+        //unique Id
+        System.arraycopy(uniqueId, 0, data, pos, uniqueId.length);
+        pos += uniqueId.length;
+        //payload
+        XByteBuffer.toBytes(payload.length, data, pos);
+        pos += 4;
+        System.arraycopy(payload, 0, data, pos, payload.length);
+        pos += payload.length;
+
+        //TRIBES_MBR_END
+        System.arraycopy(TRIBES_MBR_END, 0, data, pos, TRIBES_MBR_END.length);
+        pos += TRIBES_MBR_END.length;
+
+        //create local data
+        dataPkg = data;
+        return data;
+    }
+
+    /**
+     * Return the name of this object
+     *
+     * @return a unique name to the cluster
      */
     @Override
-    public boolean equals(Object o) {
-        if ( o instanceof MemberImpl )    {
-            return Arrays.equals(this.getHost(),((MemberImpl)o).getHost()) &&
-                   this.getPort() == ((MemberImpl)o).getPort() &&
-                   Arrays.equals(this.getUniqueId(),((MemberImpl)o).getUniqueId());
-        }
-        else
-            return false;
+    public String getName() {
+        return "tcp://" + getHostname() + ":" + getPort();
+    }
+
+    /**
+     * Return the listen port of this member
+     *
+     * @return - tcp listen port
+     */
+    @Override
+    public int getPort() {
+        return this.port;
+    }
+
+    public synchronized void setPort(int port) {
+        this.port = port;
+        this.dataPkg = null;
+    }
+
+    /**
+     * Return the TCP listen host for this member
+     *
+     * @return IP address or host name
+     */
+    @Override
+    public byte[] getHost() {
+        return host;
     }
 
     public synchronized void setHost(byte[] host) {
         this.host = host;
+    }
+
+    public String getHostname() {
+        if (this.hostname != null) return hostname;
+        else {
+            try {
+                byte[] host = this.host;
+                if (DO_DNS_LOOKUPS)
+                    this.hostname = java.net.InetAddress.getByAddress(host).getHostName();
+                else
+                    this.hostname = org.apache.catalina.tribes.util.Arrays.toString(host, 0, host.length, true);
+                return this.hostname;
+            } catch (IOException x) {
+                throw new RuntimeException(sm.getString("memberImpl.unableParse.hostname"), x);
+            }
+        }
     }
 
     public void setHostname(String host) throws IOException {
@@ -600,22 +507,52 @@ public class MemberImpl implements Member, java.io.Externalizable {
         }
     }
 
+    public int getMsgCount() {
+        return msgCount.get();
+    }
+
     public void setMsgCount(int msgCount) {
         this.msgCount.set(msgCount);
     }
 
-    public synchronized void setPort(int port) {
-        this.port = port;
-        this.dataPkg = null;
+    /**
+     * Contains information on how long this member has been online.
+     * The result is the number of milli seconds this member has been
+     * broadcasting its membership to the cluster.
+     *
+     * @return nr of milliseconds since this member started.
+     */
+    @Override
+    public long getMemberAliveTime() {
+        return memberAliveTime;
+    }
+
+    @Override
+    public void setMemberAliveTime(long time) {
+        memberAliveTime = time;
+    }
+
+    public long getServiceStartTime() {
+        return serviceStartTime;
     }
 
     public void setServiceStartTime(long serviceStartTime) {
         this.serviceStartTime = serviceStartTime;
     }
 
+    @Override
+    public byte[] getUniqueId() {
+        return uniqueId;
+    }
+
     public synchronized void setUniqueId(byte[] uniqueId) {
-        this.uniqueId = uniqueId!=null?uniqueId:new byte[16];
-        getData(true,true);
+        this.uniqueId = uniqueId != null ? uniqueId : new byte[16];
+        getData(true, true);
+    }
+
+    @Override
+    public byte[] getPayload() {
+        return payload;
     }
 
     @Override
@@ -641,14 +578,29 @@ public class MemberImpl implements Member, java.io.Externalizable {
     }
 
     @Override
+    public byte[] getCommand() {
+        return command;
+    }
+
+    @Override
     public synchronized void setCommand(byte[] command) {
-        this.command = command!=null?command:new byte[0];
-        getData(true,true);
+        this.command = command != null ? command : new byte[0];
+        getData(true, true);
+    }
+
+    @Override
+    public byte[] getDomain() {
+        return domain;
     }
 
     public synchronized void setDomain(byte[] domain) {
-        this.domain = domain!=null?domain:new byte[0];
-        getData(true,true);
+        this.domain = domain != null ? domain : new byte[0];
+        getData(true, true);
+    }
+
+    @Override
+    public int getSecurePort() {
+        return securePort;
     }
 
     public synchronized void setSecurePort(int securePort) {
@@ -656,9 +608,59 @@ public class MemberImpl implements Member, java.io.Externalizable {
         this.dataPkg = null;
     }
 
+    @Override
+    public int getUdpPort() {
+        return udpPort;
+    }
+
     public synchronized void setUdpPort(int port) {
         this.udpPort = port;
         this.dataPkg = null;
+    }
+
+    /**
+     * String representation of this object
+     */
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder(getClass().getName());
+        buf.append('[');
+        buf.append(getName()).append(',');
+        buf.append(getHostname()).append(',');
+        buf.append(port).append(", alive=");
+        buf.append(memberAliveTime).append(", ");
+        buf.append("securePort=").append(securePort).append(", ");
+        buf.append("UDP Port=").append(udpPort).append(", ");
+        buf.append("id=").append(bToS(this.uniqueId)).append(", ");
+        buf.append("payload=").append(bToS(this.payload, 8)).append(", ");
+        buf.append("command=").append(bToS(this.command, 8)).append(", ");
+        buf.append("domain=").append(bToS(this.domain, 8));
+        buf.append(']');
+        return buf.toString();
+    }
+
+    /**
+     * @return The hash code
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return getHost()[0] + getHost()[1] + getHost()[2] + getHost()[3];
+    }
+
+    /**
+     * Returns true if the param o is a McastMember with the same name
+     *
+     * @param o The object to test for equality
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MemberImpl) {
+            return Arrays.equals(this.getHost(), ((MemberImpl) o).getHost()) &&
+                    this.getPort() == ((MemberImpl) o).getPort() &&
+                    Arrays.equals(this.getUniqueId(), ((MemberImpl) o).getUniqueId());
+        } else
+            return false;
     }
 
     @Override
@@ -676,7 +678,7 @@ public class MemberImpl implements Member, java.io.Externalizable {
         int length = in.readInt();
         byte[] message = new byte[length];
         in.readFully(message);
-        getMember(message,this);
+        getMember(message, this);
 
     }
 

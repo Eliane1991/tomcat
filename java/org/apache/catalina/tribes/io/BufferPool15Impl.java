@@ -20,27 +20,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- *
  * @version 1.0
  */
 class BufferPool15Impl implements BufferPool.BufferPoolAPI {
-    protected int maxSize;
     protected final AtomicInteger size = new AtomicInteger(0);
     protected final ConcurrentLinkedQueue<XByteBuffer> queue =
             new ConcurrentLinkedQueue<>();
-
-    @Override
-    public void setMaxSize(int bytes) {
-        this.maxSize = bytes;
-    }
-
+    protected int maxSize;
 
     @Override
     public XByteBuffer getBuffer(int minSize, boolean discard) {
         XByteBuffer buffer = queue.poll();
-        if ( buffer != null ) size.addAndGet(-buffer.getCapacity());
-        if ( buffer == null ) buffer = new XByteBuffer(minSize,discard);
-        else if ( buffer.getCapacity() <= minSize ) buffer.expand(minSize);
+        if (buffer != null) size.addAndGet(-buffer.getCapacity());
+        if (buffer == null) buffer = new XByteBuffer(minSize, discard);
+        else if (buffer.getCapacity() <= minSize) buffer.expand(minSize);
         buffer.setDiscard(discard);
         buffer.reset();
         return buffer;
@@ -48,7 +41,7 @@ class BufferPool15Impl implements BufferPool.BufferPoolAPI {
 
     @Override
     public void returnBuffer(XByteBuffer buffer) {
-        if ( (size.get() + buffer.getCapacity()) <= maxSize ) {
+        if ((size.get() + buffer.getCapacity()) <= maxSize) {
             size.addAndGet(buffer.getCapacity());
             queue.offer(buffer);
         }
@@ -62,6 +55,11 @@ class BufferPool15Impl implements BufferPool.BufferPoolAPI {
 
     public int getMaxSize() {
         return maxSize;
+    }
+
+    @Override
+    public void setMaxSize(int bytes) {
+        this.maxSize = bytes;
     }
 
 }

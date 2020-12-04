@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * The annotation used to declare a listener for various types of event, in a
  * given web application context.<br>
  * <br>
- *
+ * <p>
  * The class annotated MUST implement one, (or more), of the following
  * interfaces: {@link javax.servlet.http.HttpSessionAttributeListener},
  * {@link javax.servlet.http.HttpSessionListener},
@@ -32,7 +32,7 @@ import java.lang.annotation.*;
  * {@link javax.servlet.ServletRequestListener} or
  * {@link javax.servlet.http.HttpSessionIdListener}
  * <br>
- *
+ * <p>
  * E.g. <code>@WebListener</code><br>
  * <code>public TestListener implements ServletContextListener {</code><br>
  *

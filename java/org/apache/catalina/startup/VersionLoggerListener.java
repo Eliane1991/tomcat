@@ -35,13 +35,11 @@ import java.util.TreeMap;
  */
 public class VersionLoggerListener implements LifecycleListener {
 
-    private static final Log log = LogFactory.getLog(VersionLoggerListener.class);
-
     /**
      * The string manager for this package.
      */
     protected static final StringManager sm = StringManager.getManager(Constants.Package);
-
+    private static final Log log = LogFactory.getLog(VersionLoggerListener.class);
     private boolean logArgs = true;
     private boolean logEnv = false;
     private boolean logProps = false;

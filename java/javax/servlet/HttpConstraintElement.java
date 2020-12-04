@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package javax.servlet;
 
 import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
@@ -30,7 +30,7 @@ public class HttpConstraintElement {
 
     private static final String LSTRING_FILE = "javax.servlet.LocalStrings";
     private static final ResourceBundle lStrings =
-        ResourceBundle.getBundle(LSTRING_FILE);
+            ResourceBundle.getBundle(LSTRING_FILE);
 
     private final EmptyRoleSemantic emptyRoleSemantic;// = EmptyRoleSemantic.PERMIT;
     private final TransportGuarantee transportGuarantee;// = TransportGuarantee.NONE;
@@ -68,7 +68,7 @@ public class HttpConstraintElement {
      *                           constraint
      */
     public HttpConstraintElement(TransportGuarantee transportGuarantee,
-            String... rolesAllowed) {
+                                 String... rolesAllowed) {
         this.emptyRoleSemantic = EmptyRoleSemantic.PERMIT;
         this.transportGuarantee = transportGuarantee;
         this.rolesAllowed = rolesAllowed;
@@ -78,8 +78,8 @@ public class HttpConstraintElement {
      * Construct a constraint with an empty role semantic, a transport guarantee
      * and roles.
      *
-     * @param emptyRoleSemantic The empty role semantic to apply to the newly
-     *                          created constraint
+     * @param emptyRoleSemantic  The empty role semantic to apply to the newly
+     *                           created constraint
      * @param transportGuarantee The transport guarantee to apply to the newly
      *                           created constraint
      * @param rolesAllowed       The roles to associate with the newly created
@@ -87,7 +87,7 @@ public class HttpConstraintElement {
      * @throws IllegalArgumentException if roles are specified when DENY is used
      */
     public HttpConstraintElement(EmptyRoleSemantic emptyRoleSemantic,
-            TransportGuarantee transportGuarantee, String... rolesAllowed) {
+                                 TransportGuarantee transportGuarantee, String... rolesAllowed) {
         if (rolesAllowed != null && rolesAllowed.length > 0 &&
                 EmptyRoleSemantic.DENY.equals(emptyRoleSemantic)) {
             throw new IllegalArgumentException(lStrings.getString(
@@ -100,6 +100,7 @@ public class HttpConstraintElement {
 
     /**
      * TODO
+     *
      * @return TODO
      */
     public EmptyRoleSemantic getEmptyRoleSemantic() {
@@ -108,6 +109,7 @@ public class HttpConstraintElement {
 
     /**
      * TODO
+     *
      * @return TODO
      */
     public TransportGuarantee getTransportGuarantee() {
@@ -116,6 +118,7 @@ public class HttpConstraintElement {
 
     /**
      * TODO
+     *
      * @return TODO
      */
     public String[] getRolesAllowed() {

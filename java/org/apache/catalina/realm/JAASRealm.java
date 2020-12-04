@@ -91,20 +91,20 @@ import java.util.List;
  *     JAAS configuration file entry for a database-oriented login module that uses
  *     a Tomcat-managed JNDI database resource:
  *     <blockquote><pre>Catalina {
-org.foobar.auth.DatabaseLoginModule REQUIRED
-    JNDI_RESOURCE=jdbc/AuthDB
-  USER_TABLE=users
-  USER_ID_COLUMN=id
-  USER_NAME_COLUMN=name
-  USER_CREDENTIAL_COLUMN=password
-  ROLE_TABLE=roles
-  ROLE_NAME_COLUMN=name
-  PRINCIPAL_FACTORY=org.foobar.auth.impl.SimplePrincipalFactory;
-};</pre></blockquote></li>
+ * org.foobar.auth.DatabaseLoginModule REQUIRED
+ * JNDI_RESOURCE=jdbc/AuthDB
+ * USER_TABLE=users
+ * USER_ID_COLUMN=id
+ * USER_NAME_COLUMN=name
+ * USER_CREDENTIAL_COLUMN=password
+ * ROLE_TABLE=roles
+ * ROLE_NAME_COLUMN=name
+ * PRINCIPAL_FACTORY=org.foobar.auth.impl.SimplePrincipalFactory;
+ * };</pre></blockquote></li>
  * <li>To set the JAAS configuration file
  *     location, set the <code>CATALINA_OPTS</code> environment variable
  *     similar to the following:
-<blockquote><code>CATALINA_OPTS="-Djava.security.auth.login.config=$CATALINA_HOME/conf/jaas.config"</code></blockquote>
+ * <blockquote><code>CATALINA_OPTS="-Djava.security.auth.login.config=$CATALINA_HOME/conf/jaas.config"</code></blockquote>
  * </li>
  * <li>As part of the login process, JAASRealm registers its own <code>CallbackHandler</code>,
  *     called (unsurprisingly) <code>JAASCallbackHandler</code>. This handler supplies the
@@ -120,38 +120,29 @@ org.foobar.auth.DatabaseLoginModule REQUIRED
  */
 public class JAASRealm extends RealmBase {
 
-    private static final Log log = LogFactory.getLog(JAASRealm.class);
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The application name passed to the JAAS <code>LoginContext</code>,
-     * which uses it to select the set of relevant <code>LoginModule</code>s.
-     */
-    protected String appName = null;
-
-
     /**
      * Descriptive information about this <code>Realm</code> implementation.
+     *
      * @deprecated This will be removed in Tomcat 9 onwards.
      */
     @Deprecated
     protected static final String name = "JAASRealm";
 
-
+    // ----------------------------------------------------- Instance Variables
+    private static final Log log = LogFactory.getLog(JAASRealm.class);
     /**
      * The list of role class names, split out for easy processing.
      */
     protected final List<String> roleClasses = new ArrayList<>();
-
-
     /**
      * The set of user class names, split out for easy processing.
      */
     protected final List<String> userClasses = new ArrayList<>();
-
-
+    /**
+     * The application name passed to the JAAS <code>LoginContext</code>,
+     * which uses it to select the set of relevant <code>LoginModule</code>s.
+     */
+    protected String appName = null;
     /**
      * Whether to use context ClassLoader or default ClassLoader.
      * True means use context ClassLoader, and True is the default
@@ -168,7 +159,18 @@ public class JAASRealm extends RealmBase {
 
     protected volatile Configuration jaasConfiguration;
     protected volatile boolean jaasConfigurationLoaded = false;
+    /**
+     * Comma-delimited list of <code>java.security.Principal</code> classes
+     * that represent security roles.
+     */
+    protected String roleClassNames = null;
 
+    // ------------------------------------------------------------- Properties
+    /**
+     * Comma-delimited list of <code>java.security.Principal</code> classes
+     * that represent individual users.
+     */
+    protected String userClassNames = null;
     /**
      * Keeps track if JAAS invocation of login modules was successful or not. By
      * default it is true unless we detect JAAS login module can't perform the
@@ -177,8 +179,6 @@ public class JAASRealm extends RealmBase {
      * modules are unavailable to perform the actual login.
      */
     private volatile boolean invocationSuccess = true;
-
-    // ------------------------------------------------------------- Properties
 
     /**
      * @return the path of the JAAS configuration file.
@@ -189,19 +189,11 @@ public class JAASRealm extends RealmBase {
 
     /**
      * Set the JAAS configuration file.
+     *
      * @param configFile The JAAS configuration file
      */
     public void setConfigFile(String configFile) {
         this.configFile = configFile;
-    }
-
-    /**
-     * Set the JAAS <code>LoginContext</code> app name.
-     * @param name The application name that will be used to retrieve
-     *  the set of relevant <code>LoginModule</code>s
-     */
-    public void setAppName(String name) {
-        appName = name;
     }
 
     /**
@@ -212,13 +204,13 @@ public class JAASRealm extends RealmBase {
     }
 
     /**
-     * Sets whether to use the context or default ClassLoader.
-     * True means use context ClassLoader.
+     * Set the JAAS <code>LoginContext</code> app name.
      *
-     * @param useContext True means use context ClassLoader
+     * @param name The application name that will be used to retrieve
+     *             the set of relevant <code>LoginModule</code>s
      */
-    public void setUseContextClassLoader(boolean useContext) {
-        useContextClassLoader = useContext;
+    public void setAppName(String name) {
+        appName = name;
     }
 
     /**
@@ -229,6 +221,16 @@ public class JAASRealm extends RealmBase {
      */
     public boolean isUseContextClassLoader() {
         return useContextClassLoader;
+    }
+
+    /**
+     * Sets whether to use the context or default ClassLoader.
+     * True means use context ClassLoader.
+     *
+     * @param useContext True means use context ClassLoader
+     */
+    public void setUseContextClassLoader(boolean useContext) {
+        useContextClassLoader = useContext;
     }
 
     @Override
@@ -242,12 +244,6 @@ public class JAASRealm extends RealmBase {
         }
     }
 
-    /**
-     * Comma-delimited list of <code>java.security.Principal</code> classes
-     * that represent security roles.
-     */
-    protected String roleClassNames = null;
-
     public String getRoleClassNames() {
         return this.roleClassNames;
     }
@@ -257,6 +253,7 @@ public class JAASRealm extends RealmBase {
      * classes in the list must implement <code>java.security.Principal</code>.
      * The supplied list of classes will be parsed when {@link #start()} is
      * called.
+     *
      * @param roleClassNames The class names list
      */
     public void setRoleClassNames(String roleClassNames) {
@@ -269,8 +266,8 @@ public class JAASRealm extends RealmBase {
      * <code>java.security.Principal</code>.
      *
      * @param classNamesString a comma-delimited list of fully qualified class names.
-     * @param classNamesList the list in which the class names will be stored.
-     *        The list is cleared before being populated.
+     * @param classNamesList   the list in which the class names will be stored.
+     *                         The list is cleared before being populated.
      */
     protected void parseClassNames(String classNamesString, List<String> classNamesList) {
         classNamesList.clear();
@@ -289,7 +286,7 @@ public class JAASRealm extends RealmBase {
                 if (Principal.class.isAssignableFrom(principalClass)) {
                     classNamesList.add(className);
                 } else {
-                    log.error("Class " + className + " is not implementing "+
+                    log.error("Class " + className + " is not implementing " +
                             "java.security.Principal! Class not added.");
                 }
             } catch (ClassNotFoundException e) {
@@ -297,12 +294,6 @@ public class JAASRealm extends RealmBase {
             }
         }
     }
-
-    /**
-     * Comma-delimited list of <code>java.security.Principal</code> classes
-     * that represent individual users.
-     */
-    protected String userClassNames = null;
 
     public String getUserClassNames() {
         return this.userClassNames;
@@ -313,6 +304,7 @@ public class JAASRealm extends RealmBase {
      * users. The classes in the list must implement
      * <code>java.security.Principal</code>. The supplied list of classes will
      * be parsed when {@link #start()} is called.
+     *
      * @param userClassNames The class names list
      */
     public void setUserClassNames(String userClassNames) {
@@ -326,9 +318,9 @@ public class JAASRealm extends RealmBase {
      * Return the <code>Principal</code> associated with the specified username
      * and credentials, if there is one; otherwise return <code>null</code>.
      *
-     * @param username Username of the <code>Principal</code> to look up
+     * @param username    Username of the <code>Principal</code> to look up
      * @param credentials Password or other credentials to use in
-     *  authenticating this username
+     *                    authenticating this username
      * @return the associated principal, or <code>null</code> if there is none.
      */
     @Override
@@ -342,21 +334,21 @@ public class JAASRealm extends RealmBase {
      * Return the <code>Principal</code> associated with the specified username
      * and digest, if there is one; otherwise return <code>null</code>.
      *
-     * @param username      Username of the <code>Principal</code> to look up
-     * @param clientDigest  Digest to use in authenticating this username
-     * @param nonce         Server generated nonce
-     * @param nc            Nonce count
-     * @param cnonce        Client generated nonce
-     * @param qop           Quality of protection applied to the message
-     * @param realmName     Realm name
-     * @param md5a2         Second MD5 digest used to calculate the digest
-     *                          MD5(Method + ":" + uri)
+     * @param username     Username of the <code>Principal</code> to look up
+     * @param clientDigest Digest to use in authenticating this username
+     * @param nonce        Server generated nonce
+     * @param nc           Nonce count
+     * @param cnonce       Client generated nonce
+     * @param qop          Quality of protection applied to the message
+     * @param realmName    Realm name
+     * @param md5a2        Second MD5 digest used to calculate the digest
+     *                     MD5(Method + ":" + uri)
      * @return the associated principal, or <code>null</code> if there is none.
      */
     @Override
     public Principal authenticate(String username, String clientDigest,
-            String nonce, String nc, String cnonce, String qop,
-            String realmName, String md5a2) {
+                                  String nonce, String nc, String cnonce, String qop,
+                                  String realmName, String md5a2) {
         return authenticate(username,
                 new JAASCallbackHandler(this, username, clientDigest, nonce,
                         nc, cnonce, qop, realmName, md5a2,
@@ -372,19 +364,20 @@ public class JAASRealm extends RealmBase {
 
     /**
      * Perform the actual JAAS authentication.
-     * @param username The user name
+     *
+     * @param username        The user name
      * @param callbackHandler The callback handler
      * @return the associated principal, or <code>null</code> if there is none.
      */
     protected Principal authenticate(String username,
-            CallbackHandler callbackHandler) {
+                                     CallbackHandler callbackHandler) {
 
         // Establish a LoginContext to use for authentication
         try {
             LoginContext loginContext = null;
-            if( appName==null ) appName="Tomcat";
+            if (appName == null) appName = "Tomcat";
 
-            if( log.isDebugEnabled())
+            if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.beginLogin", username, appName));
 
             // What if the LoginModule is in the container class loader ?
@@ -408,12 +401,12 @@ public class JAASRealm extends RealmBase {
                 invocationSuccess = false;
                 return null;
             } finally {
-                if(!isUseContextClassLoader()) {
+                if (!isUseContextClassLoader()) {
                     Thread.currentThread().setContextClassLoader(ocl);
                 }
             }
 
-            if( log.isDebugEnabled())
+            if (log.isDebugEnabled())
                 log.debug("Login context created " + username);
 
             // Negotiate a login via this LoginContext
@@ -427,7 +420,7 @@ public class JAASRealm extends RealmBase {
                 // of the JAAS operation to keep variable consistent.
                 invocationSuccess = true;
                 if (subject == null) {
-                    if( log.isDebugEnabled())
+                    if (log.isDebugEnabled())
                         log.debug(sm.getString("jaasRealm.failedLogin", username));
                     return (null);
                 }
@@ -467,7 +460,7 @@ public class JAASRealm extends RealmBase {
                 return null;
             }
 
-            if( log.isDebugEnabled())
+            if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.loginContextCreated", username));
 
             // Return the appropriate Principal for this authenticated Subject
@@ -481,8 +474,8 @@ public class JAASRealm extends RealmBase {
             }
 
             return principal;
-        } catch( Throwable t) {
-            log.error( "error ", t);
+        } catch (Throwable t) {
+            log.error("error ", t);
             //JAAS throws exception different than LoginException so mark the realm as unavailable
             invocationSuccess = false;
             return null;
@@ -531,14 +524,15 @@ public class JAASRealm extends RealmBase {
      * Any remaining principal objects returned by the LoginModules are mapped to
      * roles, but only if their respective classes match one of the "role class" classes.
      * If a user Principal cannot be constructed, return <code>null</code>.
-     * @param username The associated user name
-     * @param subject The <code>Subject</code> representing the logged-in user
+     *
+     * @param username     The associated user name
+     * @param subject      The <code>Subject</code> representing the logged-in user
      * @param loginContext Associated with the Principal so
      *                     {@link LoginContext#logout()} can be called later
      * @return the principal object
      */
     protected Principal createPrincipal(String username, Subject subject,
-            LoginContext loginContext) {
+                                        LoginContext loginContext) {
         // Prepare to scan the Principals for this Subject
 
         List<String> roles = new ArrayList<>();
@@ -548,20 +542,20 @@ public class JAASRealm extends RealmBase {
         for (Principal principal : subject.getPrincipals()) {
             String principalClass = principal.getClass().getName();
 
-            if( log.isDebugEnabled() ) {
+            if (log.isDebugEnabled()) {
                 log.debug(sm.getString("jaasRealm.checkPrincipal", principal, principalClass));
             }
 
             if (userPrincipal == null && userClasses.contains(principalClass)) {
                 userPrincipal = principal;
-                if( log.isDebugEnabled() ) {
+                if (log.isDebugEnabled()) {
                     log.debug(sm.getString("jaasRealm.userPrincipalSuccess", principal.getName()));
                 }
             }
 
             if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
-                if( log.isDebugEnabled() ) {
+                if (log.isDebugEnabled()) {
                     log.debug(sm.getString("jaasRealm.rolePrincipalAdd", principal.getName()));
                 }
             }
@@ -600,13 +594,13 @@ public class JAASRealm extends RealmBase {
         String result = src;
 
         // Default name is "other" per JAAS spec
-        if(result == null) {
+        if (result == null) {
             result = "other";
         }
 
         // Strip leading slash if present, as Sun JAAS impl
         // barfs on it (see Bugzilla 30869 bug report).
-        if(result.startsWith("/")) {
+        if (result.startsWith("/")) {
             result = result.substring(1);
         }
 
@@ -622,8 +616,8 @@ public class JAASRealm extends RealmBase {
      * component and implement the requirements of
      * {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected void startInternal() throws LifecycleException {
@@ -639,6 +633,7 @@ public class JAASRealm extends RealmBase {
 
     /**
      * Load custom JAAS Configuration.
+     *
      * @return the loaded configuration
      */
     protected Configuration getConfig() {
@@ -657,7 +652,7 @@ public class JAASRealm extends RealmBase {
                 URI uri = resource.toURI();
                 @SuppressWarnings("unchecked")
                 Class<Configuration> sunConfigFile = (Class<Configuration>)
-                Class.forName("com.sun.security.auth.login.ConfigFile");
+                        Class.forName("com.sun.security.auth.login.ConfigFile");
                 Constructor<Configuration> constructor =
                         sunConfigFile.getConstructor(URI.class);
                 Configuration config = constructor.newInstance(uri);

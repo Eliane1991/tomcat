@@ -32,36 +32,47 @@ import org.apache.juli.logging.LogFactory;
 public class HeartbeatListener implements LifecycleListener, ContainerListener {
 
     private static final Log log = LogFactory.getLog(HeartbeatListener.class);
-
-    /* To allow to select the connector */
-    private int port = 0;
-    private String host = null;
-
     /* for multicasting stuff */
     private final String ip = "224.0.1.105"; /* Multicast IP */
     private final int multiport = 23364;     /* Multicast Port */
     private final int ttl = 16;
-
-    public String getHost() { return host; }
-    public String getGroup() { return ip; }
-    public int getMultiport() { return multiport; }
-    public int getTtl() { return ttl; }
-
     /**
      * Proxy list, format "address:port,address:port".
      */
     private final String proxyList = null;
-    public String getProxyList() { return proxyList; }
-
     /**
      * URL prefix.
      */
     private final String proxyURL = "/HeartbeatListener";
-    public String getProxyURL() { return proxyURL; }
-
+    /* To allow to select the connector */
+    private int port = 0;
+    private String host = null;
     private CollectedInfo coll = null;
-
     private Sender sender = null;
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getGroup() {
+        return ip;
+    }
+
+    public int getMultiport() {
+        return multiport;
+    }
+
+    public int getTtl() {
+        return ttl;
+    }
+
+    public String getProxyList() {
+        return proxyList;
+    }
+
+    public String getProxyURL() {
+        return proxyURL;
+    }
 
     @Override
     public void containerEvent(ContainerEvent event) {

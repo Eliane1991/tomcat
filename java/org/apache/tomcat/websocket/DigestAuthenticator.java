@@ -36,7 +36,7 @@ public class DigestAuthenticator extends Authenticator {
 
     @Override
     public String getAuthorization(String requestUri, String WWWAuthenticate,
-            Map<String, Object> userProperties) throws AuthenticationException {
+                                   Map<String, Object> userProperties) throws AuthenticationException {
 
         String userName = (String) userProperties.get(Constants.WS_AUTHENTICATION_USER_NAME);
         String password = (String) userProperties.get(Constants.WS_AUTHENTICATION_PASSWORD);
@@ -75,9 +75,7 @@ public class DigestAuthenticator extends Authenticator {
         try {
             challenge.append("response=\"" + calculateRequestDigest(requestUri, userName, password,
                     realm, nonce, messageQop, algorithm) + "\",");
-        }
-
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new AuthenticationException(
                     "Unable to generate request digest " + e.getMessage());
         }
@@ -96,7 +94,7 @@ public class DigestAuthenticator extends Authenticator {
     }
 
     private String calculateRequestDigest(String requestUri, String userName, String password,
-            String realm, String nonce, String qop, String algorithm)
+                                          String realm, String nonce, String qop, String algorithm)
             throws NoSuchAlgorithmException {
 
         StringBuilder preDigest = new StringBuilder();

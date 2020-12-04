@@ -34,7 +34,7 @@ class Jre9Compat extends JreCompat {
     static {
         Method m1 = null;
         try {
-            m1 = AccessibleObject.class.getMethod("canAccess", new Class<?>[] { Object.class });
+            m1 = AccessibleObject.class.getMethod("canAccess", new Class<?>[]{Object.class});
         } catch (NoSuchMethodException e) {
             // Expected for Java 8
         }

@@ -41,9 +41,10 @@ public class Introspection {
 
     /**
      * Extract the Java Bean property name from the setter name.
-     *
+     * <p>
      * Note: This method assumes that the method name has already been checked
-     *       for correctness.
+     * for correctness.
+     *
      * @param setter The setter method
      * @return the bean property name
      */
@@ -56,10 +57,9 @@ public class Introspection {
      * Determines if a method has a valid name and signature for a Java Bean
      * setter.
      *
-     * @param method    The method to test
-     *
-     * @return  <code>true</code> if the method does have a valid name and
-     *          signature, else <code>false</code>
+     * @param method The method to test
+     * @return <code>true</code> if the method does have a valid name and
+     * signature, else <code>false</code>
      */
     public static boolean isValidSetter(Method method) {
         if (method.getName().startsWith("set")
@@ -74,11 +74,9 @@ public class Introspection {
     /**
      * Determines if a method is a valid lifecycle callback method.
      *
-     * @param method
-     *            The method to test
-     *
+     * @param method The method to test
      * @return <code>true</code> if the method is a valid lifecycle callback
-     *         method, else <code>false</code>
+     * method, else <code>false</code>
      */
     public static boolean isValidLifecycleCallback(Method method) {
         if (method.getParameterTypes().length != 0
@@ -93,6 +91,7 @@ public class Introspection {
     /**
      * Obtain the declared fields for a class taking account of any security
      * manager that may be configured.
+     *
      * @param clazz The class to introspect
      * @return the class fields as an array
      */
@@ -100,12 +99,12 @@ public class Introspection {
         Field[] fields = null;
         if (Globals.IS_SECURITY_ENABLED) {
             fields = AccessController.doPrivileged(
-                    new PrivilegedAction<Field[]>(){
-                @Override
-                public Field[] run(){
-                    return clazz.getDeclaredFields();
-                }
-            });
+                    new PrivilegedAction<Field[]>() {
+                        @Override
+                        public Field[] run() {
+                            return clazz.getDeclaredFields();
+                        }
+                    });
         } else {
             fields = clazz.getDeclaredFields();
         }
@@ -116,6 +115,7 @@ public class Introspection {
     /**
      * Obtain the declared methods for a class taking account of any security
      * manager that may be configured.
+     *
      * @param clazz The class to introspect
      * @return the class methods as an array
      */
@@ -123,12 +123,12 @@ public class Introspection {
         Method[] methods = null;
         if (Globals.IS_SECURITY_ENABLED) {
             methods = AccessController.doPrivileged(
-                    new PrivilegedAction<Method[]>(){
-                @Override
-                public Method[] run(){
-                    return clazz.getDeclaredMethods();
-                }
-            });
+                    new PrivilegedAction<Method[]>() {
+                        @Override
+                        public Method[] run() {
+                            return clazz.getDeclaredMethods();
+                        }
+                    });
         } else {
             methods = clazz.getDeclaredMethods();
         }
@@ -140,8 +140,9 @@ public class Introspection {
      * Attempt to load a class using the given Container's class loader. If the
      * class cannot be loaded, a debug level log message will be written to the
      * Container's log and null will be returned.
-     * @param context The class loader of this context will be used to attempt
-     *  to load the class
+     *
+     * @param context   The class loader of this context will be used to attempt
+     *                  to load the class
      * @param className The class name
      * @return the loaded class or <code>null</code> if loading failed
      */
@@ -163,10 +164,9 @@ public class Introspection {
     /**
      * Converts the primitive type to its corresponding wrapper.
      *
-     * @param clazz
-     *            Class that will be evaluated
+     * @param clazz Class that will be evaluated
      * @return if the parameter is a primitive type returns its wrapper;
-     *         otherwise returns the same class
+     * otherwise returns the same class
      */
     public static Class<?> convertPrimitiveType(Class<?> clazz) {
         if (clazz.equals(char.class)) {

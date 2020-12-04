@@ -32,9 +32,8 @@ public interface JarScannerCallback {
      * @param jar        The JAR to process
      * @param webappPath The path, if any, to the JAR within the web application
      * @param isWebapp   Indicates if the JAR was found within a web
-     *                       application. If <code>false</code> the JAR should
-     *                       be treated as being provided by the container
-     *
+     *                   application. If <code>false</code> the JAR should
+     *                   be treated as being provided by the container
      * @throws IOException if an I/O error occurs while scanning the JAR
      */
     public void scan(Jar jar, String webappPath, boolean isWebapp)
@@ -46,11 +45,10 @@ public interface JarScannerCallback {
      *
      * @param file       The directory containing the unpacked JAR.
      * @param webappPath The path, if any, to the file within the web
-     *                       application
+     *                   application
      * @param isWebapp   Indicates if the JAR was found within a web
-     *                       application. If <code>false</code> the JAR should
-     *                       be treated as being provided by the container
-     *
+     *                   application. If <code>false</code> the JAR should
+     *                   be treated as being provided by the container
      * @throws IOException if an I/O error occurs while scanning the JAR
      */
     public void scan(File file, String webappPath, boolean isWebapp) throws IOException;

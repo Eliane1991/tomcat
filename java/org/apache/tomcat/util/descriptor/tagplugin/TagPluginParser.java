@@ -37,8 +37,8 @@ import java.util.Map;
  */
 @SuppressWarnings("deprecation")
 public class TagPluginParser {
-    private final Log log = LogFactory.getLog(TagPluginParser.class); // must not be static
     private static final String PREFIX = "tag-plugins/tag-plugin";
+    private final Log log = LogFactory.getLog(TagPluginParser.class); // must not be static
     private final Digester digester;
     private final Map<String, String> plugins = new HashMap<>();
 

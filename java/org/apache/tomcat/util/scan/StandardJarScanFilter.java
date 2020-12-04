@@ -29,9 +29,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class StandardJarScanFilter implements JarScanFilter {
 
-    private final ReadWriteLock configurationLock =
-            new ReentrantReadWriteLock();
-
     private static final String defaultSkip;
     private static final String defaultScan;
     private static final Set<String> defaultSkipSet = new HashSet<>();
@@ -47,16 +44,17 @@ public class StandardJarScanFilter implements JarScanFilter {
         defaultSkipAll = (defaultSkipSet.contains("*") || defaultSkipSet.contains("*.jar")) && defaultScanSet.isEmpty();
     }
 
-    private String tldSkip;
-    private String tldScan;
+    private final ReadWriteLock configurationLock =
+            new ReentrantReadWriteLock();
     private final Set<String> tldSkipSet;
     private final Set<String> tldScanSet;
-    private boolean defaultTldScan = true;
-
-    private String pluggabilitySkip;
-    private String pluggabilityScan;
     private final Set<String> pluggabilitySkipSet;
     private final Set<String> pluggabilityScanSet;
+    private String tldSkip;
+    private String tldScan;
+    private boolean defaultTldScan = true;
+    private String pluggabilitySkip;
+    private String pluggabilityScan;
     private boolean defaultPluggabilityScan = true;
 
     /**
@@ -99,11 +97,22 @@ public class StandardJarScanFilter implements JarScanFilter {
         pluggabilityScanSet = new HashSet<>(defaultScanSet);
     }
 
+    private static void populateSetFromAttribute(String attribute, Set<String> set) {
+        set.clear();
+        if (attribute != null) {
+            StringTokenizer tokenizer = new StringTokenizer(attribute, ",");
+            while (tokenizer.hasMoreElements()) {
+                String token = tokenizer.nextToken().trim();
+                if (token.length() > 0) {
+                    set.add(token);
+                }
+            }
+        }
+    }
 
     public String getTldSkip() {
         return tldSkip;
     }
-
 
     public void setTldSkip(String tldSkip) {
         this.tldSkip = tldSkip;
@@ -116,11 +125,9 @@ public class StandardJarScanFilter implements JarScanFilter {
         }
     }
 
-
     public String getTldScan() {
         return tldScan;
     }
-
 
     public void setTldScan(String tldScan) {
         this.tldScan = tldScan;
@@ -133,26 +140,21 @@ public class StandardJarScanFilter implements JarScanFilter {
         }
     }
 
-
     public boolean isSkipAll() {
         return defaultSkipAll;
     }
-
 
     public boolean isDefaultTldScan() {
         return defaultTldScan;
     }
 
-
     public void setDefaultTldScan(boolean defaultTldScan) {
         this.defaultTldScan = defaultTldScan;
     }
 
-
     public String getPluggabilitySkip() {
         return pluggabilitySkip;
     }
-
 
     public void setPluggabilitySkip(String pluggabilitySkip) {
         this.pluggabilitySkip = pluggabilitySkip;
@@ -165,11 +167,9 @@ public class StandardJarScanFilter implements JarScanFilter {
         }
     }
 
-
     public String getPluggabilityScan() {
         return pluggabilityScan;
     }
-
 
     public void setPluggabilityScan(String pluggabilityScan) {
         this.pluggabilityScan = pluggabilityScan;
@@ -182,16 +182,13 @@ public class StandardJarScanFilter implements JarScanFilter {
         }
     }
 
-
     public boolean isDefaultPluggabilityScan() {
         return defaultPluggabilityScan;
     }
 
-
     public void setDefaultPluggabilityScan(boolean defaultPluggabilityScan) {
         this.defaultPluggabilityScan = defaultPluggabilityScan;
     }
-
 
     @Override
     public boolean check(JarScanType jarScanType, String jarName) {
@@ -242,19 +239,6 @@ public class StandardJarScanFilter implements JarScanFilter {
             }
         } finally {
             readLock.unlock();
-        }
-    }
-
-    private static void populateSetFromAttribute(String attribute, Set<String> set) {
-        set.clear();
-        if (attribute != null) {
-            StringTokenizer tokenizer = new StringTokenizer(attribute, ",");
-            while (tokenizer.hasMoreElements()) {
-                String token = tokenizer.nextToken().trim();
-                if (token.length() > 0) {
-                    set.add(token);
-                }
-            }
         }
     }
 }

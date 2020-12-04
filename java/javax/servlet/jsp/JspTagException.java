@@ -29,8 +29,7 @@ public class JspTagException extends JspException {
      * Constructs a new JspTagException with the specified message. The message
      * can be written to the server log and/or displayed for the user.
      *
-     * @param msg
-     *            a <code>String</code> specifying the text of the exception
+     * @param msg a <code>String</code> specifying the text of the exception
      *            message
      */
     public JspTagException(String msg) {
@@ -49,13 +48,11 @@ public class JspTagException extends JspException {
      * exception and include a message about the "root cause" exception that
      * interfered with its normal operation, including a description message.
      *
-     * @param message
-     *            a <code>String</code> containing the text of the exception
-     *            message
-     * @param rootCause
-     *            the <code>Throwable</code> exception that interfered with the
-     *            JSP Tag's normal operation, making this JSP Tag exception
-     *            necessary
+     * @param message   a <code>String</code> containing the text of the exception
+     *                  message
+     * @param rootCause the <code>Throwable</code> exception that interfered with the
+     *                  JSP Tag's normal operation, making this JSP Tag exception
+     *                  necessary
      * @since 2.0
      */
     public JspTagException(String message, Throwable rootCause) {
@@ -73,10 +70,9 @@ public class JspTagException extends JspException {
      * When subclassing <code>JspTagException</code>, this method can be
      * overridden to create an exception message designed for a specific locale.
      *
-     * @param rootCause
-     *            the <code>Throwable</code> exception that interfered with the
-     *            JSP Tag's normal operation, making the JSP Tag exception
-     *            necessary
+     * @param rootCause the <code>Throwable</code> exception that interfered with the
+     *                  JSP Tag's normal operation, making the JSP Tag exception
+     *                  necessary
      * @since 2.0
      */
     public JspTagException(Throwable rootCause) {

@@ -24,10 +24,8 @@ package org.apache.tomcat.dbcp.pool2;
  * This class is immutable, and therefore thread-safe
  *
  * @param <T> Type of element managed in this factory.
- *
  * @see PooledObjectFactory
  * @see BaseKeyedPooledObjectFactory
- *
  * @since 2.0
  */
 public abstract class BasePooledObjectFactory<T> extends BaseObject implements PooledObjectFactory<T> {
@@ -37,9 +35,8 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
      * activation.</p>
      *
      * @return an instance to be served by the pool
-     *
      * @throws Exception if there is a problem creating a new instance,
-     *    this will be propagated to the code requesting an object.
+     *                   this will be propagated to the code requesting an object.
      */
     public abstract T create() throws Exception;
 
@@ -48,7 +45,6 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
      * {@link PooledObject}.
      *
      * @param obj the instance to wrap
-     *
      * @return The provided instance, wrapped by a {@link PooledObject}
      */
     public abstract PooledObject<T> wrap(T obj);
@@ -59,13 +55,13 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
     }
 
     /**
-     *  No-op.
+     * No-op.
      *
-     *  @param p ignored
+     * @param p ignored
      */
     @Override
     public void destroyObject(final PooledObject<T> p)
-        throws Exception  {
+            throws Exception {
         // The default implementation is a no-op.
     }
 
@@ -73,7 +69,6 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
      * This implementation always returns {@code true}.
      *
      * @param p ignored
-     *
      * @return {@code true}
      */
     @Override
@@ -82,9 +77,9 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
     }
 
     /**
-     *  No-op.
+     * No-op.
      *
-     *  @param p ignored
+     * @param p ignored
      */
     @Override
     public void activateObject(final PooledObject<T> p) throws Exception {
@@ -92,13 +87,13 @@ public abstract class BasePooledObjectFactory<T> extends BaseObject implements P
     }
 
     /**
-     *  No-op.
+     * No-op.
      *
      * @param p ignored
      */
     @Override
     public void passivateObject(final PooledObject<T> p)
-        throws Exception {
+            throws Exception {
         // The default implementation is a no-op.
     }
 }

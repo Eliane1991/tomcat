@@ -51,22 +51,22 @@ public class DirResourceSet extends AbstractFileResourceSet {
      * Creates a new {@link org.apache.catalina.WebResourceSet} based on a
      * directory.
      *
-     * @param root          The {@link WebResourceRoot} this new
-     *                          {@link org.apache.catalina.WebResourceSet} will
-     *                          be added to.
-     * @param webAppMount   The path within the web application at which this
-     *                          {@link org.apache.catalina.WebResourceSet} will
-     *                          be mounted. For example, to add a directory of
-     *                          JARs to a web application, the directory would
-     *                          be mounted at "/WEB-INF/lib/"
-     * @param base          The absolute path to the directory on the file
-     *                          system from which the resources will be served.
-     * @param internalPath  The path within this new {@link
-     *                          org.apache.catalina.WebResourceSet} where
-     *                          resources will be served from.
+     * @param root         The {@link WebResourceRoot} this new
+     *                     {@link org.apache.catalina.WebResourceSet} will
+     *                     be added to.
+     * @param webAppMount  The path within the web application at which this
+     *                     {@link org.apache.catalina.WebResourceSet} will
+     *                     be mounted. For example, to add a directory of
+     *                     JARs to a web application, the directory would
+     *                     be mounted at "/WEB-INF/lib/"
+     * @param base         The absolute path to the directory on the file
+     *                     system from which the resources will be served.
+     * @param internalPath The path within this new {@link
+     *                     org.apache.catalina.WebResourceSet} where
+     *                     resources will be served from.
      */
     public DirResourceSet(WebResourceRoot root, String webAppMount, String base,
-            String internalPath) {
+                          String internalPath) {
         super(internalPath);
         setRoot(root);
         setWebAppMount(webAppMount);
@@ -78,7 +78,7 @@ public class DirResourceSet extends AbstractFileResourceSet {
 
             if (f.isDirectory()) {
                 root.createWebResourceSet(ResourceSetType.RESOURCE_JAR, "/",
-                         f.getAbsolutePath(), null, "/");
+                        f.getAbsolutePath(), null, "/");
             }
         }
 
@@ -136,9 +136,9 @@ public class DirResourceSet extends AbstractFileResourceSet {
             if (webAppMount.startsWith(path)) {
                 int i = webAppMount.indexOf('/', path.length());
                 if (i == -1) {
-                    return new String[] {webAppMount.substring(path.length())};
+                    return new String[]{webAppMount.substring(path.length())};
                 } else {
-                    return new String[] {
+                    return new String[]{
                             webAppMount.substring(path.length(), i)};
                 }
             }

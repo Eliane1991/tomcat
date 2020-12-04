@@ -28,11 +28,11 @@ import java.math.BigDecimal;
  * @author Jacob Hookom [jacob@hookom.net]
  */
 public final class AstFloatingPoint extends SimpleNode {
+    private volatile Number number;
+
     public AstFloatingPoint(int id) {
         super(id);
     }
-
-    private volatile Number number;
 
     public Number getFloatingPoint() {
         if (this.number == null) {

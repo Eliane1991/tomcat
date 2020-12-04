@@ -32,9 +32,7 @@ class PoolImplUtils {
     /**
      * Identifies the concrete type of object that an object factory creates.
      *
-     * @param factoryClass
-     *            The factory to examine
-     *
+     * @param factoryClass The factory to examine
      * @return the type of object the factory creates
      */
     @SuppressWarnings("rawtypes")
@@ -65,13 +63,9 @@ class PoolImplUtils {
     /**
      * Obtains the concrete type used by an implementation of an interface that uses a generic type.
      *
-     * @param type
-     *            The interface that defines a generic type
-     * @param clazz
-     *            The class that implements the interface with a concrete type
-     * @param <T>
-     *            The interface type
-     *
+     * @param type  The interface that defines a generic type
+     * @param clazz The class that implements the interface with a concrete type
+     * @param <T>   The interface type
      * @return concrete type used by the implementation
      */
     private static <T> Object getGenericType(final Class<T> type, final Class<? extends T> clazz) {
@@ -87,8 +81,7 @@ class PoolImplUtils {
         }
 
         // Interface not found on this class. Look at the superclass.
-        @SuppressWarnings("unchecked")
-        final Class<? extends T> superClass = (Class<? extends T>) clazz.getSuperclass();
+        @SuppressWarnings("unchecked") final Class<? extends T> superClass = (Class<? extends T>) clazz.getSuperclass();
 
         final Object result = getGenericType(type, superClass);
         if (result instanceof Class<?>) {
@@ -107,12 +100,10 @@ class PoolImplUtils {
 
     /**
      * Gets the matching parameterized type or null.
-     * @param type
-     *            The interface that defines a generic type.
-     * @param clazz
-     *            The class that implements the interface with a concrete type.
-     * @param <T>
-     *            The interface type.
+     *
+     * @param type  The interface that defines a generic type.
+     * @param clazz The class that implements the interface with a concrete type.
+     * @param <T>   The interface type.
      * @return the matching parameterized type or null.
      */
     private static <T> ParameterizedType getParameterizedType(final Class<T> type, final Class<? extends T> clazz) {
@@ -133,13 +124,10 @@ class PoolImplUtils {
      * For a generic parameter, return either the Class used or if the type is unknown, the index for the type in
      * definition of the class
      *
-     * @param clazz
-     *            defining class
-     * @param argType
-     *            the type argument of interest
-     *
+     * @param clazz   defining class
+     * @param argType the type argument of interest
      * @return An instance of {@link Class} representing the type used by the type parameter or an instance of
-     *         {@link Integer} representing the index for the type in the definition of the defining class
+     * {@link Integer} representing the index for the type in the definition of the defining class
      */
     private static Object getTypeParameter(final Class<?> clazz, final Type argType) {
         if (argType instanceof Class<?>) {

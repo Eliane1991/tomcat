@@ -57,7 +57,7 @@ public class FeatureInfo implements Serializable {
 
     /**
      * @return the name of this feature, which must be unique among features
-     *  in the same collection.
+     * in the same collection.
      */
     public String getName() {
         return this.name;

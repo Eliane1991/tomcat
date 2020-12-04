@@ -39,7 +39,7 @@ public class UpgradeProcessorExternal extends UpgradeProcessorBase {
     private final UpgradeInfo upgradeInfo;
 
     public UpgradeProcessorExternal(SocketWrapperBase<?> wrapper, UpgradeToken upgradeToken,
-            UpgradeGroupInfo upgradeGroupInfo) {
+                                    UpgradeGroupInfo upgradeGroupInfo) {
         super(upgradeToken);
         this.upgradeInfo = new UpgradeInfo();
         upgradeGroupInfo.addUpgradeInfo(upgradeInfo);

@@ -16,5 +16,5 @@
   limitations under the License.
 -->
 <component name="CopyrightManager">
-  <settings default="Tomcat" />
+    <settings default="Tomcat"/>
 </component>

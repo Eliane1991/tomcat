@@ -26,8 +26,8 @@ import java.util.Collection;
  * Servlet. This class implements the Wrapper or Decorator pattern. Methods
  * default to calling through to the wrapped response object.
  *
- * @since v 2.3
  * @see javax.servlet.http.HttpServletResponse
+ * @since v 2.3
  */
 public class HttpServletResponseWrapper extends ServletResponseWrapper
         implements HttpServletResponse {
@@ -36,9 +36,7 @@ public class HttpServletResponseWrapper extends ServletResponseWrapper
      * Constructs a response adaptor wrapping the given response.
      *
      * @param response The response to be wrapped
-     *
-     * @throws java.lang.IllegalArgumentException
-     *             if the response is null
+     * @throws java.lang.IllegalArgumentException if the response is null
      */
     public HttpServletResponseWrapper(HttpServletResponse response) {
         super(response);
@@ -192,15 +190,6 @@ public class HttpServletResponseWrapper extends ServletResponseWrapper
     }
 
     /**
-     * The default behavior of this method is to call setStatus(int sc) on the
-     * wrapped response object.
-     */
-    @Override
-    public void setStatus(int sc) {
-        this._getHttpServletResponse().setStatus(sc);
-    }
-
-    /**
      * The default behavior of this method is to call setStatus(int sc, String
      * sm) on the wrapped response object.
      *
@@ -225,6 +214,15 @@ public class HttpServletResponseWrapper extends ServletResponseWrapper
     @Override
     public int getStatus() {
         return this._getHttpServletResponse().getStatus();
+    }
+
+    /**
+     * The default behavior of this method is to call setStatus(int sc) on the
+     * wrapped response object.
+     */
+    @Override
+    public void setStatus(int sc) {
+        this._getHttpServletResponse().setStatus(sc);
     }
 
     /**

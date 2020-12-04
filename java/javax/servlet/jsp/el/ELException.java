@@ -39,8 +39,7 @@ public class ELException extends Exception {
     /**
      * Creates an ELException with the provided detail message.
      *
-     * @param pMessage
-     *            the detail message
+     * @param pMessage the detail message
      **/
     public ELException(String pMessage) {
         super(pMessage);
@@ -49,27 +48,26 @@ public class ELException extends Exception {
     /**
      * Creates an ELException with the given root cause.
      *
-     * @param pRootCause
-     *            the originating cause of this exception
+     * @param pRootCause the originating cause of this exception
      **/
     public ELException(Throwable pRootCause) {
         super(pRootCause);
     }
 
     // -------------------------------------
+
     /**
      * Creates an ELException with the given detail message and root cause.
      *
-     * @param pMessage
-     *            the detail message
-     * @param pRootCause
-     *            the originating cause of this exception
+     * @param pMessage   the detail message
+     * @param pRootCause the originating cause of this exception
      **/
     public ELException(String pMessage, Throwable pRootCause) {
         super(pMessage, pRootCause);
     }
 
     // -------------------------------------
+
     /**
      * Returns the root cause.
      *

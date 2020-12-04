@@ -30,6 +30,9 @@ public class MultipartDef implements Serializable {
 
     // ------------------------------------------------------------- Properties
     private String location;
+    private String maxFileSize;
+    private String maxRequestSize;
+    private String fileSizeThreshold;
 
     public String getLocation() {
         return location;
@@ -39,9 +42,6 @@ public class MultipartDef implements Serializable {
         this.location = location;
     }
 
-
-    private String maxFileSize;
-
     public String getMaxFileSize() {
         return maxFileSize;
     }
@@ -50,9 +50,6 @@ public class MultipartDef implements Serializable {
         this.maxFileSize = maxFileSize;
     }
 
-
-    private String maxRequestSize;
-
     public String getMaxRequestSize() {
         return maxRequestSize;
     }
@@ -60,9 +57,6 @@ public class MultipartDef implements Serializable {
     public void setMaxRequestSize(String maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
     }
-
-
-    private String fileSizeThreshold;
 
     public String getFileSizeThreshold() {
         return fileSizeThreshold;
@@ -82,7 +76,7 @@ public class MultipartDef implements Serializable {
         result = prime
                 * result
                 + ((fileSizeThreshold == null) ? 0 : fileSizeThreshold
-                        .hashCode());
+                .hashCode());
         result = prime * result
                 + ((location == null) ? 0 : location.hashCode());
         result = prime * result

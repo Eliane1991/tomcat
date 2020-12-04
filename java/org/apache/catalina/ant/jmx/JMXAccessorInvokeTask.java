@@ -38,7 +38,7 @@ import java.util.List;
  * <li>Show Get, Call, Query result at Ant console log</li>
  * <li>Bind Get, Call, Query result at Ant properties</li>
  * </ul>
- *
+ * <p>
  * Examples:
  * <ul>
  * <li>
@@ -93,8 +93,8 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
 
     // ----------------------------------------------------- Instance Variables
 
-    private String operation ;
-    private List<Arg> args=new ArrayList<>();
+    private String operation;
+    private List<Arg> args = new ArrayList<>();
 
     // ------------------------------------------------------------- Properties
 
@@ -104,6 +104,7 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
     public String getOperation() {
         return operation;
     }
+
     /**
      * @param operation The operation to set.
      */
@@ -111,7 +112,7 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
         this.operation = operation;
     }
 
-    public void addArg(Arg arg ) {
+    public void addArg(Arg arg) {
         args.add(arg);
     }
 
@@ -121,6 +122,7 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
     public List<Arg> getArgs() {
         return args;
     }
+
     /**
      * @param args The args to set.
      */
@@ -132,7 +134,7 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
 
     @Override
     public String jmxExecute(MBeanServerConnection jmxServerConnection)
-        throws Exception {
+            throws Exception {
 
         if (getName() == null) {
             throw new BuildException("Must specify a 'name'");
@@ -141,40 +143,40 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
             throw new BuildException(
                     "Must specify a 'operation' for call");
         }
-        return  jmxInvoke(jmxServerConnection, getName());
-     }
+        return jmxInvoke(jmxServerConnection, getName());
+    }
 
     /**
      * Invoke specified operation.
      *
      * @param jmxServerConnection Connection to the JMX server
-     * @param name The MBean name
+     * @param name                The MBean name
      * @return null (no error message to report other than exception)
      * @throws Exception An error occurred
      */
     protected String jmxInvoke(MBeanServerConnection jmxServerConnection, String name) throws Exception {
-        Object result ;
+        Object result;
         if (args == null) {
-             result = jmxServerConnection.invoke(new ObjectName(name),
+            result = jmxServerConnection.invoke(new ObjectName(name),
                     operation, null, null);
         } else {
-            Object argsA[]=new Object[ args.size()];
-            String sigA[]=new String[args.size()];
-            for( int i=0; i<args.size(); i++ ) {
-                Arg arg=args.get(i);
+            Object argsA[] = new Object[args.size()];
+            String sigA[] = new String[args.size()];
+            for (int i = 0; i < args.size(); i++) {
+                Arg arg = args.get(i);
                 if (arg.getType() == null) {
                     arg.setType("java.lang.String");
-                    sigA[i]=arg.getType();
-                    argsA[i]=arg.getValue();
+                    sigA[i] = arg.getType();
+                    argsA[i] = arg.getValue();
                 } else {
-                    sigA[i]=arg.getType();
-                    argsA[i]=convertStringToType(arg.getValue(),arg.getType());
+                    sigA[i] = arg.getType();
+                    argsA[i] = convertStringToType(arg.getValue(), arg.getType());
                 }
             }
             result = jmxServerConnection.invoke(new ObjectName(name), operation, argsA, sigA);
         }
-        if(result != null) {
-            echoResult(operation,result);
+        if (result != null) {
+            echoResult(operation, result);
             createProperty(result);
         }
         return null;

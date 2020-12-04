@@ -31,18 +31,13 @@ import java.util.StringTokenizer;
  * Sender to proxies using multicast socket.
  */
 public class TcpSender
-    implements Sender {
+        implements Sender {
 
     private static final Log log = LogFactory.getLog(HeartbeatListener.class);
-
-    HeartbeatListener config = null;
-
     /**
      * Proxies.
      */
     protected Proxy[] proxies = null;
-
-
     /**
      * Active connections.
      */
@@ -50,7 +45,7 @@ public class TcpSender
     protected Socket[] connections = null;
     protected BufferedReader[] connectionReaders = null;
     protected BufferedWriter[] connectionWriters = null;
-
+    HeartbeatListener config = null;
 
     @Override
     public void init(HeartbeatListener config) throws Exception {
@@ -61,12 +56,12 @@ public class TcpSender
         while (tok.hasMoreTokens()) {
             String token = tok.nextToken().trim();
             int pos = token.indexOf(':');
-            if (pos <=0)
+            if (pos <= 0)
                 throw new Exception("bad ProxyList");
             proxies[i] = new Proxy();
             proxies[i].port = Integer.parseInt(token.substring(pos + 1));
             try {
-                 proxies[i].address = InetAddress.getByName(token.substring(0, pos));
+                proxies[i].address = InetAddress.getByName(token.substring(0, pos));
             } catch (Exception e) {
                 throw new Exception("bad ProxyList");
             }
@@ -91,7 +86,7 @@ public class TcpSender
                 try {
                     if (config.getHost() != null) {
                         connections[i] = new Socket();
-                        InetAddress addr =  InetAddress.getByName(config.getHost());
+                        InetAddress addr = InetAddress.getByName(config.getHost());
                         InetSocketAddress addrs = new InetSocketAddress(addr, 0);
                         connections[i].setReuseAddress(true);
                         connections[i].bind(addrs);
@@ -165,7 +160,7 @@ public class TcpSender
                         } else {
                             contentLength -= n;
                         }
-                   }
+                    }
                 }
             }
 
@@ -176,6 +171,7 @@ public class TcpSender
 
     /**
      * Close connection.
+     *
      * @param i The index of the connection that will be closed
      */
     protected void close(int i) {

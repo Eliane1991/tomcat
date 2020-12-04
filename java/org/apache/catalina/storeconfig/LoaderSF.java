@@ -65,8 +65,7 @@ public class LoaderSF extends StoreFactoryBase {
      * Is this an instance of the default <code>Loader</code> configuration,
      * with all-default properties?
      *
-     * @param loader
-     *            Loader to be tested
+     * @param loader Loader to be tested
      * @return <code>true</code> if this is an instance of the default loader
      */
     protected boolean isDefaultLoader(Loader loader) {
@@ -77,7 +76,7 @@ public class LoaderSF extends StoreFactoryBase {
         WebappLoader wloader = (WebappLoader) loader;
         if ((wloader.getDelegate() != false)
                 || !wloader.getLoaderClass().equals(
-                        "org.apache.catalina.loader.WebappClassLoader")) {
+                "org.apache.catalina.loader.WebappClassLoader")) {
             return false;
         }
         return true;

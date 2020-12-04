@@ -25,10 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageInfoImpl implements MessageInfo {
-    protected static final StringManager sm = StringManager.getManager(MessageInfoImpl.class);
-
     public static final String IS_MANDATORY = "javax.security.auth.message.MessagePolicy.isMandatory";
-
+    protected static final StringManager sm = StringManager.getManager(MessageInfoImpl.class);
     private final Map<String, Object> map = new HashMap<>();
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -55,17 +53,17 @@ public class MessageInfoImpl implements MessageInfo {
     }
 
     @Override
-    public Object getResponseMessage() {
-        return response;
-    }
-
-    @Override
     public void setRequestMessage(Object request) {
         if (!(request instanceof HttpServletRequest)) {
             throw new IllegalArgumentException(sm.getString("authenticator.jaspic.badRequestType",
                     request.getClass().getName()));
         }
         this.request = (HttpServletRequest) request;
+    }
+
+    @Override
+    public Object getResponseMessage() {
+        return response;
     }
 
     @Override

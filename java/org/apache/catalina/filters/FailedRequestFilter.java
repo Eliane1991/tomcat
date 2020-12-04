@@ -54,7 +54,7 @@ public class FailedRequestFilter extends FilterBase {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
         if (!isGoodRequest(request)) {
             FailReason reason = (FailReason) request.getAttribute(
                     Globals.PARAMETER_PARSE_FAILED_REASON_ATTR);
@@ -74,8 +74,8 @@ public class FailedRequestFilter extends FilterBase {
                     // and/or URI could be well below any limits set. Use the
                     // default.
                 case UNKNOWN: // Assume the client is at fault
-                // Various things that the client can get wrong that don't have
-                // a specific status code so use the default.
+                    // Various things that the client can get wrong that don't have
+                    // a specific status code so use the default.
                 case INVALID_CONTENT_TYPE:
                 case MULTIPART_CONFIG_INVALID:
                 case NO_NAME:

@@ -34,7 +34,7 @@ public class ForTokens implements TagPlugin {
         hasEnd = ctxt.isAttributeSpecified("end");
         hasStep = ctxt.isAttributeSpecified("step");
 
-        if(hasVarStatus){
+        if (hasVarStatus) {
             ctxt.dontUseTagPlugin();
             return;
         }
@@ -44,10 +44,10 @@ public class ForTokens implements TagPlugin {
         String delimsName = ctxt.getTemporaryVariableName();
         String stName = ctxt.getTemporaryVariableName();
         String beginName = ctxt.getTemporaryVariableName();
-        String endName  = ctxt.getTemporaryVariableName();
+        String endName = ctxt.getTemporaryVariableName();
         String stepName = ctxt.getTemporaryVariableName();
         String index = ctxt.getTemporaryVariableName();
-        String temp  = ctxt.getTemporaryVariableName();
+        String temp = ctxt.getTemporaryVariableName();
         String tokensCountName = ctxt.getTemporaryVariableName();
 
         //get the value of the "items" attribute
@@ -67,20 +67,20 @@ public class ForTokens implements TagPlugin {
         //if "begin" specified, move the token to the "begin" place
         //and record the begin index. default begin place is 0.
         ctxt.generateJavaSource("int " + tokensCountName + " = " + stName + ".countTokens();");
-        if(hasBegin){
-            ctxt.generateJavaSource("int " + beginName + " = "  );
+        if (hasBegin) {
+            ctxt.generateJavaSource("int " + beginName + " = ");
             ctxt.generateAttribute("begin");
             ctxt.generateJavaSource(";");
             ctxt.generateJavaSource("for(int " + index + " = 0; " + index + " < " + beginName + " && " + stName + ".hasMoreTokens(); " + index + "++, " + stName + ".nextToken()){}");
-        }else{
+        } else {
             ctxt.generateJavaSource("int " + beginName + " = 0;");
         }
 
         //when "end" is specified, if the "end" is more than the last index,
         //record the end place as the last index, otherwise, record it as "end";
         //default end place is the last index
-        if(hasEnd){
-            ctxt.generateJavaSource("int " + endName + " = 0;"  );
+        if (hasEnd) {
+            ctxt.generateJavaSource("int " + endName + " = 0;");
             ctxt.generateJavaSource("if((" + tokensCountName + " - 1) < ");
             ctxt.generateAttribute("end");
             ctxt.generateJavaSource("){");
@@ -89,17 +89,17 @@ public class ForTokens implements TagPlugin {
             ctxt.generateJavaSource("    " + endName + " = ");
             ctxt.generateAttribute("end");
             ctxt.generateJavaSource(";}");
-        }else{
+        } else {
             ctxt.generateJavaSource("int " + endName + " = " + tokensCountName + " - 1;");
         }
 
         //get the step value from "step" if specified.
         //default step value is 1.
-        if(hasStep){
-            ctxt.generateJavaSource("int " + stepName + " = "  );
+        if (hasStep) {
+            ctxt.generateJavaSource("int " + stepName + " = ");
             ctxt.generateAttribute("step");
             ctxt.generateJavaSource(";");
-        }else{
+        } else {
             ctxt.generateJavaSource("int " + stepName + " = 1;");
         }
 
@@ -108,7 +108,7 @@ public class ForTokens implements TagPlugin {
         ctxt.generateJavaSource("    String " + temp + " = " + stName + ".nextToken();");
         ctxt.generateJavaSource("    if(((" + index + " - " + beginName + ") % " + stepName + ") == 0){");
         //if var specified, put the current token into the attribute "var" defines.
-        if(hasVar){
+        if (hasVar) {
             String strVar = ctxt.getConstantAttribute("var");
             ctxt.generateJavaSource("        pageContext.setAttribute(\"" + strVar + "\", " + temp + ");");
         }

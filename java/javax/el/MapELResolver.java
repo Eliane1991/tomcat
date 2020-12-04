@@ -39,7 +39,7 @@ public class MapELResolver extends ELResolver {
     public Class<?> getType(ELContext context, Object base, Object property) {
         Objects.requireNonNull(context);
 
-        if (base instanceof Map<?,?>) {
+        if (base instanceof Map<?, ?>) {
             context.setPropertyResolved(base, property);
             return Object.class;
         }
@@ -51,9 +51,9 @@ public class MapELResolver extends ELResolver {
     public Object getValue(ELContext context, Object base, Object property) {
         Objects.requireNonNull(context);
 
-        if (base instanceof Map<?,?>) {
+        if (base instanceof Map<?, ?>) {
             context.setPropertyResolved(base, property);
-            return ((Map<?,?>) base).get(property);
+            return ((Map<?, ?>) base).get(property);
         }
 
         return null;
@@ -61,7 +61,7 @@ public class MapELResolver extends ELResolver {
 
     @Override
     public void setValue(ELContext context, Object base, Object property,
-            Object value) {
+                         Object value) {
         Objects.requireNonNull(context);
 
         if (base instanceof Map<?, ?>) {
@@ -74,7 +74,7 @@ public class MapELResolver extends ELResolver {
 
             try {
                 @SuppressWarnings("unchecked") // Must be OK
-                Map<Object, Object> map = ((Map<Object, Object>) base);
+                        Map<Object, Object> map = ((Map<Object, Object>) base);
                 map.put(property, value);
             } catch (UnsupportedOperationException e) {
                 throw new PropertyNotWritableException(e);

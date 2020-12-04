@@ -28,7 +28,6 @@ import java.io.Reader;
  * byte streams that only contain 7-bit ASCII characters.
  *
  * @author Andy Clark, IBM
- *
  * @deprecated Will be removed in Tomcat 9.0.x onwards
  */
 @Deprecated
@@ -38,10 +37,14 @@ public class ASCIIReader extends Reader {
     // Data
     //
 
-    /** Input stream. */
+    /**
+     * Input stream.
+     */
     private final InputStream fInputStream;
 
-    /** Byte buffer. */
+    /**
+     * Byte buffer.
+     */
     private final byte[] fBuffer;
 
     //
@@ -71,18 +74,17 @@ public class ASCIIReader extends Reader {
      * <p> Subclasses that intend to support efficient single-character input
      * should override this method.
      *
-     * @return     The character read, as an integer in the range 0 to 127
-     *             (<code>0x00-0x7f</code>), or -1 if the end of the stream has
-     *             been reached
-     *
-     * @exception  IOException  If an I/O error occurs
+     * @return The character read, as an integer in the range 0 to 127
+     * (<code>0x00-0x7f</code>), or -1 if the end of the stream has
+     * been reached
+     * @throws IOException If an I/O error occurs
      */
     @Override
     public int read() throws IOException {
         int b0 = fInputStream.read();
         if (b0 > 0x80) {
             throw new IOException(Localizer.getMessage("jsp.error.xml.invalidASCII",
-                                                       Integer.toString(b0)));
+                    Integer.toString(b0)));
         }
         return b0;
     } // read():int
@@ -92,14 +94,12 @@ public class ASCIIReader extends Reader {
      * until some input is available, an I/O error occurs, or the end of the
      * stream is reached.
      *
-     * @param      ch     Destination buffer
-     * @param      offset Offset at which to start storing characters
-     * @param      length Maximum number of characters to read
-     *
-     * @return     The number of characters read, or -1 if the end of the
-     *             stream has been reached
-     *
-     * @exception  IOException  If an I/O error occurs
+     * @param ch     Destination buffer
+     * @param offset Offset at which to start storing characters
+     * @param length Maximum number of characters to read
+     * @return The number of characters read, or -1 if the end of the
+     * stream has been reached
+     * @throws IOException If an I/O error occurs
      */
     @Override
     public int read(char ch[], int offset, int length) throws IOException {
@@ -111,9 +111,9 @@ public class ASCIIReader extends Reader {
             int b0 = (0xff & fBuffer[i]); // Convert to unsigned
             if (b0 > 0x80) {
                 throw new IOException(Localizer.getMessage("jsp.error.xml.invalidASCII",
-                                                           Integer.toString(b0)));
+                        Integer.toString(b0)));
             }
-            ch[offset + i] = (char)b0;
+            ch[offset + i] = (char) b0;
         }
         return count;
     } // read(char[],int,int)
@@ -122,11 +122,9 @@ public class ASCIIReader extends Reader {
      * Skip characters.  This method will block until some characters are
      * available, an I/O error occurs, or the end of the stream is reached.
      *
-     * @param  n  The number of characters to skip
-     *
-     * @return    The number of characters actually skipped
-     *
-     * @exception  IOException  If an I/O error occurs
+     * @param n The number of characters to skip
+     * @return The number of characters actually skipped
+     * @throws IOException If an I/O error occurs
      */
     @Override
     public long skip(long n) throws IOException {
@@ -139,8 +137,7 @@ public class ASCIIReader extends Reader {
      * @return True if the next read() is guaranteed not to block for input,
      * false otherwise.  Note that returning false does not guarantee that the
      * next read will block.
-     *
-     * @exception  IOException  If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     @Override
     public boolean ready() throws IOException {
@@ -160,13 +157,12 @@ public class ASCIIReader extends Reader {
      * will attempt to reposition the stream to this point.  Not all
      * character-input streams support the mark() operation.
      *
-     * @param  readAheadLimit  Limit on the number of characters that may be
-     *                         read while still preserving the mark.  After
-     *                         reading this many characters, attempting to
-     *                         reset the stream may fail.
-     *
-     * @exception  IOException  If the stream does not support mark(),
-     *                          or if some other I/O error occurs
+     * @param readAheadLimit Limit on the number of characters that may be
+     *                       read while still preserving the mark.  After
+     *                       reading this many characters, attempting to
+     *                       reset the stream may fail.
+     * @throws IOException If the stream does not support mark(),
+     *                     or if some other I/O error occurs
      */
     @Override
     public void mark(int readAheadLimit) throws IOException {
@@ -181,10 +177,10 @@ public class ASCIIReader extends Reader {
      * character-input streams support the reset() operation, and some support
      * reset() without supporting mark().
      *
-     * @exception  IOException  If the stream has not been marked,
-     *                          or if the mark has been invalidated,
-     *                          or if the stream does not support reset(),
-     *                          or if some other I/O error occurs
+     * @throws IOException If the stream has not been marked,
+     *                     or if the mark has been invalidated,
+     *                     or if the stream does not support reset(),
+     *                     or if some other I/O error occurs
      */
     @Override
     public void reset() throws IOException {
@@ -196,11 +192,11 @@ public class ASCIIReader extends Reader {
      * ready(), mark(), or reset() invocations will throw an IOException.
      * Closing a previously-closed stream, however, has no effect.
      *
-     * @exception  IOException  If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
-     @Override
+    @Override
     public void close() throws IOException {
-         fInputStream.close();
-     } // close()
+        fInputStream.close();
+    } // close()
 
 } // class ASCIIReader

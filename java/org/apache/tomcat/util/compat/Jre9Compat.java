@@ -103,7 +103,7 @@ class Jre9Compat extends Jre8Compat {
             m13 = JarFile.class.getMethod("isMultiRelease");
             o14 = runtimeVersionMethod.invoke(null);
             o15 = majorMethod.invoke(o14);
-            m16 = AccessibleObject.class.getMethod("canAccess", new Class<?>[] { Object.class });
+            m16 = AccessibleObject.class.getMethod("canAccess", new Class<?>[]{Object.class});
             m17 = Class.class.getMethod("getModule");
             Class<?> moduleClass = Class.forName("java.lang.Module");
             m18 = moduleClass.getMethod("isExported", String.class);

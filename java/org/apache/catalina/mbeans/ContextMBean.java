@@ -23,8 +23,9 @@ import javax.management.MBeanException;
 
 public class ContextMBean extends BaseCatalinaMBean<Context> {
 
-     /**
+    /**
      * Return the set of application parameters for this application.
+     *
      * @return a string array with a representation of each parameter
      * @throws MBeanException propagated from the managed resource access
      */
@@ -35,7 +36,7 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
         ApplicationParameter[] params = context.findApplicationParameters();
         String[] stringParams = new String[params.length];
         for (int counter = 0; counter < params.length; counter++) {
-           stringParams[counter] = params[counter].toString();
+            stringParams[counter] = params[counter].toString();
         }
 
         return stringParams;
@@ -45,8 +46,9 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
     /**
      * Return the security constraints for this web application.
      * If there are none, a zero-length array is returned.
+     *
      * @return a string array with a representation of each
-     *  security constraint
+     * security constraint
      * @throws MBeanException propagated from the managed resource access
      */
     public String[] findConstraints() throws MBeanException {
@@ -85,7 +87,7 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
      * @return a string representation of the error page
      * @throws MBeanException propagated from the managed resource access
      * @deprecated Unused. Will be removed in Tomcat 10.
-     *             Use {@link #findErrorPage(Throwable)} instead.
+     * Use {@link #findErrorPage(Throwable)} instead.
      */
     @Deprecated
     public String findErrorPage(String exceptionType) throws MBeanException {
@@ -111,6 +113,7 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
     /**
      * Return the set of defined error pages for all specified error codes
      * and exception types.
+     *
      * @return a string array with a representation of each error page
      * @throws MBeanException propagated from the managed resource access
      */
@@ -147,8 +150,9 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
 
     /**
      * Return the set of defined filters for this Context.
+     *
      * @return a string array with a representation of all
-     *  the filter definitions
+     * the filter definitions
      * @throws MBeanException propagated from the managed resource access
      */
     public String[] findFilterDefs() throws MBeanException {
@@ -167,6 +171,7 @@ public class ContextMBean extends BaseCatalinaMBean<Context> {
 
     /**
      * Return the set of filter mappings for this Context.
+     *
      * @return a string array with a representation of all the filter mappings
      * @throws MBeanException propagated from the managed resource access
      */

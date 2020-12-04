@@ -35,17 +35,13 @@ public final class ErrorData {
     /**
      * Creates a new ErrorData object.
      *
-     * @param throwable
-     *            The Throwable that is the cause of the error
-     * @param statusCode
-     *            The status code of the error
-     * @param uri
-     *            The request URI
-     * @param servletName
-     *            The name of the servlet invoked
+     * @param throwable   The Throwable that is the cause of the error
+     * @param statusCode  The status code of the error
+     * @param uri         The request URI
+     * @param servletName The name of the servlet invoked
      */
     public ErrorData(Throwable throwable, int statusCode, String uri,
-            String servletName) {
+                     String servletName) {
         this.throwable = throwable;
         this.statusCode = statusCode;
         this.uri = uri;

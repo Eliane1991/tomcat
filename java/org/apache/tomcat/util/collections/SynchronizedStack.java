@@ -29,10 +29,8 @@ public class SynchronizedStack<T> {
 
     public static final int DEFAULT_SIZE = 128;
     private static final int DEFAULT_LIMIT = -1;
-
-    private int size;
     private final int limit;
-
+    private int size;
     /*
      * Points to the next available object in the stack
      */

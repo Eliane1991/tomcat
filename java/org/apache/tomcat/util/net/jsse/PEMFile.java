@@ -53,29 +53,10 @@ public class PEMFile {
     private static final StringManager sm = StringManager.getManager(PEMFile.class);
 
     private static final byte[] OID_EC_PUBLIC_KEY =
-            new byte[] { 0x06, 0x07, 0x2A, (byte) 0x86, 0x48, (byte) 0xCE, 0x3D, 0x02, 0x01 };
-
-    public static String toPEM(X509Certificate certificate) throws CertificateEncodingException {
-        StringBuilder result = new StringBuilder();
-        result.append(Part.BEGIN_BOUNDARY + Part.CERTIFICATE + Part.FINISH_BOUNDARY);
-        result.append(System.lineSeparator());
-        Base64 b64 = new Base64(64);
-        result.append(b64.encodeAsString(certificate.getEncoded()));
-        result.append(Part.END_BOUNDARY + Part.CERTIFICATE + Part.FINISH_BOUNDARY);
-        return result.toString();
-    }
-
+            new byte[]{0x06, 0x07, 0x2A, (byte) 0x86, 0x48, (byte) 0xCE, 0x3D, 0x02, 0x01};
     private String filename;
     private List<X509Certificate> certificates = new ArrayList<>();
     private PrivateKey privateKey;
-
-    public List<X509Certificate> getCertificates() {
-        return certificates;
-    }
-
-    public PrivateKey getPrivateKey() {
-        return privateKey;
-    }
 
     public PEMFile(String filename) throws IOException, GeneralSecurityException {
         this(filename, null);
@@ -131,9 +112,33 @@ public class PEMFile {
         }
     }
 
+    public static String toPEM(X509Certificate certificate) throws CertificateEncodingException {
+        StringBuilder result = new StringBuilder();
+        result.append(Part.BEGIN_BOUNDARY + Part.CERTIFICATE + Part.FINISH_BOUNDARY);
+        result.append(System.lineSeparator());
+        Base64 b64 = new Base64(64);
+        result.append(b64.encodeAsString(certificate.getEncoded()));
+        result.append(Part.END_BOUNDARY + Part.CERTIFICATE + Part.FINISH_BOUNDARY);
+        return result.toString();
+    }
+
+    public List<X509Certificate> getCertificates() {
+        return certificates;
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    private enum Format {
+        PKCS1,
+        PKCS8,
+        RFC5915
+    }
+
     private class Part {
         public static final String BEGIN_BOUNDARY = "-----BEGIN ";
-        public static final String END_BOUNDARY   = "-----END ";
+        public static final String END_BOUNDARY = "-----END ";
         public static final String FINISH_BOUNDARY = "-----";
 
         public static final String PRIVATE_KEY = "PRIVATE KEY";
@@ -187,7 +192,7 @@ public class PEMFile {
 
             InvalidKeyException exception = new InvalidKeyException(sm.getString("pemFile.parseError", filename));
             if (keyAlgorithm == null) {
-                for (String algorithm : new String[] {"RSA", "DSA", "EC"}) {
+                for (String algorithm : new String[]{"RSA", "DSA", "EC"}) {
                     try {
                         return KeyFactory.getInstance(algorithm).generatePrivate(keySpec);
                     } catch (InvalidKeySpecException e) {
@@ -279,8 +284,8 @@ public class PEMFile {
                                     Asn1Writer.writeInteger(1),
                                     Asn1Writer.writeOctetString(privateKey),
                                     Asn1Writer.writeTag((byte) 0xA1, publicKey))
-                            )
-                    );
+                    )
+            );
         }
 
 
@@ -304,12 +309,5 @@ public class PEMFile {
             return new RSAPrivateCrtKeySpec(p.parseInt(), p.parseInt(), p.parseInt(), p.parseInt(),
                     p.parseInt(), p.parseInt(), p.parseInt(), p.parseInt());
         }
-    }
-
-
-    private enum Format {
-        PKCS1,
-        PKCS8,
-        RFC5915
     }
 }

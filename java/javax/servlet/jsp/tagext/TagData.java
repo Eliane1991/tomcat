@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package javax.servlet.jsp.tagext;
 
@@ -37,7 +37,7 @@ public class TagData implements Cloneable {
      */
 
     public static final Object REQUEST_TIME_VALUE = new Object();
-
+    private final Hashtable<String, Object> attributes;        // the tagname/value map
 
     /**
      * Constructor for TagData.
@@ -48,10 +48,10 @@ public class TagData implements Cloneable {
      * static final Object[][] att = {{"connection", "conn0"}, {"id", "query0"}};
      * static final TagData td = new TagData(att);
      * </pre>
-     *
+     * <p>
      * All values must be Strings except for those holding the
      * distinguished object REQUEST_TIME_VALUE.
-
+     *
      * @param atts the static attribute and values.  May be null.
      */
     public TagData(Object[] atts[]) {
@@ -70,7 +70,7 @@ public class TagData implements Cloneable {
 
     /**
      * Constructor for a TagData.
-     *
+     * <p>
      * If you already have the attributes in a hashtable, use this
      * constructor.
      *
@@ -84,7 +84,7 @@ public class TagData implements Cloneable {
      * The value of the tag's id attribute.
      *
      * @return the value of the tag's id attribute, or null if no such
-     *     attribute was specified.
+     * attribute was specified.
      */
 
     public String getId() {
@@ -115,7 +115,7 @@ public class TagData implements Cloneable {
      * Set the value of an attribute.
      *
      * @param attName the name of the attribute
-     * @param value the value.
+     * @param value   the value.
      */
     public void setAttribute(String attName,
                              Object value) {
@@ -138,16 +138,14 @@ public class TagData implements Cloneable {
         return (String) o;
     }
 
+    // private data
+
     /**
      * Enumerates the attributes.
      *
-     *@return An enumeration of the attributes in a TagData
+     * @return An enumeration of the attributes in a TagData
      */
     public java.util.Enumeration<String> getAttributes() {
         return attributes.keys();
     }
-
-    // private data
-
-    private final Hashtable<String, Object> attributes;        // the tagname/value map
 }

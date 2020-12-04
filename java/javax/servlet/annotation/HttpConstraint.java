@@ -55,13 +55,12 @@ public @interface HttpConstraint {
      * have a special meaning if it occurs as a role name.
      *
      * @return array of names. The array may be of zero length, in which case
-     *         the EmptyRoleSemantic applies; the returned value determines
-     *         whether access is to be permitted or denied regardless of the
-     *         identity and authentication state in either case, PERMIT or DENY.<br>
-     *         Otherwise, when the array contains one or more role names access
-     *         is permitted if the user a member of at least one of the named
-     *         roles. The EmptyRoleSemantic is not applied in this case.
-     *
+     * the EmptyRoleSemantic applies; the returned value determines
+     * whether access is to be permitted or denied regardless of the
+     * identity and authentication state in either case, PERMIT or DENY.<br>
+     * Otherwise, when the array contains one or more role names access
+     * is permitted if the user a member of at least one of the named
+     * roles. The EmptyRoleSemantic is not applied in this case.
      */
     String[] rolesAllowed() default {};
 

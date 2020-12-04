@@ -33,7 +33,6 @@ public interface WebConnection extends AutoCloseable {
      * the client.
      *
      * @return the input stream
-     *
      * @throws IOException If an I/O occurs while obtaining the stream
      */
     ServletInputStream getInputStream() throws IOException;
@@ -43,7 +42,6 @@ public interface WebConnection extends AutoCloseable {
      * the client.
      *
      * @return the output stream
-     *
      * @throws IOException If an I/O occurs while obtaining the stream
      */
     ServletOutputStream getOutputStream() throws IOException;

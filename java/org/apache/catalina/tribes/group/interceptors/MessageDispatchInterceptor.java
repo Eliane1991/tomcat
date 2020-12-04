@@ -39,16 +39,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MessageDispatchInterceptor extends ChannelInterceptorBase
         implements MessageDispatchInterceptorMBean {
 
-    private static final Log log = LogFactory.getLog(MessageDispatchInterceptor.class);
     protected static final StringManager sm =
             StringManager.getManager(MessageDispatchInterceptor.class);
-
-    protected long maxQueueSize = 1024*1024*64; //64MB
+    private static final Log log = LogFactory.getLog(MessageDispatchInterceptor.class);
+    protected final AtomicLong currentSize = new AtomicLong(0);
+    protected long maxQueueSize = 1024 * 1024 * 64; //64MB
     protected volatile boolean run = false;
     protected boolean useDeepClone = true;
     protected boolean alwaysSend = true;
-
-    protected final AtomicLong currentSize = new AtomicLong(0);
     protected ExecutorService executor = null;
     protected int maxThreads = 10;
     protected int maxSpareThreads = 2;
@@ -66,9 +64,9 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
         boolean async = (msg.getOptions() &
                 Channel.SEND_OPTIONS_ASYNCHRONOUS) == Channel.SEND_OPTIONS_ASYNCHRONOUS;
         if (async && run) {
-            if ((getCurrentSize()+msg.getMessage().getLength()) > maxQueueSize) {
+            if ((getCurrentSize() + msg.getMessage().getLength()) > maxQueueSize) {
                 if (alwaysSend) {
-                    super.sendMessage(destination,msg,payload);
+                    super.sendMessage(destination, msg, payload);
                     return;
                 } else {
                     throw new ChannelException(sm.getString("messageDispatchInterceptor.queue.full",
@@ -77,7 +75,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
             }
             //add to queue
             if (useDeepClone) {
-                msg = (ChannelMessage)msg.deepclone();
+                msg = (ChannelMessage) msg.deepclone();
             }
             if (!addToQueue(msg, destination, payload)) {
                 throw new ChannelException(
@@ -91,7 +89,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
 
     public boolean addToQueue(final ChannelMessage msg, final Member[] destination,
-            final InterceptorPayload payload) {
+                              final InterceptorPayload payload) {
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -125,20 +123,10 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
     @Override
     public void setOptionFlag(int flag) {
-        if ( flag != Channel.SEND_OPTIONS_ASYNCHRONOUS ) {
+        if (flag != Channel.SEND_OPTIONS_ASYNCHRONOUS) {
             log.warn(sm.getString("messageDispatchInterceptor.warning.optionflag"));
         }
         super.setOptionFlag(flag);
-    }
-
-
-    public void setMaxQueueSize(long maxQueueSize) {
-        this.maxQueueSize = maxQueueSize;
-    }
-
-
-    public void setUseDeepClone(boolean useDeepClone) {
-        this.useDeepClone = useDeepClone;
     }
 
     @Override
@@ -146,9 +134,16 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
         return maxQueueSize;
     }
 
+    public void setMaxQueueSize(long maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
 
     public boolean getUseDeepClone() {
         return useDeepClone;
+    }
+
+    public void setUseDeepClone(boolean useDeepClone) {
+        this.useDeepClone = useDeepClone;
     }
 
     @Override
@@ -172,26 +167,23 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
         return keepAliveTime;
     }
 
+    public void setKeepAliveTime(long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
     @Override
     public int getMaxSpareThreads() {
         return maxSpareThreads;
+    }
+
+    public void setMaxSpareThreads(int maxSpareThreads) {
+        this.maxSpareThreads = maxSpareThreads;
     }
 
     @Override
     public int getMaxThreads() {
         return maxThreads;
     }
-
-
-    public void setKeepAliveTime(long keepAliveTime) {
-        this.keepAliveTime = keepAliveTime;
-    }
-
-
-    public void setMaxSpareThreads(int maxSpareThreads) {
-        this.maxSpareThreads = maxSpareThreads;
-    }
-
 
     public void setMaxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
@@ -211,10 +203,10 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
     @Override
     public void start(int svc) throws ChannelException {
         //start the thread
-        if (!run ) {
+        if (!run) {
             synchronized (this) {
                 // only start with the sender
-                if ( !run && ((svc & Channel.SND_TX_SEQ)==Channel.SND_TX_SEQ) ) {
+                if (!run && ((svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ)) {
                     startQueue();
                 }
             }
@@ -228,7 +220,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
         //stop the thread
         if (run) {
             synchronized (this) {
-                if ( run && ((svc & Channel.SND_TX_SEQ)==Channel.SND_TX_SEQ)) {
+                if (run && ((svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ)) {
                     stopQueue();
                 }
             }
@@ -239,7 +231,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
 
     protected void sendAsyncData(ChannelMessage msg, Member[] destination,
-            InterceptorPayload payload) {
+                                 InterceptorPayload payload) {
         ErrorHandler handler = null;
         if (payload != null) {
             handler = payload.getErrorHandler();
@@ -250,10 +242,10 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
                 if (handler != null) {
                     handler.handleCompletion(new UniqueId(msg.getUniqueId()));
                 }
-            } catch ( Exception ex ) {
-                log.error(sm.getString("messageDispatchInterceptor.completeMessage.failed"),ex);
+            } catch (Exception ex) {
+                log.error(sm.getString("messageDispatchInterceptor.completeMessage.failed"), ex);
             }
-        } catch ( Exception x ) {
+        } catch (Exception x) {
             ChannelException cx = null;
             if (x instanceof ChannelException) {
                 cx = (ChannelException) x;
@@ -261,14 +253,14 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
                 cx = new ChannelException(x);
             }
             if (log.isDebugEnabled()) {
-                log.debug(sm.getString("messageDispatchInterceptor.AsyncMessage.failed"),x);
+                log.debug(sm.getString("messageDispatchInterceptor.AsyncMessage.failed"), x);
             }
             try {
                 if (handler != null) {
                     handler.handleError(cx, new UniqueId(msg.getUniqueId()));
                 }
-            } catch ( Exception ex ) {
-                log.error(sm.getString("messageDispatchInterceptor.errorMessage.failed"),ex);
+            } catch (Exception ex) {
+                log.error(sm.getString("messageDispatchInterceptor.errorMessage.failed"), ex);
             }
         } finally {
             addAndGetCurrentSize(-msg.getMessage().getLength());
@@ -276,8 +268,10 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
     }
 
     // ---------------------------------------------- stats of the thread pool
+
     /**
      * Return the current number of threads that are managed by the pool.
+     *
      * @return the current number of threads that are managed by the pool
      */
     @Override
@@ -291,6 +285,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
     /**
      * Return the current number of threads that are in use.
+     *
      * @return the current number of threads that are in use
      */
     @Override
@@ -304,6 +299,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
     /**
      * Return the total number of tasks that have ever been scheduled for execution by the pool.
+     *
      * @return the total number of tasks that have ever been scheduled for execution by the pool
      */
     @Override
@@ -317,6 +313,7 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase
 
     /**
      * Return the total number of tasks that have completed execution by the pool.
+     *
      * @return the total number of tasks that have completed execution by the pool
      */
     @Override

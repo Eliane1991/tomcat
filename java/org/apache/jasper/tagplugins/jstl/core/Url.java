@@ -44,7 +44,7 @@ public class Url implements TagPlugin {
 
         //get the scope
         String strScope = "page";
-        if(hasScope){
+        if (hasScope) {
             strScope = ctxt.getConstantAttribute("scope");
         }
         int iScope = Util.getScope(strScope);
@@ -56,7 +56,7 @@ public class Url implements TagPlugin {
 
         //get the context
         ctxt.generateJavaSource("String " + contextName + " = null;");
-        if(hasContext){
+        if (hasContext) {
             ctxt.generateJavaSource(contextName + " = ");
             ctxt.generateAttribute("context");
             ctxt.generateJavaSource(";");
@@ -72,25 +72,25 @@ public class Url implements TagPlugin {
         ctxt.generateBody();
 
         ctxt.generateJavaSource("String " + resultName + " = " +
-        "(String)pageContext.getAttribute(\"url_without_param\");");
+                "(String)pageContext.getAttribute(\"url_without_param\");");
         ctxt.generateJavaSource("pageContext.removeAttribute(\"url_without_param\");");
 
         //if the url is relative, encode it
         ctxt.generateJavaSource("if(!org.apache.jasper.tagplugins.jstl.Util.isAbsoluteUrl(" + resultName + ")){");
         ctxt.generateJavaSource("    HttpServletResponse " + responseName + " = " +
-        "((HttpServletResponse) pageContext.getResponse());");
+                "((HttpServletResponse) pageContext.getResponse());");
         ctxt.generateJavaSource("    " + resultName + " = "
                 + responseName + ".encodeURL(" + resultName + ");");
         ctxt.generateJavaSource("}");
 
         //if "var" is specified, the url string store in the attribute var defines
-        if(hasVar){
+        if (hasVar) {
             String strVar = ctxt.getConstantAttribute("var");
             ctxt.generateJavaSource("pageContext.setAttribute" +
                     "(\"" + strVar + "\", " + resultName + ", " + iScope + ");");
 
             //if var is not specified, just print out the url string
-        }else{
+        } else {
             ctxt.generateJavaSource("try{");
             ctxt.generateJavaSource("    pageContext.getOut().print(" + resultName + ");");
             ctxt.generateJavaSource("}catch(java.io.IOException ex){");

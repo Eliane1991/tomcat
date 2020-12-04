@@ -24,87 +24,81 @@ package javax.servlet;
  */
 public interface SessionCookieConfig {
 
+    public String getName();
+
     /**
      * Sets the session cookie name.
      *
      * @param name The name of the session cookie
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setName(String name);
 
-    public String getName();
+    public String getDomain();
 
     /**
      * Sets the domain for the session cookie
      *
      * @param domain The session cookie domain
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setDomain(String domain);
 
-    public String getDomain();
+    public String getPath();
 
     /**
      * Sets the path of the session cookie.
      *
      * @param path The session cookie path
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setPath(String path);
 
-    public String getPath();
+    public String getComment();
 
     /**
      * Sets the comment for the session cookie
      *
      * @param comment The session cookie comment
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setComment(String comment);
 
-    public String getComment();
+    public boolean isHttpOnly();
 
     /**
      * Sets the httpOnly flag for the session cookie.
      *
      * @param httpOnly The httpOnly setting to use for session cookies
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setHttpOnly(boolean httpOnly);
 
-    public boolean isHttpOnly();
+    public boolean isSecure();
 
     /**
      * Sets the secure flag for the session cookie.
      *
      * @param secure The secure setting to use for session cookies
-     *
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setSecure(boolean secure);
 
-    public boolean isSecure();
+    public int getMaxAge();
 
     /**
      * Sets the maximum age.
      *
      * @param MaxAge the maximum age to set
      * @throws IllegalStateException if the associated ServletContext has
-     *         already been initialised
+     *                               already been initialised
      */
     public void setMaxAge(int MaxAge);
-
-    public int getMaxAge();
 
 }

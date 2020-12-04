@@ -44,8 +44,8 @@ public class EjbFactory extends FactoryBase {
                 "javax.ejb.Factory", Constants.OPENEJB_EJB_FACTORY);
         try {
             factory = (ObjectFactory)
-                Class.forName(javaxEjbFactoryClassName).getConstructor().newInstance();
-        } catch(Throwable t) {
+                    Class.forName(javaxEjbFactoryClassName).getConstructor().newInstance();
+        } catch (Throwable t) {
             if (t instanceof NamingException) {
                 throw (NamingException) t;
             }
@@ -56,7 +56,7 @@ public class EjbFactory extends FactoryBase {
                 throw (VirtualMachineError) t;
             }
             NamingException ex = new NamingException
-                ("Could not create resource factory instance");
+                    ("Could not create resource factory instance");
             ex.initCause(t);
             throw ex;
         }

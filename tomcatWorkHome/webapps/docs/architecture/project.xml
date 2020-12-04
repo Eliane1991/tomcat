@@ -16,30 +16,30 @@
   limitations under the License.
 -->
 <project name="Apache Tomcat 8 Architecture"
-        href="https://tomcat.apache.org/">
+         href="https://tomcat.apache.org/">
 
     <title>Apache Tomcat 8 Architecture</title>
 
     <logo href="/images/tomcat.gif">
-      The Apache Tomcat Servlet/JSP Container
+        The Apache Tomcat Servlet/JSP Container
     </logo>
 
 
     <body>
 
-    <menu name="Links">
-        <item name="Docs Home"             href="../index.html" />
-        <item name="Architecture Home"     href="index.html"/>
-        <item name="FAQ"                   href="https://wiki.apache.org/tomcat/FAQ" />
-        <item name="User Comments"         href="#comments_section"/>
-    </menu>
+        <menu name="Links">
+            <item name="Docs Home" href="../index.html"/>
+            <item name="Architecture Home" href="index.html"/>
+            <item name="FAQ" href="https://wiki.apache.org/tomcat/FAQ"/>
+            <item name="User Comments" href="#comments_section"/>
+        </menu>
 
-    <menu name="Contents">
-        <item name="Contents"              href="index.html" />
-        <item name="Overview"              href="overview.html" />
-        <item name="Server Startup"        href="startup.html" />
-        <item name="Request Process"       href="requestProcess.html" />
-    </menu>
+        <menu name="Contents">
+            <item name="Contents" href="index.html"/>
+            <item name="Overview" href="overview.html"/>
+            <item name="Server Startup" href="startup.html"/>
+            <item name="Request Process" href="requestProcess.html"/>
+        </menu>
 
     </body>
 </project>

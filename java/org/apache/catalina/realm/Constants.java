@@ -20,7 +20,6 @@ package org.apache.catalina.realm;
  * Manifest constants for this Java package.
  *
  * @author Craig R. McClanahan
- *
  * @deprecated Unused. Will be removed in Tomcat 9
  */
 @Deprecated

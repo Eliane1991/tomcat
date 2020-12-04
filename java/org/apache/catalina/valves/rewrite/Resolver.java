@@ -38,7 +38,6 @@ public abstract class Resolver {
 
     /**
      * @return The name of the encoding to use to %nn encode URIs
-     *
      * @deprecated This will be removed in Tomcat 9.0.x
      */
     @Deprecated

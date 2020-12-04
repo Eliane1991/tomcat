@@ -31,15 +31,6 @@ public class AcceptEncoding {
         this.quality = quality;
     }
 
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public double getQuality() {
-        return quality;
-    }
-
-
     public static List<AcceptEncoding> parse(StringReader input) throws IOException {
 
         List<AcceptEncoding> result = new ArrayList<>();
@@ -70,5 +61,13 @@ public class AcceptEncoding {
         } while (true);
 
         return result;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public double getQuality() {
+        return quality;
     }
 }

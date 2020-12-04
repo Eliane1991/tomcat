@@ -33,46 +33,11 @@ public class Ranges {
         this.entries = Collections.unmodifiableList(entries);
     }
 
-
-    public List<Entry> getEntries() {
-        return entries;
-    }
-
-    public String getUnits() {
-        return units;
-    }
-
-
-    public static class Entry {
-
-        private final long start;
-        private final long end;
-
-
-        public Entry(long start, long end) {
-            this.start = start;
-            this.end = end;
-        }
-
-
-        public long getStart() {
-            return start;
-        }
-
-
-        public long getEnd() {
-            return end;
-        }
-    }
-
-
     /**
      * Parses a Range header from an HTTP header.
      *
      * @param input a reader over the header text
-     *
      * @return a set of ranges parsed from the input, or null if not valid
-     *
      * @throws IOException if there was a problem reading the input
      */
     public static Ranges parse(StringReader input) throws IOException {
@@ -120,5 +85,35 @@ public class Ranges {
         }
 
         return new Ranges(units, entries);
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public String getUnits() {
+        return units;
+    }
+
+    public static class Entry {
+
+        private final long start;
+        private final long end;
+
+
+        public Entry(long start, long end) {
+            this.start = start;
+            this.end = end;
+        }
+
+
+        public long getStart() {
+            return start;
+        }
+
+
+        public long getEnd() {
+            return end;
+        }
     }
 }

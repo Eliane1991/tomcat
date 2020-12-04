@@ -55,7 +55,7 @@ public class IdentityOutputFilter implements OutputFilter {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doWrite(ByteBuffer)}
+     * {@link #doWrite(ByteBuffer)}
      */
     @Deprecated
     @Override
@@ -71,7 +71,7 @@ public class IdentityOutputFilter implements OutputFilter {
                     // in the body; changing the chunk length to the number
                     // of bytes remaining
                     chunk.setBytes(chunk.getBytes(), chunk.getStart(),
-                                   (int) remaining);
+                            (int) remaining);
                     result = (int) remaining;
                     remaining = 0;
                 } else {

@@ -24,6 +24,7 @@ import java.util.Objects;
 public class CompositeELResolver extends ELResolver {
 
     private static final Class<?> SCOPED_ATTRIBUTE_EL_RESOLVER;
+
     static {
         Class<?> clazz = null;
         try {
@@ -72,7 +73,7 @@ public class CompositeELResolver extends ELResolver {
      */
     @Override
     public Object invoke(ELContext context, Object base, Object method,
-            Class<?>[] paramTypes, Object[] params) {
+                         Class<?>[] paramTypes, Object[] params) {
         context.setPropertyResolved(false);
         int sz = this.size;
         for (int i = 0; i < sz; i++) {

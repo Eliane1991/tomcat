@@ -39,30 +39,25 @@ public class GzipOutputFilter implements OutputFilter {
 
 
     // ----------------------------------------------------- Instance Variables
-
+    /**
+     * Fake internal output stream.
+     */
+    protected final OutputStream fakeOutputStream = new FakeOutputStream();
     /**
      * Next buffer in the pipeline.
      */
     protected HttpOutputBuffer buffer;
-
-
     /**
      * Compression output stream.
      */
     protected GZIPOutputStream compressionStream = null;
 
 
-    /**
-     * Fake internal output stream.
-     */
-    protected final OutputStream fakeOutputStream = new FakeOutputStream();
-
-
     // --------------------------------------------------- OutputBuffer Methods
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doWrite(ByteBuffer)}
+     * {@link #doWrite(ByteBuffer)}
      */
     @Deprecated
     @Override
@@ -71,7 +66,7 @@ public class GzipOutputFilter implements OutputFilter {
             compressionStream = new GZIPOutputStream(fakeOutputStream, true);
         }
         compressionStream.write(chunk.getBytes(), chunk.getStart(),
-                                chunk.getLength());
+                chunk.getLength());
         return chunk.getLength();
     }
 
@@ -159,23 +154,27 @@ public class GzipOutputFilter implements OutputFilter {
 
 
     protected class FakeOutputStream
-        extends OutputStream {
+            extends OutputStream {
         protected final ByteBuffer outputChunk = ByteBuffer.allocate(1);
+
         @Override
         public void write(int b)
-            throws IOException {
+                throws IOException {
             // Shouldn't get used for good performance, but is needed for
             // compatibility with Sun JDK 1.4.0
             outputChunk.put(0, (byte) (b & 0xff));
             buffer.doWrite(outputChunk);
         }
+
         @Override
         public void write(byte[] b, int off, int len)
-            throws IOException {
+                throws IOException {
             buffer.doWrite(ByteBuffer.wrap(b, off, len));
         }
+
         @Override
         public void flush() throws IOException {/*NOOP*/}
+
         @Override
         public void close() throws IOException {/*NOOP*/}
     }

@@ -29,10 +29,8 @@ import java.net.URL;
 
 public abstract class AbstractFileResourceSet extends AbstractResourceSet {
 
-    private static final Log log = LogFactory.getLog(AbstractFileResourceSet.class);
-
     protected static final String[] EMPTY_STRING_ARRAY = new String[0];
-
+    private static final Log log = LogFactory.getLog(AbstractFileResourceSet.class);
     private File fileBase;
     private String absoluteBase;
     private String canonicalBase;
@@ -47,13 +45,13 @@ public abstract class AbstractFileResourceSet extends AbstractResourceSet {
     }
 
     @Override
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
     @Override
-    public boolean isReadOnly() {
-        return readOnly;
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     protected final File file(String name, boolean mustExist) {
@@ -139,7 +137,7 @@ public abstract class AbstractFileResourceSet extends AbstractResourceSet {
                 String msg = sm.getString("abstractFileResourceSet.canonicalfileCheckFailed",
                         getRoot().getContext().getName(), absPath, canPath);
                 // Log issues with configuration files at a higher level
-                if(absPath.startsWith("/META-INF/") || absPath.startsWith("/WEB-INF/")) {
+                if (absPath.startsWith("/META-INF/") || absPath.startsWith("/WEB-INF/")) {
                     log.error(msg);
                 } else {
                     log.warn(msg);
@@ -175,7 +173,7 @@ public abstract class AbstractFileResourceSet extends AbstractResourceSet {
         // level APIs are used to create the files that bypass various checks.
         // File names that end in ' ' are known to cause problems when using
         // File#getCanonicalPath().
-        if (name.charAt(len -1) == ' ') {
+        if (name.charAt(len - 1) == ' ') {
             return true;
         }
         return false;

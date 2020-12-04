@@ -51,10 +51,68 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
     private static final Log log = LogFactory.getLog(NamingResourcesImpl.class);
 
     private static final StringManager sm = StringManager.getManager(NamingResourcesImpl.class);
-
-    private volatile boolean resourceRequireExplicitRegistration = false;
+    /**
+     * The property change support for this component.
+     */
+    protected final PropertyChangeSupport support =
+            new PropertyChangeSupport(this);
 
     // ----------------------------------------------------------- Constructors
+    /**
+     * Set of naming entries, keyed by name.
+     */
+    private final Set<String> entries = new HashSet<>();
+
+
+    // ----------------------------------------------------- Instance Variables
+    /**
+     * The EJB resource references for this web application, keyed by name.
+     */
+    private final Map<String, ContextEjb> ejbs = new HashMap<>();
+    /**
+     * The environment entries for this web application, keyed by name.
+     */
+    private final Map<String, ContextEnvironment> envs = new HashMap<>();
+    /**
+     * The local  EJB resource references for this web application, keyed by
+     * name.
+     */
+    private final Map<String, ContextLocalEjb> localEjbs = new HashMap<>();
+    /**
+     * The message destination references for this web application,
+     * keyed by name.
+     */
+    private final Map<String, MessageDestinationRef> mdrs = new HashMap<>();
+    /**
+     * The resource environment references for this web application,
+     * keyed by name.
+     */
+    private final HashMap<String, ContextResourceEnvRef> resourceEnvRefs =
+            new HashMap<>();
+    /**
+     * The resource references for this web application, keyed by name.
+     */
+    private final HashMap<String, ContextResource> resources =
+            new HashMap<>();
+    /**
+     * The resource links for this web application, keyed by name.
+     */
+    private final HashMap<String, ContextResourceLink> resourceLinks =
+            new HashMap<>();
+    /**
+     * The web service references for this web application, keyed by name.
+     */
+    private final HashMap<String, ContextService> services =
+            new HashMap<>();
+    private volatile boolean resourceRequireExplicitRegistration = false;
+    /**
+     * Associated container object.
+     */
+    private Object container = null;
+    /**
+     * The transaction for this webapp.
+     */
+    private ContextTransaction transaction = null;
 
 
     /**
@@ -65,91 +123,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Associated container object.
-     */
-    private Object container = null;
-
-
-    /**
-     * Set of naming entries, keyed by name.
-     */
-    private final Set<String> entries = new HashSet<>();
-
-
-    /**
-     * The EJB resource references for this web application, keyed by name.
-     */
-    private final Map<String, ContextEjb> ejbs = new HashMap<>();
-
-
-    /**
-     * The environment entries for this web application, keyed by name.
-     */
-    private final Map<String, ContextEnvironment> envs = new HashMap<>();
-
-
-    /**
-     * The local  EJB resource references for this web application, keyed by
-     * name.
-     */
-    private final Map<String, ContextLocalEjb> localEjbs = new HashMap<>();
-
-
-    /**
-     * The message destination references for this web application,
-     * keyed by name.
-     */
-    private final Map<String, MessageDestinationRef> mdrs = new HashMap<>();
-
-
-    /**
-     * The resource environment references for this web application,
-     * keyed by name.
-     */
-    private final HashMap<String, ContextResourceEnvRef> resourceEnvRefs =
-        new HashMap<>();
-
-
-    /**
-     * The resource references for this web application, keyed by name.
-     */
-    private final HashMap<String, ContextResource> resources =
-        new HashMap<>();
-
-
-    /**
-     * The resource links for this web application, keyed by name.
-     */
-    private final HashMap<String, ContextResourceLink> resourceLinks =
-        new HashMap<>();
-
-
-    /**
-     * The web service references for this web application, keyed by name.
-     */
-    private final HashMap<String, ContextService> services =
-        new HashMap<>();
-
-
-    /**
-     * The transaction for this webapp.
-     */
-    private ContextTransaction transaction = null;
-
-
-    /**
-     * The property change support for this component.
-     */
-    protected final PropertyChangeSupport support =
-            new PropertyChangeSupport(this);
-
-
     // ------------------------------------------------------------- Properties
-
 
     /**
      * @return the container with which the naming resources are associated.
@@ -162,21 +136,12 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
     /**
      * Set the container with which the naming resources are associated.
+     *
      * @param container the associated with the resources
      */
     public void setContainer(Object container) {
         this.container = container;
     }
-
-
-    /**
-     * Set the transaction object.
-     * @param transaction the transaction descriptor
-     */
-    public void setTransaction(ContextTransaction transaction) {
-        this.transaction = transaction;
-    }
-
 
     /**
      * @return the transaction object.
@@ -185,6 +150,14 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
         return transaction;
     }
 
+    /**
+     * Set the transaction object.
+     *
+     * @param transaction the transaction descriptor
+     */
+    public void setTransaction(ContextTransaction transaction) {
+        this.transaction = transaction;
+    }
 
     /**
      * Add an EJB resource reference for this web application.
@@ -300,7 +273,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
         if (container instanceof Context) {
             // Could do this in one go. Lots of casts so split out for clarity
             Engine engine =
-                (Engine) ((Context) container).getParent().getParent();
+                    (Engine) ((Context) container).getParent().getParent();
             return engine.getService().getServer();
         }
         return null;
@@ -486,10 +459,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired EJB resource reference
      * @return the EJB resource reference with the specified name, if any;
      * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
      */
     public ContextEjb findEjb(String name) {
 
@@ -515,10 +487,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired environment entry
      * @return the environment entry with the specified name, if any;
      * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired environment entry
      */
     public ContextEnvironment findEnvironment(String name) {
 
@@ -545,10 +516,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired EJB resource reference
      * @return the local EJB resource reference with the specified name, if any;
      * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
      */
     public ContextLocalEjb findLocalEjb(String name) {
 
@@ -574,10 +544,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired message destination reference
      * @return the message destination reference with the specified name,
      * if any; otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired message destination reference
      */
     public MessageDestinationRef findMessageDestinationRef(String name) {
 
@@ -596,7 +565,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
         synchronized (mdrs) {
             MessageDestinationRef results[] =
-                new MessageDestinationRef[mdrs.size()];
+                    new MessageDestinationRef[mdrs.size()];
             return mdrs.values().toArray(results);
         }
 
@@ -604,10 +573,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired resource reference
      * @return the resource reference with the specified name, if any;
      * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource reference
      */
     public ContextResource findResource(String name) {
 
@@ -619,10 +587,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired resource link
      * @return the resource link with the specified name, if any;
      * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource link
      */
     public ContextResourceLink findResourceLink(String name) {
 
@@ -641,7 +608,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
         synchronized (resourceLinks) {
             ContextResourceLink results[] =
-                new ContextResourceLink[resourceLinks.size()];
+                    new ContextResourceLink[resourceLinks.size()];
             return resourceLinks.values().toArray(results);
         }
 
@@ -663,10 +630,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired resource environment reference
      * @return the resource environment reference type for the specified
      * name, if any; otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource environment reference
      */
     public ContextResourceEnvRef findResourceEnvRef(String name) {
 
@@ -693,10 +659,9 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
 
 
     /**
+     * @param name Name of the desired web service
      * @return the web service reference for the specified
      * name, if any; otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired web service
      */
     public ContextService findService(String name) {
 
@@ -808,7 +773,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
         }
         if (mdr != null) {
             support.firePropertyChange("messageDestinationRef",
-                                       mdr, null);
+                    mdr, null);
             mdr.setNamingResources(null);
         }
 
@@ -869,7 +834,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
         ContextResourceEnvRef resourceEnvRef = null;
         synchronized (resourceEnvRefs) {
             resourceEnvRef =
-                resourceEnvRefs.remove(name);
+                    resourceEnvRefs.remove(name);
         }
         if (resourceEnvRef != null) {
             support.firePropertyChange("resourceEnvRef", resourceEnvRef, null);
@@ -1003,14 +968,14 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
                     container), e);
             return;
         }
-        for (ContextResource cr: resources.values()) {
+        for (ContextResource cr : resources.values()) {
             if (cr.getSingleton()) {
                 String closeMethod = cr.getCloseMethod();
                 if (closeMethod != null && closeMethod.length() > 0) {
                     String name = cr.getName();
                     Object resource;
                     try {
-                         resource = ctxt.lookup(name);
+                        resource = ctxt.lookup(name);
                     } catch (NamingException e) {
                         log.warn(sm.getString(
                                 "namingResources.cleanupNoResource",
@@ -1030,7 +995,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
      * will happen on GC but that leaves db connections open that may cause
      * issues.
      *
-     * @param resource  The resource to close.
+     * @param resource The resource to close.
      */
     private void cleanUp(Object resource, String name, String closeMethod) {
         // Look for a zero-arg close() method
@@ -1127,12 +1092,11 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
      * consistent with any injection targets and if the type is not specified,
      * tries to configure the type based on the injection targets
      *
-     * @param resource  The resource to check
-     *
-     * @return  <code>true</code> if the type for the resource is now valid (if
-     *          previously <code>null</code> this means it is now set) or
-     *          <code>false</code> if the current resource type is inconsistent
-     *          with the injection targets and/or cannot be determined
+     * @param resource The resource to check
+     * @return <code>true</code> if the type for the resource is now valid (if
+     * previously <code>null</code> this means it is now set) or
+     * <code>false</code> if the current resource type is inconsistent
+     * with the injection targets and/or cannot be determined
      */
     private boolean checkResourceType(ResourceBase resource) {
         if (!(container instanceof Context)) {
@@ -1172,7 +1136,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
     }
 
     private Class<?> getCompatibleType(Context context,
-            ResourceBase resource, Class<?> typeClass) {
+                                       ResourceBase resource, Class<?> typeClass) {
 
         Class<?> result = null;
 
@@ -1190,7 +1154,7 @@ public class NamingResourcesImpl extends LifecycleMBeanBase
             Class<?> targetType = getSetterType(clazz, targetName);
             if (targetType == null) {
                 // Try a field match if no setter match
-                targetType = getFieldType(clazz,targetName);
+                targetType = getFieldType(clazz, targetName);
             }
             if (targetType == null) {
                 // No match - ignore this injection target

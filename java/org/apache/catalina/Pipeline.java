@@ -75,13 +75,12 @@ public interface Pipeline {
      * call is successful.</p>
      *
      * @param valve Valve to be added
-     *
-     * @exception IllegalArgumentException if this Container refused to
-     *  accept the specified Valve
-     * @exception IllegalArgumentException if the specified Valve refuses to be
-     *  associated with this Container
-     * @exception IllegalStateException if the specified Valve is already
-     *  associated with a different Container
+     * @throws IllegalArgumentException if this Container refused to
+     *                                  accept the specified Valve
+     * @throws IllegalArgumentException if the specified Valve refuses to be
+     *                                  associated with this Container
+     * @throws IllegalStateException    if the specified Valve is already
+     *                                  associated with a different Container
      */
     public void addValve(Valve valve);
 
@@ -118,6 +117,7 @@ public interface Pipeline {
 
     /**
      * Returns true if all the valves in this pipeline support async, false otherwise
+     *
      * @return true if all the valves in this pipeline support async, false otherwise
      */
     public boolean isAsyncSupported();

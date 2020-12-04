@@ -70,6 +70,14 @@ public class OpenSSLSessionContext implements SSLSessionContext {
     }
 
     /**
+     * @return {@code true} if caching of SSL sessions is enabled, {@code false}
+     * otherwise.
+     */
+    public boolean isSessionCacheEnabled() {
+        return SSLContext.getSessionCacheMode(contextID) == SSL.SSL_SESS_CACHE_SERVER;
+    }
+
+    /**
      * Enable or disable caching of SSL sessions.
      *
      * @param enabled {@code true} to enable caching, {@code false} to disable
@@ -80,18 +88,15 @@ public class OpenSSLSessionContext implements SSLSessionContext {
     }
 
     /**
-     * @return {@code true} if caching of SSL sessions is enabled, {@code false}
-     *         otherwise.
-     */
-    public boolean isSessionCacheEnabled() {
-        return SSLContext.getSessionCacheMode(contextID) == SSL.SSL_SESS_CACHE_SERVER;
-    }
-
-    /**
      * @return The statistics for this context.
      */
     public OpenSSLSessionStats stats() {
         return stats;
+    }
+
+    @Override
+    public int getSessionTimeout() {
+        return (int) SSLContext.getSessionCacheTimeout(contextID);
     }
 
     @Override
@@ -103,8 +108,8 @@ public class OpenSSLSessionContext implements SSLSessionContext {
     }
 
     @Override
-    public int getSessionTimeout() {
-        return (int) SSLContext.getSessionCacheTimeout(contextID);
+    public int getSessionCacheSize() {
+        return (int) SSLContext.getSessionCacheSize(contextID);
     }
 
     @Override
@@ -115,15 +120,10 @@ public class OpenSSLSessionContext implements SSLSessionContext {
         SSLContext.setSessionCacheSize(contextID, size);
     }
 
-    @Override
-    public int getSessionCacheSize() {
-        return (int) SSLContext.getSessionCacheSize(contextID);
-    }
-
     /**
      * Set the context within which session be reused (server side only)
      * See <a href="http://www.openssl.org/docs/ssl/SSL_CTX_set_session_id_context.html">
-     *     man SSL_CTX_set_session_id_context</a>
+     * man SSL_CTX_set_session_id_context</a>
      *
      * @param sidCtx can be any kind of binary data, it is therefore possible to use e.g. the name
      *               of the application and/or the hostname and/or service name

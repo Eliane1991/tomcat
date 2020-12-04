@@ -38,7 +38,7 @@ public class Authorization {
     private static final Integer FIELD_TYPE_LHEX = Integer.valueOf(3);
     private static final Integer FIELD_TYPE_QUOTED_TOKEN = Integer.valueOf(4);
 
-    private static final Map<String,Integer> fieldTypes = new HashMap<>();
+    private static final Map<String, Integer> fieldTypes = new HashMap<>();
 
     static {
         // Digest field types.
@@ -67,20 +67,18 @@ public class Authorization {
      * 2617 section 3.2.2.
      *
      * @param input The header value to parse
-     *
-     * @return  A map of directives and values as {@link String}s or
-     *          <code>null</code> if a parsing error occurs. Although the
-     *          values returned are {@link String}s they will have been
-     *          validated to ensure that they conform to RFC 2617.
-     *
+     * @return A map of directives and values as {@link String}s or
+     * <code>null</code> if a parsing error occurs. Although the
+     * values returned are {@link String}s they will have been
+     * validated to ensure that they conform to RFC 2617.
      * @throws IllegalArgumentException If the header does not conform to RFC
      *                                  2617
-     * @throws java.io.IOException If an error occurs while reading the input
+     * @throws java.io.IOException      If an error occurs while reading the input
      */
-    public static Map<String,String> parseAuthorizationDigest (StringReader input)
+    public static Map<String, String> parseAuthorizationDigest(StringReader input)
             throws IllegalArgumentException, IOException {
 
-        Map<String,String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
 
         if (HttpParser.skipConstant(input, "Digest") != SkipResult.FOUND) {
             return null;

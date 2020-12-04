@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package javax.servlet.jsp.tagext;
 
@@ -60,19 +60,19 @@ public abstract class JspFragment {
      * associated with the fragment if out is null.
      *
      * @param out The Writer to output the fragment to, or null if
-     *     output should be sent to JspContext.getOut().
-     * @throws javax.servlet.jsp.JspException Thrown if an error occurred
-     *     while invoking this fragment.
+     *            output should be sent to JspContext.getOut().
+     * @throws javax.servlet.jsp.JspException      Thrown if an error occurred
+     *                                             while invoking this fragment.
      * @throws javax.servlet.jsp.SkipPageException Thrown if the page
-     *     that (either directly or indirectly) invoked the tag handler that
-     *     invoked this fragment is to cease evaluation.  The container
-     *     must throw this exception if a Classic Tag Handler returned
-     *     Tag.SKIP_PAGE or if a Simple Tag Handler threw SkipPageException.
-     * @throws java.io.IOException If there was an error writing to the
-     *     stream.
+     *                                             that (either directly or indirectly) invoked the tag handler that
+     *                                             invoked this fragment is to cease evaluation.  The container
+     *                                             must throw this exception if a Classic Tag Handler returned
+     *                                             Tag.SKIP_PAGE or if a Simple Tag Handler threw SkipPageException.
+     * @throws java.io.IOException                 If there was an error writing to the
+     *                                             stream.
      */
-    public abstract void invoke( Writer out )
-        throws JspException, IOException;
+    public abstract void invoke(Writer out)
+            throws JspException, IOException;
 
     /**
      * Returns the JspContext that is bound to this JspFragment.

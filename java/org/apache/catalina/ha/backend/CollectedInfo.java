@@ -49,6 +49,7 @@ public class CollectedInfo {
     public CollectedInfo(String host, int port) throws Exception {
         init(host, port);
     }
+
     public void init(String host, int port) throws Exception {
         int iport = 0;
         String shost = null;
@@ -65,15 +66,15 @@ public class CollectedInfo {
              * jk-10.33.144.3-8009
              * jk-jfcpc%2F10.33.144.3-8009
              */
-            String [] elenames = name.split("-");
-            String sport = elenames[elenames.length-1];
+            String[] elenames = name.split("-");
+            String sport = elenames[elenames.length - 1];
             iport = Integer.parseInt(sport);
-            String [] shosts = elenames[1].split("%2F");
+            String[] shosts = elenames[1].split("%2F");
             shost = shosts[0];
 
-            if (port==0 && host==null)
-                  break; /* Take the first one */
-            if (host==null && iport==port)
+            if (port == 0 && host == null)
+                break; /* Take the first one */
+            if (host == null && iport == port)
                 break; /* Only port done */
             if (shost.compareTo(host) == 0)
                 break; /* Done port and host are the expected ones */
@@ -94,7 +95,7 @@ public class CollectedInfo {
         // the currentThreadCount could be 0 before the threads are created...
         // Integer iready = (Integer) mBeanServer.getAttribute(objName, "currentThreadCount");
 
-        Integer ibusy  = (Integer) mBeanServer.getAttribute(objName, "currentThreadsBusy");
+        Integer ibusy = (Integer) mBeanServer.getAttribute(objName, "currentThreadsBusy");
 
         busy = ibusy.intValue();
         ready = imax.intValue() - ibusy.intValue();

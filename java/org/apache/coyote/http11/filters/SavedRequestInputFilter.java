@@ -47,12 +47,12 @@ public class SavedRequestInputFilter implements InputFilter {
 
     /**
      * @deprecated Unused. Will be removed in Tomcat 9. Use
-     *             {@link #doRead(ApplicationBufferHandler)}
+     * {@link #doRead(ApplicationBufferHandler)}
      */
     @Deprecated
     @Override
     public int doRead(ByteChunk chunk) throws IOException {
-        if(input.getOffset()>= input.getEnd())
+        if (input.getOffset() >= input.getEnd())
             return -1;
 
         int writeLength = 0;
@@ -72,7 +72,7 @@ public class SavedRequestInputFilter implements InputFilter {
 
     @Override
     public int doRead(ApplicationBufferHandler handler) throws IOException {
-        if(input.getOffset()>= input.getEnd())
+        if (input.getOffset() >= input.getEnd())
             return -1;
 
         ByteBuffer byteBuffer = handler.getByteBuffer();

@@ -25,7 +25,6 @@ import org.apache.tools.ant.BuildException;
 /**
  * Ant task that implements the <code>/threaddump</code> command
  * supported by the Tomcat manager application.
- *
  */
 public class ThreaddumpTask extends AbstractCatalinaTask {
 
@@ -34,7 +33,7 @@ public class ThreaddumpTask extends AbstractCatalinaTask {
     /**
      * Execute the requested operation.
      *
-     * @exception BuildException if an error occurs
+     * @throws BuildException if an error occurs
      */
     @Override
     public void execute() throws BuildException {

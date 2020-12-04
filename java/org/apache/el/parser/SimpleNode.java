@@ -33,12 +33,9 @@ import java.util.Arrays;
  * @author Jacob Hookom [jacob@hookom.net]
  */
 public abstract class SimpleNode extends ELSupport implements Node {
-    protected Node parent;
-
-    protected Node[] children;
-
     protected final int id;
-
+    protected Node parent;
+    protected Node[] children;
     protected String image;
 
     public SimpleNode(int i) {
@@ -148,13 +145,13 @@ public abstract class SimpleNode extends ELSupport implements Node {
 
     @Override
     public Object invoke(EvaluationContext ctx, Class<?>[] paramTypes,
-            Object[] paramValues) throws ELException {
+                         Object[] paramValues) throws ELException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public MethodInfo getMethodInfo(EvaluationContext ctx,
-            Class<?>[] paramTypes) throws ELException {
+                                    Class<?>[] paramTypes) throws ELException {
         throw new UnsupportedOperationException();
     }
 

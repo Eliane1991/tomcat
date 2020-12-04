@@ -36,6 +36,14 @@ public class MessageDestination extends ResourceBase {
      * The display name of this destination.
      */
     private String displayName = null;
+    /**
+     * The large icon of this destination.
+     */
+    private String largeIcon = null;
+    /**
+     * The small icon of this destination.
+     */
+    private String smallIcon = null;
 
     public String getDisplayName() {
         return this.displayName;
@@ -45,12 +53,6 @@ public class MessageDestination extends ResourceBase {
         this.displayName = displayName;
     }
 
-
-    /**
-     * The large icon of this destination.
-     */
-    private String largeIcon = null;
-
     public String getLargeIcon() {
         return this.largeIcon;
     }
@@ -58,12 +60,6 @@ public class MessageDestination extends ResourceBase {
     public void setLargeIcon(String largeIcon) {
         this.largeIcon = largeIcon;
     }
-
-
-    /**
-     * The small icon of this destination.
-     */
-    private String smallIcon = null;
 
     public String getSmallIcon() {
         return this.smallIcon;

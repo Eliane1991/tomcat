@@ -76,84 +76,76 @@ public class Catalina {
 
 
     // ----------------------------------------------------- Instance Variables
-
+    private static final Log log = LogFactory.getLog(Catalina.class);
     /**
      * Use await.
      */
     protected boolean await = false;
 
+    // XXX Should be moved to embedded
     /**
      * Pathname to the server configuration file.
      */
     protected String configFile = "conf/server.xml";
-
-    // XXX Should be moved to embedded
     /**
      * The shared extensions class loader for this server.
      */
     protected ClassLoader parentClassLoader =
             Catalina.class.getClassLoader();
-
-
     /**
      * The server component we are starting or stopping.
      */
     protected Server server = null;
-
-
     /**
      * Use shutdown hook flag.
      */
     protected boolean useShutdownHook = true;
-
-
     /**
      * Shutdown hook.
      */
     protected Thread shutdownHook = null;
-
-
     /**
      * Is naming enabled ?
      */
     protected boolean useNaming = true;
 
 
+    // ----------------------------------------------------------- Constructors
     /**
      * Prevent duplicate loads.
      */
     protected boolean loaded = false;
 
 
-    // ----------------------------------------------------------- Constructors
+    // ------------------------------------------------------------- Properties
 
     public Catalina() {
         setSecurityProtection();
         ExceptionUtils.preload();
     }
 
-
-    // ------------------------------------------------------------- Properties
+    public String getConfigFile() {
+        return configFile;
+    }
 
     public void setConfigFile(String file) {
         configFile = file;
     }
 
-
-    public String getConfigFile() {
-        return configFile;
+    public boolean getUseShutdownHook() {
+        return useShutdownHook;
     }
-
 
     public void setUseShutdownHook(boolean useShutdownHook) {
         this.useShutdownHook = useShutdownHook;
     }
 
-
-    public boolean getUseShutdownHook() {
-        return useShutdownHook;
+    public ClassLoader getParentClassLoader() {
+        if (parentClassLoader != null) {
+            return parentClassLoader;
+        }
+        return ClassLoader.getSystemClassLoader();
     }
-
 
     /**
      * Set the shared extensions class loader.
@@ -164,22 +156,13 @@ public class Catalina {
         this.parentClassLoader = parentClassLoader;
     }
 
-    public ClassLoader getParentClassLoader() {
-        if (parentClassLoader != null) {
-            return parentClassLoader;
-        }
-        return ClassLoader.getSystemClassLoader();
+    public Server getServer() {
+        return server;
     }
 
     public void setServer(Server server) {
         this.server = server;
     }
-
-
-    public Server getServer() {
-        return server;
-    }
-
 
     /**
      * @return <code>true</code> if naming is enabled.
@@ -187,7 +170,6 @@ public class Catalina {
     public boolean isUseNaming() {
         return this.useNaming;
     }
-
 
     /**
      * Enables or disables naming support.
@@ -198,16 +180,15 @@ public class Catalina {
         this.useNaming = useNaming;
     }
 
-    public void setAwait(boolean b) {
-        await = b;
-    }
-
     public boolean isAwait() {
         return await;
     }
 
     // ------------------------------------------------------ Protected Methods
 
+    public void setAwait(boolean b) {
+        await = b;
+    }
 
     /**
      * Process the specified command line arguments.
@@ -250,7 +231,6 @@ public class Catalina {
         return true;
     }
 
-
     /**
      * Return a File object representing our configuration file.
      *
@@ -265,7 +245,6 @@ public class Catalina {
         return file;
 
     }
-
 
     /**
      * Create and configure the Digester we will be using for startup.
@@ -504,7 +483,6 @@ public class Catalina {
 
     }
 
-
     public void stopServer() {
         stopServer(null);
     }
@@ -566,7 +544,6 @@ public class Catalina {
             System.exit(1);
         }
     }
-
 
     /**
      * Start a new server instance.
@@ -722,7 +699,6 @@ public class Catalina {
         }
     }
 
-
     /*
      * Load using arguments
      */
@@ -736,7 +712,6 @@ public class Catalina {
             e.printStackTrace(System.out);
         }
     }
-
 
     /**
      * Start a new server instance.
@@ -756,6 +731,9 @@ public class Catalina {
 
         // Start the new server
         try {
+            /**
+             * 开始standardServer的启动过程
+             */
             getServer().start();
         } catch (LifecycleException e) {
             log.fatal(sm.getString("catalina.serverStartFail"), e);
@@ -777,6 +755,9 @@ public class Catalina {
             if (shutdownHook == null) {
                 shutdownHook = new CatalinaShutdownHook();
             }
+            /**
+             * 注册运行时的关闭线程的线程钩子,这个线程钩子会在关闭的时候执行Catalina.stop()方法,优雅关机
+             */
             Runtime.getRuntime().addShutdownHook(shutdownHook);
 
             // If JULI is being used, disable JULI's shutdown hook since
@@ -790,11 +771,13 @@ public class Catalina {
         }
 
         if (await) {
+            /**
+             * 使server进入await等待状态.然后socket进入消息的监听
+             */
             await();
             stop();
         }
     }
-
 
     /**
      * Stop an existing server instance.
@@ -838,7 +821,6 @@ public class Catalina {
 
     }
 
-
     /**
      * Await and shutdown.
      */
@@ -847,7 +829,6 @@ public class Catalina {
         getServer().await();
 
     }
-
 
     /**
      * Print usage information for this application.
@@ -862,7 +843,6 @@ public class Catalina {
 
     }
 
-
     /**
      * @deprecated unused. Will be removed in Tomcat 10 onwards.
      */
@@ -870,13 +850,11 @@ public class Catalina {
     protected void initDirs() {
     }
 
-
     protected void initStreams() {
         // Replace System.out and System.err with a custom PrintStream
         System.setOut(new SystemLogHandler(System.out));
         System.setErr(new SystemLogHandler(System.err));
     }
-
 
     protected void initNaming() {
         // Setting additional variables
@@ -908,6 +886,10 @@ public class Catalina {
     }
 
 
+    // --------------------------------------- CatalinaShutdownHook Inner Class
+
+    // XXX Should be moved to embedded !
+
     /**
      * Set the security package access/protection.
      */
@@ -916,11 +898,6 @@ public class Catalina {
         securityConfig.setPackageDefinition();
         securityConfig.setPackageAccess();
     }
-
-
-    // --------------------------------------- CatalinaShutdownHook Inner Class
-
-    // XXX Should be moved to embedded !
 
     /**
      * Shutdown hook which will perform a clean shutdown of Catalina if needed.
@@ -947,9 +924,6 @@ public class Catalina {
         }
     }
 
-
-    private static final Log log = LogFactory.getLog(Catalina.class);
-
 }
 
 
@@ -963,13 +937,13 @@ public class Catalina {
 
 final class SetParentClassLoaderRule extends Rule {
 
+    ClassLoader parentClassLoader = null;
+
     public SetParentClassLoaderRule(ClassLoader parentClassLoader) {
 
         this.parentClassLoader = parentClassLoader;
 
     }
-
-    ClassLoader parentClassLoader = null;
 
     @Override
     public void begin(String namespace, String name, Attributes attributes)

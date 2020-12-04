@@ -90,8 +90,7 @@ public class SharedPoolDataSource extends InstanceKeyDataSource {
     /**
      * Sets {@link GenericKeyedObjectPool#getMaxTotal()} for this pool.
      *
-     * @param maxTotal
-     *            {@link GenericKeyedObjectPool#getMaxTotal()} for this pool.
+     * @param maxTotal {@link GenericKeyedObjectPool#getMaxTotal()} for this pool.
      */
     public void setMaxTotal(final int maxTotal) {
         assertInitializationAllowed();
@@ -217,12 +216,9 @@ public class SharedPoolDataSource extends InstanceKeyDataSource {
     /**
      * Supports Serialization interface.
      *
-     * @param in
-     *            a <code>java.io.ObjectInputStream</code> value
-     * @throws IOException
-     *             if an error occurs
-     * @throws ClassNotFoundException
-     *             if an error occurs
+     * @param in a <code>java.io.ObjectInputStream</code> value
+     * @throws IOException            if an error occurs
+     * @throws ClassNotFoundException if an error occurs
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         try {

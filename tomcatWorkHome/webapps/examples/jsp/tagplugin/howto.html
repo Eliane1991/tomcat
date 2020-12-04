@@ -15,31 +15,33 @@
   limitations under the License.
 -->
 <html>
-  <head>
+<head>
     <title>Tag Plugin Implementation</title>
-  </head>
-  <body>
-    <h2>How to write tag plugins</h2>
-    <p>
-      To write a plugin, you'll need to download the source for Tomcat.
-      There are two steps:
+</head>
+<body>
+<h2>How to write tag plugins</h2>
+<p>
+    To write a plugin, you'll need to download the source for Tomcat.
+    There are two steps:
     <ol>
-      <li>
-        Implement the plugin class.<p/>
-        This class, which implements
-        <tt>org.apache.jasper.compiler.tagplugin.TagPlugin</tt>
-        instructs Jasper what Java codes to generate in place of the tag
-        handler calls.
-        See Javadoc for <tt>org.apache.jasper.compiler.tagplugin.TagPlugin</tt>
-        for details.
-      </li>
+        <li>
+            Implement the plugin class.
+<p/>
+This class, which implements
+<tt>org.apache.jasper.compiler.tagplugin.TagPlugin</tt>
+instructs Jasper what Java codes to generate in place of the tag
+handler calls.
+See Javadoc for <tt>org.apache.jasper.compiler.tagplugin.TagPlugin</tt>
+for details.
+</li>
 
-      <li>
-        Create the plugin descriptor file <tt> WEB-INF/tagPlugins.xml</tt><p/>
-        This file
-        specifies the plugin classes and their corresponding tag handler
-        classes.
-      </li>
-    </ol>
-  </body>
+<li>
+    Create the plugin descriptor file <tt> WEB-INF/tagPlugins.xml</tt>
+    <p/>
+    This file
+    specifies the plugin classes and their corresponding tag handler
+    classes.
+</li>
+</ol>
+</body>
 </html>

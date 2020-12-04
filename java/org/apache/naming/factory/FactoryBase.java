@@ -37,7 +37,7 @@ public abstract class FactoryBase implements ObjectFactory {
      */
     @Override
     public final Object getObjectInstance(Object obj, Name name, Context nameCtx,
-            Hashtable<?,?> environment) throws Exception {
+                                          Hashtable<?, ?> environment) throws Exception {
 
         if (isReferenceTypeSupported(obj)) {
             Reference ref = (Reference) obj;
@@ -61,14 +61,14 @@ public abstract class FactoryBase implements ObjectFactory {
                     } else {
                         factoryClass = Class.forName(factoryClassName);
                     }
-                } catch(ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     NamingException ex = new NamingException(sm.getString("factoryBase.factoryClassError"));
                     ex.initCause(e);
                     throw ex;
                 }
                 try {
                     factory = (ObjectFactory) factoryClass.getConstructor().newInstance();
-                } catch(Throwable t) {
+                } catch (Throwable t) {
                     if (t instanceof NamingException) {
                         throw (NamingException) t;
                     }
@@ -102,10 +102,9 @@ public abstract class FactoryBase implements ObjectFactory {
      * Determines if this factory supports processing the provided reference
      * object.
      *
-     * @param obj   The object to be processed
-     *
+     * @param obj The object to be processed
      * @return <code>true</code> if this factory can process the object,
-     *         otherwise <code>false</code>
+     * otherwise <code>false</code>
      */
     protected abstract boolean isReferenceTypeSupported(Object obj);
 
@@ -113,12 +112,10 @@ public abstract class FactoryBase implements ObjectFactory {
      * If a default factory is available for the given reference type, create
      * the default factory.
      *
-     * @param ref   The reference object to be processed
-     *
-     * @return  The default factory for the given reference object or
-     *          <code>null</code> if no default factory exists.
-     *
-     * @throws NamingException  If the default factory cannot be created
+     * @param ref The reference object to be processed
+     * @return The default factory for the given reference object or
+     * <code>null</code> if no default factory exists.
+     * @throws NamingException If the default factory cannot be created
      */
     protected abstract ObjectFactory getDefaultFactory(Reference ref)
             throws NamingException;
@@ -126,10 +123,9 @@ public abstract class FactoryBase implements ObjectFactory {
     /**
      * If this reference is a link to another JNDI object, obtain that object.
      *
-     * @param ref   The reference object to be processed
-     *
-     * @return  The linked object or <code>null</code> if linked objects are
-     *          not supported by or not configured for this reference object
+     * @param ref The reference object to be processed
+     * @return The linked object or <code>null</code> if linked objects are
+     * not supported by or not configured for this reference object
      * @throws NamingException Error accessing linked object
      */
     protected abstract Object getLinked(Reference ref) throws NamingException;

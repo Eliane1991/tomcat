@@ -26,6 +26,7 @@ public class AuthenticatorFactory {
 
     /**
      * Return a new authenticator instance.
+     *
      * @param authScheme The scheme used
      * @return the authenticator
      */
@@ -34,17 +35,17 @@ public class AuthenticatorFactory {
         Authenticator auth = null;
         switch (authScheme.toLowerCase()) {
 
-        case BasicAuthenticator.schemeName:
-            auth = new BasicAuthenticator();
-            break;
+            case BasicAuthenticator.schemeName:
+                auth = new BasicAuthenticator();
+                break;
 
-        case DigestAuthenticator.schemeName:
-            auth = new DigestAuthenticator();
-            break;
+            case DigestAuthenticator.schemeName:
+                auth = new DigestAuthenticator();
+                break;
 
-        default:
-            auth = loadAuthenticators(authScheme);
-            break;
+            default:
+                auth = loadAuthenticators(authScheme);
+                break;
         }
 
         return auth;

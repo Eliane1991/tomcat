@@ -24,12 +24,11 @@ import javax.naming.StringRefAddr;
  */
 public class LookupRef extends AbstractRef {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * JNDI name for the lookup
      */
     public static final String LOOKUP_NAME = "lookup-name";
+    private static final long serialVersionUID = 1L;
 
 
     public LookupRef(String resourceType, String lookupName) {

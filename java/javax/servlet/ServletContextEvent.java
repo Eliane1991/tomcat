@@ -30,8 +30,7 @@ public class ServletContextEvent extends java.util.EventObject {
     /**
      * Construct a ServletContextEvent from the given context.
      *
-     * @param source
-     *            - the ServletContext that is sending the event.
+     * @param source - the ServletContext that is sending the event.
      */
     public ServletContextEvent(ServletContext source) {
         super(source);

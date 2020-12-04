@@ -52,111 +52,76 @@ public class Http11Processor extends AbstractProcessor {
      * The string manager for this package.
      */
     private static final StringManager sm = StringManager.getManager(Http11Processor.class);
-
-
-    private final AbstractHttp11Protocol<?> protocol;
-
-
     /**
      * Input.
      */
     protected final Http11InputBuffer inputBuffer;
-
-
     /**
      * Output.
      */
     protected final Http11OutputBuffer outputBuffer;
-
-
+    private final AbstractHttp11Protocol<?> protocol;
     private final HttpParser httpParser;
-
-
-    /**
-     * Tracks how many internal filters are in the filter library so they
-     * are skipped when looking for pluggable filters.
-     */
-    private int pluggableFilterIndex = Integer.MAX_VALUE;
-
-
     /**
      * Keep-alive.
      */
     protected volatile boolean keepAlive = true;
-
-
     /**
      * Flag used to indicate that the socket should be kept open (e.g. for keep
      * alive or send file.
      */
     protected boolean openSocket = false;
-
-
     /**
      * Flag that indicates if the request headers have been completely read.
      */
     protected boolean readComplete = true;
-
     /**
      * HTTP/1.1 flag.
      */
     protected boolean http11 = true;
-
-
     /**
      * HTTP/0.9 flag.
      */
     protected boolean http09 = false;
-
-
     /**
      * Content delimiter for the request (if false, the connection will
      * be closed at the end of the request).
      */
     protected boolean contentDelimitation = true;
-
-
     /**
      * Regular expression that defines the restricted user agents.
      */
     protected Pattern restrictedUserAgents = null;
-
-
     /**
      * Maximum number of Keep-Alive requests to honor.
      */
     protected int maxKeepAliveRequests = -1;
-
-
     /**
      * Maximum timeout on uploads. 5 minutes as in Apache HTTPD server.
      */
     protected int connectionUploadTimeout = 300000;
-
-
     /**
      * Flag to disable setting a different time-out on uploads.
      */
     protected boolean disableUploadTimeout = false;
-
-
     /**
      * Max saved post size.
      */
     protected int maxSavePostSize = 4 * 1024;
-
-
     /**
      * Instance of the new protocol to use after the HTTP connection has been
      * upgraded.
      */
     protected UpgradeToken upgradeToken = null;
-
-
     /**
      * Sendfile data.
      */
     protected SendfileDataBase sendfileData = null;
+    /**
+     * Tracks how many internal filters are in the filter library so they
+     * are skipped when looking for pluggable filters.
+     */
+    private int pluggableFilterIndex = Integer.MAX_VALUE;
 
 
     @SuppressWarnings("deprecation")
@@ -199,19 +164,30 @@ public class Http11Processor extends AbstractProcessor {
         pluggableFilterIndex = inputBuffer.getFilters().length;
     }
 
-
     /**
-     * Set compression level.
-     *
-     * @param compression One of <code>on</code>, <code>force</code>,
-     *                    <code>off</code> or the minimum compression size in
-     *                    bytes which implies <code>on</code>
-     *
-     * @deprecated Use {@link Http11Protocol#setCompression(String)}
+     * Determine if we must drop the connection because of the HTTP status
+     * code.  Use the same list of codes as Apache/httpd.
      */
-    @Deprecated
-    public void setCompression(String compression) {
-        protocol.setCompression(compression);
+    private static boolean statusDropsConnection(int status) {
+        return status == 400 /* SC_BAD_REQUEST */ ||
+                status == 408 /* SC_REQUEST_TIMEOUT */ ||
+                status == 411 /* SC_LENGTH_REQUIRED */ ||
+                status == 413 /* SC_REQUEST_ENTITY_TOO_LARGE */ ||
+                status == 414 /* SC_REQUEST_URI_TOO_LONG */ ||
+                status == 500 /* SC_INTERNAL_SERVER_ERROR */ ||
+                status == 503 /* SC_SERVICE_UNAVAILABLE */ ||
+                status == 501 /* SC_NOT_IMPLEMENTED */;
+    }
+
+    private static boolean isConnectionToken(MimeHeaders headers, String token) throws IOException {
+        MessageBytes connection = headers.getValue(Constants.CONNECTION);
+        if (connection == null) {
+            return false;
+        }
+
+        Set<String> tokens = new HashSet<>();
+        TokenList.parseTokenList(headers.values(Constants.CONNECTION), tokens);
+        return tokens.contains(token);
     }
 
     /**
@@ -219,14 +195,12 @@ public class Http11Processor extends AbstractProcessor {
      *
      * @param compressionMinSize The minimum content length required for
      *                           compression in bytes
-     *
      * @deprecated Use {@link Http11Protocol#setCompressionMinSize(int)}
      */
     @Deprecated
     public void setCompressionMinSize(int compressionMinSize) {
         protocol.setCompressionMinSize(compressionMinSize);
     }
-
 
     /**
      * Set no compression user agent pattern. Regular expression as supported
@@ -235,7 +209,6 @@ public class Http11Processor extends AbstractProcessor {
      * @param noCompressionUserAgents The regular expression for user agent
      *                                strings for which compression should not
      *                                be applied
-     *
      * @deprecated Use {@link Http11Protocol#setNoCompressionUserAgents(String)}
      */
     @Deprecated
@@ -243,11 +216,9 @@ public class Http11Processor extends AbstractProcessor {
         protocol.setNoCompressionUserAgents(noCompressionUserAgents);
     }
 
-
     /**
      * @param compressibleMimeTypes See
-     *        {@link Http11Processor#setCompressibleMimeTypes(String[])}
-     *
+     *                              {@link Http11Processor#setCompressibleMimeTypes(String[])}
      * @deprecated Use {@link Http11Protocol#setCompressibleMimeType(String)}
      */
     @Deprecated
@@ -255,13 +226,11 @@ public class Http11Processor extends AbstractProcessor {
         setCompressibleMimeTypes(compressibleMimeTypes);
     }
 
-
     /**
      * Set compressible mime-type list.
      *
      * @param compressibleMimeTypes MIME types for which compression should be
      *                              enabled
-     *
      * @deprecated Use {@link Http11Protocol#setCompressibleMimeType(String)}
      */
     @Deprecated
@@ -273,12 +242,10 @@ public class Http11Processor extends AbstractProcessor {
         protocol.setCompressibleMimeType(StringUtils.join(compressibleMimeTypes));
     }
 
-
     /**
      * Return compression level.
      *
      * @return The current compression level in string form (off/on/force)
-     *
      * @deprecated Use {@link Http11Protocol#getCompression()}
      */
     @Deprecated
@@ -286,6 +253,18 @@ public class Http11Processor extends AbstractProcessor {
         return protocol.getCompression();
     }
 
+    /**
+     * Set compression level.
+     *
+     * @param compression One of <code>on</code>, <code>force</code>,
+     *                    <code>off</code> or the minimum compression size in
+     *                    bytes which implies <code>on</code>
+     * @deprecated Use {@link Http11Protocol#setCompression(String)}
+     */
+    @Deprecated
+    public void setCompression(String compression) {
+        protocol.setCompression(compression);
+    }
 
     /**
      * Set restricted user agent list (which will downgrade the connector
@@ -304,6 +283,15 @@ public class Http11Processor extends AbstractProcessor {
         }
     }
 
+    /**
+     * Get the maximum number of Keep-Alive requests allowed. A negative value
+     * means there is no limit.
+     *
+     * @return the number of Keep-Alive requests that we will allow.
+     */
+    public int getMaxKeepAliveRequests() {
+        return maxKeepAliveRequests;
+    }
 
     /**
      * Set the maximum number of Keep-Alive requests to allow.
@@ -316,17 +304,14 @@ public class Http11Processor extends AbstractProcessor {
         maxKeepAliveRequests = mkar;
     }
 
-
     /**
-     * Get the maximum number of Keep-Alive requests allowed. A negative value
-     * means there is no limit.
+     * Return the maximum size of a POST which will be buffered in SSL mode.
      *
-     * @return the number of Keep-Alive requests that we will allow.
+     * @return The size in bytes
      */
-    public int getMaxKeepAliveRequests() {
-        return maxKeepAliveRequests;
+    public int getMaxSavePostSize() {
+        return maxSavePostSize;
     }
-
 
     /**
      * Set the maximum size of a POST which will be buffered in SSL mode.
@@ -340,16 +325,14 @@ public class Http11Processor extends AbstractProcessor {
         maxSavePostSize = msps;
     }
 
-
     /**
-     * Return the maximum size of a POST which will be buffered in SSL mode.
+     * Get the flag that controls upload time-outs.
      *
-     * @return The size in bytes
+     * @return {@code true} if the separate upload timeout is disabled
      */
-    public int getMaxSavePostSize() {
-        return maxSavePostSize;
+    public boolean getDisableUploadTimeout() {
+        return disableUploadTimeout;
     }
-
 
     /**
      * Set the flag to control whether a separate connection timeout is used
@@ -363,24 +346,6 @@ public class Http11Processor extends AbstractProcessor {
     }
 
     /**
-     * Get the flag that controls upload time-outs.
-     *
-     * @return {@code true} if the separate upload timeout is disabled
-     */
-    public boolean getDisableUploadTimeout() {
-        return disableUploadTimeout;
-    }
-
-    /**
-     * Set the upload timeout.
-     *
-     * @param timeout Upload timeout in milliseconds
-     */
-    public void setConnectionUploadTimeout(int timeout) {
-        connectionUploadTimeout = timeout ;
-    }
-
-    /**
      * Get the upload timeout.
      *
      * @return Upload timeout in milliseconds
@@ -389,12 +354,19 @@ public class Http11Processor extends AbstractProcessor {
         return connectionUploadTimeout;
     }
 
+    /**
+     * Set the upload timeout.
+     *
+     * @param timeout Upload timeout in milliseconds
+     */
+    public void setConnectionUploadTimeout(int timeout) {
+        connectionUploadTimeout = timeout;
+    }
 
     /**
      * Set the server header name.
      *
      * @param server The new value to use for the server header
-     *
      * @deprecated Use {@link Http11Protocol#setServer(String)}
      */
     @Deprecated
@@ -402,28 +374,10 @@ public class Http11Processor extends AbstractProcessor {
         protocol.setServer(server);
     }
 
-
     @Deprecated
     public void setServerRemoveAppProvidedValues(boolean serverRemoveAppProvidedValues) {
         protocol.setServerRemoveAppProvidedValues(serverRemoveAppProvidedValues);
     }
-
-
-    /**
-     * Determine if we must drop the connection because of the HTTP status
-     * code.  Use the same list of codes as Apache/httpd.
-     */
-    private static boolean statusDropsConnection(int status) {
-        return status == 400 /* SC_BAD_REQUEST */ ||
-               status == 408 /* SC_REQUEST_TIMEOUT */ ||
-               status == 411 /* SC_LENGTH_REQUIRED */ ||
-               status == 413 /* SC_REQUEST_ENTITY_TOO_LARGE */ ||
-               status == 414 /* SC_REQUEST_URI_TOO_LONG */ ||
-               status == 500 /* SC_INTERNAL_SERVER_ERROR */ ||
-               status == 503 /* SC_SERVICE_UNAVAILABLE */ ||
-               status == 501 /* SC_NOT_IMPLEMENTED */;
-    }
-
 
     /**
      * Add an input filter to the current request. If the encoding is not
@@ -437,7 +391,7 @@ public class Http11Processor extends AbstractProcessor {
             // Skip
         } else if (encodingName.equals("chunked")) {
             inputBuffer.addActiveFilter
-                (inputFilters[Constants.CHUNKED_FILTER]);
+                    (inputFilters[Constants.CHUNKED_FILTER]);
             contentDelimitation = true;
         } else {
             for (int i = pluggableFilterIndex; i < inputFilters.length; i++) {
@@ -452,15 +406,14 @@ public class Http11Processor extends AbstractProcessor {
             setErrorState(ErrorState.CLOSE_CLEAN, null);
             if (log.isDebugEnabled()) {
                 log.debug(sm.getString("http11processor.request.prepare") +
-                          " Unsupported transfer encoding [" + encodingName + "]");
+                        " Unsupported transfer encoding [" + encodingName + "]");
             }
         }
     }
 
-
     @Override
     public SocketState service(SocketWrapperBase<?> socketWrapper)
-        throws IOException {
+            throws IOException {
         RequestInfo rp = request.getRequestProcessor();
         rp.setStage(org.apache.coyote.Constants.STAGE_PARSE);
 
@@ -552,7 +505,7 @@ public class Http11Processor extends AbstractProcessor {
                         response.setStatus(HttpServletResponse.SC_SWITCHING_PROTOCOLS);
                         response.setHeader("Connection", "Upgrade");
                         response.setHeader("Upgrade", requestedProtocol);
-                        action(ActionCode.CLOSE,  null);
+                        action(ActionCode.CLOSE, null);
                         getAdapter().log(request, response, 0);
 
                         InternalHttpUpgradeHandler upgradeHandler =
@@ -598,7 +551,7 @@ public class Http11Processor extends AbstractProcessor {
                     // set the status to 500 and set the errorException.
                     // If we fail here, then the response is likely already
                     // committed, so we can't try and set headers.
-                    if(keepAlive && !getErrorState().isError() && !isAsync() &&
+                    if (keepAlive && !getErrorState().isError() && !isAsync() &&
                             statusDropsConnection(response.getStatus())) {
                         setErrorState(ErrorState.CLOSE_CLEAN, null);
                     }
@@ -652,7 +605,7 @@ public class Http11Processor extends AbstractProcessor {
 
             if (!disableUploadTimeout) {
                 int soTimeout = endpoint.getConnectionTimeout();
-                if(soTimeout > 0) {
+                if (soTimeout > 0) {
                     socketWrapper.setReadTimeout(soTimeout);
                 } else {
                     socketWrapper.setReadTimeout(0);
@@ -689,14 +642,12 @@ public class Http11Processor extends AbstractProcessor {
         }
     }
 
-
     @Override
     protected final void setSocketWrapper(SocketWrapperBase<?> socketWrapper) {
         super.setSocketWrapper(socketWrapper);
         inputBuffer.init(socketWrapper);
         outputBuffer.init(socketWrapper);
     }
-
 
     private Request cloneRequest(Request source) throws IOException {
         Request dest = new Request();
@@ -713,6 +664,7 @@ public class Http11Processor extends AbstractProcessor {
         return dest;
 
     }
+
     private boolean handleIncompleteRequestLineRead() {
         // Haven't finished reading the request so keep the socket
         // open
@@ -733,7 +685,6 @@ public class Http11Processor extends AbstractProcessor {
         return true;
     }
 
-
     private void checkExpectationAndResponseStatus() {
         if (request.hasExpectation() && !isRequestBodyFullyRead() &&
                 (response.getStatus() < 200 || response.getStatus() > 299)) {
@@ -747,7 +698,6 @@ public class Http11Processor extends AbstractProcessor {
             keepAlive = false;
         }
     }
-
 
     private void checkMaxSwallowSize() {
         // Parse content-length header
@@ -767,7 +717,6 @@ public class Http11Processor extends AbstractProcessor {
             keepAlive = false;
         }
     }
-
 
     private void prepareRequestProtocol() {
 
@@ -794,12 +743,11 @@ public class Http11Processor extends AbstractProcessor {
             response.setStatus(505);
             setErrorState(ErrorState.CLOSE_CLEAN, null);
             if (log.isDebugEnabled()) {
-                log.debug(sm.getString("http11processor.request.prepare")+
-                          " Unsupported HTTP version \""+protocolMB+"\"");
+                log.debug(sm.getString("http11processor.request.prepare") +
+                        " Unsupported HTTP version \"" + protocolMB + "\"");
             }
         }
     }
-
 
     /**
      * After reading the request headers, we have to setup the request filters.
@@ -844,7 +792,7 @@ public class Http11Processor extends AbstractProcessor {
             MessageBytes userAgentValueMB = headers.getValue("user-agent");
             // Check in the restricted list, and adjust the http11
             // and keepAlive flags accordingly
-            if(userAgentValueMB != null && !userAgentValueMB.isNull()) {
+            if (userAgentValueMB != null && !userAgentValueMB.isNull()) {
                 String userAgentValue = userAgentValueMB.toString();
                 if (restrictedUserAgents != null &&
                         restrictedUserAgents.matcher(userAgentValue).matches()) {
@@ -1030,7 +978,6 @@ public class Http11Processor extends AbstractProcessor {
         }
     }
 
-
     private void badRequest(String errorKey) {
         response.setStatus(400);
         setErrorState(ErrorState.CLOSE_CLEAN, null);
@@ -1038,7 +985,6 @@ public class Http11Processor extends AbstractProcessor {
             log.debug(sm.getString(errorKey));
         }
     }
-
 
     /**
      * When committing the response, we have to validate the set of headers, as
@@ -1064,7 +1010,7 @@ public class Http11Processor extends AbstractProcessor {
                 statusCode == 304) {
             // No entity body
             outputBuffer.addActiveFilter
-                (outputFilters[Constants.VOID_FILTER]);
+                    (outputFilters[Constants.VOID_FILTER]);
             entityBody = false;
             contentDelimitation = true;
             if (statusCode == 205) {
@@ -1080,7 +1026,7 @@ public class Http11Processor extends AbstractProcessor {
         if (methodMB.equals("HEAD")) {
             // No entity body
             outputBuffer.addActiveFilter
-                (outputFilters[Constants.VOID_FILTER]);
+                    (outputFilters[Constants.VOID_FILTER]);
             contentDelimitation = true;
         }
 
@@ -1105,7 +1051,7 @@ public class Http11Processor extends AbstractProcessor {
             String contentLanguage = response.getContentLanguage();
             if (contentLanguage != null) {
                 headers.setValue("Content-Language")
-                    .setString(contentLanguage);
+                        .setString(contentLanguage);
             }
         }
 
@@ -1176,7 +1122,7 @@ public class Http11Processor extends AbstractProcessor {
 
             if (protocol.getUseKeepAliveResponseHeader()) {
                 boolean connectionKeepAlivePresent =
-                    isConnectionToken(request.getMimeHeaders(), Constants.KEEP_ALIVE_HEADER_VALUE_TOKEN);
+                        isConnectionToken(request.getMimeHeaders(), Constants.KEEP_ALIVE_HEADER_VALUE_TOKEN);
 
                 if (connectionKeepAlivePresent) {
                     int keepAliveTimeout = protocol.getKeepAliveTimeout();
@@ -1231,18 +1177,6 @@ public class Http11Processor extends AbstractProcessor {
 
         outputBuffer.commit();
     }
-
-    private static boolean isConnectionToken(MimeHeaders headers, String token) throws IOException {
-        MessageBytes connection = headers.getValue(Constants.CONNECTION);
-        if (connection == null) {
-            return false;
-        }
-
-        Set<String> tokens = new HashSet<>();
-        TokenList.parseTokenList(headers.values(Constants.CONNECTION), tokens);
-        return tokens.contains(token);
-    }
-
 
     private void prepareSendfile(OutputFilter[] outputFilters) {
         String fileName = (String) request.getAttribute(
@@ -1536,15 +1470,15 @@ public class Http11Processor extends AbstractProcessor {
             }
             result = socketWrapper.processSendfile(sendfileData);
             switch (result) {
-            case ERROR:
-                // Write failed
-                if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("http11processor.sendfile.error"));
-                }
-                setErrorState(ErrorState.CLOSE_CONNECTION_NOW, null);
-                //$FALL-THROUGH$
-            default:
-                sendfileData = null;
+                case ERROR:
+                    // Write failed
+                    if (log.isDebugEnabled()) {
+                        log.debug(sm.getString("http11processor.sendfile.error"));
+                    }
+                    setErrorState(ErrorState.CLOSE_CONNECTION_NOW, null);
+                    //$FALL-THROUGH$
+                default:
+                    sendfileData = null;
             }
         }
         return result;

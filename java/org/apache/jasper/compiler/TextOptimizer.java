@@ -20,8 +20,19 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Options;
 
 /**
+ *
  */
 public class TextOptimizer {
+
+    public static void concatenate(Compiler compiler, Node.Nodes page)
+            throws JasperException {
+
+        TextCatVisitor v = new TextCatVisitor(compiler);
+        page.visit(v);
+
+        // Cleanup, in case the page ends with a template text
+        v.collectText();
+    }
 
     /**
      * A visitor to concatenate contiguous template texts.
@@ -110,15 +121,5 @@ public class TextOptimizer {
             textNodeCount = 0;
         }
 
-    }
-
-    public static void concatenate(Compiler compiler, Node.Nodes page)
-            throws JasperException {
-
-        TextCatVisitor v = new TextCatVisitor(compiler);
-        page.visit(v);
-
-        // Cleanup, in case the page ends with a template text
-        v.collectText();
     }
 }

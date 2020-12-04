@@ -40,7 +40,7 @@ public class ThrowableCallStack implements CallStack {
      * Create a new instance.
      *
      * @param messageFormat message format
-     * @param useTimestamp whether to format the dates in the output message or not
+     * @param useTimestamp  whether to format the dates in the output message or not
      */
     public ThrowableCallStack(final String messageFormat, final boolean useTimestamp) {
         this.messageFormat = messageFormat;

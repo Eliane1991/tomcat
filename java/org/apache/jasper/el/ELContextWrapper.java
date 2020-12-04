@@ -64,24 +64,24 @@ public final class ELContextWrapper extends ELContext {
     }
 
     @Override
-    public boolean isPropertyResolved() {
-        return this.target.isPropertyResolved();
-    }
-
-    @Override
-    public void putContext(@SuppressWarnings("rawtypes") Class key,
-            Object contextObject) throws NullPointerException {
-        this.target.putContext(key, contextObject);
-    }
-
-    @Override
     public void setLocale(Locale locale) {
         this.target.setLocale(locale);
     }
 
     @Override
+    public boolean isPropertyResolved() {
+        return this.target.isPropertyResolved();
+    }
+
+    @Override
     public void setPropertyResolved(boolean resolved) {
         this.target.setPropertyResolved(resolved);
+    }
+
+    @Override
+    public void putContext(@SuppressWarnings("rawtypes") Class key,
+                           Object contextObject) throws NullPointerException {
+        this.target.putContext(key, contextObject);
     }
 
 }
