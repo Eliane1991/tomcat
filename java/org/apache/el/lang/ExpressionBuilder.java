@@ -36,7 +36,7 @@ public final class ExpressionBuilder implements NodeVisitor {
 
     private static final SynchronizedStack<ELParser> parserCache = new SynchronizedStack<>();
 
-    private static final int CACHE_SIZE;
+    private static int CACHE_SIZE = 0;
     private static final String CACHE_SIZE_PROP =
             "org.apache.el.ExpressionBuilder.CACHE_SIZE";
     private static final ConcurrentCache<String, Node> expressionCache =

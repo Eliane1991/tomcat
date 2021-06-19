@@ -562,7 +562,7 @@ public class Catalina {
         // Before digester - it may be needed
         /**
          * 这里判断是否需要使用namingContext服务
-         * 如果需要的话,在构造server.xml解析,构造Server容器的过程中,会加入namingContextListener 这个监听器
+         * 如果需要的话,在针对server.xml解析,构造Server容器的过程中,会加入namingContextListener 这个监听器
          *
          */
         initNaming();
@@ -667,7 +667,7 @@ public class Catalina {
                 }
             }
         }
-
+        
         getServer().setCatalina(this);
         getServer().setCatalinaHome(Bootstrap.getCatalinaHomeFile());
         getServer().setCatalinaBase(Bootstrap.getCatalinaBaseFile());
@@ -682,7 +682,7 @@ public class Catalina {
              * 所有组件都继承自LifecycleBase.init() -->
              * 最终执行的方法
              * org.apache.catalina.core.StandardServer#initInternal()
-             *
+             * getServer()中获取的Server对象是在server.xml解析后生成的
              */
             getServer().init();
         } catch (LifecycleException e) {
